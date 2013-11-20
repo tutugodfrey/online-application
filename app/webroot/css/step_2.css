@@ -1,0 +1,44 @@
+input[type="submit"] {
+    padding: 5px 10px;
+    background-color: #4e6378;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Helvetica, Verdana, sans-serif;
+}
+
+#ApplicationMonthlyVolume, #ApplicationAverageTicket, #ApplicationHighestTicket {
+    width: 107px;
+}
+
+table.percentages input {
+    width: 50px;
+}
+
+div.high_volume_months div {
+    float: left;
+    width: 115px;
+    margin: 7px 0px;
+}
+
+div.high_volume_months label, #moto_and_internet label {
+    display: inline;
+}
+
+#moto_and_internet {
+    font-size: 12px;
+}
+
+#moto_and_internet input[type="text"] {
+    width: auto;
+}
+
+div.moto_checkboxes div {
+    float: left;
+    width: 175px;
+}
+
+table.moto_policy input {
+    width: 30px !important;
+    font-size: 12px !important;
+}

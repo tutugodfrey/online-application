@@ -1,0 +1,55 @@
+/* 
+    Document   : sessionMsg
+    Created on : Apr 6, 2012, 11:03:49 AM
+    Author     : omota
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+
+#msg_fader,#msg_faders {
+    background: black;
+    opacity: .2;
+    -moz-opacity: .5;
+    filter: alpha(opacity=50);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 5;
+    display: none; 
+}
+
+#session_box,#loading_box {
+	font: 13px Verdana;
+    width: 310px;
+    height: 168px;
+    vertical-align: baseline;    
+    border: 2px blue solid;
+    background: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -160px;
+    padding: 5px 0 0 10px;
+    z-index: 10;
+    display: none;
+}
+
+.btn {
+	padding: 5px 10px 5px 10px;
+	background: #aaa;
+	border: 1px #ddd solid;
+	float: Right;
+	margin: 3px;
+	font-size: 14px;
+        font-weight: bold;       
+	cursor: pointer;
+}
+

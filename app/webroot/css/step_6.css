@@ -1,0 +1,45 @@
+input[type="submit"], input[type="button"] {
+    padding: 5px 10px;
+    background-color: #4e6378;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Helvetica, Verdana, sans-serif;
+}
+
+h3 {
+    color: #4E6378;
+}
+
+input {
+    width: 200px !important;
+}
+
+div.radio label {
+    color: #4D4D4D !important;
+}
+
+.radio input, .radio2 input {
+    width: auto !important;
+}
+
+.radio2 span {
+    display: inline-block;
+    width: 350px;
+    padding: 5px 0px;
+}
+
+.fees_part_two td {
+    font-size: 11px;
+    white-space: nowrap;
+    
+}
+
+.fees_part_two label, .fees_part_two input {
+    font-size: 11px;
+    display: inline;
+}
+
+.fees_part_two input {
+    width: 40px !important;
+}

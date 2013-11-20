@@ -1,0 +1,764 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"></head><body><div class="cake-debug-output">
+<span><strong>/app/Controller/TimelineEntriesController.php</strong> (line <strong>32</strong>)</span>
+<pre class="cake-debug">array(
+	'TimelineEntry' =&gt; array(
+		'id' =&gt; (int) 32,
+		'merchant_id' =&gt; (int) 1909,
+		'timeline_item' =&gt; 'APP',
+		'timeline_date_completed' =&gt; '2001-07-31',
+		'action_flag' =&gt; false,
+		'timeline_item_id' =&gt; (int) 4
+	),
+	'Merchant' =&gt; array(
+		'id' =&gt; (int) 1909,
+		'merchant_id' =&gt; (int) 3948000030000082,
+		'user_id' =&gt; (int) 21,
+		'merchant_mid' =&gt; '3948000030000082',
+		'merchant_name' =&gt; null,
+		'merchant_dba' =&gt; 'To The Nynes',
+		'merchant_contact' =&gt; 'Michael Hanks',
+		'merchant_email' =&gt; null,
+		'merchant_ownership_type' =&gt; 'Corporation',
+		'merchant_tin' =&gt; '76cef1032737a4f9b00adb0a4c941f8c',
+		'merchant_d_and_b' =&gt; null,
+		'inactive_date' =&gt; '2006-01-11',
+		'active_date' =&gt; null,
+		'ref_seq_number' =&gt; null,
+		'network_id' =&gt; (int) 5,
+		'merchant_buslevel' =&gt; 'Retail',
+		'merchant_sic' =&gt; (int) 5651,
+		'entity' =&gt; 'AX',
+		'group_id' =&gt; null,
+		'merchant_bustype' =&gt; 'Clothing - Family',
+		'merchant_url' =&gt; null,
+		'merchant_tin_disp' =&gt; '8888',
+		'merchant_d_and_b_disp' =&gt; null,
+		'active' =&gt; (int) 0,
+		'cancellation_fee_id' =&gt; null,
+		'merchant_contact_position' =&gt; null,
+		'merchant_mail_contact' =&gt; 'Michael Hanks',
+		'res_seq_number' =&gt; null,
+		'merchant_bin_id' =&gt; null,
+		'merchant_acquirer_id' =&gt; null,
+		'reporting_user' =&gt; null,
+		'merchant_ps_sold' =&gt; null,
+		'ref_p_type' =&gt; null,
+		'ref_p_value' =&gt; null,
+		'res_p_type' =&gt; null,
+		'res_p_value' =&gt; null,
+		'ref_p_pct' =&gt; null,
+		'res_p_pct' =&gt; null,
+		'onlineapp_application_id' =&gt; null,
+		'partner_id' =&gt; null,
+		'partner_exclude_volume' =&gt; null
+	),
+	'TimelineItem' =&gt; array(
+		'id' =&gt; (int) 4,
+		'timeline_item' =&gt; 'APP',
+		'timeline_item_description' =&gt; 'Approved'
+	)
+)
+</pre>
+</div>
+
+
+    <script type="text/javascript" src="32_files/jquery-latest.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    <title>
+            Data Warehouse:
+            TimelineEntries    </title>
+    <link href="http://db-new.axia-eft.local/favicon.ico" type="image/x-icon" rel="icon"><link href="http://db-new.axia-eft.local/favicon.ico" type="image/x-icon" rel="shortcut icon"><link rel="stylesheet" type="text/css" href="32_files/axia.css">     <script type="text/javascript">
+            $(document).ready(function () {
+            if(document.getElementById("thisViewTitle"))/*If object exists*/
+            document.getElementById("layoutViewTitle").innerHTML = document.getElementById("thisViewTitle").value;            
+            });
+     </script>
+
+
+    <div class="wrapper">
+            <div id="header">
+                <table id="headTable" cellpadding="0" cellspacing="0"><tbody><tr><td>
+                    <h1><br><br><a href="http://datawarehouse.axia-eft.local/">Data Warehouse</a></h1>
+                </td></tr></tbody></table>
+            </div>
+        
+            <div class="mainContainer">
+                <div id="topNavBarConteiner" class="roundEdges">
+                    <table style="width:1300px;" cellpadding="0" cellspacing="0"><tbody><tr><th style="width:300px"></th>
+                                <th>                        
+                                    <ul id="topnavbar">      
+                                        <li><a href="#">Merchants</a>
+                                            <ul class="roundEdges shadow">
+                                                <li><a href="http://db-new.axia-eft.local/merchants/index">Merchant list</a></li>
+                                                <li><a href="#">Partners</a></li>
+                                                <li><a href="#">Pending Requests</a></li>
+                                                <li><a href="#">Search all notes</a></li>
+                                            </ul>
+                                        </li>
+                                            
+                                        <li><a href="#">Reports</a>
+                                            <ul class="roundEdges shadow">
+                                                <li><a href="#">Commission report</a></li>
+                                                <li><a href="#">Cancellation report</a></li>
+                                                <li><a href="#">Gross profit analysis</a></li>
+                                                <li><a href="#">Goals report</a></li>
+                                                <li><a href="#">Gross profit report</a></li>
+                                                <li><a href="#">Last Deposit report</a></li>
+                                                <li><a href="#">Rejects report</a></li>
+                                                <li><a href="#">Residual report</a></li>
+                                                <li><a href="#">Replacement tracking report</a></li>
+                                                <li><a href="#">Underwriting report</a></li>                                                                        
+                                            </ul>
+                                        </li>                             
+                                            
+                                            
+                                        <li><a href="#">Users</a>
+                                            <ul class="roundEdges shadow">
+                                                <li><a href="http://db-new.axia-eft.local/users">User List</a></li>                                    
+                                                <li><a href="#">Recent activity</a></li>
+                                                <li><a href="#">Referrers</a></li>
+                                                <li><a href="#">Resellers</a></li>
+                                            </ul>
+                                        </li>
+                                            
+                                            
+                                            
+                                        <li><a href="#">Equipment</a>
+                                            <ul class="roundEdges shadow">
+                                                <li><a href="#">Equipment list</a></li>
+                                                <li><a href="#">Equipment orders</a></li>
+                                                <li><a href="#">SB Inventory</a></li>
+                                            </ul>
+                                        </li>
+                                            
+                                        <li><a href="#">Shortcuts</a>
+                                            <ul class="roundEdges shadow">
+                                                <li><a href="#">My Profile</a></li>
+                                                <li><a href="#">Team Contest</a></li>
+                                                <li><a href="#">POA Materials</a></li>
+                                                <li><a href="#">Logout</a></li>
+                                            </ul>
+                                        </li>
+                                            
+                                        <li><a href="#">Admin</a>
+                                            <ul class="roundEdges shadow">
+                                                <li><a href="#">Merchant upload</a></li>
+                                                <li><a href="#">ControlScan Results Upload</a></li>
+                                                <li><a href="#">Merchant pricing archive</a></li>
+                                                <li><a href="#">Residual admin</a></li>
+                                                <li><a href="#">Commission admin</a></li>
+                                                <li><a href="#">Goals admin</a></li>
+                                                <li><a href="#">Group admin</a></li>
+                                                <li><a href="#">SAQ Overview</a></li>
+                                                <li><a href="#">Reject Upload</a></li>
+                                                <li><a href="#">Last Deposit Upload</a></li>
+                                            </ul>
+                                        </li>
+                                            
+                                            
+                                    </ul>
+                                        
+                                </th></tr></tbody></table>
+                </div>      
+
+                <div class="leftNav">
+                                      
+                    <div style="display:none" class="containerStyle roundEdges shadow">
+                        	
+                      <table>
+                          <tbody><tr>
+                            <th class="contrTitle roundEdges">
+                                Merchant Pages
+                             </th> 
+                           </tr>
+                           <tr>
+                             <td id="merchNavContents">  
+                        
+                            <div class="leftNavItem">
+                            <a href="http://db-new.axia-eft.local/merchants/view/%3Cpre%20class=" cake-error"=""></a><a href="javascript:void(0);" onclick="document.getElementById('cakeErr5059171247628-trace').style.display = (document.getElementById('cakeErr5059171247628-trace').style.display == 'none' ? '' : 'none');"><b>Notice</b> (8)</a>: Undefined variable: merchant [<b>APP/View/Layouts/default.ctp</b>, line <b>147</b>]<div id="cakeErr5059171247628-trace" class="cake-stack-trace" style="display: none;"><a href="javascript:void(0);" onclick="document.getElementById('cakeErr5059171247628-code').style.display = (document.getElementById('cakeErr5059171247628-code').style.display == 'none' ? '' : 'none')">Code</a> <a href="javascript:void(0);" onclick="document.getElementById('cakeErr5059171247628-context').style.display = (document.getElementById('cakeErr5059171247628-context').style.display == 'none' ? '' : 'none')">Context</a><pre id="cakeErr5059171247628-code" class="cake-code-dump" style="display: none;"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ob_start();</span></code>
+<code><span style="color: #000000"></span></code>
+<span class="code-highlight"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;$this-&gt;__viewFile;</span></code></span></pre><pre id="cakeErr5059171247628-context" class="cake-context" style="display: none;">$viewFile = '/var/www/vhosts/db.axiapayments.com/app/View/Layouts/default.ctp'
+$dataForView = array(
+	'timelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'content_for_layout' =&gt; '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+',
+	'scripts_for_layout' =&gt; '',
+	'title_for_layout' =&gt; 'TimelineEntries'
+)
+$timelineEntry = array(
+	'TimelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'Merchant' =&gt; array(
+		[maximum depth reached]
+	),
+	'TimelineItem' =&gt; array(
+		[maximum depth reached]
+	)
+)
+$content_for_layout = '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+'
+$scripts_for_layout = ''
+$title_for_layout = 'TimelineEntries'
+$cakeDescription = 'Data Warehouse'</pre><pre class="stack-trace">include - APP/View/Layouts/default.ctp, line 147
+View::_evaluate() - CORE/Cake/View/View.php, line 920
+View::_render() - CORE/Cake/View/View.php, line 883
+View::renderLayout() - CORE/Cake/View/View.php, line 539
+View::render() - CORE/Cake/View/View.php, line 483
+Controller::render() - CORE/Cake/Controller/Controller.php, line 957
+Dispatcher::_invoke() - CORE/Cake/Routing/Dispatcher.php, line 193
+Dispatcher::dispatch() - CORE/Cake/Routing/Dispatcher.php, line 161
+[main] - APP/webroot/index.php, line 94</pre></div>"&gt;
+                            Overview</div>
+                            <div class="leftNavItem">
+                            <a href="http://db-new.axia-eft.local/merchants/notes/%3Cpre%20class=" cake-error"=""></a><a href="javascript:void(0);" onclick="document.getElementById('cakeErr50591712483c4-trace').style.display = (document.getElementById('cakeErr50591712483c4-trace').style.display == 'none' ? '' : 'none');"><b>Notice</b> (8)</a>: Undefined variable: merchant [<b>APP/View/Layouts/default.ctp</b>, line <b>150</b>]<div id="cakeErr50591712483c4-trace" class="cake-stack-trace" style="display: none;"><a href="javascript:void(0);" onclick="document.getElementById('cakeErr50591712483c4-code').style.display = (document.getElementById('cakeErr50591712483c4-code').style.display == 'none' ? '' : 'none')">Code</a> <a href="javascript:void(0);" onclick="document.getElementById('cakeErr50591712483c4-context').style.display = (document.getElementById('cakeErr50591712483c4-context').style.display == 'none' ? '' : 'none')">Context</a><pre id="cakeErr50591712483c4-code" class="cake-code-dump" style="display: none;"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ob_start();</span></code>
+<code><span style="color: #000000"></span></code>
+<span class="code-highlight"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;$this-&gt;__viewFile;</span></code></span></pre><pre id="cakeErr50591712483c4-context" class="cake-context" style="display: none;">$viewFile = '/var/www/vhosts/db.axiapayments.com/app/View/Layouts/default.ctp'
+$dataForView = array(
+	'timelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'content_for_layout' =&gt; '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+',
+	'scripts_for_layout' =&gt; '',
+	'title_for_layout' =&gt; 'TimelineEntries'
+)
+$timelineEntry = array(
+	'TimelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'Merchant' =&gt; array(
+		[maximum depth reached]
+	),
+	'TimelineItem' =&gt; array(
+		[maximum depth reached]
+	)
+)
+$content_for_layout = '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+'
+$scripts_for_layout = ''
+$title_for_layout = 'TimelineEntries'
+$cakeDescription = 'Data Warehouse'</pre><pre class="stack-trace">include - APP/View/Layouts/default.ctp, line 150
+View::_evaluate() - CORE/Cake/View/View.php, line 920
+View::_render() - CORE/Cake/View/View.php, line 883
+View::renderLayout() - CORE/Cake/View/View.php, line 539
+View::render() - CORE/Cake/View/View.php, line 483
+Controller::render() - CORE/Cake/Controller/Controller.php, line 957
+Dispatcher::_invoke() - CORE/Cake/Routing/Dispatcher.php, line 193
+Dispatcher::dispatch() - CORE/Cake/Routing/Dispatcher.php, line 161
+[main] - APP/webroot/index.php, line 94</pre></div>"&gt;
+                            Notes</div>
+                            <div class="leftNavItem">
+                            <a href="http://db-new.axia-eft.local/merchants/timeline/%3Cpre%20class=" cake-error"=""></a><a href="javascript:void(0);" onclick="document.getElementById('cakeErr505917124913b-trace').style.display = (document.getElementById('cakeErr505917124913b-trace').style.display == 'none' ? '' : 'none');"><b>Notice</b> (8)</a>: Undefined variable: merchant [<b>APP/View/Layouts/default.ctp</b>, line <b>153</b>]<div id="cakeErr505917124913b-trace" class="cake-stack-trace" style="display: none;"><a href="javascript:void(0);" onclick="document.getElementById('cakeErr505917124913b-code').style.display = (document.getElementById('cakeErr505917124913b-code').style.display == 'none' ? '' : 'none')">Code</a> <a href="javascript:void(0);" onclick="document.getElementById('cakeErr505917124913b-context').style.display = (document.getElementById('cakeErr505917124913b-context').style.display == 'none' ? '' : 'none')">Context</a><pre id="cakeErr505917124913b-code" class="cake-code-dump" style="display: none;"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ob_start();</span></code>
+<code><span style="color: #000000"></span></code>
+<span class="code-highlight"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;$this-&gt;__viewFile;</span></code></span></pre><pre id="cakeErr505917124913b-context" class="cake-context" style="display: none;">$viewFile = '/var/www/vhosts/db.axiapayments.com/app/View/Layouts/default.ctp'
+$dataForView = array(
+	'timelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'content_for_layout' =&gt; '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+',
+	'scripts_for_layout' =&gt; '',
+	'title_for_layout' =&gt; 'TimelineEntries'
+)
+$timelineEntry = array(
+	'TimelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'Merchant' =&gt; array(
+		[maximum depth reached]
+	),
+	'TimelineItem' =&gt; array(
+		[maximum depth reached]
+	)
+)
+$content_for_layout = '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+'
+$scripts_for_layout = ''
+$title_for_layout = 'TimelineEntries'
+$cakeDescription = 'Data Warehouse'</pre><pre class="stack-trace">include - APP/View/Layouts/default.ctp, line 153
+View::_evaluate() - CORE/Cake/View/View.php, line 920
+View::_render() - CORE/Cake/View/View.php, line 883
+View::renderLayout() - CORE/Cake/View/View.php, line 539
+View::render() - CORE/Cake/View/View.php, line 483
+Controller::render() - CORE/Cake/Controller/Controller.php, line 957
+Dispatcher::_invoke() - CORE/Cake/Routing/Dispatcher.php, line 193
+Dispatcher::dispatch() - CORE/Cake/Routing/Dispatcher.php, line 161
+[main] - APP/webroot/index.php, line 94</pre></div>"&gt;
+                            Installation &amp; Timeline</div>
+                            <div class="leftNavItem">
+                            <a href="http://db-new.axia-eft.local/merchants/equipment/%3Cpre%20class=" cake-error"=""></a><a href="javascript:void(0);" onclick="document.getElementById('cakeErr5059171249e0c-trace').style.display = (document.getElementById('cakeErr5059171249e0c-trace').style.display == 'none' ? '' : 'none');"><b>Notice</b> (8)</a>: Undefined variable: merchant [<b>APP/View/Layouts/default.ctp</b>, line <b>156</b>]<div id="cakeErr5059171249e0c-trace" class="cake-stack-trace" style="display: none;"><a href="javascript:void(0);" onclick="document.getElementById('cakeErr5059171249e0c-code').style.display = (document.getElementById('cakeErr5059171249e0c-code').style.display == 'none' ? '' : 'none')">Code</a> <a href="javascript:void(0);" onclick="document.getElementById('cakeErr5059171249e0c-context').style.display = (document.getElementById('cakeErr5059171249e0c-context').style.display == 'none' ? '' : 'none')">Context</a><pre id="cakeErr5059171249e0c-code" class="cake-code-dump" style="display: none;"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ob_start();</span></code>
+<code><span style="color: #000000"></span></code>
+<span class="code-highlight"><code><span style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;$this-&gt;__viewFile;</span></code></span></pre><pre id="cakeErr5059171249e0c-context" class="cake-context" style="display: none;">$viewFile = '/var/www/vhosts/db.axiapayments.com/app/View/Layouts/default.ctp'
+$dataForView = array(
+	'timelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'content_for_layout' =&gt; '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+',
+	'scripts_for_layout' =&gt; '',
+	'title_for_layout' =&gt; 'TimelineEntries'
+)
+$timelineEntry = array(
+	'TimelineEntry' =&gt; array(
+		[maximum depth reached]
+	),
+	'Merchant' =&gt; array(
+		[maximum depth reached]
+	),
+	'TimelineItem' =&gt; array(
+		[maximum depth reached]
+	)
+)
+$content_for_layout = '
+&lt;input type="hidden" id="thisViewTitle" value="View Timeline Entry" /&gt;
+&lt;div&gt;
+
+&lt;div&gt;
+    		&lt;li&gt;&lt;a href="/TimelineEntries/edit/32"&gt;Edit Timeline Entry&lt;/a&gt; &lt;/li&gt;
+    
+&lt;/div&gt;
+	&lt;dl&gt;
+		&lt;dt&gt;Id&lt;/dt&gt;
+		&lt;dd&gt;
+			32			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Merchant&lt;/dt&gt;
+		&lt;dd&gt;
+			&lt;a href="/merchants/view/1909"&gt;1909&lt;/a&gt;			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Item&lt;/dt&gt;
+		&lt;dd&gt;
+			APP			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Timeline Date Completed&lt;/dt&gt;
+		&lt;dd&gt;
+			2001-07-31			&amp;nbsp;
+		&lt;/dd&gt;
+                &lt;dt&gt;Timeline Action&lt;/dt&gt;
+		&lt;dd&gt;
+			Approved			&amp;nbsp;
+		&lt;/dd&gt;
+		&lt;dt&gt;Action Flag&lt;/dt&gt;
+		&lt;dd&gt;
+						&amp;nbsp;
+		&lt;/dd&gt;
+	&lt;/dl&gt;
+&lt;/div&gt;
+
+
+'
+$scripts_for_layout = ''
+$title_for_layout = 'TimelineEntries'
+$cakeDescription = 'Data Warehouse'</pre><pre class="stack-trace">include - APP/View/Layouts/default.ctp, line 156
+View::_evaluate() - CORE/Cake/View/View.php, line 920
+View::_render() - CORE/Cake/View/View.php, line 883
+View::renderLayout() - CORE/Cake/View/View.php, line 539
+View::render() - CORE/Cake/View/View.php, line 483
+Controller::render() - CORE/Cake/Controller/Controller.php, line 957
+Dispatcher::_invoke() - CORE/Cake/Routing/Dispatcher.php, line 193
+Dispatcher::dispatch() - CORE/Cake/Routing/Dispatcher.php, line 161
+[main] - APP/webroot/index.php, line 94</pre></div>"&gt;
+                            Programming</div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            Products &amp; Services</a></div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            Business Information</a></div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            Equipment Orders</a></div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            Assigned Equipment</a></div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            Axia Invoices</a></div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            PCI DSS Compliance</a></div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            Underwriting</a></div>
+                            <div class="leftNavItem">
+                            <a href="">
+                            Rejects</a></div>
+                        </td>
+                       </tr>
+                     </tbody></table>
+                    </div>
+                    
+                    
+                    
+                    <div class="containerStyle roundEdges shadow">
+                        <table>
+                          <tbody><tr>
+                            <th class="contrTitle roundEdges">
+                                Search
+                             </th> 
+                           </tr>
+                           <tr>
+                             <td>
+                                <input type="text"> 
+                                <select>
+                                    <option selected="selected" value="">Search by:</option>
+                                    <option value="MID">MID</option>
+                                    <option value="DBA">DBA</option>
+                                    <option value="G">Group</option>
+                                  </select>
+                                <input value="Search" type="button">
+
+                             </td>
+                             </tr>
+
+                        </tbody></table>
+                    </div>
+
+                    <div class="containerStyle roundEdges shadow">
+                        <table id="miscLinks">
+                          <tbody><tr>
+                            <th class="contrTitle roundEdges">
+                                Links
+                             </th> 
+                           </tr>
+                           <tr>
+                             <td>
+                                <a href="http://www.axiapayments.com/" target="_blank">
+                                    Axiapayments.com</a><br>
+                                    <a href="http://www.axiapayments.com/rep/" target="_blank">
+                                    Axiapayments.com/rep/</a><br>
+                                    <a href="https://app.axiapayments.com/" target="_blank">
+                                    Online App</a><br>
+                                    <a href="https://handbook.axiapayments.com/" target="_blank">
+                                    Affilliate Handbook</a><br>
+                                    <a href="https://mail.axiapayments.com:987/" target="_blank">
+                                    Companyweb</a><br>
+                                    <a href="http://www.axiapayments.com/frame.phtml?navigateUrl=https%3A%2F%2Fsecure.usaepay.com%2Flogin" target="_blank">
+                                    Axia Gateway</a><br>
+                                    <a href="http://www.myvirtualreports.com/" target="_blank">
+                                    Sage Online Reporting</a><br>                                        
+                             </td>
+                             </tr>
+
+                        </tbody></table>
+                    </div>                        
+                </div>
+
+                <div class="index">
+                  <table class="containerStyle roundEdges" cellpadding="0" cellspacing="0">
+                      <tbody><tr><td>
+                    <div id="layoutViewTitle" class="contrTitle roundEdges">View Timeline Entry</div>
+                  </td></tr>
+                  <tr><td>
+                          <!-- ALL CONTENT RENDERS WITHIN HERE -->
+
+                       
+                        
+<input id="thisViewTitle" value="View Timeline Entry" type="hidden">
+<div>
+
+<div>
+    		<li><a href="http://db-new.axia-eft.local/TimelineEntries/edit/32">Edit Timeline Entry</a> </li>
+    
+</div>
+	<dl>
+		<dt>Id</dt>
+		<dd>
+			32			&nbsp;
+		</dd>
+		<dt>Merchant</dt>
+		<dd>
+			<a href="http://db-new.axia-eft.local/merchants/view/1909">1909</a>			&nbsp;
+		</dd>
+		<dt>Timeline Item</dt>
+		<dd>
+			APP			&nbsp;
+		</dd>
+		<dt>Timeline Date Completed</dt>
+		<dd>
+			2001-07-31			&nbsp;
+		</dd>
+                <dt>Timeline Action</dt>
+		<dd>
+			Approved			&nbsp;
+		</dd>
+		<dt>Action Flag</dt>
+		<dd>
+						&nbsp;
+		</dd>
+	</dl>
+</div>
+
+
+                 </td></tr>
+                  </tbody></table>	
+                </div>
+
+
+                   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>                </div>
+        
+            <div class="push"></div>
+        </div>
+            <div class="footer">
+                Having problems? <a href="mailto:webmaster@axia-eft.com?subject=Axia%20Extranet%20Database%20Inquiry">Click here to send us an email.</a>
+                <br>© 2012 Axia
+            </div>
+    
+	
+
+</body></html>

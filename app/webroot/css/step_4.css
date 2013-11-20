@@ -1,0 +1,41 @@
+input[type="submit"] {
+    padding: 5px 10px;
+    background-color: #4e6378;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Helvetica, Verdana, sans-serif;
+}
+
+table.nowrap td {
+    white-space: nowrap;
+}
+
+#ApplicationExistingSeNum, #ApplicationTerm1WhatTime, #ApplicationTerm2WhatTime {
+    width: 129px;
+}
+
+#ApplicationTerm1Type, #ApplicationTerm2Type, #ApplicationTerm1PinPadType, #ApplicationTerm2PinPadType {
+    width: 100px;
+}
+
+#ApplicationTerm1Quantity, #ApplicationTerm2Quantity, #ApplicationTerm1PinPadQty, #ApplicationTerm2PinPadQty {
+    width: 25px;
+}
+
+div.term1_use_autoclose, div.term1_what_time, div.term1_accept_debit, div.term1_pin_pad_type,
+div.term1_pin_pad_type label, div.term1_pin_pad_qty, div.term1_pin_pad_qty label,
+div.term2_use_autoclose, div.term2_what_time, div.term2_accept_debit, div.term2_pin_pad_type,
+div.term2_pin_pad_type label, div.term2_pin_pad_qty, div.term2_pin_pad_qty label {
+    display: inline;
+}
+
+div.terminal_prog_info div {
+    float: left;
+    width: 130px;
+}
+
+div.terminal_prog_info label {
+    display: inline;
+}
+
