@@ -1,0 +1,12 @@
+[submodule "app/Plugin/DebugKit"]
+	path = app/Plugin/DebugKit
+	url = https://github.com/cakephp/debug_kit.git
+[submodule "app/Plugin/Utils"]
+	path = app/Plugin/Utils
+	url = https://github.com/CakeDC/utils.git
+[submodule "app/Plugin/migrations"]
+	path = app/Plugin/migrations
+	url = https://github.com/CakeDC/migrations.git
+[submodule "app/Plugin/search"]
+	path = app/Plugin/search
+	url = https://github.com/CakeDC/search.git
