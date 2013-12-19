@@ -6,6 +6,9 @@ App::uses('AppModel', 'Model');
  */
 class TemplateField extends AppModel {
 
+  public $field_types = array('text', 'datetime', 'time', 'checkbox', 'radio');
+  public $source_types = array('api', 'user');
+
   public $displayName = 'name';
   public $useTable = 'onlineapp_template_fields';
 
@@ -64,7 +67,7 @@ class TemplateField extends AppModel {
 
   public function beforeSave($options = array()) {
     // if the order field is not set, figure it out
-    if (empty($this->data['TemplateField']['order'])) {
+    if ($this->data['TemplateField']['order'] == null) {
       $templateSection = $this->TemplateSection->find(
         'first',
         array('conditions' => 'TemplateSection.id = "' . $this->data['TemplateField']['section_id'] . '"' ),
@@ -76,6 +79,7 @@ class TemplateField extends AppModel {
     }
 
     // TODO: if the order is dirty we may have to change some siblings
+    
   }
 
   private $__cobrand;

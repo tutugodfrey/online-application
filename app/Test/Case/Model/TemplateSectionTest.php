@@ -131,10 +131,11 @@ class TemplateSectionTest extends CakeTestCase {
       'TemplateSection' => array(
         'name' => 'testSaveNew_order',
         'description' => '',
-        'page_id' => '1'
+        'page_id' => '1',
+        'order' => null,
       )
     );
-    $this->TemplateSection->save($data);
+    $this->TemplateSection->save($data, array('validate' => false));
     $this->assertEquals($expected_order_value, $this->TemplateSection->field('order'));
   }
 }

@@ -28,6 +28,9 @@ class TemplateFieldsController extends NestedResourceController {
     $this->set('template', $this->TemplateField->getTemplate($this->_getParentControllerId()));
     $this->set('templatePage', $this->TemplateField->getTemplatePage($this->_getParentControllerId()));
     $this->set('templateSection', $this->TemplateField->getTemplateSection($this->_getParentControllerId()));
+
+    $this->set('field_types', $this->TemplateField->field_types);
+    $this->set('source_types', $this->TemplateField->source_types);
   }
 
   public function admin_edit($id) {
@@ -51,15 +54,18 @@ class TemplateFieldsController extends NestedResourceController {
     $this->set('template', $this->TemplateField->getTemplate($this->_getParentControllerId()));
     $this->set('templatePage', $this->TemplateField->getTemplatePage($this->_getParentControllerId()));
     $this->set('templateSection', $this->TemplateField->getTemplateSection($this->_getParentControllerId()));
+
+    $this->set('field_types', $this->TemplateField->field_types);
+    $this->set('source_types', $this->TemplateField->source_types);
   }
 
   public function admin_index() {
-    $this->pthaginate = array(
+    $this->paginate = array(
       'limit' => 25,
-      'order' => array('TemplateField.name' => 'ASC'),
+      'order' => array('TemplateField.order' => 'ASC'),
       'conditions' => array('TemplateField.section_id' => $this->_getParentControllerId())
     );
-        
+
     $data = $this->paginate('TemplateField');
     $this->set('templateFields', $data);
     $this->set('scaffoldFields', array_keys($this->TemplateField->schema()));
@@ -70,6 +76,9 @@ class TemplateFieldsController extends NestedResourceController {
     $this->set('template', $this->TemplateField->getTemplate($this->_getParentControllerId()));
     $this->set('templatePage', $this->TemplateField->getTemplatePage($this->_getParentControllerId()));
     $this->set('templateSection', $this->TemplateField->getTemplateSection($this->_getParentControllerId()));
+
+    $this->set('field_types', $this->TemplateField->field_types);
+    $this->set('source_types', $this->TemplateField->source_types);
   }
 
   public function admin_delete($id) {

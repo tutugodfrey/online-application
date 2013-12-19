@@ -159,10 +159,11 @@ class TemplateFieldTest extends CakeTestCase {
       'TemplateSection' => array(
         'name' => 'testSaveNew_order',
         'description' => '',
-        'page_id' => '1'
+        'page_id' => '1',
+        'order' => null,
       )
     );
-    $this->TemplateSection->save($template_section_data);
+    $this->TemplateSection->save($template_section_data, array('validate' => false));
 
     $section_id = $this->TemplateSection->id;
     $template_field_data = array(
@@ -175,19 +176,18 @@ class TemplateFieldTest extends CakeTestCase {
         'default_value' => '',
         'merge_field_name' => 'required_text_from_user_with_default',
         'section_id' => $section_id,
+        'order' => null
       )
     );
-    $this->TemplateField->save($template_field_data);
+    $this->TemplateField->save($template_field_data, array('validate' => false));
     $expected_order_value = 0;
     $this->assertEquals($expected_order_value, $this->TemplateField->field('order'));
 
     // add another field
     $template_field_data['TemplateField']['name'] = 'another field';
     $this->TemplateField->create();
-    $this->TemplateField->save($template_field_data);
+    $this->TemplateField->save($template_field_data, array('validate' => false));
     $expected_order_value = 1;
     $this->assertEquals($expected_order_value, $this->TemplateField->field('order'));
-
-    
   }
 }

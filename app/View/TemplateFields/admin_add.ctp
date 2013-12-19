@@ -34,7 +34,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input(
 			'type',
 			array(
-				'options' => array('text', 'date', 'checkbox', 'radio'),
+				'options' => $field_types,
 				'empty' => __('(choose one)')
 			)
 		);
@@ -42,7 +42,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input(
 			'source',
 			array(
-				'options' => array(__('API'), __('User')),
+				'options' => $source_types,
 				'empty' => __('(choose one)')
 			)
 		);

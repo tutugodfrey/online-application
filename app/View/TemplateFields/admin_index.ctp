@@ -44,9 +44,9 @@ $this->Html->addCrumb(
 		<td><?php echo h($templateField['TemplateField']['order']); ?>&nbsp;</td>
 		<td><?php echo h($templateField['TemplateField']['name']); ?>&nbsp;</td>
 		<td><?php echo h($templateField['TemplateField']['description']); ?>&nbsp;</td>
-		<td><?php echo h($templateField['TemplateField']['type']); ?>&nbsp;</td>
+		<td><?php echo h($field_types[$templateField['TemplateField']['type']]); ?>&nbsp;</td>
 		<td><?php echo h($templateField['TemplateField']['required']); ?>&nbsp;</td>
-		<td><?php echo h($templateField['TemplateField']['source']); ?>&nbsp;</td>
+		<td><?php echo h($source_types[$templateField['TemplateField']['source']]); ?>&nbsp;</td>
 		<td><?php echo h($templateField['TemplateField']['default_value']); ?>&nbsp;</td>
 		<td><?php echo h($templateField['TemplateField']['merge_field_name']); ?>&nbsp;</td>
 		<td><?php echo h($templateField['TemplateField']['created']); ?>&nbsp;</td>

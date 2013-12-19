@@ -50,7 +50,7 @@ class TemplateSection extends AppModel {
 
   public function beforeSave($options = array()) {
     // if the order field is not set, figure it out
-    if (empty($this->data['TemplateSection']['order'])) {
+    if ($this->data['TemplateSection']['order'] == null) {
       $templatePage = $this->TemplatePage->find(
         'first',
         array('conditions' => 'TemplatePage.id = "' . $this->data['TemplateSection']['page_id'] . '"' ),

@@ -31,9 +31,9 @@ $this->Html->addCrumb(
 		echo $this->Form->input('id');
 		echo $this->Form->input('name');
 		echo $this->Form->input('description');
-		echo $this->Form->input('type');
+		echo $this->Form->input('type', array('options' => $field_types));
 		echo $this->Form->input('required');
-		echo $this->Form->input('source');
+		echo $this->Form->input('source', array('options' => $source_types));
 		echo $this->Form->input('default_value');
 		echo $this->Form->input('merge_field_name');
 		echo $this->Form->input('order');

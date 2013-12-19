@@ -67,7 +67,18 @@ class TemplatesController extends NestedResourceController {
 
   public function admin_preview($id) {
     $this->Template->id = $id;
-    $template = $this->Template->find('first', array('conditions' => array('Template.id' => $id),'recursive' => 2));
+    $template = $this->Template->find(
+      'first', array(
+        'contain' => array(
+          'TemplatePages' => array(
+            'TemplateSections' => array(
+              'TemplateFields'
+            )
+          )
+        ),
+        'conditions' => array('Template.id' => $id)
+      )
+    );
     debug($template);
   }
 }
