@@ -68,6 +68,20 @@ class User extends AppModel {
             'conditions' => '',
             'fields' => '',
             'order' => ''
+        ),
+        'Cobrand' => array(
+            'className' => 'Cobrand',
+            'foreignKey' => 'cobrand_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        ),
+        'Template' => array(
+            'className' => 'Template',
+            'foreignKey' => 'template_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
         )
     );
 
@@ -111,7 +125,7 @@ class User extends AppModel {
             'finderQuery' => '',
             'counterQuery' => ''
         ),
-            'ApiLog' => array(
+        'ApiLog' => array(
             'className' => 'ApiLog',
             'foreignKey' => 'user_id',
             'dependent' => false,
@@ -126,22 +140,22 @@ class User extends AppModel {
         ),
     );
     
-        public $hasAndBelongsToMany = array(
-                'Manager' => array(
-                        'with' => 'UsersManager',
-                        'className' => 'User',
-                        'joinTable' => 'onlineapp_users_managers',
-                        'foreignKey' => 'user_id',
-                        'associationForeignKey' => 'manager_id',
-                ),
-                'AssignedRepresentative' => array(
-                        'with' => 'UsersManager',
-                        'className' => 'User',
-                        'joinTable' => 'onlineapp_users_managers',
-                        'foreignKey' => 'manager_id',
-                        'associationForeignKey' => 'user_id',
-                )
-        );
+    public $hasAndBelongsToMany = array(
+        'Manager' => array(
+                'with' => 'UsersManager',
+                'className' => 'User',
+                'joinTable' => 'onlineapp_users_managers',
+                'foreignKey' => 'user_id',
+                'associationForeignKey' => 'manager_id',
+        ),
+        'AssignedRepresentative' => array(
+                'with' => 'UsersManager',
+                'className' => 'User',
+                'joinTable' => 'onlineapp_users_managers',
+                'foreignKey' => 'manager_id',
+                'associationForeignKey' => 'user_id',
+        )
+    );
         
     function bindNode($user) {
         return array('model' => 'Group', 'foreign_key' => $user['User']['group_id']);

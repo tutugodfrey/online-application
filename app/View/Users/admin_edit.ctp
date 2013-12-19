@@ -17,21 +17,22 @@ echo $this->Form->input('api_password', array('label'=> 'Api Password','type'=>'
 echo $this->Form->input('active', array('type' => 'checkbox'));
 echo $this->Form->input('Manager', array('label' => 'Select Manager(s)', 'multiple' => 'checkbox'));
 if ($this->request->data['User']['group_id'] == User::MANAGER_GROUP_ID){?>
-        <br/>Select Rep(s)<br/>
+    <br/>Select Rep(s)<br/>
  
             
-            <?php
+<?php
 echo $this->Form->input('AssignedRepresentative',array('label' => false,'multiple' => 'checkbox'));
 }?>
-
         
-        <?php
+<?php
 if ($this->request->data['User']['group_id'] == User::API_GROUP_ID) {
 echo $this->Form->input('token');
 echo $this->Form->input('token_used');
 echo $this->Form->input('token_uses');
-
 }
+
+echo $this->Form->input('cobrand_id');
+echo $this->Form->input('template_id');
 
 echo $this->Form->end('Save User');
 ?>
@@ -43,10 +44,10 @@ echo $this->Form->end('Save User');
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link('List Users', array('action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List Applications', array('controller' => 'applications', 'action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List Settings', array('controller' => 'settings', 'action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List IP Restrictions', array('controller' => 'apips', 'action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List Groups', array('controller' => 'groups', 'action' => 'index', 'admin' => true)); ?></li>
-                <? echo $this->Element('users/search'); ?>
+        <li><?php echo $this->Html->link('List Applications', array('controller' => 'applications', 'action' => 'index', 'admin' => true)); ?></li>
+        <li><?php echo $this->Html->link('List Settings', array('controller' => 'settings', 'action' => 'index', 'admin' => true)); ?></li>
+        <li><?php echo $this->Html->link('List IP Restrictions', array('controller' => 'apips', 'action' => 'index', 'admin' => true)); ?></li>
+        <li><?php echo $this->Html->link('List Groups', array('controller' => 'groups', 'action' => 'index', 'admin' => true)); ?></li>
+        <? echo $this->Element('users/search'); ?>
 	</ul>
 </div>

@@ -71,7 +71,6 @@ Cache::config('default', array('engine' => 'Apc'));
  * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
  *
  */
-CakePlugin::load('Upgrade');
 CakePlugin::load('Search');
 CakePlugin::load('DebugKit');
 CakePlugin::load('Migrations');

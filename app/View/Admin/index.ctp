@@ -4,6 +4,7 @@
     <li><?php echo $this->Html->link('Settings', '/admin/settings/'); ?></li>
     <li><?php echo $this->Html->link('Users', '/admin/users/'); ?></li>
     <li><?php echo $this->Html->link('Groups', '/admin/groups/'); ?></li>
+    <li><?php echo $this->Html->link('Cobrands', '/admin/Cobrands/'); ?></li>
     <li><?php echo $this->Html->link('Multipass', '/admin/multipasses/'); ?></li>
     <li><?php echo $this->Html->link('API IP restrictions', '/admin/apips/'); ?></li>
     <li><?php echo $this->Html->link('API Logs', '/admin/apiLogs/'); ?></li>

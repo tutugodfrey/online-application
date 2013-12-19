@@ -1,6 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<!DOCTYPE html>
+<html>
+  <head>
     
     <?php echo $this->Html->charset(); ?>
     
@@ -8,7 +8,8 @@
         <?php echo __('Axia - '); ?>
         <?php echo $title_for_layout; ?>
     </title>
-    <link href="/favicon.ico" type="image/x-icon" rel="icon" ><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" >
+    <link href="/favicon.ico" type="image/x-icon" rel="icon" >
+    <link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" >
     <?php
         echo $this->Html->css('sessionMsg');
         if ($this->request->params['admin'] === true) {
@@ -23,9 +24,9 @@
         }
         else echo $this->Html->css('master.css');
     ?>
-    <link rel="stylesheet" type="text/css" href="http<?php echo (env('HTTPS') ? 's' : ''); ?>://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
-    <script type="text/javascript" src="http<?php echo (env('HTTPS') ? 's' : ''); ?>://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script> 
-    <script type="text/javascript" src="http<?php echo (env('HTTPS') ? 's' : ''); ?>://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js"></script> 
+    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script> 
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js"></script> 
     <script type="text/javascript" src="/js/uiContols.js"></script>
         
     <?php
@@ -119,7 +120,10 @@
     <div id="container">
         <div id="header">
             <?php if ($this->request->params['admin'] === true): ?>
-                <h1><?php echo $this->Html->link(__('Axia Admin'), '/admin/'); ?></h1>
+                <h1>
+                <?php //echo $this->Html->link(__('Axia Admin'), '/admin/'); ?>
+                <?php echo $this->Html->getCrumbs(' > ', array('text' => 'Axia Admin Home', 'url' => '/admin/')); ?>
+                </h1>
                 <div style="float: right; margin-top: -25px;"><?php echo $this->Html->link(__('Logout'), '/users/logout', array('style' => 'color: #fff;')); ?></div>
             <?php else: ?>
                 <?php //echo $this->Html->image('axia_header.png', array('alt'=> __('Axia'), 'border' => '0', 'usemap' => '#m_axia_header')); ?>
@@ -128,14 +132,14 @@
                     </div>
                 </center>
             <?php endif; ?>
+
+
+
         </div>
         <div id="content">
-
             <?php echo $this->Session->flash(); ?>
             <?php echo $this->Session->flash('auth'); ?>
-
             <?php echo $this->fetch('content'); ?>
-
         </div>
         <div id="footer">
             <?php /* echo $this->Html->link(
