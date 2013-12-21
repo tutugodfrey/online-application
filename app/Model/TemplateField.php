@@ -65,9 +65,10 @@ class TemplateField extends AppModel {
     )
   );
 
+  private $__neighbors;
   public function beforeSave($options = array()) {
     // if the order field is not set, figure it out
-    if ($this->data['TemplateField']['order'] == null) {
+    if ($this->data['TemplateField']['order'] === null) {
       $templateSection = $this->TemplateSection->find(
         'first',
         array('conditions' => 'TemplateSection.id = "' . $this->data['TemplateField']['section_id'] . '"' ),
@@ -77,9 +78,50 @@ class TemplateField extends AppModel {
 
       $this->data['TemplateField']['order'] = $count;
     }
+    if ($this->id) {
+      $data = $this->data;
+      $this->old = $this->findById($this->id);
 
-    // TODO: if the order is dirty we may have to change some siblings
-    
+      if ($this->old['TemplateField']['order'] != $data['TemplateField']['order']) {
+        $templateSection = $this->TemplateSection->find(
+          'first',
+          array('conditions' => 'TemplateSection.id = "' . $this->data['TemplateField']['section_id'] . '"' ),
+          array('contain' => array('TemplateField'))
+        );
+
+        $old_order = $this->old['TemplateField']['order'];
+        $new_order = $data['TemplateField']['order'];
+
+        // get the templateFields
+        $this->__neighbors = $templateSection['TemplateFields'];
+        $moving_item = array_splice($this->__neighbors, $old_order, 1);
+        array_splice($this->__neighbors, $new_order, 0, $moving_item);
+
+        // rebase the template pages
+        for ($i = 0; $i < count($this->__neighbors); $i++) {
+          $this->__neighbors[$i]['order'] = $i;
+        }
+
+        // remove the $moving_item from the array
+        for ($i = 0; $i < count($this->__neighbors); $i++) {
+          if ($this->__neighbors[$i]['id'] == $moving_item[0]['id']) {
+            unset($this->__neighbors[$i]);
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  public function afterSave($created, $options = array()) {
+    if ($this->__neighbors != null) {
+      if (count($this->__neighbors) > 0) {
+        foreach ($this->__neighbors as $neighbor) {
+          $this->save($neighbor, array('callbacks' => false));
+        }
+      }
+    }
   }
 
   private $__cobrand;

@@ -85,7 +85,7 @@ class TemplateFieldTest extends CakeTestCase {
     $section_id = 1;
     $expected_template_page = array(
       'id' => 1,
-      'name' => 'Lorem ipsum dolor sit amet',
+      'name' => 'Page 1',
       'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
       'template_id' => 1,
       'order' => 0,
@@ -189,5 +189,98 @@ class TemplateFieldTest extends CakeTestCase {
     $this->TemplateField->save($template_field_data, array('validate' => false));
     $expected_order_value = 1;
     $this->assertEquals($expected_order_value, $this->TemplateField->field('order'));
+  }
+
+  
+  public function testReordering_LastToFirst() {
+    // make sure the order values are what we expect
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(0, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(1, $second['TemplateField']['order']);
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(2, $third['TemplateField']['order']);
+
+    // move the third field to the front of the list
+    $third['TemplateField']['order'] = 0;
+    $this->TemplateField->save($third);
+
+    // check the order values
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(0, $third['TemplateField']['order']);
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(1, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(2, $second['TemplateField']['order']);
+  }
+
+  public function testReordering_FirstToLast() {
+    // make sure the order values are what we expect
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(0, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(1, $second['TemplateField']['order']);
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(2, $third['TemplateField']['order']);
+
+    // move the third back to the end now
+    $first = $this->TemplateField->findById(1);
+    $first['TemplateField']['order'] = 2;
+    $this->TemplateField->save($first);
+
+    // make sure the order values are what we expect
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(2, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(0, $second['TemplateField']['order']);
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(1, $third['TemplateField']['order']);
+  }
+
+  public function testReordering_MiddleToFirst() {
+    // make sure the order values are what we expect
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(0, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(1, $second['TemplateField']['order']);
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(2, $third['TemplateField']['order']);
+
+    // move the third back to the end now
+    $second = $this->TemplateField->findById(2);
+    $second['TemplateField']['order'] = 0;
+    $this->TemplateField->save($second);
+    
+    // make sure the order values are what we expect
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(1, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(0, $second['TemplateField']['order']);
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(2, $third['TemplateField']['order']);
+  }
+
+  public function testReordering_MiddleToLast() {
+    
+    // make sure the order values are what we expect
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(0, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(1, $second['TemplateField']['order']);
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(2, $third['TemplateField']['order']);
+
+    // move the third back to the end now
+    $second = $this->TemplateField->findById(2);
+    $second['TemplateField']['order'] = 2;
+    $this->TemplateField->save($second);
+    
+    // make sure the order values are what we expect
+    $first = $this->TemplateField->findById(1);
+    $this->assertEquals(0, $first['TemplateField']['order']);
+    $second = $this->TemplateField->findById(2);
+    $this->assertEquals(2, $second['TemplateField']['order']);
+    $third = $this->TemplateField->findById(3);
+    $this->assertEquals(1, $third['TemplateField']['order']);
   }
 }

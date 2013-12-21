@@ -37,7 +37,7 @@ class Template extends AppModel {
     'TemplatePages' => array(
       'className' => 'TemplatePage',
       'foreignKey' => 'template_id',
-      'order' => 'TemplatePages.name',
+      'order' => 'TemplatePages.order',
       'dependent' => true,
     )
   );

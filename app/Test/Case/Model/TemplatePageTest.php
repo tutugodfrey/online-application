@@ -145,4 +145,96 @@ class TemplatePageTest extends CakeTestCase {
     $this->TemplatePage->save($data, array('validate' => false));
     $this->assertEquals($expected_order_value, $this->TemplatePage->field('order'));
   }
+
+  public function testReordering_LastToFirst() {
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+
+    // move the third field to the front of the list
+    $third_page['TemplatePage']['order'] = 0;
+    $this->TemplatePage->save($third_page);
+
+    // check the order values
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(0, $third_page['TemplatePage']['order']);
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(1, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(2, $second_page['TemplatePage']['order']);
+  }
+
+  public function testReordering_FirstToLast() {
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+
+    // move the third back to the end now
+    $first_page = $this->TemplatePage->findById(1);
+    $first_page['TemplatePage']['order'] = 2;
+    $this->TemplatePage->save($first_page);
+
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(2, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(0, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(1, $third_page['TemplatePage']['order']);
+  }
+
+  public function testReordering_MiddleToFirst() {
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+
+    // move the third back to the end now
+    $second_page = $this->TemplatePage->findById(2);
+    $second_page['TemplatePage']['order'] = 0;
+    $this->TemplatePage->save($second_page);
+    
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(1, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(0, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+  }
+
+  public function testReordering_MiddleToLast() {
+    
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+
+    // move the third back to the end now
+    $second_page = $this->TemplatePage->findById(2);
+    $second_page['TemplatePage']['order'] = 2;
+    $this->TemplatePage->save($second_page);
+    
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(2, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(1, $third_page['TemplatePage']['order']);
+  }
 }
