@@ -25,6 +25,7 @@ class TemplatesController extends NestedResourceController {
     $Cobrand = ClassRegistry::init('Cobrand');
     $this->set('cobrands', $Cobrand->getList());
     $this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
+    $this->set('logo_position_types', $this->Template->logo_position_types);
   }
 
   public function admin_edit($id) {
@@ -43,6 +44,7 @@ class TemplatesController extends NestedResourceController {
     $Cobrand = ClassRegistry::init('Cobrand');
     $this->set('cobrands', $Cobrand->getList());
     $this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
+    $this->set('logo_position_types', $this->Template->logo_position_types);
   }
 
   public function admin_index() {
@@ -57,6 +59,7 @@ class TemplatesController extends NestedResourceController {
     $this->set('scaffoldFields', array_keys($this->Template->schema()));
     $this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
     $this->set('list_url', $this->_getListUrl());
+    $this->set('logo_position_types', $this->Template->logo_position_types);
   }
 
   public function admin_delete($id) {

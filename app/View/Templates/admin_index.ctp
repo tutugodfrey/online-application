@@ -7,6 +7,8 @@
 	<tr>
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
 			<th><?php echo $this->Paginator->sort('description'); ?></th>
+			<th><?php echo $this->Paginator->sort('logo_position'); ?></th>
+			<th><?php echo $this->Paginator->sort('include_axia_logo'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -15,6 +17,8 @@
 	<tr>
 		<td><?php echo h($template['Template']['name']); ?>&nbsp;</td>
 		<td><?php echo h($template['Template']['description']); ?>&nbsp;</td>
+		<td><?php echo h($logo_position_types[$template['Template']['logo_position']]); ?>&nbsp;</td>
+		<td><?php echo h(($template['Template']['include_axia_logo'] ? 'yes':'no')); ?>&nbsp;</td>
 		<td><?php echo h($template['Template']['created']); ?>&nbsp;</td>
 		<td><?php echo h($template['Template']['modified']); ?>&nbsp;</td>
 		<td class="actions">

@@ -7,6 +7,14 @@
 	<?php
 		echo $this->Form->input('id');
 		echo $this->Form->input('name');
+		echo $this->Form->input(
+			'logo_position',
+			array(
+				'options' => $logo_position_types,
+				'empty' => __('(choose one)')
+			)
+		);
+		echo $this->Form->input('include_axia_logo');
 		echo $this->Form->input('description');
 		echo $this->Form->hidden('cobrand_id');
 	?>

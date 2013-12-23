@@ -5,6 +5,7 @@
 	<?php
 		echo $this->Form->input('partner_name');
 		echo $this->Form->input('partner_name_short');
+		echo $this->Form->input('logo_url');
 		echo $this->Form->input('description');
 	?>
 	</fieldset>

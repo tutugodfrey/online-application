@@ -26,28 +26,32 @@ class CobrandedOnlineapp extends CakeMigration {
           ),
           'partner_name' => array(
             'type'    => 'string',
-            'null'    => false
+            'null'    => false,
           ),
           'partner_name_short' => array(
             'type'    => 'string',
-            'null'    => false
+            'null'    => false,
+          ),
+          'logo_url' => array(
+            'type'    => 'text',
+            'null'    => true,
           ),
           'description' => array(
             'type'    => 'text',
-            'null'    => true
+            'null'    => true,
           ),
           'created' => array(
             'type'    => 'datetime',
-            'null'    => false
+            'null'    => false,
           ),
           'modified' => array(
             'type'    => 'datetime',
-            'null'    => false
+            'null'    => false,
           ),
           'indexes' => array(
             'PRIMARY' => array(
               'column' => 'id',
-              'unique' => 1
+              'unique' => 1,
             )
           )
         ),
@@ -55,32 +59,42 @@ class CobrandedOnlineapp extends CakeMigration {
           'id' => array(
             'type'    => 'integer',
             'null'    => false,
-            'key'     => 'primary'
+            'key'     => 'primary',
           ),
           'name' => array(
             'type'    => 'string',
-            'null'    => false
+            'null'    => false,
+          ),
+          'logo_position' => array(
+            'type'    => 'integer',
+            'null'    => false,
+            'default' => 3
+          ),
+          'include_axia_logo' => array(
+            'type'    => 'boolean',
+            'null'    => false,
+            'default' => true,
           ),
           'description' => array(
             'type'    => 'text',
-            'null'    => true
+            'null'    => true,
           ),
           'cobrand_id' => array(
             'type'    => 'integer',
-            'null'    => true
+            'null'    => true,
           ),
           'created' => array(
             'type'    => 'datetime',
-            'null'    => false
+            'null'    => false,
           ),
           'modified' => array(
             'type'    => 'datetime',
-            'null'    => false
+            'null'    => false,
           ),
           'indexes' => array(
             'PRIMARY' => array(
               'column' => 'id',
-              'unique' => 1
+              'unique' => 1,
             )
           )
         ),
@@ -269,7 +283,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ALTER TABLE onlineapp_template_sections
         DROP CONSTRAINT onlineapp_template_section_page_fk;
         ALTER TABLE onlineapp_template_fields
-        DROP CONSTRAINT onlineapp_template_fields_section_fk;
+        DROP CONSTRAINT onlineapp_template_field_section_fk;
       "); 
     }
     return true;
@@ -284,27 +298,58 @@ class CobrandedOnlineapp extends CakeMigration {
  */
   public function after($direction) {
     if ($direction == 'up') {
-      echo "\nINSERT Cobrand\n";
       $data['Cobrand'][0]['partner_name'] = 'A Charity for Charities';
       $data['Cobrand'][0]['partner_name_short'] = 'ACFC';
+      $data['Cobrand'][0]['logo_url'] = 'TODO: add ACFC logo';
       $data['Cobrand'][1]['partner_name'] = 'Axia';
       $data['Cobrand'][1]['partner_name_short'] = 'AX';
+      $data['Cobrand'][1]['logo_url'] = 'TODO: add AX logo';
       $data['Cobrand'][2]['partner_name'] = 'Hooza';
       $data['Cobrand'][2]['partner_name_short'] = 'HZ';
+      $data['Cobrand'][2]['logo_url'] = 'TODO: add HZ logo';
       $data['Cobrand'][3]['partner_name'] = 'Inspire';
       $data['Cobrand'][3]['partner_name_short'] = 'IN';
+      $data['Cobrand'][3]['logo_url'] = 'TODO: add IN logo';
       $data['Cobrand'][4]['partner_name'] = 'Passport';
       $data['Cobrand'][4]['partner_name_short'] = 'PP';
+      $data['Cobrand'][4]['logo_url'] = 'TODO: add PP logo';
       $data['Cobrand'][5]['partner_name'] = 'PaymentSpring';
       $data['Cobrand'][5]['partner_name_short'] = 'PS';
+      $data['Cobrand'][5]['logo_url'] = 'TODO: add PS logo';
       $data['Cobrand'][6]['partner_name'] = 'Shortcut';
       $data['Cobrand'][6]['partner_name_short'] = 'SC';
+      $data['Cobrand'][6]['logo_url'] = 'TODO: add SC logo';
 
+      echo "\nINSERT Cobrand\n";
       $Cobrand = ClassRegistry::init('Cobrand');
+      $hooza_cobrand_id;
+      $axia_cobrand_id;
       foreach ($data['Cobrand'] as $cobrand) {
+        echo "-------\n";
+        //echo var_dump($cobrand);
         $Cobrand->create();
         if ($Cobrand->save($cobrand)) {
-          echo String::insert("Created cobrand partner for [:partner_name]\n", array("partner_name" => $cobrand["partner_name"]));
+          echo String::insert(
+            "Created cobrand partner for [:partner_name]\n",
+            array(
+              "partner_name" => $cobrand["partner_name"]
+            )
+          );
+          switch ($cobrand['partner_name']) {
+            case 'Hooza':
+              $hooza_cobrand_id = $Cobrand->id;
+              echo('$hooza_cobrand_id ' . $hooza_cobrand_id);
+              break;
+
+            case 'Axia':
+              $axia_cobrand_id = $Cobrand->id;
+              echo('$axia_cobrand_id ' . $axia_cobrand_id);
+              break;
+            
+            default:
+              # noop
+              break;
+          }
         } else {
           echo "Failed to seed cobrand data.";
           return false;
@@ -317,17 +362,16 @@ class CobrandedOnlineapp extends CakeMigration {
       // hooza@axiapayments.com ==> gets Hooza
       $User = ClassRegistry::init('OnlineappUser');
       $hooza_user = $User->findByEmail('hooza@axiapayments.com');
-      $hooza_cobrand = $Cobrand->findByPartnerName("Hooza");
       $User->id = $hooza_user['OnlineappUser']['id'];
-      $User->saveField('cobrand_id', $hooza_cobrand['Cobrand']['id']);
+      $User->saveField('cobrand_id', $hooza_cobrand_id);
+      
       // everyone else gets the axia cobrand
-      $axia_cobrand = $Cobrand->findByPartnerName("Axia");
       $Cobrand->query(
-      	String::insert("
-      		UPDATE onlineapp_users
-      		SET cobrand_id = :id
-      		WHERE email != 'hooza@axiapayments.com'
-      		", array('id' => $axia_cobrand['Cobrand']['id'])));
+        String::insert("
+          UPDATE onlineapp_users
+          SET cobrand_id = :id
+          WHERE email != 'hooza@axiapayments.com'
+          ", array('id' => $axia_cobrand_id)));
 
       echo "\nCreate the foreign key relationship for cobrand and template\n";
       $Cobrand->query("

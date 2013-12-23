@@ -6,6 +6,8 @@ App::uses('AppModel', 'Model');
  */
 class Template extends AppModel {
 
+  public $logo_position_types = array('left', 'center', 'right', 'hide');
+
   public $displayField = 'name';
   public $useTable = 'onlineapp_templates';
 
@@ -24,6 +26,12 @@ class Template extends AppModel {
       'notempty' => array(
         'rule' => array('notempty'),
         'message' => array('Cobrand_id name cannot be empty'),
+      ),
+    ),
+    'logo_position' => array(
+      'notempty' => array(
+        'rule' => array('notempty'),
+        'message' => array('Logo position value not selected'),
       ),
     ),
   );

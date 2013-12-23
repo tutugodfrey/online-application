@@ -6,12 +6,6 @@ App::uses('AppController', 'Controller');
  *
  */
 class CobrandsController extends AppController {
-
-/**
- * Scaffold
- *
- * @var mixed
- */
   public $scaffold = 'admin';
 
   protected $_list_url = '/admin/cobrands';

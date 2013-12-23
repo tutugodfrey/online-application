@@ -60,6 +60,7 @@ class TemplateSectionTest extends CakeTestCase {
       'description' => 'Cobrand "Partner Name 1" description goes here.',
       'created' => '2007-03-18 10:41:31',
       'modified' => '2007-03-18 10:41:31',
+      'logo_url' => 'PN1 logo_url',
     );
     $returned_cobrand = $this->TemplateSection->getCobrand($page_id);
     $this->assertEquals($expected_cobrand, $returned_cobrand);
@@ -82,6 +83,8 @@ class TemplateSectionTest extends CakeTestCase {
       'cobrand_id' => 1,
       'created' => '2007-03-18 10:41:31',
       'modified' => '2007-03-18 10:41:31',
+      'logo_position' => 0,
+      'include_axia_logo' => true,
     );
 
     $returned_template = $this->TemplateSection->getTemplate($page_id);

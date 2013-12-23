@@ -9,11 +9,7 @@ App::uses('AppModel', 'Model');
 class Cobrand extends AppModel {
   public $displayField = 'partner_name';
   public $useTable = 'onlineapp_cobrands';
-/**
- * Validation rules
- *
- * @var array
- */
+
   public $validate = array(
     'partner_name' => array(
       'notempty' => array(

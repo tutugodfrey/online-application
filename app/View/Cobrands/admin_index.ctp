@@ -5,6 +5,7 @@
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('partner_name'); ?></th>
 			<th><?php echo $this->Paginator->sort('partner_name_short'); ?></th>
+			<th><?php echo $this->Paginator->sort('logo_url'); ?></th>
 			<th><?php echo $this->Paginator->sort('description'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
@@ -15,6 +16,16 @@
 		<td><?php echo h($cobrand['Cobrand']['id']); ?>&nbsp;</td>
 		<td><?php echo h($cobrand['Cobrand']['partner_name']); ?>&nbsp;</td>
 		<td><?php echo h($cobrand['Cobrand']['partner_name_short']); ?>&nbsp;</td>
+		<td><?php
+			$logo_url = $cobrand['Cobrand']['logo_url'];
+			$pos = strpos($logo_url, '/');
+			if ($pos === false) {
+				echo h($logo_url);
+			} else {
+				// assume it is a url
+				echo $this->Html->link($logo_url);
+			}
+		?>&nbsp;</td>
 		<td><?php echo h($cobrand['Cobrand']['description']); ?>&nbsp;</td>
 		<td><?php echo h($cobrand['Cobrand']['created']); ?>&nbsp;</td>
 		<td><?php echo h($cobrand['Cobrand']['modified']); ?>&nbsp;</td>

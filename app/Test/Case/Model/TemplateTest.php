@@ -54,6 +54,7 @@ class TemplateTest extends CakeTestCase {
         'description' => 'Cobrand "Partner Name 1" description goes here.',
         'created' => '2007-03-18 10:41:31',
         'modified' => '2007-03-18 10:41:31',
+        'logo_url' => 'PN1 logo_url',
       ),
     );
     $returned_cobrand = $this->Template->getCobrand(1);
@@ -67,6 +68,7 @@ class TemplateTest extends CakeTestCase {
         'description' => 'Cobrand "Partner Name 2" description goes here.',
         'created' => '2007-03-18 10:41:31',
         'modified' => '2007-03-18 10:41:31',
+        'logo_url' => 'PN2 logo_url',
       ),
     );
     $returned_cobrand = $this->Template->getCobrand(2);
@@ -80,6 +82,7 @@ class TemplateTest extends CakeTestCase {
         'description' => 'Cobrand "Partner Name 3" description goes here.',
         'created' => '2007-03-18 10:41:31',
         'modified' => '2007-03-18 10:41:31',
+        'logo_url' => 'PN3 logo_url',
       ),
     );
     $returned_cobrand = $this->Template->getCobrand(3);
@@ -89,23 +92,25 @@ class TemplateTest extends CakeTestCase {
   public function testValidation() {
     $expected_validationErrors = array(
       'name' => array('Template name cannot be empty'),
+      'logo_position' => array('Logo position value not selected'),
     );
 
-    $this->Template->create(array('name' => ''));
+    $this->Template->create(array('name' => '', 'logo_position' => ''));
     $this->assertFalse($this->Template->validates());
     $this->assertEquals($expected_validationErrors, $this->Template->validationErrors);
 
     // test non-numeric cobrand_id
     $expected_validationErrors = array(
       'cobrand_id' => array('Invalid cobrand_id value used'),
+      'logo_position' => array('Logo position value not selected'),
     );
-    $this->Template->create(array('name' => 'template name', 'cobrand_id' => 'abcd'));
+    $this->Template->create(array('name' => 'template name', 'cobrand_id' => 'abcd', 'logo_position' => ''));
     $this->assertFalse($this->Template->validates());
     $this->assertEquals($expected_validationErrors, $this->Template->validationErrors);
 
     // test the go right path
     $expected_validationErrors = array();
-    $this->Template->create(array('name' => 'template name', 'cobrand_id' => 1));
+    $this->Template->create(array('name' => 'template name', 'cobrand_id' => 1, 'logo_position' => 0));
     $this->assertTrue($this->Template->validates());
     $this->assertEquals($expected_validationErrors, $this->Template->validationErrors);
   }
