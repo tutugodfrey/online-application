@@ -16,7 +16,12 @@ class AppController extends Controller {
         'DebugKit.Toolbar',
         'RequestHandler'
     );
-    public $helpers = array('Html', 'Form', 'Session', /*'Ajax', 'Javascript'*/);
+    public $helpers = array(
+        'Html' => array('className' => 'BoostCake.BoostCakeHtml'),
+        'Form' => array('className' => 'BoostCake.BoostCakeForm'),
+        'Paginator' => array('className' => 'BoostCake.BoostCakePaginator'),
+        'Session',
+        /*'Ajax', 'Javascript'*/);
 
     public function beforeFilter() {
         // Force SSL

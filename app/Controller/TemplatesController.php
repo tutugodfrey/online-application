@@ -73,6 +73,7 @@ class TemplatesController extends NestedResourceController {
     $template = $this->Template->find(
       'first', array(
         'contain' => array(
+          'Cobrand',
           'TemplatePages' => array(
             'TemplateSections' => array(
               'TemplateFields'

@@ -6,7 +6,7 @@ App::uses('AppModel', 'Model');
  */
 class TemplateField extends AppModel {
 
-  public $field_types = array('text', 'datetime', 'time', 'checkbox', 'radio');
+  public $field_types = array('text', 'datetime', 'time', 'checkbox', 'radio', 'percents');
   public $source_types = array('api', 'user');
 
   public $displayName = 'name';
