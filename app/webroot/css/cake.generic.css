@@ -83,6 +83,17 @@ ul, li {
 	color: #fff;
 	padding: 0px 30px;
 }
+#header nav {
+	color: #fff;
+	background: #003d4c url('../img/cake.icon.png') no-repeat left;
+	font-weight: normal;
+	text-decoration: none;
+	padding: 0 10px;
+}
+#header nav a {
+	color: #fff;
+}
+
 #header h1 a {
 	color: #fff;
 	background: #003d4c;
@@ -112,13 +123,13 @@ div.form,
 div.index,
 div.view {
 	float:right;
-	width:76%;
+	width:80%;
 	border-left:1px solid #666;
 	padding:10px 2%;
 }
 div.actions {
 	float:left;
-	width:16%;
+	width:19%;
 	padding:10px 1.5%;
 }
 div.actions h3 {
@@ -259,6 +270,23 @@ form div {
 	margin-bottom: 1em;
 	padding: .5em;
 	vertical-align: text-top;
+}
+form.onlineapp_preview_page div.panel-default {
+	margin-bottom: 0;
+	padding: 0;
+}
+form.onlineapp_preview_page div.panel-body,
+div.checkbox {
+	padding: 0 15px;
+}
+form.onlineapp_preview_page div.panel-heading {
+	margin-bottom: 0;
+}
+div.panel-body > div,
+div.panel-body > div > div.input.select,
+div.panel-body > div > div.input.checkbox {
+	margin-bottom: 0;
+	padding: 0;
 }
 form .input {
 	color: #444;

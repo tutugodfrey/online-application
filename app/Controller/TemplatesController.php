@@ -83,6 +83,7 @@ class TemplatesController extends NestedResourceController {
         'conditions' => array('Template.id' => $id)
       )
     );
-    debug($template);
+    //debug($template);
+    $this->set('template', $template);
   }
 }
