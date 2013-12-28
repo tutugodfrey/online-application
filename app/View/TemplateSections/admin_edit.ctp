@@ -1,3 +1,20 @@
+<?php
+$this->Html->addCrumb(__('Cobrands'), '/admin/cobrands');
+$this->Html->addCrumb(
+	__('Templates'),
+	String::insert(
+		'/admin/cobrands/:cobrand_id/templates',
+		array('cobrand_id' => $cobrand['id'])
+	)
+);
+$this->Html->addCrumb(
+	__('Pages'),
+	String::insert(
+		'/admin/templates/:template_id/templatepages',
+		array('template_id' => $template['id'])
+	)
+);
+?>
 <div class="templateSections form">
 <?php echo $this->Form->create('TemplateSection'); ?>
 	<fieldset>

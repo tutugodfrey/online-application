@@ -43,6 +43,9 @@ class TemplateSectionsController extends NestedResourceController {
       }
     }
     $this->set('list_url', $this->_getListUrl());
+
+    $this->set('cobrand', $this->TemplateSection->getCobrand($this->_getParentControllerId()));
+    $this->set('template', $this->TemplateSection->getTemplate($this->_getParentControllerId()));
     $this->set('templatePage', $this->TemplateSection->getTemplatePage($this->_getParentControllerId()));
   }
 

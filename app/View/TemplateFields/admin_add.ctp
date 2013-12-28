@@ -1,11 +1,11 @@
 <?php
-$this->Html->addCrumb(__('Cobrands'), '/admin/cobrands', array('class' => 'navbar-text'));
+$this->Html->addCrumb(__('Cobrands'), '/admin/cobrands');
 $this->Html->addCrumb(
   __('Templates'),
   String::insert(
     '/admin/cobrands/:cobrand_id/templates',
     array('cobrand_id' => $cobrand['id'])
-  ), array('class' => 'navbar-text')
+  )
 );
 $this->Html->addCrumb(
   __('Pages'),

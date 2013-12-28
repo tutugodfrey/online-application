@@ -83,7 +83,9 @@ class TemplatesController extends NestedResourceController {
         'conditions' => array('Template.id' => $id)
       )
     );
-    //debug($template);
+
     $this->set('template', $template);
+    $this->set('logo_position_types', $this->Template->logo_position_types);
+    $this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
   }
 }

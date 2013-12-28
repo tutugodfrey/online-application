@@ -385,7 +385,7 @@ class CobrandedOnlineapp extends CakeMigration {
     $data['Cobrand'][1]['logo_url'] = '/img/axia_logo.png';
     $data['Cobrand'][2]['partner_name'] = 'Hooza';
     $data['Cobrand'][2]['partner_name_short'] = 'HZ';
-    $data['Cobrand'][2]['logo_url'] = 'TODO: add HZ logo';
+    $data['Cobrand'][2]['logo_url'] = '/img/hooza_logo.jpg';
     $data['Cobrand'][3]['partner_name'] = 'Inspire';
     $data['Cobrand'][3]['partner_name_short'] = 'IN';
     $data['Cobrand'][3]['logo_url'] = 'TODO: add IN logo';
@@ -848,24 +848,14 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
-            )
-          ),
-        ),
-        array(
-          'name' => 'Method of Sales',
-          'fields' => array(
+            ),
             array(
               'name' => 'Method of Sales',
               'type' => 5,
               'required' => true,
               'source' => 1,
               'default_value' => 'Card Present Swiped:0,Card Present Imprint:1,Card Not Present (Keyed):2,Card Not Present (Internet):3',
-            )
-          )
-        ),
-        array(
-          'name' => '% of Products Sold',
-          'fields' => array(
+            ),
             array(
               'name' => '% of Product Sold',
               'type' => 5,
@@ -873,7 +863,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'source' => 1,
               'default_value' => 'Card Present Swiped:0,Card Present Imprint:1,Card Not Present (Keyed):2,Card Not Present (Internet):3',
             )
-          )
+          ),
         ),
         array(
           'name' => 'High Volume Months',
@@ -1237,7 +1227,7 @@ class CobrandedOnlineapp extends CakeMigration {
           )
         ),
         array(
-          'name' => 'Terminal Programming Information (please select all that apply)',
+          'name' => 'Terminal Programming Information (1) (please select all that apply)',
           'fields' => array(
             array(
               'name' => 'AVS',
@@ -1338,7 +1328,7 @@ class CobrandedOnlineapp extends CakeMigration {
           )
         ),
         array(
-          'name' => 'Terminal Programming Information (please select all that apply)',
+          'name' => 'Terminal Programming Information (2) (please select all that apply)',
           'fields' => array(
             array(
               'name' => 'AVS',
