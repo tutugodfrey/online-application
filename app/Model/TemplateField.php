@@ -8,6 +8,7 @@ class TemplateField extends AppModel {
 
   public $field_types = array('text', 'date', 'time', 'checkbox', 'radio', 'percents');
   public $source_types = array('api', 'user');
+  public $required_types = array('no', 'yes');
 
   public $displayName = 'name';
   public $useTable = 'onlineapp_template_fields';

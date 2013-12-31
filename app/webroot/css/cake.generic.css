@@ -69,6 +69,10 @@ ul, li {
 	margin: 0 12px;
 }
 
+.help {
+	cursor: help;
+}
+
 /** Layout **/
 #container {
 	text-align: left;
@@ -281,9 +285,9 @@ form.onlineapp_preview_page div.panel-default {
 	margin-bottom: 0;
 	padding: 0;
 }
-form.onlineapp_preview_page div.panel-body,
-div.checkbox {
+form.onlineapp_preview_page div.panel-body {
 	padding: 0 15px;
+	margin-bottom: 5px;
 }
 form.onlineapp_preview_page div.panel-heading {
 	margin-bottom: 0;
@@ -292,7 +296,13 @@ div.panel-body > div,
 div.panel-body > div > div.input.select,
 div.panel-body > div > div.input.checkbox {
 	margin-bottom: 0;
-	padding: 0;
+	padding: 10;
+}
+#HighVolumeMonths div.checkbox {
+	margin-top: inherit;
+	padding: 5px 20px;
+	float: left;
+	clear: none;
 }
 div.panel-body form {
 	clear: both;
@@ -300,7 +310,6 @@ div.panel-body form {
 	padding: 0;
 	width: 100%;
 }
-
 form fieldset.percent div {
 	padding: 0;
 }

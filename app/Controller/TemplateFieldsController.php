@@ -79,6 +79,7 @@ class TemplateFieldsController extends NestedResourceController {
 
     $this->set('field_types', $this->TemplateField->field_types);
     $this->set('source_types', $this->TemplateField->source_types);
+    $this->set('required_types', $this->TemplateField->required_types);
   }
 
   public function admin_delete($id) {

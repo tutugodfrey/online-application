@@ -14,7 +14,10 @@
       break;
 
     case 3: // checkboxes
-      echo $this->Form->input($field['name'], array('type' => 'checkbox', 'label' => $label));
+      echo $this->Html->div('checkbox',
+        $this->Form->checkbox($field['name']) . 
+        $this->Form->label($field['name'])
+      );
       break;
 
     case 4: // radios

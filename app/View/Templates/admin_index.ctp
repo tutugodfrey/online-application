@@ -1,12 +1,11 @@
 <?php $this->Html->addCrumb(__('Cobrand'), '/admin/cobrands'); ?>
 
 <div class="templates index">
-
-  <h2><?php echo String::insert("Templates for \":partner_name\"", array("partner_name" => $cobrand['Cobrand']['partner_name'])); ?></h2>
+  <h2><?php echo __('Templates for:'); ?></h2>
+    <?php echo String::insert(__(':partner_name'), array("partner_name" => $cobrand['Cobrand']['partner_name'],)); ?>
   <table cellpadding="0" cellspacing="0">
   <tr>
       <th><?php echo $this->Paginator->sort('name'); ?></th>
-      <th><?php echo $this->Paginator->sort('description'); ?></th>
       <th><?php echo $this->Paginator->sort('logo_position'); ?></th>
       <th><?php echo $this->Paginator->sort('include_axia_logo'); ?></th>
       <th><?php echo $this->Paginator->sort('created'); ?></th>
@@ -15,8 +14,7 @@
   </tr>
   <?php foreach ($templates as $template): ?>
   <tr>
-    <td><?php echo h($template['Template']['name']); ?>&nbsp;</td>
-    <td><?php echo h($template['Template']['description']); ?>&nbsp;</td>
+    <td><?php echo $this->Html->tag('div', $template['Template']['name'], array('class' => 'help', 'title' => strlen($template['Template']['description']) > 0 ? $template['Template']['description'] : 'No description saved')); ?>&nbsp;</td>
     <td><?php echo h($logo_position_types[$template['Template']['logo_position']]); ?>&nbsp;</td>
     <td><?php echo h(($template['Template']['include_axia_logo'] ? 'yes':'no')); ?>&nbsp;</td>
     <td><?php echo h($template['Template']['created']); ?>&nbsp;</td>

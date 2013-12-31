@@ -918,7 +918,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'default_value' => '',
             ),
             array(
-              'name' => 'aug',
+              'name' => 'Aug',
               'type' => 3,
               'required' => false,
               'source' => 1,
