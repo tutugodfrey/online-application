@@ -28,6 +28,7 @@ $this->Html->addCrumb(
   <tr>
       <th><?php echo $this->Paginator->sort('order'); ?></th>
       <th><?php echo $this->Paginator->sort('name'); ?></th>
+      <th><?php echo $this->Paginator->sort('width'); ?></th>
       <th><?php echo $this->Paginator->sort('created'); ?></th>
       <th><?php echo $this->Paginator->sort('modified'); ?></th>
       <th class="actions"><?php echo __('Actions'); ?></th>
@@ -36,6 +37,7 @@ $this->Html->addCrumb(
   <tr>
     <td><?php echo h($templateSection['TemplateSection']['order']); ?>&nbsp;</td>
     <td><?php echo $this->Html->tag('div', $templateSection['TemplateSection']['name'], array('class' => 'help', 'title' => strlen($templateSection['TemplateSection']['description']) > 0 ? $templateSection['TemplateSection']['description'] : 'No description saved')); ?>&nbsp;</td>
+    <td><?php echo h($templateSection['TemplateSection']['width']); ?>&nbsp;</td>
     <td><?php echo h($templateSection['TemplateSection']['created']); ?>&nbsp;</td>
     <td><?php echo h($templateSection['TemplateSection']['modified']); ?>&nbsp;</td>
     <td class="actions">

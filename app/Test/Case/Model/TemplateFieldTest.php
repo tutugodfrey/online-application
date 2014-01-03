@@ -109,7 +109,9 @@ class TemplateFieldTest extends CakeTestCase {
       'page_id' => 1,
       'order' => 0,
       'created' => '2013-12-18 13:36:11',
-      'modified' => '2013-12-18 13:36:11'
+      'modified' => '2013-12-18 13:36:11',
+      'rep_only' => false,
+      'width' => 12,
     );
 
     $returned_template_section = $this->TemplateField->getTemplateSection($section_id);
@@ -118,41 +120,44 @@ class TemplateFieldTest extends CakeTestCase {
 
   public function testValidation() {
     $expected_validationErrors = array(
-    	'name' => array('Template field name cannot be empty'),
-    	'type' => array('Template field type cannot be empty'),
-    	'required' => array('Invalid required value used'),
-    	'source' => array('Template field source cannot be empty'),
-    	'merge_field_name' => array('Template field merge_field_name cannot be empty'),
-    	'order' => array('Invalid order value used'),
-    	'section_id' => array('Invalid section_id value used'),
-  	);
+      'name' => array('Template field name cannot be empty'),
+      'width' => array('Invalid width value used, please select a number between 1 and 12'),
+      'type' => array('Template field type cannot be empty'),
+      'required' => array('Invalid required value used'),
+      'source' => array('Template field source cannot be empty'),
+      'merge_field_name' => array('Template field merge_field_name cannot be empty'),
+      'order' => array('Invalid order value used'),
+      'section_id' => array('Invalid section_id value used'),
+    );
 
-  	$new_field_data = array(
-  		'name' => '',
-    	'type' => '',
-    	'required' => '',
-    	'source' => '',
-    	'merge_field_name' => '',
-  		'order' => '',
-  		'section_id' => '',
-		);
+    $new_field_data = array(
+      'name' => '',
+      'width' => '',
+      'type' => '',
+      'required' => '',
+      'source' => '',
+      'merge_field_name' => '',
+      'order' => '',
+      'section_id' => '',
+    );
 
     $this->TemplateField->create($new_field_data);
     $this->assertFalse($this->TemplateField->validates());
     $this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
 
     // go right
-		$new_field_data = array(
+    $new_field_data = array(
       'name' => 'required text field from user w/o default',
+      'width' => 6,
       'type' => 0, // (text|)
       'required' => 1,
       'source' => 1,
       'merge_field_name' => 'required_text_from_user_with_default',
       'order' => 0,
       'section_id' => 1,
-		);
-		$expected_validationErrors = array();
-		$this->TemplateField->create($new_field_data);
+    );
+    $expected_validationErrors = array();
+    $this->TemplateField->create($new_field_data);
     $this->asserttrue($this->TemplateField->validates());
     $this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
   }
@@ -206,7 +211,8 @@ class TemplateFieldTest extends CakeTestCase {
 
     // move the third field to the front of the list
     $third['TemplateField']['order'] = 0;
-    $this->TemplateField->save($third);
+    // make sure we save
+    $this->assertTrue($this->TemplateField->save($third));
 
     // check the order values
     $third = $this->TemplateField->findById(3);

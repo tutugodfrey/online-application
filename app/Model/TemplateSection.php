@@ -17,6 +17,12 @@ class TemplateSection extends AppModel {
         'message' => array('Template section name cannot be empty'),
       ),
     ),
+    'width' => array(
+      'between' => array(
+        'rule'    => array('range', 0, 13),
+        'message' => array('Invalid width value used, please select a number between 1 and 12'),
+      )
+    ),
     'page_id' => array(
       'numeric' => array(
         'rule' => array('numeric'),

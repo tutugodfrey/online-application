@@ -30,6 +30,7 @@ $this->Html->addCrumb(
     <?php echo String::insert(__('Add Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?></legend>
   <?php
     echo $this->Form->input('name');
+    echo $this->Form->input('width', array('min' => 1, 'max' => 12));
     echo $this->Form->input('description');
     echo $this->Form->input(
       'type',

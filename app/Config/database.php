@@ -62,6 +62,7 @@ class DATABASE_CONFIG {
 		'login' => 'axia',
 		'password' => 'ax!a',
 		'database' => 'axia_legacy',
+		'schema' => 'public',
 		'prefix' => '',
 		//'encoding' => 'utf8',
 	);
@@ -73,6 +74,7 @@ class DATABASE_CONFIG {
 		'login' => 'axia',
 		'password' => 'ax!a',
 		'database' => 'test_legacy',
+		'schema' => 'public',
 		'prefix' => '',
 		//'encoding' => 'utf8',
 	);

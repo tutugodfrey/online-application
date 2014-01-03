@@ -149,6 +149,16 @@ class CobrandedOnlineapp extends CakeMigration {
             'type'    => 'text',
             'null'    => true
           ),
+          'rep_only' => array(
+            'type' => 'boolean',
+            'null' => false,
+            'default' => false,
+          ),
+          'width' => array(
+            'type' => integer,
+            'null' => false,
+            'default' => 12 /* 1 - 12 columns, using bootstrap layout */
+          ),
           'page_id' => array(
             'type' => 'integer',
             'null' => false
@@ -185,6 +195,11 @@ class CobrandedOnlineapp extends CakeMigration {
           'description' => array(
             'type' => 'text',
             'null' => true
+          ),
+          'width' => array(
+            'type' => integer,
+            'null' => false,
+            'default' => 12 /* 1 - 12 columns, using bootstrap layout */
           ),
           'type' => array(
             'type' => 'integer',
@@ -448,6 +463,8 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'TemplateSection' => array(
                 'name' => $section['name'],
+                'width' => (array_key_exists('width', $section) ? $section['width'] : 12),
+                'rep_only' => (array_key_exists('rep_only', $section) ? $section['rep_only'] : false),
                 'order' => $section_order,
                 'page_id' => $page_id
               )
@@ -466,6 +483,7 @@ class CobrandedOnlineapp extends CakeMigration {
                 array(
                   'TemplateField' => array(
                     'name' => $field['name'],
+                    'width' => (array_key_exists('width', $field) ? $field['width'] : 12),
                     'order' => $field_order,
                     'section_id' => $section_id,
                     'type' => $field['type'],
@@ -536,6 +554,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ),
         array(
           'name' => 'CORPORATE INFORMATION',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Legal Business Name',
@@ -554,6 +573,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'City',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -561,6 +581,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'State',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -568,6 +589,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'Zip',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -667,6 +689,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ),
         array(
           'name' => 'LOCATION INFORMATION',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Same As Corporate Information',
@@ -692,6 +715,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'City',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -699,6 +723,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'State',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -706,6 +731,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'Zip',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -852,6 +878,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'Method of Sales',
               'type' => 5,
+              'width' => 6,
               'required' => true,
               'source' => 1,
               'default_value' => 'Card Present Swiped:0,Card Present Imprint:1,Card Not Present (Keyed):2,Card Not Present (Internet):3',
@@ -859,6 +886,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => '% of Product Sold',
               'type' => 5,
+              'width' => 6,
               'required' => true,
               'source' => 1,
               'default_value' => 'Card Present Swiped:0,Card Present Imprint:1,Card Not Present (Keyed):2,Card Not Present (Internet):3',
@@ -993,6 +1021,15 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'City',
               'type' => 0,
+              'width' => 4,
+              'required' => false,
+              'source' => 1,
+              'default_value' => '',
+            ),
+            array(
+              'name' => 'State',
+              'type' => 0,
+              'width' => 4,
               'required' => false,
               'source' => 1,
               'default_value' => '',
@@ -1000,6 +1037,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'Zip',
               'type' => 0,
+              'width' => 4,
               'required' => false,
               'source' => 1,
               'default_value' => '',
@@ -1008,6 +1046,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ),
         array(
           'name' => 'Depository Account',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Routing Number',
@@ -1027,6 +1066,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ),
         array(
           'name' => 'Fees Account',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Routing Number',
@@ -1048,6 +1088,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ),
         array(
           'name' => 'Trade Reference 1',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Business Name',
@@ -1080,6 +1121,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'City',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1087,6 +1129,15 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'State',
               'type' => 0,
+              'width' => 4,
+              'required' => true,
+              'source' => 1,
+              'default_value' => '',
+            ),
+            array(
+              'name' => 'Zip',
+              'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1095,6 +1146,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ),
         array(
           'name' => 'Trade Reference 2',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Business Name',
@@ -1127,6 +1179,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'City',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1134,6 +1187,15 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'State',
               'type' => 0,
+              'width' => 4,
+              'required' => true,
+              'source' => 1,
+              'default_value' => '',
+            ),
+            array(
+              'name' => 'Zip',
+              'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1395,6 +1457,7 @@ class CobrandedOnlineapp extends CakeMigration {
       'sections' => array(
         array(
           'name' => 'OWNER / OFFICER (1) Percentage Ownership',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Full Name',
@@ -1420,6 +1483,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'City',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1427,6 +1491,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'State',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1434,6 +1499,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'Zip',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1477,6 +1543,7 @@ class CobrandedOnlineapp extends CakeMigration {
         ),
         array(
           'name' => 'OWNER / OFFICER (2) Percentage Ownership',
+          'width' => 6,
           'fields' => array(
             array(
               'name' => 'Full Name',
@@ -1502,6 +1569,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'City',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1509,6 +1577,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'State',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',
@@ -1516,6 +1585,7 @@ class CobrandedOnlineapp extends CakeMigration {
             array(
               'name' => 'Zip',
               'type' => 0,
+              'width' => 4,
               'required' => true,
               'source' => 1,
               'default_value' => '',

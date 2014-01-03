@@ -110,17 +110,18 @@ class TemplateSectionTest extends CakeTestCase {
   public function testValidation() {
     $expected_validationErrors = array(
       'name' => array('Template section name cannot be empty'),
+      'width' => array('Invalid width value used, please select a number between 1 and 12'),
       'page_id' => array('Invalid page_id value used'),
       'order' => array('Invalid order value used'),
     );
 
-    $this->TemplateSection->create(array('name' => '', 'page_id' => '', 'order' => ''));
+    $this->TemplateSection->create(array('name' => '', 'width' => '', 'page_id' => '', 'order' => ''));
     $this->assertFalse($this->TemplateSection->validates());
     $this->assertEquals($expected_validationErrors, $this->TemplateSection->validationErrors);
 
     // go right
     $expected_validationErrors = array();
-    $this->TemplateSection->create(array('name' => 'section name', 'page_id' => '1'));
+    $this->TemplateSection->create(array('name' => 'section name', 'width' => 6, 'page_id' => '1'));
     $this->assertTrue($this->TemplateSection->validates());
     $this->assertEquals($expected_validationErrors, $this->TemplateSection->validationErrors);    
   }
@@ -133,6 +134,7 @@ class TemplateSectionTest extends CakeTestCase {
     $data = array(
       'TemplateSection' => array(
         'name' => 'testSaveNew_order',
+        'width' => 12,
         'description' => '',
         'page_id' => '1',
         'order' => null,

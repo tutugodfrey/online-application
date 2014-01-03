@@ -15,9 +15,13 @@ class TemplateFieldsController extends NestedResourceController {
       $data = Sanitize::clean($this->request->data);
       // we know the page_id from the uri
       $data['TemplateField']['section_id'] = $this->_getParentControllerId();
-      if ($this->TemplateField->save($data)) {
-        $this->Session->setFlash("Template Field Saved!");
-        $this->redirect($this->_getListUrl());
+      if ($this->TemplateField->validates()) {
+        if ($this->TemplateField->save($data)) {
+          $this->Session->setFlash("Template Field Saved!");
+          $this->redirect($this->_getListUrl());
+        }
+      } else {
+        $errors = $this->TemplateField->validationErrors;
       }
     }
 

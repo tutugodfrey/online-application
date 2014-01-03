@@ -20,6 +20,12 @@ class TemplateField extends AppModel {
         'message' => array('Template field name cannot be empty'),
       ),
     ),
+    'width' => array(
+      'between' => array(
+        'rule'    => array('range', 0, 13),
+        'message' => array('Invalid width value used, please select a number between 1 and 12'),
+      )
+    ),
     'type' => array(
       'notempty' => array(
         'rule' => array('notempty'),

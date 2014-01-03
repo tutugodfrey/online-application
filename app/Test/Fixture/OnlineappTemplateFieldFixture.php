@@ -3,8 +3,9 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
   public $records = array(
     array(
       'name' => 'field 1',
+      'width' => 12,
       'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-      'type' => 0, // (text|)
+      'type' => 0,
       'required' => 1,
       'source' => 1,
       'default_value' => '',
@@ -16,8 +17,9 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
     ),
     array(
       'name' => 'field 2',
+      'width' => 12,
       'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-      'type' => 0, // (text|)
+      'type' => 0,
       'required' => 1,
       'source' => 1,
       'default_value' => '',
@@ -29,8 +31,9 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
     ),
     array(
       'name' => 'field 3',
+      'width' => 12,
       'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-      'type' => 0, // (text|)
+      'type' => 0,
       'required' => 1,
       'source' => 1,
       'default_value' => '',
