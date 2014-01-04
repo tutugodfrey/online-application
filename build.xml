@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
  
-<project name="name-of-project" default="build-parallel">
+<project name="axia_app_2" default="build-parallel">
   <target name="build"
     depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
 
@@ -57,6 +57,18 @@
     </apply>
   </target>
 
+  <target name="migrate">
+    <exec executable="${basedir}/app/Console/cake" failonerror="false">
+      <arg line="Migrations.migration run all"/>
+    </exec>
+    <exec executable="${basedir}/app/Console/cake" failonerror="false">
+      <arg line="Migrations.migration run all -plugin favorites"/>
+    </exec>
+    <exec executable="${basedir}/app/Console/cake" failonerror="false">
+      <arg line="Migrations.migration run all -plugin tags"/>
+    </exec>
+  </target>
+
   <target name="phploc"
     description="Measure project size using PHPLOC">
     <exec executable="phploc">
@@ -72,35 +84,33 @@
      <arg value="--summary-xml=${basedir}/build/pdepend/summary.xml" />
      <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
      <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+     <arg value="--ignore=${basedir}/Console,${basedir}/Lib,${basedir}/Locale,${basedir}/Plugin,${basedir}/tmp,${basedir}/vendor,${basedir}/Vendor" />
      <arg path="${basedir}/app" />
     </exec>
   </target>
 
   <target name="phpmd"
     description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
-    <exec executable="phpmd">
-      <arg path="${basedir}/app" />
-      <arg value="text" />
-      <arg value="${basedir}/build/phpmd.xml" />
+    <exec executable="bash">
+      <arg value="-c"/>
+      <arg value="phpmd ${basedir}/app/ text codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.txt'"/>
     </exec>
   </target>
 
   <target name="phpmd-ci"
     description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
-    <exec executable="phpmd">
-      <arg path="${basedir}/app" />
-      <arg value="xml" />
-      <arg value="${basedir}/build/phpmd.xml" />
-      <arg value="--reportfile" />
-      <arg value="${basedir}/build/logs/pmd.xml" />
+    <exec executable="bash">
+      <arg value="-c"/>
+      <arg value="phpmd ${basedir}/app/ xml codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.xml'"/>
     </exec>
   </target>
  
   <target name="phpcs"
     description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
     <exec executable="phpcs">
-      <arg value="--standard=CakePHP"/>
       <arg value="-p"/>
+      <arg value="--standard=CakePHP"/>
+      <arg value="--ignore=Console,Plugin,tmp,vendor,Vendor"/>
       <arg path="${basedir}/app"/>
     </exec>
   </target>
@@ -108,13 +118,10 @@
   <target name="phpcs-ci"
     description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
     <exec executable="phpcs">
-      <arg value="--report=checkstyle" />
-      <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
-      <arg value="--standard=Cake" />
-      <arg value="--extensions=php,ctp"/>
-      <arg value="--ignore=.git"/>
-      <arg value="-p"/>
-      <arg path="${basedir}/app" />
+      <arg value="--standard=CakePHP"/>
+      <arg value="--ignore=Console,Plugin,tmp,vendor,Vendor"/>
+      <arg value="--report-file=${basedir}/build/logs/phpcs.txt"/>
+      <arg path="${basedir}/app"/>
     </exec>
   </target>
 
@@ -145,7 +152,7 @@
     <mkdir dir="${basedir}/app/tmp/sessions"/>
   </target>
 
-  <target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders">
+  <target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate, phpmd-ci">
     <exec executable="bash" failonerror="true" dir="${basedir}/app">
       <arg value="Console/cake"/>
       <arg value="test"/>
@@ -155,7 +162,7 @@
       <arg value="--coverage-html"/>
       <arg path="${basedir}/build/reports/coverage"/>
       <arg value="--coverage-clover"/>
-      <arg path="${basedir}/build/reports/clover.xml"/>
+      <arg path="${basedir}/build/reports/coverage-clover.xml"/>
     </exec>
   </target>
 
