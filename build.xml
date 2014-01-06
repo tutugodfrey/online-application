@@ -89,12 +89,9 @@
 
   <target name="pdepend"
     description="Calculate software metrics using PHP_Depend">
-    <exec executable="pdepend">
-     <arg value="--summary-xml=${basedir}/build/pdepend/summary.xml" />
-     <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
-     <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-     <arg value="--ignore=${basedir}/Console,${basedir}/Lib,${basedir}/Locale,${basedir}/Plugin,${basedir}/tmp,${basedir}/vendor,${basedir}/Vendor" />
-     <arg path="${basedir}/app" />
+    <exec executable="bash">
+      <arg value="-c"/>
+      <arg value="pdepend --summary-xml=${basedir}/build/pdepend/summary.xml --jdepend-chart=${basedir}/build/pdepend/dependencies.svg --overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg --ignore=Console,Locale,Plugin,vendor,Vendor ${basedir}/app/"/>
     </exec>
   </target>
 
