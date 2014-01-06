@@ -126,7 +126,7 @@
     description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
     <exec executable="bash">
       <arg value="-c"/>
-      <arg value="phpcs -p -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full=${basedir}/build/logs/phpcs_full.txt ${basedir}/app/"/>
+      <arg value="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full=${basedir}/build/logs/phpcs_full.txt ${basedir}/app/"/>
     </exec>
   </target>
 
