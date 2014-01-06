@@ -69,13 +69,10 @@
 
   <target name="migrate">
     <exec executable="${basedir}/app/Console/cake" failonerror="false">
-      <arg line="Migrations.migration run all"/>
+      <arg line="Migrations.migration status"/>
     </exec>
     <exec executable="${basedir}/app/Console/cake" failonerror="false">
-      <arg line="Migrations.migration run all -plugin favorites"/>
-    </exec>
-    <exec executable="${basedir}/app/Console/cake" failonerror="false">
-      <arg line="Migrations.migration run all -plugin tags"/>
+      <arg line="Migrations.migration run all -q"/>
     </exec>
   </target>
 
