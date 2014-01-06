@@ -37,6 +37,7 @@
     <delete dir="${basedir}/build/coverage"/>
     <delete dir="${basedir}/build/logs"/>
     <delete dir="${basedir}/build/pdepend"/>
+    <delete dir="${basedir}/build/phpdox"/>
   </target>
 
   <target name="prepare" depends="clean"
@@ -80,15 +81,16 @@
 
   <target name="phploc"
     description="Measure project size using PHPLOC">
-    <exec executable="phploc">
-      <arg value="--log-csv" />
-      <arg value="${basedir}/build/logs/phploc.csv" />
-      <arg path="${basedir}/app" />
+    <echo message="phploc --log-csv ${basedir}/build/logs/phploc.csv ${basedir}/app"/>
+    <exec executable="bash">
+      <arg value="-c"/>
+      <arg value="phploc --log-csv ${basedir}/build/logs/phploc.csv ${basedir}/app"/>
     </exec>
   </target>
 
   <target name="pdepend"
     description="Calculate software metrics using PHP_Depend">
+    <echo message="pdepend --summary-xml=${basedir}/build/pdepend/summary.xml --jdepend-chart=${basedir}/build/pdepend/dependencies.svg --overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg --ignore=Console,Locale,Plugin,vendor,Vendor ${basedir}/app/"/>
     <exec executable="bash">
       <arg value="-c"/>
       <arg value="pdepend --summary-xml=${basedir}/build/pdepend/summary.xml --jdepend-chart=${basedir}/build/pdepend/dependencies.svg --overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg --ignore=Console,Locale,Plugin,vendor,Vendor ${basedir}/app/"/>
@@ -97,6 +99,7 @@
 
   <target name="phpmd"
     description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
+    <echo message="phpmd ${basedir}/app/ text codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.txt"/>
     <exec executable="bash">
       <arg value="-c"/>
       <arg value="phpmd ${basedir}/app/ text codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.txt'"/>
@@ -105,6 +108,7 @@
 
   <target name="phpmd-ci"
     description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
+    <echo message="phpmd ${basedir}/app/ xml codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.xml"/>
     <exec executable="bash">
       <arg value="-c"/>
       <arg value="phpmd ${basedir}/app/ xml codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.xml'"/>
@@ -113,6 +117,7 @@
 
   <target name="phpcs"
     description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+    <echo message="phpcs -v -n --standard=CakePHP --report=summary --ignore=Console,Plugin,tmp,vendor,Vendor,webroot ${basedir}/app/"/>
     <exec executable="bash">
       <arg value="-c"/>
       <arg value="phpcs -v -n --standard=CakePHP --report=summary --ignore=Console,Plugin,tmp,vendor,Vendor,webroot ${basedir}/app/"/>
@@ -121,6 +126,7 @@
 
   <target name="phpcs-ci"
     description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
+    <echo message="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full=${basedir}/build/logs/phpcs_full.txt ${basedir}/app/"/>
     <exec executable="bash">
       <arg value="-c"/>
       <arg value="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full=${basedir}/build/logs/phpcs_full.txt ${basedir}/app/"/>
@@ -129,6 +135,7 @@
 
   <target name="phpcpd"
     description="Find duplicate code using PHPCPD">
+    <echo message="phpcpd --progress --exclude=Vendor --exclude=Plugin --exclude=vendor --log-pmd ${basedir}/build/logs/pmd-cpd.xml ${basedir}/app"/>
     <exec executable="bash">
       <arg value="-c"/>
       <arg value="phpcpd --progress --exclude=Vendor --exclude=Plugin --exclude=vendor --log-pmd ${basedir}/build/logs/pmd-cpd.xml ${basedir}/app"/>
@@ -136,6 +143,7 @@
   </target>
 
   <target name="phpdox" description="Generate API documentation using phpDox">
+    <echo message="phpdox -f ${basedir}/build/phpdox.xml.dist"/>
     <exec executable="bash">
       <arg value="-c"/>
       <arg value="phpdox -f ${basedir}/build/phpdox.xml.dist" />
@@ -168,6 +176,7 @@
   </target>
 
   <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
+    <echo message="phpcb --log ${basedir}/build/logs --source ${basedir}/app --output ${basedir}/build/code-browser"/>
     <exec executable="bash">
       <arg value="-c" />
       <arg value="phpcb --log ${basedir}/build/logs --source ${basedir}/app --output ${basedir}/build/code-browser" />
