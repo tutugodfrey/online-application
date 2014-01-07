@@ -148,16 +148,10 @@
   </target>
 
   <target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate">
+    <echo message="Console/cake test app AllTests --stderr --coverage-html '${basedir}/build/reports/coverage' --coverage-clover '${basedir}/build/reports/coverage-clover.xml'"/>
     <exec executable="bash" failonerror="true" dir="${basedir}/app">
-      <arg value="Console/cake"/>
-      <arg value="test"/>
-      <arg value="app"/>
-      <arg value="AllTests"/>
-      <arg value="--stderr"/>
-      <arg value="--coverage-html"/>
-      <arg path="${basedir}/build/reports/coverage"/>
-      <arg value="--coverage-clover"/>
-      <arg path="${basedir}/build/reports/coverage-clover.xml"/>
+      <arg value="-c"/>
+      <arg value="Console/cake test app AllTests --stderr --coverage-html '${basedir}/build/reports/coverage' --coverage-clover '${basedir}/build/reports/coverage-clover.xml'"/>
     </exec>
   </target>
 
