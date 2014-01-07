@@ -1641,6 +1641,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Owner/Officer',
@@ -1648,6 +1649,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Phone #',
@@ -1655,6 +1657,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Referral Business #2',
@@ -1662,6 +1665,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Owner/Officer',
@@ -1669,6 +1673,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Phone #',
@@ -1676,6 +1681,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Referral Business #3',
@@ -1683,6 +1689,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Owner/Officer',
@@ -1690,6 +1697,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
             array(
               'name' => 'Phone #',
@@ -1697,6 +1705,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             ),
           )
         ),

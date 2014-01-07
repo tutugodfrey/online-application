@@ -1,3 +1,4 @@
+<br/><br/><br/>
 <div>
   <div>
     <h1>
@@ -11,7 +12,7 @@
     ); ?></h1>
   </div>
 
-  <div>
+  <div class="container">
     <?php
     // TODO: use the Template->logo_position and include_axia_logo
     // to display this VVVV
@@ -65,27 +66,36 @@
         <div class="panel-body panel-collapse collapse" id="<?php echo $page_id ?>">
           <div class="accordion">
             <div class="panel-group" id="section_accordion">
-              <?php
-              $form_html = $this->Form->create($page['name']);
-              echo preg_replace('/(id="[^"]*)"/', '\1" class="onlineapp_preview_page"', $form_html);
-              foreach ($page['TemplateSections'] as $section):
-                $section_id = str_replace($bad_characters, '', $section['name']);
-              ?>
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h4 class="panel-title">
-                      <a data-toggle="collapse" data-parent="#section_accordion" href="#<?php echo $section_id ?>">
-                        <?php echo $section['name']; ?>
-                      </a>
-                    </h4>
+              <div class="row">
+                <?php
+                $form_html = $this->Form->create($page['name']);
+                echo preg_replace('/(id="[^"]*)"/', '\1" class="onlineapp_preview_page"', $form_html);
+                foreach ($page['TemplateSections'] as $section):
+                  $section_id = str_replace($bad_characters, '', $section['name']);
+                ?>
+
+                  <div class="col-md-<?php echo $section['width']; ?>">
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#section_accordion" href="#<?php echo $section_id ?>">
+                            <?php echo $section['name']; ?>
+                          </a>
+                        </h4>
+                      </div>
+                      <div class="panel-body panel-collapse collapse" id="<?php echo $section_id ?>">
+                        <div class="row">
+                        <?php echo $this->Element('Templates/Pages/Sections/Fields/genericField',
+                          array("fields" => $section['TemplateFields'], "bad_characters" => $bad_characters)); ?>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
-                  <div class="panel-body panel-collapse collapse" id="<?php echo $section_id ?>">
-                    <?php echo $this->Element('Templates/Pages/Sections/Fields/genericField',
-                      array("fields" => $section['TemplateFields'], "bad_characters" => $bad_characters)); ?>
-                  </div>
-                </div>
-              <?php endforeach; ?><!-- end sections -->
-              <?php echo $this->Form->end(array('label' => 'Update', 'class' => 'hidden')); ?>
+                <?php endforeach; ?><!-- end sections -->
+                <?php echo $this->Form->end(array('label' => 'Update', 'class' => 'hidden')); ?>
+              </div>
             </div>
           </div>
         </div>
@@ -97,6 +107,17 @@
   <script type="text/javascript">
     /* TODO: move this into a javascript file */
     $(document).on("ready", function() {
+      // remove the cake css
+      // TODO: use a different template that does not use the cake.generic.css file
+      $.map(
+        $('head link'),
+        function(link, index) {
+          if ($(link).attr('href') == '/css/cake.generic.css') {
+            $(link).remove();
+          }
+        }
+      );
+
       $(document).on("percentOptionBlur", handlePercentOptionBlur);
       function handlePercentOptionBlur(event) {
         var totalField = $(event.totalFieldId);

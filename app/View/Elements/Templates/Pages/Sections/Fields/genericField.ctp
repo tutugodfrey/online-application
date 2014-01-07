@@ -1,5 +1,6 @@
 <?php foreach ($fields as $field):
   $label = ($field['required'] == true ? $field['name'] . '*' : $field['name']);
+  echo String::insert('<div class="col-md-:width">', array('width' => $field['width']));
   switch ($field['type']) {
     case 0: // text
       echo $this->Form->input($field['name'], array('label' => $label));
@@ -15,8 +16,7 @@
 
     case 3: // checkboxes
       echo $this->Html->div('checkbox',
-        $this->Form->checkbox($field['name']) . 
-        $this->Form->label($field['name'])
+        $this->Form->checkbox($field['name']) . $this->Form->label($field['name'])
       );
       break;
 
@@ -59,5 +59,6 @@
       echo '***** UNRECOGNIZED FIELD TYPE [' . $field['type'] . '] for field [' . $field['merge_field_name'] . ']*****';
       break;
   }
+  echo '</div>';
   ?>
 <?php endforeach; ?><!-- end fields -->
