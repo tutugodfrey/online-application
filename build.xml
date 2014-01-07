@@ -78,80 +78,71 @@
 
   <target name="phploc"
     description="Measure project size using PHPLOC">
-    <echo message="phploc --log-csv '${basedir}/build/logs/phploc.csv' '${basedir}/app'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phploc --log-csv '${basedir}/build/logs/phploc.csv' '${basedir}/app'"/>
+      <arg value="phploc --log-csv 'build/logs/phploc.csv' 'app'"/>
     </exec>
   </target>
 
   <target name="pdepend"
     description="Calculate software metrics using PHP_Depend">
-    <echo message="pdepend --summary-xml='${basedir}/build/pdepend/summary.xml' --jdepend-chart='${basedir}/build/pdepend/dependencies.svg' --overview-pyramid='${basedir}/build/pdepend/overview-pyramid.svg' --ignore=Console,Locale,Plugin,vendor,Vendor '${basedir}/app/'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="pdepend --summary-xml='${basedir}/build/pdepend/summary.xml' --jdepend-chart='${basedir}/build/pdepend/dependencies.svg' --overview-pyramid='${basedir}/build/pdepend/overview-pyramid.svg' --ignore=Console,Locale,Plugin,vendor,Vendor '${basedir}/app/'"/>
+      <arg value="pdepend --summary-xml='build/pdepend/summary.xml' --jdepend-chart='build/pdepend/dependencies.svg' --overview-pyramid='build/pdepend/overview-pyramid.svg' --ignore=Console,Locale,Plugin,vendor,Vendor 'app'"/>
     </exec>
   </target>
 
   <target name="phpmd"
     description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
-    <echo message="phpmd '${basedir}/app/'' text codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.txt'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpmd '${basedir}/app/' text codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.txt'"/>
+      <arg value="phpmd 'app' text codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile 'build/logs/phpmd.txt'"/>
     </exec>
   </target>
 
   <target name="phpmd-ci"
     description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
-    <echo message="phpmd '${basedir}/app/' xml codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.xml'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpmd '${basedir}/app/' xml codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile '${basedir}/build/logs/phpmd.xml'"/>
+      <arg value="phpmd 'app' xml codesize,unusedcode,naming --exclude 'Console,Plugin,tmp,vendor,Vendor' --reportfile 'build/logs/phpmd.xml'"/>
     </exec>
   </target>
 
   <target name="phpcs"
     description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-    <echo message="phpcs -v -n --standard=CakePHP --report=summary --ignore=Console,Plugin,tmp,vendor,Vendor,webroot '${basedir}/app/'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpcs -v -n --standard=CakePHP --report=summary --ignore=Console,Plugin,tmp,vendor,Vendor,webroot '${basedir}/app/'"/>
+      <arg value="phpcs -v -n --standard=CakePHP --report=summary --ignore=Console,Plugin,tmp,vendor,Vendor,webroot 'app'"/>
     </exec>
   </target>
 
   <target name="phpcs-ci"
     description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-    <echo message="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full='${basedir}/build/logs/phpcs_full.txt' '${basedir}/app/'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full='${basedir}/build/logs/phpcs_full.txt' '${basedir}/app/'"/>
+      <arg value="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full='build/logs/phpcs_full.txt' 'app'"/>
     </exec>
   </target>
 
   <target name="phpcpd"
     description="Find duplicate code using PHPCPD">
-    <echo message="phpcpd --progress --exclude=Vendor --exclude=Plugin --exclude=vendor --log-pmd '${basedir}/build/logs/pmd-cpd.xml' '${basedir}/app'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpcpd --progress --exclude=Vendor --exclude=Plugin --exclude=vendor --log-pmd '${basedir}/build/logs/pmd-cpd.xml' '${basedir}/app'"/>
+      <arg value="phpcpd --progress --exclude=Vendor --exclude=Plugin --exclude=vendor --log-pmd 'build/logs/pmd-cpd.xml' 'app'"/>
     </exec>
   </target>
 
   <target name="phpdox" description="Generate API documentation using phpDox">
-    <echo message="phpdox -f '${basedir}/build/phpdox.xml.dist'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpdox -f '${basedir}/build/phpdox.xml.dist'" />
+      <arg value="phpdox -f 'build/phpdox.xml.dist'" />
     </exec>
   </target>
 
   <target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate">
-    <echo message="Console/cake test app AllTests --stderr --coverage-html '${basedir}/build/reports/coverage' --coverage-clover '${basedir}/build/reports/coverage-clover.xml'"/>
     <exec executable="bash" failonerror="true" dir="${basedir}/app">
       <arg value="-c"/>
-      <arg value="Console/cake test app AllTests --stderr --coverage-html '${basedir}/build/reports/coverage' --coverage-clover '${basedir}/build/reports/coverage-clover.xml'"/>
+      <arg value="Console/cake test app AllTests --log-junit '../build/reports/junit.xml' --coverage-html '../build/reports/coverage' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml'"/>
     </exec>
   </target>
 
@@ -167,10 +158,9 @@
   </target>
 
   <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
-    <echo message="phpcb --log '${basedir}/build/logs' --source '${basedir}/app' --output '${basedir}/build/code-browser'"/>
-    <exec executable="bash">
+    <exec executable="bash" dir="${basedir}">
       <arg value="-c" />
-      <arg value="phpcb --log '${basedir}/build/logs' --source '${basedir}/app' --output '${basedir}/build/code-browser'" />
+      <arg value="phpcb --log 'build/logs' --source 'app' --output 'build/code-browser'" />
     </exec>
   </target>
 </project>

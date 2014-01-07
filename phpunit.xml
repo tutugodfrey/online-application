@@ -1,0 +1,15 @@
+<phpunit>
+  <filter>
+    <blacklist>
+      <directory suffix=".php">app/Config</directory>
+      <directory suffix=".php">app/Console</directory>
+      <directory suffix=".php">app/Lib</directory>
+      <directory suffix=".php">app/Locale</directory>
+      <directory suffix=".php">app/Plugin</directory>
+      <directory suffix=".php">app/tmp</directory>
+      <directory suffix=".php">app/vendor</directory>
+      <directory suffix=".php">app/Vendor</directory>
+      <directory suffix=".php">app/webroot</directory>
+    </blacklist> 
+  </filter>
+</phpunit>
