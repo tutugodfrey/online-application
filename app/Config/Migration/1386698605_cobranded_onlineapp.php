@@ -902,6 +902,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Feb',
@@ -909,6 +910,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Mar',
@@ -916,6 +918,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Apr',
@@ -923,6 +926,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'May',
@@ -930,6 +934,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Jun',
@@ -937,6 +942,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Jul',
@@ -944,6 +950,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Aug',
@@ -951,6 +958,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Sep',
@@ -958,6 +966,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Oct',
@@ -965,6 +974,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Nov',
@@ -972,6 +982,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
             array(
               'name' => 'Dec',
@@ -979,6 +990,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 1,
             ),
           )
         )
@@ -1297,6 +1309,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2,
             ),
             array(
               'name' => 'Server #s',
@@ -1304,6 +1317,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2,
             ),
             array(
               'name' => 'Tips',
@@ -1311,6 +1325,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2,
             ),
             array(
               'name' => 'Invoice #',
@@ -1318,6 +1333,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2,
             ),
             array(
               'name' => 'Purchasing Cards',
@@ -1325,6 +1341,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2,
             ),
             array(
               'name' => 'Do you accept Debit on this terminal?',
@@ -1372,6 +1389,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => 'Axia:0,Merchant:1',
+              'width' => 4,
             ),
             array(
               'name' => 'Do You Use Autoclose?',
@@ -1379,6 +1397,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => 'Yes:0,No:1',
+              'width' => 4,
             ),
             array(
               'name' => 'If Yes, What Time?',
@@ -1386,6 +1405,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => true,
               'source' => 1,
               'default_value' => '',
+              'width' => 4,
             )
           )
         ),
@@ -1398,6 +1418,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2
             ),
             array(
               'name' => 'Server #s',
@@ -1405,6 +1426,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2
             ),
             array(
               'name' => 'Tips',
@@ -1412,6 +1434,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2
             ),
             array(
               'name' => 'Invoice #',
@@ -1419,6 +1442,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2
             ),
             array(
               'name' => 'Purchasing Cards',
@@ -1426,6 +1450,7 @@ class CobrandedOnlineapp extends CakeMigration {
               'required' => false,
               'source' => 1,
               'default_value' => '',
+              'width' => 2
             ),
             array(
               'name' => 'Do you accept Debit on this terminal?',

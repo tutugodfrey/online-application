@@ -24,6 +24,7 @@ $this->Html->addCrumb(
   <?php
     echo $this->Form->input('name');
     echo $this->Form->input('width', array('min' => 1, 'max' => 12));
+    echo $this->Form->input('rep_only');
     echo $this->Form->input('description');
   ?>
   </fieldset>

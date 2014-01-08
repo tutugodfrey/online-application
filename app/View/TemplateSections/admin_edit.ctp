@@ -23,8 +23,9 @@ $this->Html->addCrumb(
     echo $this->Form->input('id');
     echo $this->Form->input('name');
     echo $this->Form->input('width', array('min' => 1, 'max' => 12));
-    echo $this->Form->input('description');
+    echo $this->Form->input('rep_only');
     echo $this->Form->input('order', array('min' => 0));
+    echo $this->Form->input('description');
     echo $this->Form->hidden('page_id');
   ?>
   </fieldset>

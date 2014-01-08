@@ -52,6 +52,7 @@
   <div class="accordion">
     <div class="panel-group" id="page_accordion">
     <?php
+      $is_admin = $this->Session->read('Auth.User.id') > 0;
       foreach ($template['TemplatePages'] as $page):
         $page_id = str_replace($bad_characters, '', $page['name']);
       ?>
@@ -71,7 +72,10 @@
                 $form_html = $this->Form->create($page['name']);
                 echo preg_replace('/(id="[^"]*)"/', '\1" class="onlineapp_preview_page"', $form_html);
                 foreach ($page['TemplateSections'] as $section):
-                  $section_id = str_replace($bad_characters, '', $section['name']);
+
+                  if ($is_admin || $section['rep_only'] !== true) {
+
+                    $section_id = str_replace($bad_characters, '', $section['name']);
                 ?>
 
                   <div class="col-md-<?php echo $section['width']; ?>">
@@ -93,7 +97,10 @@
                     </div>
 
                   </div>
-                <?php endforeach; ?><!-- end sections -->
+                <?php
+                  }
+                endforeach;
+                ?><!-- end sections -->
                 <?php echo $this->Form->end(array('label' => 'Update', 'class' => 'hidden')); ?>
               </div>
             </div>

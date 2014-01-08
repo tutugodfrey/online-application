@@ -29,6 +29,7 @@ $this->Html->addCrumb(
       <th><?php echo $this->Paginator->sort('order'); ?></th>
       <th><?php echo $this->Paginator->sort('name'); ?></th>
       <th><?php echo $this->Paginator->sort('width'); ?></th>
+      <th><?php echo $this->Paginator->sort('rep_only'); ?></th>
       <th><?php echo $this->Paginator->sort('created'); ?></th>
       <th><?php echo $this->Paginator->sort('modified'); ?></th>
       <th class="actions"><?php echo __('Actions'); ?></th>
@@ -38,6 +39,8 @@ $this->Html->addCrumb(
     <td><?php echo h($templateSection['TemplateSection']['order']); ?>&nbsp;</td>
     <td><?php echo $this->Html->tag('div', $templateSection['TemplateSection']['name'], array('class' => 'help', 'title' => strlen($templateSection['TemplateSection']['description']) > 0 ? $templateSection['TemplateSection']['description'] : 'No description saved')); ?>&nbsp;</td>
     <td><?php echo h($templateSection['TemplateSection']['width']); ?>&nbsp;</td>
+
+    <td><?php echo $templateSection['TemplateSection']['rep_only'] === true ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'Only the rep sees this section')) : ''; ?>&nbsp;</td>
     <td><?php echo h($templateSection['TemplateSection']['created']); ?>&nbsp;</td>
     <td><?php echo h($templateSection['TemplateSection']['modified']); ?>&nbsp;</td>
     <td class="actions">
