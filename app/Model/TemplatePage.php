@@ -74,14 +74,16 @@ class TemplatePage extends AppModel {
       $this->data['TemplatePage']['order'] = $count;
     }
 
+    // if we have an id, assume edit case
     if ($this->id) {
       $data = $this->data;
       $this->old = $this->findById($this->id);
 
+      // see if the order value has changed
       if ($this->old['TemplatePage']['order'] != $data['TemplatePage']['order']) {
         $template = $this->Template->find(
           'first',
-          array('conditions' => 'Template.id = "' . $this->data['TemplatePage']['template_id'] . '"' ),
+          array('conditions' => 'Template.id = "' . $this->data['TemplatePage']['template_id'] . '"'),
           array('contain' => array('TemplatePage'))
         );
 
@@ -119,8 +121,35 @@ class TemplatePage extends AppModel {
     }
   }
 
+  private $__template_id = null;
+  public function beforeDelete() {
+    $templatePage = $this->read();
+    $this->__template_id = $templatePage['Template']['id'];
+  }
+
   public function afterDelete() {
-    // TODO: handle delete logic
+    // if the neighbors are not in sequence (0, 1, 3, 4)
+    // reorder the 'orders'
+    $template = $this->Template->find(
+      'first',
+      array('conditions' => 'Template.id = "' . $this->__template_id . '"'),
+      array('contain' => array('TemplatePage'))
+    );
+    $this->__neighbors = $template['TemplatePages'];
+
+    $rebase_needed = false;
+    for ($i = 0; $i < count($this->__neighbors); $i++) {
+      if ($this->__neighbors[$i]['order'] != $i) {
+        $this->__neighbors[$i]['order'] = $i;
+        $rebase_needed = true;
+      }
+    }
+
+    if ($rebase_needed == true) {
+      foreach ($this->__neighbors as $neighbor) {
+        $this->save($neighbor, array('callbacks' => false));
+      }
+    }
   }
 
   public function getCobrand($template_id) {
@@ -131,8 +160,13 @@ class TemplatePage extends AppModel {
   }
 
   public function getTemplate($template_id) {
+    return $this->getTemplateAndAssociated($template_id, false);
+  }
+
+  public function getTemplateAndAssociated($template_id, $include_assc) {
     $this->Template->id = $template_id;
     $template = $this->Template->read();
-    return $template['Template'];
+
+    return $include_assc ? $template : $template['Template'];
   }
 }

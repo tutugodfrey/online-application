@@ -223,7 +223,6 @@ class TemplatePageTest extends CakeTestCase {
   }
 
   public function testReordering_MiddleToLast() {
-    
     // make sure the order values are what we expect
     $first_page = $this->TemplatePage->findById(1);
     $this->assertEquals(0, $first_page['TemplatePage']['order']);
@@ -244,5 +243,69 @@ class TemplatePageTest extends CakeTestCase {
     $this->assertEquals(2, $second_page['TemplatePage']['order']);
     $third_page = $this->TemplatePage->findById(3);
     $this->assertEquals(1, $third_page['TemplatePage']['order']);
+  }
+
+  public function testDelete_FirstPage() {
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+
+    // delete the first one
+    $this->TemplatePage->delete(1);
+    // make sure 1 is gone
+    $this->assertEquals(array(), $this->TemplatePage->findById(1), 'Page with id == [1] has not been deleted.');
+
+    // re-check the order
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(0, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(1, $third_page['TemplatePage']['order']);
+    // make sure 1 is gone
+  }
+
+  public function testDelete_MiddlePage() {
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+
+    // delete one in the middle; id = 2
+    $this->TemplatePage->delete(2);
+    // make sure 2 is gone
+    $this->assertEquals(array(), $this->TemplatePage->findById(2), 'Page with id == [2] has not been deleted.');
+
+    // recheck the order
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(1, $third_page['TemplatePage']['order']);
+  }
+
+  public function testDelete_LastPage() {
+    // make sure the order values are what we expect
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
+    $third_page = $this->TemplatePage->findById(3);
+    $this->assertEquals(2, $third_page['TemplatePage']['order']);
+
+    // delete the last page
+    $this->TemplatePage->delete(3);
+    // make sure 3 is gone
+    $this->assertEquals(array(), $this->TemplatePage->findById(3), 'Page with id == [3] has not been deleted.');
+
+    // recheck the order
+    $first_page = $this->TemplatePage->findById(1);
+    $this->assertEquals(0, $first_page['TemplatePage']['order']);
+    $second_page = $this->TemplatePage->findById(2);
+    $this->assertEquals(1, $second_page['TemplatePage']['order']);
   }
 }
