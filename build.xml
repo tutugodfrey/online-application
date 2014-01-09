@@ -162,7 +162,7 @@
   <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
     <exec executable="bash" dir="${basedir}">
       <arg value="-c" />
-      <arg value="phpcb --log 'build/logs' --source 'app' --output 'build/code-browser'" />
+      <arg value="phpcb --log 'build/logs' --source 'app' --output 'app/webroot/code-browser'" />
     </exec>
   </target>
 </project>

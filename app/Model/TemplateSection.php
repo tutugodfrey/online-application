@@ -13,15 +13,10 @@ class TemplateSection extends AppModel {
   public $actsAs = array(
     'Search.Searchable',
     'Containable',
-    'Orderable' => array(
-      'fields' => array(
-        'order',
-        'name',
-        'width',
-        'rep_only',
-        'created',
-        'modified',
-      )
+    'OrderableChild' => array(
+      'parent_model_name' => 'TemplatePage',
+      'parent_model_foreign_key_name' => 'page_id',
+      'class_name' => 'TemplateSection',
     )
   );
 
@@ -57,6 +52,7 @@ class TemplateSection extends AppModel {
     'TemplatePage' => array(
       'className' => 'TemplatePage',
       'foreignKey' => 'page_id',
+      'class_name' => 'TemplateSection',
     )
   );
 
@@ -68,67 +64,6 @@ class TemplateSection extends AppModel {
       'dependent' => true,
     )
   );
-
-  private $__neighbors;
-  public function beforeSave($options = array()) {
-    $this->__neighbors = null;
-
-    // if the order field is not set, figure it out
-    if ($this->data['TemplateSection']['order'] === null) {
-      $templatePage = $this->TemplatePage->find(
-        'first',
-        array('conditions' => 'TemplatePage.id = "' . $this->data['TemplateSection']['page_id'] . '"' ),
-        array('contain' => array('TemplateSection'))
-      );
-      $count = count($templatePage['TemplateSections']);
-
-      $this->data['TemplateSection']['order'] = $count;
-    }
-
-    if ($this->id) {
-      $data = $this->data;
-      $this->old = $this->findById($this->id);
-
-      if ($this->old['TemplateSection']['order'] != $data['TemplateSection']['order']) {
-        $templatePage = $this->TemplatePage->find(
-          'first',
-          array('conditions' => 'TemplatePage.id = "' . $this->data['TemplateSection']['page_id'] . '"' ),
-          array('contain' => array('TemplateSection'))
-        );
-
-        $old_order = $this->old['TemplateSection']['order'];
-        $new_order = $data['TemplateSection']['order'];
-
-        // get the templateSections
-        $this->__neighbors = $templatePage['TemplateSections'];
-        $moving_item = array_splice($this->__neighbors, $old_order, 1);
-        array_splice($this->__neighbors, $new_order, 0, $moving_item);
-
-        // rebase the template pages
-        for ($i = 0; $i < count($this->__neighbors); $i++) {
-          $this->__neighbors[$i]['order'] = $i;
-        }
-
-        // remove the $moving_item from the array
-        for ($i = 0; $i < count($this->__neighbors); $i++) {
-          if ($this->__neighbors[$i]['id'] == $moving_item[0]['id']) {
-            unset($this->__neighbors[$i]);
-          }
-        }
-      }
-    }
-    return true;
-  }
-
-  public function afterSave($created, $options = array()) {
-    if ($this->__neighbors != null) {
-      if (count($this->__neighbors) > 0) {
-        foreach ($this->__neighbors as $neighbor) {
-          $this->save($neighbor, array('callbacks' => false));
-        }
-      }
-    }
-  }
 
   private $__cobrand;
   private $__template;

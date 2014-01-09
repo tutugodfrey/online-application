@@ -166,13 +166,13 @@ class TemplatePageTest extends CakeTestCase {
     $expected_order_value = 3;
     // create a new template page for template_id = 1
     $data = array(
-			'TemplatePage' => array(
-				'name' => 'testSaveNew_order',
-				'description' => '',
-				'template_id' => '1',
+      'TemplatePage' => array(
+        'name' => 'testSaveNew_order',
+        'description' => '',
+        'template_id' => '1',
         'order' => null
-			)
-		);
+      )
+    );
     // NOTE: since we are explicitly passing an order value of null
     //       turn off validation
     $this->TemplatePage->save($data, array('validate' => false));

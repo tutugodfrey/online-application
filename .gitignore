@@ -9,6 +9,8 @@
 /dist
 /tags
 /node_modules
+/app/webroot/coverage
+/app/webroot/code-browser
 
 # OS generated files #
 ######################
