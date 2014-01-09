@@ -13,6 +13,25 @@ class TemplateField extends AppModel {
   public $displayName = 'name';
   public $useTable = 'onlineapp_template_fields';
 
+  public $actsAs = array(
+    'Search.Searchable',
+    'Containable',
+    'Orderable' => array(
+      'fields' => array(
+        'order',
+        'name',
+        'width',
+        'type',
+        'required',
+        'source',
+        'default_value',
+        'merge_field_name',
+        'created',
+        'modified',
+      )
+    )
+  );
+
   public $validate = array(
     'name' => array(
       'notempty' => array(

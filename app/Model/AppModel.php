@@ -32,12 +32,12 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
-    public $actsAs = array(
-	'Containable',
+  public $actsAs = array(
+    'Containable',
     'Utils.CsvImport' => array(
-        'delimiter'  => ',',
-        'hasHeader' => true,
+      'delimiter'  => ',',
+      'hasHeader' => true,
     )
-);
-//    	public $recursive = 0;
+  );
+  //    	public $recursive = 0;
 }

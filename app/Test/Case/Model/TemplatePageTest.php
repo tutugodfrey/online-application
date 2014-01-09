@@ -16,6 +16,14 @@ class TemplatePageTest extends CakeTestCase {
   );
   public $autoFixtures = false;
 
+  public static function setUpBeforeClass() {
+    parent::setUpBeforeClass();
+  }
+
+  public static function tearDownAfterClass() {
+    parent::tearDownAfterClass();
+  }
+
   public function setUp() {
     parent::setUp();
     $this->Cobrand = ClassRegistry::init('Cobrand');
@@ -70,6 +78,23 @@ class TemplatePageTest extends CakeTestCase {
     );
     $returned_cobrand = $this->TemplatePage->getCobrand($template_id);
     $this->assertEquals($expected_cobrand, $returned_cobrand);
+  }
+
+  public function testGetCobrand_afterRead() {
+    // now test the case when we set the id
+    $expected_cobrand = array (
+      'id' => 1,
+      'partner_name' => 'Partner Name 1',
+      'partner_name_short' => 'PN1',
+      'logo_url' => 'PN1 logo_url',
+      'description' => 'Cobrand "Partner Name 1" description goes here.',
+      'created' => '2007-03-18 10:41:31',
+      'modified' => '2007-03-18 10:41:31',
+    );
+
+    $this->TemplatePage->id = 2;
+    $templatePage = $this->TemplatePage->read();
+    $this->assertEquals($expected_cobrand, $this->TemplatePage->getCobrand());
   }
 
   public function testGetTemplate() {

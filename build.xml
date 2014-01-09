@@ -20,13 +20,15 @@
     </parallel>
   </target>
 
-  <target name="build-smoke">
+  <target name="build-smoke"
+    description="Jenkin's target for smoke builds; prepare, migrate, phpunit">
     <antcall target="prepare"/>
     <antcall target="migrate"/>
     <antcall target="phpunit"/>
   </target>
 
-  <target name="build-nightly">
+  <target name="build-nightly"
+    description="Jenkin's target for nightly builds; build-parallel">
     <antcall target="build-parallel"/>
   </target>
 
@@ -142,9 +144,14 @@
   <target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate">
     <exec executable="bash" failonerror="true" dir="${basedir}/app">
       <arg value="-c"/>
-      <arg value="Console/cake test app AllTests --log-junit '../build/reports/junit.xml' --coverage-html '../build/reports/coverage' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml'"/>
+      <arg value="Console/cake test app AllTests --stderr --log-junit '../build/reports/junit.xml' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml'"/>
     </exec>
   </target>
+
+  <?ignore
+  TODO: figure out why the html generation fails '--coverage-html 'webroot/coverage'
+        also figure out why the standard xml/html comments don't work in this file.
+  ?>
 
   <target name="ensure-tmp-folders">
     <mkdir dir="${basedir}/app/tmp/"/>

@@ -10,6 +10,21 @@ class TemplateSection extends AppModel {
   public $displayField = 'name';
   public $useTable = 'onlineapp_template_sections';
 
+  public $actsAs = array(
+    'Search.Searchable',
+    'Containable',
+    'Orderable' => array(
+      'fields' => array(
+        'order',
+        'name',
+        'width',
+        'rep_only',
+        'created',
+        'modified',
+      )
+    )
+  );
+
   public $validate = array(
     'name' => array(
       'notempty' => array(
