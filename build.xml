@@ -40,6 +40,8 @@
     <delete dir="${basedir}/build/logs"/>
     <delete dir="${basedir}/build/pdepend"/>
     <delete dir="${basedir}/build/phpdox"/>
+    <delete dir="${basedir}/app/webroot/coverage"/>
+    <delete dir="${basedir}/app/webroot/code-browser"/>
   </target>
 
   <target name="prepare" depends="clean"
@@ -162,7 +164,7 @@
   <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
     <exec executable="bash" dir="${basedir}">
       <arg value="-c" />
-      <arg value="phpcb --log 'build/logs' --source 'app' --output 'app/webroot/code-browser'" />
+      <arg value="phpcb --log 'build/logs' --source 'app' --output 'app/webroot/code-browser' --ignore 'app/Config,app/Console,app/Lib,app/Plugin,app/tmp,app/vendor,app/Vendor'" />
     </exec>
   </target>
 </project>
