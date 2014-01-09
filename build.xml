@@ -144,14 +144,9 @@
   <target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate">
     <exec executable="bash" failonerror="true" dir="${basedir}/app">
       <arg value="-c"/>
-      <arg value="Console/cake test app AllTests --stderr --log-junit '../build/reports/junit.xml' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml'"/>
+      <arg value="Console/cake test app AllTests --stderr --log-junit '../build/reports/junit.xml' --coverage-html 'webroot/coverage' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml'"/>
     </exec>
   </target>
-
-  <?ignore
-  TODO: figure out why the html generation fails '--coverage-html 'webroot/coverage'
-        also figure out why the standard xml/html comments don't work in this file.
-  ?>
 
   <target name="ensure-tmp-folders">
     <mkdir dir="${basedir}/app/tmp/"/>
