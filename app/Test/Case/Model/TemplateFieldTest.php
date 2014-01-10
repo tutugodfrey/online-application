@@ -173,7 +173,6 @@ class TemplateFieldTest extends CakeTestCase {
         'default_value' => '',
         'merge_field_name' => 'required_text_from_user_with_default',
         'section_id' => 1,
-        'order' => null
       )
     );
     $this->TemplateField->save($template_field_data, array('validate' => false));

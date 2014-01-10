@@ -47,7 +47,7 @@ class CobrandsController extends AppController {
   }
 
   public function admin_delete($id) {
-    $this->Cobrand->delete($id, false);
+    $this->Cobrand->delete($id);
     $this->Session->setFlash("Cobrand Deleted!");
     $this->redirect($this->_list_url);
   }

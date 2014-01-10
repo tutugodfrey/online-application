@@ -89,10 +89,10 @@ class TemplateField extends AppModel {
 
   private function getRelated($template_section_id) {
     $this->TemplateSection->id = $template_section_id;
-    $parentTemplateSection = $this->TemplateSection->read();
+    $parent = $this->TemplateSection->read();
 
-    $this->__templatePage = $parentTemplateSection['TemplatePage'];
-    $this->__templateSection = $parentTemplateSection['TemplateSection'];
+    $this->__templatePage = $parent['TemplatePage'];
+    $this->__templateSection = $parent['TemplateSection'];
 
     // look up the template
     $Template = ClassRegistry::init('Template');

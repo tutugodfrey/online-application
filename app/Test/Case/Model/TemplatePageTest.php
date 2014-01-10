@@ -170,7 +170,6 @@ class TemplatePageTest extends CakeTestCase {
         'name' => 'testSaveNew_order',
         'description' => '',
         'template_id' => '1',
-        'order' => null
       )
     );
     // NOTE: since we are explicitly passing an order value of null

@@ -63,7 +63,7 @@ class TemplatesController extends NestedResourceController {
   }
 
   public function admin_delete($id) {
-    $this->Template->delete($id, false);
+    $this->Template->delete($id);
     $this->Session->setFlash("Template Deleted!");
     $this->redirect($this->_getListUrl());
   }

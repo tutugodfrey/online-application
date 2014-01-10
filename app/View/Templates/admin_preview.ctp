@@ -1,6 +1,6 @@
 <br/><br/><br/>
-<div>
-  <div>
+<div class="container">
+  <div class="row">
     <h1>
     <?php
     echo String::insert(
@@ -12,7 +12,7 @@
     ); ?></h1>
   </div>
 
-  <div class="container">
+  <div class="row">
     <?php
     // TODO: use the Template->logo_position and include_axia_logo
     // to display this VVVV
@@ -65,43 +65,40 @@
           </h4>
         </div>
         <div class="panel-body panel-collapse collapse" id="<?php echo $page_id ?>">
-          <div class="accordion">
-            <div class="panel-group" id="section_accordion">
-              <div class="row">
-                <?php
-                $form_html = $this->Form->create($page['name']);
-                echo preg_replace('/(id="[^"]*)"/', '\1" class="onlineapp_preview_page"', $form_html);
-                foreach ($page['TemplateSections'] as $section):
-
-                  if ($is_admin || $section['rep_only'] !== true) {
-
-                    $section_id = str_replace($bad_characters, '', $section['name']);
-                ?>
-
-                  <div class="col-md-<?php echo $section['width']; ?>">
-
-                    <div class="panel panel-default">
-                      <div class="panel-heading">
-                        <h4 class="panel-title">
-                          <a data-toggle="collapse" data-parent="#section_accordion" href="#<?php echo $section_id ?>">
-                            <?php echo $section['name']; ?>
-                          </a>
-                        </h4>
-                      </div>
-                      <div class="panel-body panel-collapse collapse" id="<?php echo $section_id ?>">
-                        <div class="row">
-                        <?php echo $this->Element('Templates/Pages/Sections/Fields/genericField',
-                          array("fields" => $section['TemplateFields'], "bad_characters" => $bad_characters)); ?>
+          <div class="row">
+            <div class="accordion">
+              <div class="panel-group" id="section_accordion">
+                <div class="row">
+                  <?php
+                  $form_html = $this->Form->create($page['name']);
+                  echo preg_replace('/(id="[^"]*)"/', '\1" class="onlineapp_preview_page"', $form_html);
+                  foreach ($page['TemplateSections'] as $section):
+                    if ($is_admin || $section['rep_only'] !== true) {
+                      $section_id = str_replace($bad_characters, '', $section['name']);
+                  ?>
+                    <div class="col-md-<?php echo $section['width']; ?>">
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#section_accordion" href="#<?php echo $section_id ?>">
+                              <?php echo $section['name']; ?>
+                            </a>
+                          </h4>
+                        </div>
+                        <div class="panel-body panel-collapse collapse" id="<?php echo $section_id ?>">
+                          <div class="row">
+                          <?php echo $this->Element('Templates/Pages/Sections/Fields/genericField',
+                            array("fields" => $section['TemplateFields'], "bad_characters" => $bad_characters)); ?>
+                          </div>
                         </div>
                       </div>
                     </div>
-
-                  </div>
-                <?php
-                  }
-                endforeach;
-                ?><!-- end sections -->
-                <?php echo $this->Form->end(array('label' => 'Update', 'class' => 'hidden')); ?>
+                  <?php
+                    }
+                  endforeach;
+                  ?><!-- end sections -->
+                  <?php echo $this->Form->end(array('label' => 'Update', 'class' => 'hidden')); ?>
+                </div>
               </div>
             </div>
           </div>

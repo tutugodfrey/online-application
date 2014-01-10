@@ -137,7 +137,6 @@ class TemplateSectionTest extends CakeTestCase {
         'width' => 12,
         'description' => '',
         'page_id' => '1',
-        'order' => null,
       )
     );
     $this->TemplateSection->save($data, array('validate' => false));
