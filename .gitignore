@@ -11,6 +11,9 @@
 /node_modules
 /app/webroot/coverage
 /app/webroot/code-browser
+*~
+/app/Test/Case/Codeception/_data/
+/app/Test/Case/Codeception/_log/
 
 # OS generated files #
 ######################
