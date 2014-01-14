@@ -30,7 +30,7 @@ class TemplateFieldTest extends CakeTestCase {
 
     // drop all data in the db
     // NOTE: there should be a better way to do this
-    $this->Cobrand->query("SELECT truncate_tables('axia');");
+//    $this->Cobrand->query("SELECT truncate_tables('axia');");
 
     // load data
     $this->loadFixtures('OnlineappCobrand');
@@ -41,13 +41,24 @@ class TemplateFieldTest extends CakeTestCase {
   }
 
   public function tearDown() {
-    $this->TemplateField->deleteAll(true, true);
-    $this->TemplateSection->deleteAll(true, true);
-    $this->TemplatePage->deleteAll(true, true);
-    $this->Template->deleteAll(true, true);
-    $this->Cobrand->deleteAll(true, true);
+    $this->TemplateField->deleteAll(true, false);
+    $this->TemplateSection->deleteAll(true, false);
+    $this->TemplatePage->deleteAll(true, false);
+    $this->Template->deleteAll(true, false);
+    $query = 'ALTER TABLE onlineapp_users
+      DROP CONSTRAINT onlineapp_users_cobrand_fk;
+      UPDATE onlineapp_users SET cobrand_id = null;';
+    $this->Cobrand->query($query);
+    $this->Cobrand->deleteAll(true, false);
+    $query = 'ALTER TABLE onlineapp_users
+        ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
+    $this->Cobrand->query($query);
 
     unset($this->TemplateField);
+    unset($this->TemplateSection);
+    unset($this->TemplatePage);
+    unset($this->Template);
+    unset($this->Cobrand);
 
     parent::tearDown();
   }
