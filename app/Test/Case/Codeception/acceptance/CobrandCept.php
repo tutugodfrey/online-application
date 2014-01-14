@@ -90,7 +90,6 @@ $I->seeCurrentUrlEquals(CobrandPage::$URL);
 // edit - click on the first edit and see the edit form
 $I->wantTo('Ensure that I can edit a cobrand');
 $I->click(CobrandPage::$editButtonLabel);
-$I->seeCurrentUrlEquals(CobrandPage::$URL . '/edit/1');
 $I->see('Edit Cobrand'); // title
 $CB->checkCobrandForm();
 
