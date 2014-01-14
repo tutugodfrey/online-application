@@ -55,27 +55,60 @@
  */
 class DATABASE_CONFIG {
 
-	public $default = array(
-		'datasource' => 'Database/Postgres',
-		'persistent' => false,
-		'host' => 'localhost',
-		'login' => 'axia',
-		'password' => 'ax!a',
-		'database' => 'axia_legacy',
-		'schema' => 'public',
-		'prefix' => '',
-		//'encoding' => 'utf8',
-	);
+	//initalize variable as null
+	var $default=null;
 
-	public $test = array(
-		'datasource' => 'Database/Postgres',
-		'persistent' => false,
-		'host' => 'localhost',
-		'login' => 'axia',
-		'password' => 'ax!a',
-		'database' => 'test_legacy',
-		'schema' => 'public',
-		'prefix' => '',
-		//'encoding' => 'utf8',
-	);
+	//set up connection details to use in Live production server
+	var $prod = 
+		array(
+			// ... TODO: add this config
+		);
+
+	// and details to use on your local machine for testing and development
+	var $dev = 
+		array(
+			'datasource' => 'Database/Postgres',
+			'persistent' => false,
+			'host' => 'localhost',
+			'login' => 'axia',
+			'password' => 'ax!a',
+			'database' => 'axia_legacy',
+			'schema' => 'public',
+			'prefix' => '',
+			//'encoding' => 'utf8',
+		);
+
+	var $test = 
+		array(
+			'datasource' => 'Database/Postgres',
+			'persistent' => false,
+			'host' => 'localhost',
+			'login' => 'axia',
+			'password' => 'ax!a',
+			'database' => 'test_legacy',
+			'schema' => 'public',
+			'prefix' => '',
+			//'encoding' => 'utf8',
+		);
+
+	function __construct () {
+		// convert to regex to test for '*-test'
+		if(isset($_SERVER['SERVER_NAME'])){
+		    switch($_SERVER['SERVER_NAME']){
+		        case 'todo-change-to-prod-onlineapp-url.axiapayments.com':
+					$this->default = $this->prod;
+					break;
+				case 'app-travis-test.axiapayments.com':
+					$this->default = $this->test;
+					break;
+				default:
+					$this->default = $this->dev;
+		            break;
+			}
+		}
+		else // we are likely baking, use our local db
+		{
+			$this->default = $this->dev;
+		}
+	}
 }

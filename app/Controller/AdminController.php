@@ -17,7 +17,7 @@ class AdminController extends AppController {
         array('Settings', '/admin/settings/'),
         array('Users', '/admin/users/'),
         array('Groups', '/admin/groups/'),
-        array('Cobrands', '/admin/Cobrands/'),
+        array('Cobrands', '/admin/cobrands'),
         array('Multipass', '/admin/multipasses/'),
         array('API IP restrictions', '/admin/apips/'),
         array('API Logs', '/admin/apiLogs/'),

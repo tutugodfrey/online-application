@@ -2,20 +2,20 @@
 	<h2><?php echo __('Cobrands'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
-			<th><?php echo $this->Paginator->sort('id'); ?></th>
-			<th><?php echo $this->Paginator->sort('partner_name'); ?></th>
-			<th><?php echo $this->Paginator->sort('partner_name_short'); ?></th>
-			<th><?php echo $this->Paginator->sort('logo_url'); ?></th>
-			<th><?php echo $this->Paginator->sort('description'); ?></th>
-			<th><?php echo $this->Paginator->sort('created'); ?></th>
-			<th><?php echo $this->Paginator->sort('modified'); ?></th>
-			<th class="actions"><?php echo __('Actions'); ?></th>
+		<th><?php echo $this->Paginator->sort('id'); ?></th>
+		<th><?php echo $this->Paginator->sort('partner_name'); ?></th>
+		<th><?php echo $this->Paginator->sort('partner_name_short'); ?></th>
+		<th><?php echo $this->Paginator->sort('logo_url'); ?></th>
+		<th><?php echo $this->Paginator->sort('description'); ?></th>
+		<th><?php echo $this->Paginator->sort('created'); ?></th>
+		<th><?php echo $this->Paginator->sort('modified'); ?></th>
+		<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	<?php foreach ($cobrands as $cobrand): ?>
-	<tr>
-		<td><?php echo h($cobrand['Cobrand']['id']); ?>&nbsp;</td>
-		<td><?php echo h($cobrand['Cobrand']['partner_name']); ?>&nbsp;</td>
-		<td><?php echo h($cobrand['Cobrand']['partner_name_short']); ?>&nbsp;</td>
+	<tr class="<?php echo $cobrand['Cobrand']['partner_name_short'] ?>">
+		<td><?php echo h($cobrand['Cobrand']['id']); ?></td>
+		<td><?php echo h($cobrand['Cobrand']['partner_name']); ?></td>
+		<td><?php echo h($cobrand['Cobrand']['partner_name_short']); ?></td>
 		<td><?php
 			$logo_url = $cobrand['Cobrand']['logo_url'];
 			$pos = strpos($logo_url, '/');
@@ -25,10 +25,10 @@
 				// assume it is a url
 				echo $this->Html->link($logo_url);
 			}
-		?>&nbsp;</td>
-		<td><?php echo h($cobrand['Cobrand']['description']); ?>&nbsp;</td>
-		<td><?php echo h($cobrand['Cobrand']['created']); ?>&nbsp;</td>
-		<td><?php echo h($cobrand['Cobrand']['modified']); ?>&nbsp;</td>
+		?></td>
+		<td><?php echo h($cobrand['Cobrand']['description']); ?></td>
+		<td><?php echo h($cobrand['Cobrand']['created']); ?></td>
+		<td><?php echo h($cobrand['Cobrand']['modified']); ?></td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $cobrand['Cobrand']['id'])); ?>
 			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $cobrand['Cobrand']['id']), null, __('Are you sure you want to delete # %s?', $cobrand['Cobrand']['id'])); ?>
