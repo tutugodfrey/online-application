@@ -42,12 +42,6 @@ class TemplateField extends AppModel {
         'message' => array('Template field type cannot be empty'),
       ),
     ),
-    'required' => array(
-      'boolean' => array(
-        'rule' => array('boolean'),
-        'message' => array('Invalid required value used'),
-      ),
-    ),
     'source' => array(
       'notempty' => array(
         'rule' => array('notempty'),

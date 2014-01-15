@@ -25,7 +25,7 @@ class SectionPage
 	public static $cancelButtonLabel = 'Cancel';
 	public static $submitButtonLabel = 'Submit';
 	public static $deleteButtonLabel = 'Delete';
-	public static $listChildrenButtonLabel = 'List Sections';
+	public static $listChildrenButtonLabel = 'List Fields';
 
 	// action titles
 	public static $addActionTitle = 'Add Template Section';

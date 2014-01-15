@@ -5,6 +5,7 @@ $CC = new CobrandController($I);
 $TC = new TemplateController($I);
 $PC = new PageController($I);
 $SC = new SectionController($I);
+$FC = new FieldController($I);
 
 // authenticate
 $UL->login();
@@ -40,7 +41,7 @@ $partner_description = 'Cobrand_1 description goes here';
 $CC->fillCobrandForm($partner_name, $partner_name_short, $logo_url, $partner_description);
 $I->click(CobrandPage::$submitButtonLabel);
 
-// should be redirected to the /admin/cobrands page and see Cobrand Saved!
+// should be redirected and see Cobrand Saved!
 $I->seeCurrentUrlEquals(CobrandPage::$url);
 $I->see(CobrandPage::$savedMsg);
 $I->see($partner_name);
@@ -106,7 +107,7 @@ $description = 'Template_1 description goes here';
 $TC->fillForm($templateName, $logoPosition, $includeAxiaLogo, $description);
 $I->click(TemplatePage::$submitButtonLabel);
 
-// should be redirected to the /admin/Templates page and see Template Saved!
+// should be redirected and see Template Saved!
 $I->seeCurrentUrlMatches(TemplatePage::$url);
 $I->see(TemplatePage::$savedMsg);
 $I->see($templateName);
@@ -170,7 +171,7 @@ $description = 'Page_1 description goes here';
 $PC->fillForm($pageName, $description);
 $I->click(PagePage::$submitButtonLabel);
 
-// should be redirected to the /admin/Pages page and see Page Saved!
+// should be redirected and see Page Saved!
 $I->seeCurrentUrlMatches(PagePage::$url);
 $I->see(PagePage::$savedMsg);
 $I->see($pageName);
@@ -233,7 +234,7 @@ $description = 'Section_1 description goes here';
 $SC->fillForm($sectionName, $width, $description);
 $I->click(SectionPage::$submitButtonLabel);
 
-// should be redirected to the /admin/Sections section and see Section Saved!
+// should be redirected and see Section Saved!
 $I->seeCurrentUrlMatches(SectionPage::$url);
 $I->see(SectionPage::$savedMsg);
 $I->see($sectionName);
@@ -264,16 +265,85 @@ $I->click(SectionPage::$submitButtonLabel);
 // Submit the edit form
 $I->seeCurrentUrlMatches(SectionPage::$url);
 $I->see(SectionPage::$savedMsg);
-/*
+
 $I->wantTo('Ensure that I can manipulate template sections');
 $I->see(SectionPage::$listChildrenButtonLabel);
 $I->click(SectionPage::$listChildrenButtonLabel);
 $I->seeCurrentUrlMatches(FieldPage::$url);
-*/
 /*************** End Section **************/
 
 
 /***************** Field ****************/
+// add a new field
+$I->wantTo('Ensure that I can add a Field');
+$I->see(FieldPage::$newButtonLabel);
+$I->click(FieldPage::$newButtonLabel);
+$I->seeCurrentUrlMatches(FieldPage::$urlAdd);
+$I->see(FieldPage::$addActionTitle);
+
+$FC->checkForm();
+
+// I don't add any values and click submit
+$I->click(FieldPage::$submitButtonLabel);
+
+// I see errors
+$I->seeCurrentUrlMatches(FieldPage::$urlAdd);
+$I->see('Field name cannot be empty');
+$I->see('Invalid width value used, please select a number between 1 and 12');
+$I->see('Template field type cannot be empty');
+$I->see('Template field source cannot be empty');
+$I->see('Template field merge_field_name cannot be empty');
+
+// add required fields and click submit
+$fieldName = 'field_1';
+$fieldWidth = 12;
+$fieldDescription = 'Field_1 description goes here';
+$fieldRequired = true;
+$fieldSource = 'user';
+$fieldType = 'text';
+$fieldDefaultValue = 'defaultValue';
+$fieldMergeFieldName = 'mergeFieldName';
+
+$FC->fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription);
+$I->click(FieldPage::$submitButtonLabel);
+
+// should be redirected and see Field Saved!
+$I->seeCurrentUrlMatches(FieldPage::$url);
+$I->see(FieldPage::$savedMsg);
+$I->see($fieldName);
+$I->see($fieldWidth);
+$I->see($fieldType);
+$I->see($fieldRequired);
+$I->see($fieldSource);
+$I->see($fieldDefaultValue);
+$I->see($fieldMergeFieldName);
+$I->see($fieldDescription);
+
+// this time click cancel on the add form
+$I->wantTo('Ensure that clicking cancel goes back to the lists field');
+$I->see(FieldPage::$newButtonLabel);
+$I->click(FieldPage::$newButtonLabel);
+
+// I see add Field form
+$I->seeCurrentUrlMatches(FieldPage::$urlAdd);
+$I->see(FieldPage::$addActionTitle); // title
+$FC->checkForm();
+
+// click cancel
+$I->click(FieldPage::$cancelButtonLabel);
+$I->seeCurrentUrlMatches(FieldPage::$url);
+
+// edit - click on the first edit and see the edit form
+$I->wantTo('Ensure that I can edit a Field');
+$I->click(FieldPage::$editButtonLabel);
+$I->see(FieldPage::$editActionTitle); // title
+$FC->checkForm();
+
+$I->click(FieldPage::$submitButtonLabel);
+
+// Submit the edit form
+$I->seeCurrentUrlMatches(FieldPage::$url);
+$I->see(FieldPage::$savedMsg);
 /*************** End Field **************/
 
 /*-------------- CLEAN UP!!!------------*/
@@ -282,8 +352,11 @@ $newCobrandId =  $I->grabFromDatabase('onlineapp_cobrands', 'id', array('partner
 $newTemplateId = $I->grabFromDatabase('onlineapp_templates', 'id', array('name' => $templateName));
 $newPageId =     $I->grabFromDatabase('onlineapp_template_pages', 'id', array('name' => $pageName));
 $newSectionId =  $I->grabFromDatabase('onlineapp_template_sections', 'id', array('name' => $sectionName));
+$newFieldId =  $I->grabFromDatabase('onlineapp_template_fields', 'id', array('name' => $fieldName));
 
 // delete field
+$I->wantTo('Ensure that I can delete a template field');
+$I->sendAjaxPostRequest('/admin/templatesections/'.$newSectionId.'/templatefields/delete/'.$newFieldId, array('_method' => 'POST', 'notifications' => true));
 
 // delete section
 $I->wantTo('Ensure that I can delete a template section');

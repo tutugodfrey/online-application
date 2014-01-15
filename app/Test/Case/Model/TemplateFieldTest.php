@@ -134,7 +134,6 @@ class TemplateFieldTest extends CakeTestCase {
       'name' => array('Template field name cannot be empty'),
       'width' => array('Invalid width value used, please select a number between 1 and 12'),
       'type' => array('Template field type cannot be empty'),
-      'required' => array('Invalid required value used'),
       'source' => array('Template field source cannot be empty'),
       'merge_field_name' => array('Template field merge_field_name cannot be empty'),
       'order' => array('Invalid order value used'),

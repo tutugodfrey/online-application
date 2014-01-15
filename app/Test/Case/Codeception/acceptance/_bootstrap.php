@@ -10,3 +10,5 @@ require_once 'PagePage.php';
 require_once 'PageController.php';
 require_once 'SectionPage.php';
 require_once 'SectionController.php';
+require_once 'FieldPage.php';
+require_once 'FieldController.php';
