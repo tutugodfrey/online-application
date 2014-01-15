@@ -16,7 +16,7 @@ class TemplateSectionsController extends NestedResourceController {
       // we know the page_id from the uri
       $data['TemplateSection']['page_id'] = $this->_getParentControllerId();
       if ($this->TemplateSection->save($data)) {
-        $this->Session->setFlash("TemplateSection Saved!");
+        $this->Session->setFlash("Template Section Saved!");
         $this->redirect($this->_getListUrl());
       }
     }

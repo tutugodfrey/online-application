@@ -1,7 +1,9 @@
 <?php
 class CobrandPage
 {
-	public static $URL = '/admin/cobrands';
+	public static $url = '/admin/cobrands';
+	public static $urlAdd = '/admin/cobrands/add';
+	public static $urlEdit = '~^/admin/cobrands/edit/\d*$~';
 
 	// form fields and labels
 	public static $partnerNameField = 'CobrandPartnerName';
@@ -17,17 +19,18 @@ class CobrandPage
 	public static $descriptionLabel = 'Description';
 
 	// buttons
-	public static $newCobrandButtonLabel = 'New Cobrand';
+	public static $newButtonLabel = 'New Cobrand';
 	public static $editButtonLabel = 'Edit';
 	public static $cancelButtonLabel = 'Cancel';
 	public static $submitButtonLabel = 'Submit';
 	public static $deleteButtonLabel = 'Delete';
+	public static $listChildrenButtonLabel = 'List Templates';
 
 	// action titles
-	public static $addCobrand = 'Add Cobrand';
-	public static $editCobrand = 'Edit Cobrand';
+	public static $addActionTitle = 'Add Cobrand';
+	public static $editActionTitle = 'Edit Cobrand';
 
 	// action messages
-	public static $cobrandSavedMsg = 'Cobrand Saved!';
-	public static $cobrandDeletedMsg = 'Cobrand Deleted!';
+	public static $savedMsg = 'Cobrand Saved!';
+	public static $deletedMsg = 'Cobrand Deleted!';
 }
