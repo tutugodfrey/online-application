@@ -25,10 +25,6 @@ class TemplateSectionTest extends CakeTestCase {
     $this->TemplatePage = ClassRegistry::init('TemplatePage');
     $this->TemplateSection = ClassRegistry::init('TemplateSection');
 
-    // drop all data in the db
-    // NOTE: there should be a better way to do this
-//    $this->Cobrand->query("SELECT truncate_tables('axia');");
-
     // load data
     $this->loadFixtures('OnlineappCobrand');
     $this->loadFixtures('OnlineappTemplate');

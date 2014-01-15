@@ -28,9 +28,6 @@ class TemplateFieldTest extends CakeTestCase {
     $this->TemplateSection = ClassRegistry::init('TemplateSection');
     $this->TemplateField = ClassRegistry::init('TemplateField');
 
-    // drop all data in the db
-    // NOTE: there should be a better way to do this
-//    $this->Cobrand->query("SELECT truncate_tables('axia');");
 
     // load data
     $this->loadFixtures('OnlineappCobrand');

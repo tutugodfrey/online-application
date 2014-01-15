@@ -10,7 +10,7 @@
 		echo $this->Form->input(
 			'logo_position',
 			array(
-				'options' => $logo_position_types,
+				'options' => $logoPositionTypes,
 				'empty' => __('(choose one)')
 			)
 		);

@@ -288,6 +288,7 @@ $I->click(FieldPage::$submitButtonLabel);
 
 // I see errors
 $I->seeCurrentUrlMatches(FieldPage::$urlAdd);
+$I->see('Unable to add your field.');
 $I->see('Field name cannot be empty');
 $I->see('Invalid width value used, please select a number between 1 and 12');
 $I->see('Template field type cannot be empty');
@@ -338,6 +339,8 @@ $I->wantTo('Ensure that I can edit a Field');
 $I->click(FieldPage::$editButtonLabel);
 $I->see(FieldPage::$editActionTitle); // title
 $FC->checkForm();
+
+// TODO: change a field such that the form cannot be saved
 
 $I->click(FieldPage::$submitButtonLabel);
 

@@ -15,10 +15,6 @@ class TemplateTest extends CakeTestCase {
     $this->Cobrand = ClassRegistry::init('Cobrand');
     $this->Template = ClassRegistry::init('Template');
 
-    // drop all data in the db
-    // NOTE: there should be a better way to do this
-//    $this->Template->query("SELECT truncate_tables('axia');");
-
     // load data
     $this->loadFixtures('OnlineappCobrand');
     $this->loadFixtures('OnlineappTemplate');

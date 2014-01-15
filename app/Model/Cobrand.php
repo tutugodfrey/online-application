@@ -7,48 +7,50 @@ App::uses('AppModel', 'Model');
  * @property User $User
  */
 class Cobrand extends AppModel {
-  public $displayField = 'partner_name';
-  public $useTable = 'onlineapp_cobrands';
 
-  public $validate = array(
-    'partner_name' => array(
-      'notempty' => array(
-        'rule' => array('notempty'),
-        'required' => true,
-        'message'  => 'Partner name cannot be empty'
-      ),
-    ),
-    'partner_name_short' => array(
-      'notempty' => array(
-        'rule' => array('notempty'),
-        'required' => true,
-        'message'  => 'Short partner name cannot be empty'
-      ),
-    ),
-  );
+	public $displayField = 'partner_name';
 
-  //The Associations below have been created with all possible keys, those that are not needed can be removed
+	public $useTable = 'onlineapp_cobrands';
+
+	public $validate = array(
+		'partner_name' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'required' => true,
+				'message' => 'Partner name cannot be empty'
+			),
+		),
+		'partner_name_short' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'required' => true,
+				'message' => 'Short partner name cannot be empty'
+			),
+		),
+	);
+
+	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
 /**
  * hasMany associations
  *
  * @var array
  */
-  public $hasMany = array(
-    'Users' => array(
-      'className' => 'User',
-      'foreignKey' => 'cobrand_id',
-      'dependent' => false,
-    ),
-    'Templates' => array(
-      'className' => 'Template',
-      'foreignKey' => 'cobrand_id',
-      'dependent' => true,
-    )
-  );
+	public $hasMany = array(
+		'Users' => array(
+			'className' => 'User',
+			'foreignKey' => 'cobrand_id',
+			'dependent' => false,
+		),
+		'Templates' => array(
+			'className' => 'Template',
+			'foreignKey' => 'cobrand_id',
+			'dependent' => true,
+		)
+	);
 
-  public function getList() {
-    return $this->find('list',
-      array('order' => array('Cobrand.partner_name' => 'asc')));
-  }
+	public function getList() {
+		return $this->find('list',
+			array('order' => array('Cobrand.partner_name' => 'asc')));
+	}
 }

@@ -39,7 +39,7 @@
           '</div>',
           array(
             'partner_logo' => $partner_logo,
-            'position' => $logo_position_types[$logo_position]
+            'position' => $logoPositionTypes[$logo_position]
           )
         );
       } // else don't show the logo

@@ -14,15 +14,12 @@ class CobrandTest extends CakeTestCase {
 		parent::setUp();
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 
-		// drop all data in the db
-		// NOTE: there should be a better way to do this
-//		$this->Cobrand->query("SELECT truncate_tables('axia');");
-
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
 	}
 
 	public function tearDown() {
+		// need to update this sql to be a little more flexible
 		$query = 'ALTER TABLE onlineapp_users
 			DROP CONSTRAINT onlineapp_users_cobrand_fk;
 			UPDATE onlineapp_users SET cobrand_id = null;';

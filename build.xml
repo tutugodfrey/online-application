@@ -35,7 +35,6 @@
   <target name="clean"
     description="Cleanup build artifacts">
     <delete dir="${basedir}/build/api"/>
-    <delete dir="${basedir}/build/code-browser"/>
     <delete dir="${basedir}/build/coverage"/>
     <delete dir="${basedir}/build/logs"/>
     <delete dir="${basedir}/build/pdepend"/>
@@ -47,7 +46,6 @@
   <target name="prepare" depends="clean"
     description="Prepare for build">
     <mkdir dir="${basedir}/build/api"/>
-    <mkdir dir="${basedir}/build/code-browser"/>
     <mkdir dir="${basedir}/build/coverage"/>
     <mkdir dir="${basedir}/build/logs"/>
     <mkdir dir="${basedir}/build/pdepend"/>
@@ -118,7 +116,7 @@
     description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
     <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpcs -v -n --standard=CakePHP --report=summary --ignore=Console,Plugin,tmp,vendor,Vendor,webroot 'app'"/>
+      <arg value="phpcs -v -n --standard=CakePHP --report=summary --ignore=Console,Plugin,tmp,vendor,Vendor,webroot,.css,.js 'app'"/>
     </exec>
   </target>
 
@@ -126,7 +124,7 @@
     description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
     <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,vendor,Vendor,webroot --report-full='build/logs/phpcs_full.txt' 'app'"/>
+      <arg value="phpcs -n --standard=CakePHP --ignore=Console,Plugin,tmp,Test,vendor,Vendor,webroot,.css,.js --report-full='build/logs/phpcs_full.txt' 'app'"/>
     </exec>
   </target>
 
