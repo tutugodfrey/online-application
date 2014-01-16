@@ -90,7 +90,7 @@
     description="Calculate software metrics using PHP_Depend">
     <exec executable="bash" dir="${basedir}">
       <arg value="-c"/>
-      <arg value="pdepend --summary-xml='build/pdepend/summary.xml' --jdepend-chart='build/pdepend/dependencies.svg' --overview-pyramid='build/pdepend/overview-pyramid.svg' --jdepend-xml='build/log/jdepend.xml' --ignore=Console,Locale,Plugin,vendor,Vendor 'app'"/>
+      <arg value="pdepend --summary-xml='build/pdepend/summary.xml' --jdepend-chart='build/pdepend/dependencies.svg' --overview-pyramid='build/pdepend/overview-pyramid.svg' --jdepend-xml='build/logs/jdepend.xml' --ignore=Console,Locale,Plugin,vendor,Vendor 'app'"/>
     </exec>
   </target>
 
