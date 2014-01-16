@@ -5,7 +5,7 @@
   ));
   ?></p>
   <div class="paging">
-  <?php echo "\t" . $this->Paginator->prev('<< ' . __('previous'), array(), null, array('class' => 'disabled')) . "\n";?>
+  <?php echo "\t" . $this->Paginator->prev('<< ' . __('previous'), array('tag' => 'span'), null, array('class' => 'disabled')) . "\n";?>
    | <?php echo $this->Paginator->numbers() . "\n"?>
-  <?php echo "\t ". $this->Paginator->next(__('next') .' >>', array(), null, array('class' => 'disabled')) . "\n";?>
+  <?php echo "\t ". $this->Paginator->next(__('next') .' >>', array('tag' => 'span'), null, array('class' => 'disabled')) . "\n";?>
   </div>

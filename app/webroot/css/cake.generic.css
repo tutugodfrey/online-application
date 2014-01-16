@@ -26,7 +26,7 @@ body {
 	background: #003d4c;
 	color: #fff;
 	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
-	font-size:90%;
+	/*font-size:90%;*/
 	margin: 0;
 }
 a {
@@ -48,18 +48,18 @@ h1, h2, h3, h4 {
 h1 {
 	background:#fff;
 	color: #003d4c;
-	font-size: 100%;
+	/*font-size: 100%;*/
 }
 h2 {
 	background:#fff;
 	color: #e32;
 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
-	font-size: 190%;
+	/*font-size: 190%;*/
 }
 h3 {
 	color: #993;
 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
-	font-size: 165%;
+	/*font-size: 165%;*/
 }
 h4 {
 	color: #993;
@@ -214,9 +214,12 @@ div.paging {
 	margin-top: 1em;
 	clear:both;
 }
-div.paging span.disabled {
+div.paging span.disabled,
+div.paging span.disabled a {
 	color: #ddd;
 	display: inline;
+	cursor: default;
+	text-decoration: none;
 }
 div.paging span.current {
 	color: #c73e14;
