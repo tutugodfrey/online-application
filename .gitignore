@@ -9,6 +9,7 @@
 /dist
 /tags
 /node_modules
+/app/webroot/api
 /app/webroot/coverage
 /app/webroot/code-browser
 *~
