@@ -16,17 +16,15 @@ class TemplatesController extends NestedResourceController {
 			$data = Sanitize::clean($this->request->data);
 			// set the cobrand_id
 			$data['Template']['cobrand_id'] = $this->_getParentControllerId();
+			$this->Template->create();
 			if ($this->Template->save($data)) {
 				$this->Session->setFlash("Template Saved!");
-				$this->redirect($this->_getListUrl());
+				return $this->redirect($this->_getListUrl());
 			}
+			$this->Session->setFlash(__('Unable to add your template'));
 		}
 
-		// is this the way to access another model?
-		$Cobrand = ClassRegistry::init('Cobrand');
-		$this->set('cobrands', $Cobrand->getList());
-		$this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
-		$this->set('logoPositionTypes', $this->Template->logoPositionTypes);
+		$this->__setCommonViewVariables();
 	}
 
 	public function admin_edit($idToEdit) {
@@ -34,18 +32,17 @@ class TemplatesController extends NestedResourceController {
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Template->read();
 		} else {
-			// try to update the template
-			if ($this->Template->saveAll(Sanitize::clean($this->request->data))) {
+			$data = Sanitize::clean($this->request->data);
+			// we know the cobrand_id from the uri
+			$data['Template']['cobrand_id'] = $this->_getParentControllerId();
+			if ($this->Template->saveAll(Sanitize::clean($data))) {
 				$this->Session->setFlash("Template Saved!");
-				$this->redirect($this->_getListUrl());
+				return $this->redirect($this->_getListUrl());
 			}
+			$this->Session->setFlash(__('Unable to update your template'));
 		}
 
-		// is this the way to access another model?
-		$Cobrand = ClassRegistry::init('Cobrand');
-		$this->set('cobrands', $Cobrand->getList());
-		$this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
-		$this->set('logoPositionTypes', $this->Template->logoPositionTypes);
+		$this->__setCommonViewVariables();
 	}
 
 	public function admin_index() {
@@ -58,15 +55,19 @@ class TemplatesController extends NestedResourceController {
 		$data = $this->paginate('Template');
 		$this->set('templates', $data);
 		$this->set('scaffoldFields', array_keys($this->Template->schema()));
-		$this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
-		$this->set('list_url', $this->_getListUrl());
-		$this->set('logoPositionTypes', $this->Template->logoPositionTypes);
+		$this->__setCommonViewVariables();
 	}
 
 	public function admin_delete($idToDelete) {
 		$this->Template->delete($idToDelete);
 		$this->Session->setFlash("Template Deleted!");
 		$this->redirect($this->_getListUrl());
+	}
+
+	private function __setCommonViewVariables() {
+		$this->set('list_url', $this->_getListUrl());
+		$this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
+		$this->set('logoPositionTypes', $this->Template->logoPositionTypes);
 	}
 
 	public function admin_preview($idToPreview) {

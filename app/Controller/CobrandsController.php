@@ -16,10 +16,12 @@ class CobrandsController extends AppController {
 
 		if ($this->request->is('post')) {
 			$data = Sanitize::clean($this->request->data);
+			$this->Cobrand->create();
 			if ($this->Cobrand->save($data)) {
 				$this->Session->setFlash("Cobrand Saved!");
 				$this->redirect($this->_listUrl);
 			}
+			$this->Session->setFlash(__('Unable to add your cobrand'));
 		}
 	}
 
@@ -31,14 +33,15 @@ class CobrandsController extends AppController {
 			// try to update the cobrand
 			if ($this->Cobrand->saveAll(Sanitize::clean($this->request->data))) {
 				$this->Session->setFlash("Cobrand Saved!");
-				$this->redirect($this->_listUrl);
+				return $this->redirect($this->_listUrl);
 			}
+			$this->Session->setFlash(__('Unable to update your cobrand'));
 		}
 	}
 
 	public function admin_index() {
 		$this->paginate = array(
-			'limit' => 10,
+			'limit' => 25,
 			'order' => array('Cobrand.partner_name' => 'asc'),
 		);
 
