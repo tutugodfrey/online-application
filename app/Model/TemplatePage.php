@@ -88,4 +88,8 @@ class TemplatePage extends AppModel {
 
 		return $includeAssc ? $template : $template['Template'];
 	}
+
+	public function afterSave($model, $created, $options = array()) {
+		
+	}
 }

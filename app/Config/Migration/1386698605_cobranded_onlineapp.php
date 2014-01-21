@@ -112,6 +112,11 @@ class CobrandedOnlineapp extends CakeMigration {
 						'type' => 'text',
 						'null' => true
 					),
+					'rep_only' => array(
+						'type' => 'boolean',
+						'null' => false,
+						'default' => false,
+					),
 					'template_id' => array(
 						'type' => 'integer',
 						'null' => false
@@ -195,6 +200,11 @@ class CobrandedOnlineapp extends CakeMigration {
 					'description' => array(
 						'type' => 'text',
 						'null' => true
+					),
+					'rep_only' => array(
+						'type' => 'boolean',
+						'null' => false,
+						'default' => false,
 					),
 					'width' => array(
 						'type' => 'integer',
@@ -445,6 +455,7 @@ class CobrandedOnlineapp extends CakeMigration {
 					'TemplatePage' => array(
 						'name' => $page['name'],
 						'order' => $pageOrder,
+						'rep_only' => (array_key_exists('rep_only', $page) ? $page['rep_only'] : false),
 						'template_id' => $defaultTemplateId
 					)
 				)
@@ -503,6 +514,7 @@ class CobrandedOnlineapp extends CakeMigration {
 									'source' => (array_key_exists('source', $field) ? $field['source'] : 2), // 2 == n/a
 									'default_value' => (array_key_exists('default_value', $field) ? $field['default_value'] : ''),
 									'merge_field_name' => $merge_field_name,
+									'rep_only' => (array_key_exists('rep_only', $field) ? $field['rep_only'] : false),
 								)
 							);
 							if (!$TemplateField->save($newField)) {
@@ -1653,6 +1665,7 @@ class CobrandedOnlineapp extends CakeMigration {
 		),
 		array(
 			'name' => 'Validate Application',
+			'rep_only' => true,
 			'sections' => array(
 				array(
 					'name' => 'Rep only',

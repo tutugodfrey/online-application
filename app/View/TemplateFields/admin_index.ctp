@@ -41,6 +41,7 @@ $this->Html->addCrumb(
 			<th><?php echo $this->Paginator->sort('order'); ?></th>
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
 			<th><?php echo $this->Paginator->sort('width'); ?></th>
+			<th><?php echo $this->Paginator->sort('rep_only'); ?></th>
 			<th><?php echo $this->Paginator->sort('type'); ?></th>
 			<th><?php echo $this->Paginator->sort('required'); ?></th>
 			<th><?php echo $this->Paginator->sort('source'); ?></th>
@@ -55,6 +56,7 @@ $this->Html->addCrumb(
 			<td><?php echo h($templateField['TemplateField']['order']); ?>&nbsp;</td>
 			<td><?php echo $this->Html->tag('div', $templateField['TemplateField']['name'], array('class' => 'help', 'title' => strlen($templateField['TemplateField']['description']) > 0 ? $templateField['TemplateField']['description'] : 'No description saved')); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['width']); ?>&nbsp;</td>
+			<td><?php echo $templateField['TemplateField']['rep_only'] === true ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'Only the rep sees this field')) : ''; ?>&nbsp;</td>
 			<td><?php echo h($fieldTypes[$templateField['TemplateField']['type']]); ?>&nbsp;</td>
 			<td><?php echo $templateField['TemplateField']['required'] == 1 ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'required')) : ''; ?>&nbsp;</td>
 			<td><?php echo h($sourceTypes[$templateField['TemplateField']['source']]); ?>&nbsp;</td>

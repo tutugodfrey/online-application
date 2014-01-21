@@ -101,7 +101,8 @@ class TemplateFieldTest extends CakeTestCase {
       'template_id' => 1,
       'order' => 0,
       'created' => '2013-12-18 09:26:45',
-      'modified' => '2013-12-18 09:26:45'
+      'modified' => '2013-12-18 09:26:45',
+      'rep_only' => false,
     );
 
     $returned_template_page = $this->TemplateField->getTemplatePage($section_id);

@@ -16,8 +16,9 @@ $this->Html->addCrumb(
   <?php
     echo $this->Form->input('id');
     echo $this->Form->input('name');
-    echo $this->Form->input('description');
+    echo $this->Form->input('rep_only');
     echo $this->Form->input('order', array('min' => 0));
+    echo $this->Form->input('description');
     echo $this->Form->hidden('template_id');
   ?>
   </fieldset>

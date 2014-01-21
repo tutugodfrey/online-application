@@ -24,6 +24,7 @@ $this->Html->addCrumb(
 		<tr>
 			<th><?php echo $this->Paginator->sort('order'); ?></th>
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
+			<th><?php echo $this->Paginator->sort('rep_only'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions">Actions</th>
@@ -32,6 +33,7 @@ $this->Html->addCrumb(
 		<tr>
 			<td><?php echo h($templatePage['TemplatePage']['order']); ?>&nbsp;</td>
 			<td><?php echo $this->Html->tag('div', $templatePage['TemplatePage']['name'], array('class' => 'help', 'title' => strlen($templatePage['TemplatePage']['description']) > 0 ? $templatePage['TemplatePage']['description'] : 'No description saved')); ?>&nbsp;</td>
+			<td><?php echo $templatePage['TemplatePage']['rep_only'] === true ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'Only the rep sees this page')) : ''; ?>&nbsp;</td>
 			<td><?php echo h($templatePage['TemplatePage']['created']); ?>&nbsp;</td>
 			<td><?php echo h($templatePage['TemplatePage']['modified']); ?>&nbsp;</td>
 			<td class="actions">

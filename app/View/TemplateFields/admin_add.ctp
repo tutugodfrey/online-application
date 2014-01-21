@@ -31,7 +31,7 @@ $this->Html->addCrumb(
   <?php
     echo $this->Form->input('name');
     echo $this->Form->input('width', array('min' => 1, 'max' => 12));
-    echo $this->Form->input('description');
+    echo $this->Form->input('rep_only');
     echo $this->Form->input(
       'type',
       array(
@@ -49,6 +49,7 @@ $this->Html->addCrumb(
     );
     echo $this->Form->input('default_value');
     echo $this->Form->input('merge_field_name');
+    echo $this->Form->input('description');
   ?>
   </fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

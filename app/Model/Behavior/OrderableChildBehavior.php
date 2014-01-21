@@ -64,7 +64,7 @@ class OrderableChildBehavior extends ModelBehavior {
 		}
 	}
 
-	public function beforeDelete(Model $model) {
+	public function beforeDelete(Model $model, $cascade = true) {
 		$behaviorObject = $model->read();
 		$this->__parentId = $behaviorObject[$this->settings[$model->alias]['parent_model_name']]['id'];
 	}

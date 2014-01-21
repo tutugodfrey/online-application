@@ -12,6 +12,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
       'merge_field_name' => 'required_text_from_user_with_default',
       'order' => 0,
       'section_id' => 1,
+      'rep_only' => false,
       'created' => '2013-12-18 14:10:17',
       'modified' => '2013-12-18 14:10:17'
     ),
@@ -26,6 +27,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
       'merge_field_name' => 'required_text_from_user_with_default',
       'order' => 1,
       'section_id' => 1,
+      'rep_only' => false,
       'created' => '2013-12-18 14:10:17',
       'modified' => '2013-12-18 14:10:17'
     ),
@@ -40,6 +42,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
       'merge_field_name' => 'required_text_from_user_with_default',
       'order' => 2,
       'section_id' => 1,
+      'rep_only' => false,
       'created' => '2013-12-18 14:10:17',
       'modified' => '2013-12-18 14:10:17'
     ),

@@ -15,6 +15,7 @@ $this->Html->addCrumb(
 		<legend><?php echo String::insert(__('Add Template Page for ":template_name" '), array("template_name" => $template['name'])); ?></legend>
 	<?php
 		echo $this->Form->input('name');
+		echo $this->Form->input('rep_only');
 		echo $this->Form->input('description');
 	?>
 	</fieldset>

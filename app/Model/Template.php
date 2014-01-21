@@ -70,4 +70,10 @@ class Template extends AppModel {
 		$this->Cobrand->find('first');
 		return $this->Cobrand->read();
 	}
+
+	public function afterSave($model, $created, $options = array()) {
+		if ($created == true) {
+			// TODO: add Validate Application page to the template
+		}
+	}
 }
