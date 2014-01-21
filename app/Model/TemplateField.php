@@ -28,10 +28,8 @@ class TemplateField extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Template field name cannot be empty'),
-			),
+			'rule' => array('notempty'),
+			'message' => array('Template field name cannot be empty'),
 		),
 		'width' => array(
 			'between' => array(
@@ -40,34 +38,24 @@ class TemplateField extends AppModel {
 			)
 		),
 		'type' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Template field type cannot be empty'),
-			),
+			'rule' => array('notempty'),
+			'message' => array('Template field type cannot be empty'),
 		),
 		'source' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Template field source cannot be empty'),
-			),
+			'rule' => array('notempty'),
+			'message' => array('Template field source cannot be empty'),
 		),
 		'merge_field_name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Template field merge_field_name cannot be empty'),
-			),
+			'rule' => array('notempty'),
+			'message' => array('Template field merge_field_name cannot be empty'),
 		),
 		'order' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Invalid order value used'),
-			),
+			'rule' => array('notempty'),
+			'message' => array('Invalid order value used'),
 		),
 		'section_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => array('Invalid section_id value used'),
-			),
+			'rule' => array('numeric'),
+			'message' => array('Invalid section_id value used'),
 		),
 	);
 

@@ -12,28 +12,23 @@ class Template extends AppModel {
 
 	public $useTable = 'onlineapp_templates';
 
+	public $actsAs = array(
+		'Search.Searchable',
+		'Containable',
+	);
+
 	public $validate = array(
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Template name cannot be empty'),
-			),
+			'rule' => array('notempty'),
+			'message' => array('Template name cannot be empty'),
 		),
 		'cobrand_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => array('Invalid cobrand_id value used'),
-			),
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Cobrand_id name cannot be empty'),
-			),
+			'rule' => array('numeric'),
+			'message' => array('Invalid cobrand_id value used'),
 		),
 		'logo_position' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => array('Logo position value not selected'),
-			),
+			'rule' => array('notempty'),
+			'message' => array('Logo position value not selected'),
 		),
 	);
 
@@ -69,11 +64,5 @@ class Template extends AppModel {
 		$this->Cobrand->recursive = -1;
 		$this->Cobrand->find('first');
 		return $this->Cobrand->read();
-	}
-
-	public function afterSave($model, $created, $options = array()) {
-		if ($created == true) {
-			// TODO: add Validate Application page to the template
-		}
 	}
 }

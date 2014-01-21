@@ -74,7 +74,7 @@
       <arg line="Migrations.migration status"/>
     </exec>
     <exec executable="${basedir}/app/Console/cake" failonerror="false">
-      <arg line="Migrations.migration run all -q"/>
+      <arg line="Migrations.migration run all -c test -i test"/>
     </exec>
   </target>
 

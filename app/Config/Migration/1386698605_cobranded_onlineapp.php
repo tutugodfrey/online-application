@@ -298,17 +298,17 @@ class CobrandedOnlineapp extends CakeMigration {
 			$Cobrand = ClassRegistry::init('Cobrand');
 			$Cobrand->query("
 				ALTER TABLE onlineapp_users
-				DROP CONSTRAINT onlineapp_users_cobrand_fk;
+				DROP CONSTRAINT IF EXISTS onlineapp_users_cobrand_fk CASCADE;
 				ALTER TABLE onlineapp_users
-				DROP CONSTRAINT onlineapp_users_template_fk;
+				DROP CONSTRAINT IF EXISTS onlineapp_users_template_fk CASCADE;
 				ALTER TABLE onlineapp_templates
-				DROP CONSTRAINT onlineapp_template_cobrand_fk;
+				DROP CONSTRAINT IF EXISTS onlineapp_template_cobrand_fk CASCADE;
 				ALTER TABLE onlineapp_template_pages
-				DROP CONSTRAINT onlineapp_template_page_template_fk;
+				DROP CONSTRAINT IF EXISTS onlineapp_template_page_template_fk CASCADE;
 				ALTER TABLE onlineapp_template_sections
-				DROP CONSTRAINT onlineapp_template_section_page_fk;
+				DROP CONSTRAINT IF EXISTS onlineapp_template_section_page_fk CASCADE;
 				ALTER TABLE onlineapp_template_fields
-				DROP CONSTRAINT onlineapp_template_field_section_fk;
+				DROP CONSTRAINT IF EXISTS onlineapp_template_field_section_fk CASCADE;
 			");
 		}
 		return true;

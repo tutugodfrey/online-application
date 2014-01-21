@@ -3,12 +3,6 @@ App::uses('AppModel', 'Model');
 /**
  * OnlineappTemplatePage Model
  *
- * @property Template $Template
- *
- * TODO: create an OrderableChild base class to handle
- *       before save and some other common logic.  Also
- *       need to apply this change to section and field
- *       models.
  */
 class TemplatePage extends AppModel {
 
@@ -28,27 +22,18 @@ class TemplatePage extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'required' => true,
-				'message' => array('Template page name cannot be empty')
-			),
+			'rule' => array('notempty'),
+			'required' => true,
+			'message' => array('Template page name cannot be empty')
 		),
 		'template_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'required' => true,
-				'message' => array('Invalid cobrand_id value used')
-			),
+			'rule' => array('numeric'),
+			'required' => true,
+			'message' => array('Invalid cobrand_id value used')
 		),
 		'order' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => array('Invalid order value used')
-			),
-			'notempty' => array(
-				'rule' => array('notempty'),
-			),
+			'rule' => array('numeric'),
+			'message' => array('Invalid order value used')
 		),
 	);
 
@@ -85,11 +70,6 @@ class TemplatePage extends AppModel {
 	public function getTemplate($templateId, $includeAssc = false) {
 		$this->Template->id = $templateId;
 		$template = $this->Template->read();
-
-		return $includeAssc ? $template : $template['Template'];
-	}
-
-	public function afterSave($model, $created, $options = array()) {
-		
+		return ($includeAssc == true ? $template : $template['Template']);
 	}
 }

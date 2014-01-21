@@ -43,6 +43,8 @@ class TemplatePagesController extends NestedResourceController {
 		}
 
 		$this->__setCommonViewVariables();
+		$template = $this->TemplatePage->getTemplate($this->request->data['TemplatePage']['template_id'], true);
+		$this->set('maxOrderValue', count($template['TemplatePages']) - 2); // minus 2 because we are using a zero based index and we are not including the Validate Application page.
 	}
 
 	public function admin_index() {
