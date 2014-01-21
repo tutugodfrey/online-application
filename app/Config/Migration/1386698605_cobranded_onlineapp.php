@@ -1786,9 +1786,15 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 8,
 							'width' => 12,
 							'source' => 2,
-							'default_value' => ''
+							'default_value' => '',
 						),
-						// add label
+						array(
+							'name' => 'Site Inspection Information',
+							'type' => 6,
+							'width' => 12,
+							'source' => 2,
+							'default_value' => '',
+						),
 						array(
 							'name' => 'Does business appear legitimate?',
 							'type' => 4,
