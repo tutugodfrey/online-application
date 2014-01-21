@@ -215,7 +215,7 @@ class CobrandedOnlineapp extends CakeMigration {
 						'null' => false
 					),
 					'default_value' => array(
-						'type' => 'string',
+						'type' => 'text',
 						'null' => true
 					),
 					'merge_field_name' => array(
@@ -477,22 +477,38 @@ class CobrandedOnlineapp extends CakeMigration {
 						$fields = $section['fields'];
 						$fieldOrder = 0;
 						foreach ($fields as $field) {
+							$merge_field_name;
+							switch ($field['type']) {
+								case 6:
+									$merge_field_name = 'label';
+									break;
+
+								case 8:
+									$merge_field_name = 'hr';
+									break;
+
+								default:
+									$merge_field_name = $this->__buildMergeFieldName($page['name'], $section['name'], $field['name']);
+									break;
+							}
 							$TemplateField->create();
-							$TemplateField->save(
-								array(
-									'TemplateField' => array(
-										'name' => $field['name'],
-										'width' => (array_key_exists('width', $field) ? $field['width'] : 12),
-										'order' => $fieldOrder,
-										'section_id' => $sectionId,
-										'type' => $field['type'],
-										'required' => $field['required'],
-										'source' => $field['source'],
-										'default_value' => $field['default_value'],
-										'merge_field_name' => $this->__buildMergeFieldName($page['name'], $section['name'], $field['name']),
-									)
+							$newField = array(
+								'TemplateField' => array(
+									'name' => $field['name'],
+									'width' => (array_key_exists('width', $field) ? $field['width'] : 12),
+									'order' => $fieldOrder,
+									'section_id' => $sectionId,
+									'type' => $field['type'],
+									'required' => (array_key_exists('required', $field) ? $field['required'] : false),
+									'source' => (array_key_exists('source', $field) ? $field['source'] : 2), // 2 == n/a
+									'default_value' => (array_key_exists('default_value', $field) ? $field['default_value'] : ''),
+									'merge_field_name' => $merge_field_name,
 								)
 							);
+							if (!$TemplateField->save($newField)) {
+								debug('Failed to save field.');
+								debug($newField);
+							}
 							$fieldOrder = $fieldOrder + 1;
 
 							// TODO: fields can have follow on questions
@@ -546,7 +562,7 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Corporation:0,Sole Prop:1,LLC:2,Partnership:3,Non Profit/Tax Exempt (fed form 501C):4,Other:5',
+							'default_value' => 'Corporation::0,Sole Prop::1,LLC::2,Partnership::3,Non Profit/Tax Exempt (fed form 501C)::4,Other::5',
 						)
 					)
 				),
@@ -559,14 +575,12 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Mailing Address',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'City',
@@ -574,7 +588,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'State',
@@ -582,7 +595,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Zip',
@@ -590,100 +602,38 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Phone',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Fax',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Corp Contact Name',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Title',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Email',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
-						array(
-							'name' => 'Federal Tax ID',
-							'type' => 0,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Website',
-							'type' => 0,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Customer Service Phone',
-							'type' => 0,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Business Open Date',
-							'type' => 1,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Length of Current Ownership',
-							'type' => 0,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Existing Axia Merchant?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
-						),
-						array(
-							'name' => 'Current MID #',
-							'type' => 0,
-							'required' => false,
-							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'General Comments',
-							'type' => 0,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
-						),
-					)
+					),
 				),
 				array(
 					'name' => 'LOCATION INFORMATION',
@@ -694,21 +644,18 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'source' => 1,
 							'required' => false,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Business Name (DBA)',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Location Address',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'City',
@@ -716,7 +663,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'State',
@@ -724,7 +670,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Zip',
@@ -732,44 +677,100 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Phone',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Fax',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Location Contact Name',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Title',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Email',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 					)
+				),
+				array(
+					'name' => 'BUSINESS INFORMATION',
+					'fields' => array(
+						array(
+							'name' => 'Federal Tax ID',
+							'type' => 0,
+							'required' => true,
+							'source' => 1,
+							'width' => 12,
+						),
+						array(
+							'name' => 'Website',
+							'type' => 0,
+							'required' => true,
+							'source' => 1,
+							'width' => 12,
+						),
+						array(
+							'name' => 'Customer Service Phone',
+							'type' => 0,
+							'required' => true,
+							'source' => 1,
+							'width' => 12,
+						),
+						array(
+							'name' => 'Business Open Date',
+							'type' => 1,
+							'required' => true,
+							'source' => 1,
+							'width' => 4,
+						),
+						array(
+							'name' => 'Length of Current Ownership',
+							'type' => 0,
+							'required' => true,
+							'source' => 1,
+							'width' => 8,
+						),
+						array(
+							'name' => 'Existing Axia Merchant?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 4,
+						),
+						array(
+							'name' => 'Current MID #',
+							'type' => 0,
+							'required' => false,
+							'source' => 1,
+							'width' => 8,
+						),
+						array(
+							'name' => 'General Comments',
+							'type' => 0,
+							'required' => true,
+							'source' => 1,
+							'width' => 12,
+						),
+					),
 				),
 				array(
 					'name' => 'LOCATION TYPE',
@@ -779,7 +780,7 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Retail Store:0,Industrial:1,Trade:2,Office:3,Residence:4,Other:5',
+							'default_value' => 'Retail Store::0,Industrial::1,Trade::2,Office::3,Residence::4,Other::5',
 						),
 					)
 				),
@@ -791,21 +792,19 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Owns:0,Leases:1',
+							'default_value' => 'Owns::0,Leases::1',
 						),
 						array(
 							'name' => 'Landlord Name',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Landlord Phone',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						),
 					)
 				)
@@ -822,56 +821,52 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Retail:0,Restaurant:1,Lodging:2,MOTO:3,Internet:4,Grocery:5',
+							'default_value' => 'Retail::0,Restaurant::1,Lodging::2,MOTO::3,Internet::4,Grocery::5',
 						),
 						array(
 							'name' => 'Products/Services Sold',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Return Policy',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Days Until Product Delivery',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Monthly Volume',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Average Ticket',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Highest Ticket',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Current Processor',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Method of Sales',
@@ -879,7 +874,7 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 6,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Card Present Swiped:0,Card Present Imprint:1,Card Not Present (Keyed):2,Card Not Present (Internet):3',
+							'default_value' => 'Card Present Swiped::0,Card Present Imprint::1,Card Not Present (Keyed)::2,Card Not Present (Internet)::3',
 						),
 						array(
 							'name' => '% of Product Sold',
@@ -887,7 +882,7 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 6,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Card Present Swiped:0,Card Present Imprint:1,Card Not Present (Keyed):2,Card Not Present (Internet):3',
+							'default_value' => 'Card Present Swiped::0,Card Present Imprint::1,Card Not Present (Keyed)::2,Card Not Present (Internet)::3',
 						)
 					),
 				),
@@ -899,7 +894,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -907,7 +901,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -915,7 +908,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -923,7 +915,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -931,7 +922,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -939,7 +929,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -947,7 +936,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -955,7 +943,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -963,7 +950,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -971,7 +957,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -979,7 +964,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 						array(
@@ -987,7 +971,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 3,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 1,
 						),
 					),
@@ -1005,28 +988,24 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Contact Name',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Phone',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Address',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'City',
@@ -1034,7 +1013,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'State',
@@ -1042,7 +1020,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Zip',
@@ -1050,7 +1027,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 						)
 					)
 				),
@@ -1063,14 +1039,12 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Account Number',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 					),
 				),
@@ -1083,14 +1057,12 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Account Number',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'merge_field_name' => 'ach_bank_and_trade_reference_fees_account_account_number',
 						)
 					)
@@ -1104,54 +1076,42 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Contact Person',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Phone',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 6,
 						),
 						array(
 							'name' => 'Acct #',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 6,
 						),
 						array(
 							'name' => 'City',
 							'type' => 0,
-							'width' => 4,
+							'width' => 6,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'State',
 							'type' => 0,
-							'width' => 4,
+							'width' => 6,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
-						array(
-							'name' => 'Zip',
-							'type' => 0,
-							'width' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
-						),
-					)
+					),
 				),
 				array(
 					'name' => 'Trade Reference 2',
@@ -1162,52 +1122,38 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Contact Person',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Phone',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Acct #',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'City',
 							'type' => 0,
-							'width' => 4,
+							'width' => 6,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'State',
 							'type' => 0,
-							'width' => 4,
+							'width' => 6,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Zip',
-							'type' => 0,
-							'width' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => '',
 						),
 					),
 				),
@@ -1224,23 +1170,24 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
+							'default_value' => 'Yes::0,No::1',
 							'merge_field_name' => 'set_up_information_american_express_information_currently_accepted',
+							'width' => 6,
 						),
 						array(
 							'name' => 'Please Provide Existing SE#',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'merge_field_name' => 'set_up_information_american_express_information_existing_se',
+							'width' => 6,
 						),
 						array(
 							'name' => 'Do you want to accept American Express',
 							'type' => 4,
 							'required' => false,
 							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
+							'default_value' => 'Yes::0,No::1',
 							'merge_field_name' => 'set_up_information_american_express_information_wants_to_accept_american_express',
 						),
 					)
@@ -1253,7 +1200,7 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '4',
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
+							'default_value' => 'Yes::0,No::1',
 						)
 					)
 				),
@@ -1265,37 +1212,39 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 2,
 						),
 						array(
 							'name' => 'Type',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Provider',
-							'type' => '4',
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Axia:0,Merchant:1',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Do You Use Autoclose?',
 							'type' => '4',
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
+							'default_value' => 'Yes::0,No::1',
+							'width' => 3,
 						),
 						array(
 							'name' => 'If Yes, What Time?',
 							'type' => '2',
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
-						)
-					)
+							'width' => 3,
+						),
+						array(
+							'name' => 'Provider',
+							'type' => '4',
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Axia::0,Merchant::1',
+							'width' => 12,
+						),
+					),
 				),
 				array(
 					'name' => 'Terminal Programming Information (1) (please select all that apply)',
@@ -1305,7 +1254,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 2,
 						),
 						array(
@@ -1313,7 +1261,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 2,
 						),
 						array(
@@ -1321,7 +1268,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 2,
 						),
 						array(
@@ -1329,7 +1275,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 2,
 						),
 						array(
@@ -1337,7 +1282,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 2,
 						),
 						array(
@@ -1345,23 +1289,24 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
+							'default_value' => 'Yes::0,No::1',
+							'width' => 4,
 						),
 						array(
 							'name' => 'If Yes, what type of PIN Pad?',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Quantity',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
-						)
-					)
+							'width' => 4,
+						),
+					),
 				),
 				array(
 					'name' => 'Terminal/Software Type (2)',
@@ -1371,21 +1316,13 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 2,
 						),
 						array(
 							'name' => 'Type',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Provider',
-							'type' => '4',
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Axia:0,Merchant:1',
 							'width' => 4,
 						),
 						array(
@@ -1393,18 +1330,25 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '4',
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
-							'width' => 4,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 3,
 						),
 						array(
 							'name' => 'If Yes, What Time?',
 							'type' => '2',
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
-							'width' => 4,
-						)
-					)
+							'width' => 3,
+						),
+						array(
+							'name' => 'Provider',
+							'type' => '4',
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Axia::0,Merchant::1',
+							'width' => 12,
+						),
+					),
 				),
 				array(
 					'name' => 'Terminal Programming Information (2) (please select all that apply)',
@@ -1414,61 +1358,57 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
-							'width' => 2
+							'width' => 2,
 						),
 						array(
 							'name' => 'Server #s',
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
-							'width' => 2
+							'width' => 2,
 						),
 						array(
 							'name' => 'Tips',
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
-							'width' => 2
+							'width' => 2,
 						),
 						array(
 							'name' => 'Invoice #',
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
-							'width' => 2
+							'width' => 2,
 						),
 						array(
 							'name' => 'Purchasing Cards',
 							'type' => '3',
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
-							'width' => 2
+							'width' => 2,
 						),
-							array(
+						array(
 							'name' => 'Do you accept Debit on this terminal?',
 							'type' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => 'Yes:0,No:1',
+							'default_value' => 'Yes::0,No::1',
+							'width' => 4,
 						),
 						array(
 							'name' => 'If Yes, what type of PIN Pad?',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Quantity',
 							'type' => 0,
 							'required' => false,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						)
 					)
 				)
@@ -1486,21 +1426,18 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Title',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Address',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'City',
@@ -1508,7 +1445,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'State',
@@ -1516,7 +1452,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Zip',
@@ -1524,42 +1459,40 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Phone',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 6,
 						),
 							array(
 							'name' => 'Fax',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 6,
 						),
 						array(
 							'name' => 'Email',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'SSN',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Date of Birth',
 							'type' => 1,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 8
 						),
 					),
 				),
@@ -1572,21 +1505,18 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Title',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Address',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'City',
@@ -1594,7 +1524,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'State',
@@ -1602,7 +1531,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Zip',
@@ -1610,42 +1538,40 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'Phone',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 6,
 						),
 						array(
 							'name' => 'Fax',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 6,
 						),
 						array(
 							'name' => 'Email',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 						),
 						array(
 							'name' => 'SSN',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 4,
 						),
 						array(
 							'name' => 'Date of Birth',
 							'type' => 1,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
+							'width' => 8,
 						),
 					)
 				)
@@ -1662,7 +1588,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1670,7 +1595,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1678,7 +1602,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1686,7 +1609,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1694,7 +1616,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1702,7 +1623,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1710,7 +1630,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1718,7 +1637,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 						array(
@@ -1726,13 +1644,217 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
-							'default_value' => '',
 							'width' => 4,
 						),
 					)
 				),
 				// TODO: add Validate Application info
-			)
+			),
+		),
+		array(
+			'name' => 'Validate Application',
+			'sections' => array(
+				array(
+					'name' => 'Rep only',
+					'fields' => array(
+						array(
+							'name' => 'Contractor Name',
+							'type' => 0,
+							'required' => true,
+							'source' => 1,
+							'width' => 12,
+						)
+					)
+				),
+				array(
+					'name' => 'Schedule of Fees Part I',
+					'fields' => array(
+						array(
+							'name' => 'Rate Discount %',
+							'type' => 0,
+							'required' => true,
+							'source' => 1,
+							'width' => 4,
+						),
+						array(
+							'name' => 'Rate Structure',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Interchange Pass Thru::Interchange Pass Thru,Downgrades At Cost::Downgrades At Cost,Cost Plus::Cost Plus,Bucketed::Bucketed,Bucketed (Rewards)::Bucketed (Rewards),Simply Swipe It Rates::Simply Swipe It Rates',
+							'width' => 4,
+						),
+						array(
+							'name' => 'Qualification Exemptions',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Visa/MC Interchange at Pass Thru::Visa/MC Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MC Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Qualified Consumer Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Non-Regulated Qualified Check Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Non-Regulated Qualified Check Cards,Visa/MC Cost Plus 0.05%::Visa/MC Cost Plus 0.05%,Visa/MC Cost Plus 0.10%::Visa/MC Cost Plus 0.10%,Visa/MC Cost Plus 0.15%::Visa/MC Cost Plus 0.15%,Visa/MC Cost Plus 0.20%::Visa/MC Cost Plus 0.20%,Visa/MC Cost Plus 0.25%::Visa/MC Cost Plus 0.25%,Visa/MC Cost Plus 0.30%::Visa/MC Cost Plus 0.30%,Visa/MC Cost Plus 0.35%::Visa/MC Cost Plus 0.35%,Visa/MC Cost Plus 0.40%::Visa/MC Cost Plus 0.40%,Visa/MC Cost Plus 0.45%::Visa/MC Cost Plus 0.45%,Visa/MC Cost Plus 0.50%::Visa/MC Cost Plus 0.50%,Visa/MC Cost Plus 0.55%::Visa/MC Cost Plus 0.55%,Visa/MC Cost Plus 0.60%::Visa/MC Cost Plus 0.60%,Visa/MC Cost Plus 0.65%::Visa/MC Cost Plus 0.65%,Visa/MC Cost Plus 0.70%::Visa/MC Cost Plus 0.70%,Visa/MC Cost Plus 0.75%::Visa/MC Cost Plus 0.75%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10::RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10,RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10::RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10,REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10         ::REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10         ',
+							'width' => 12,
+						),
+					),
+				),
+				array(
+					'name' => 'Schedule of Fees Part II',
+					'fields' => array(
+						array(
+							'name' => 'Start Up Fees',
+							'type' => 7,
+							'required' => false,
+							'source' => 1,
+							'width' => 3,
+							'default_value' => 'Application::25.00,Equipment::0.00,Expedite::0.00,Reprogramming::0.00,Training::0.00,Wireless Activation::0.00',
+						),
+						array(
+							'name' => 'Authorization Fees',
+							'type' => 7,
+							'required' => false,
+							'source' => 1,
+							'width' => 3,
+							'default_value' => "Visa/MC/JCB/DISC & Batch::0.10,American Express::0.00,ARU & Voice Authorization::0.65,Wireless::0.00",
+						),
+						array(
+							'name' => 'Monthly Fees',
+							'type' => 7,
+							'required' => false,
+							'source' => 1,
+							'width' => 3,
+							'default_value' => 'Statement::4.75,Monthly Minimum::25.00,Debit Access::0.00,EBT Access::0.00,Gateway Access::0.00,Wireless Access::0.00',
+						),
+						array(
+							'name' => 'Miscellaneous Fees',
+							'type' => 7,
+							'required' => false,
+							'source' => 1,
+							'width' => 3,
+							'default_value' => 'Annual File Fee::95.00,Chargeback::15.00',
+						),
+						array(
+							'name' => 'PIN Debit Fees',
+							'type' => 6,
+							'width' => 6
+						),
+						array(
+							'name' => 'PIN Debit Authorization',
+							'type' => 6,
+							'width' => 6
+						),
+						array(
+							'name' => 'PIN Debit Discount',
+							'type' => 0,
+							'width' => 6,
+							'required' => false,
+							'source' => 1,
+						),
+						array(
+							'name' => 'EBT Fees',
+							'type' => 0,
+							'width' => 6,
+							'required' => false,
+							'source' => 1,
+						),
+						array(
+							'name' => 'EBT Authorization',
+							'type' => 0,
+							'width' => 6,
+							'required' => false,
+							'source' => 1,
+						),
+						array(
+							'name' => 'EBT Discount',
+							'type' => 0,
+							'width' => 6,
+							'required' => false,
+							'source' => 1,
+						),
+						array(
+							'name' => 'Discount Paid',
+							'type' => 4,
+							'width' => 12,
+							'source' => 1,
+							'default_value' => 'Monthly::0,Daily::1'
+						),
+						array(
+							'name' => 'Amex Discount Rate',
+							'type' => 0,
+							'width' => 12,
+							'source' => 1,
+							'default_value' => '2.89',
+						),
+						array(
+							'name' => 'hr',
+							'type' => 8,
+							'width' => 12,
+							'source' => 2,
+							'default_value' => ''
+						),
+						// add label
+						array(
+							'name' => 'Does business appear legitimate?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 12,
+						),
+						array(
+							'name' => 'Is site photo included with this application?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 12,
+						),
+						array(
+							'name' => 'Is inventory sufficient for Business Type?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 12,
+						),
+						array(
+							'name' => 'Are goods and services delivered at time of sale?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 12,
+						),
+						array(
+							'name' => 'Is business open and operating?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 12,
+						),
+						array(
+							'name' => 'Are Visa and MasterCard decals visible?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 12,
+						),
+						array(
+							'name' => 'Any mail/telephone order sales activity?',
+							'type' => 4,
+							'required' => true,
+							'source' => 1,
+							'default_value' => 'Yes::0,No::1',
+							'width' => 12,
+						),
+						array(
+							'name' => 'Please type name to confirm if you visted the site',
+							'type' => 0,
+							'width' => 12,
+							'required' => false,
+							'source' => 1,
+						),
+					),
+				),
+			),
 		),
 	);
 }

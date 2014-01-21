@@ -23,7 +23,7 @@
 				<?php echo $this->Html->link(__('Edit'), String::insert($list_url . '/edit/:id', array('id' => $template['Template']['id']))); ?>
 				<?php echo $this->Form->postLink(__('Delete'), String::insert($list_url . '/delete/:template_id', array('template_id' => $template['Template']['id'])), null, __('Are you sure you want to delete the template named "%s"?', $template['Template']['name'])); ?>
 				<?php echo $this->Html->link(__('List Pages'), String::insert('/admin/templates/:template_id/templatepages', array('template_id' => $template['Template']['id']))); ?>
-				<?php echo $this->Html->link(__('Preview'), String::insert('/admin/templates/preview/:template_id', array('template_id' => $template['Template']['id']))); ?>
+				<?php echo $this->Html->link(__('Preview'), String::insert('/admin/templates/preview/:template_id', array('template_id' => $template['Template']['id'])), array('target' => '_blank')); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>

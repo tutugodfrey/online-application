@@ -6,9 +6,9 @@ App::uses('AppModel', 'Model');
  */
 class TemplateField extends AppModel {
 
-	public $fieldTypes = array('text', 'date', 'time', 'checkbox', 'radio', 'percents');
+	public $fieldTypes = array('text', 'date', 'time', 'checkbox', 'radio', 'percents', 'label', 'fees', 'hr');
 
-	public $sourceTypes = array('api', 'user');
+	public $sourceTypes = array('api', 'user', 'n/a');
 
 	public $requiredTypes = array('no', 'yes');
 

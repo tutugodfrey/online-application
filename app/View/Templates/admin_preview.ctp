@@ -14,8 +14,6 @@
 
   <div class="row">
     <?php
-    // TODO: use the Template->logo_position and include_axia_logo
-    // to display this VVVV
     $partner_logo = $this->Html->image($template['Cobrand']['logo_url']);
     if ($template['Template']['include_axia_logo'] == true) {
       // only one way to display this combination
@@ -42,7 +40,7 @@
             'position' => $logoPositionTypes[$logo_position]
           )
         );
-      } // else don't show the logo
+      } // else noop don't show the logo
     }
     ?>
   </div>
@@ -123,6 +121,8 @@
       );
 
       $(document).on("percentOptionBlur", handlePercentOptionBlur);
+      $(document).on("feeOptionBlur", handleFeeOptionBlur);
+
       function handlePercentOptionBlur(event) {
         var totalField = $(event.totalFieldId);
         var startingTotalValue = parseInt(totalField.val());
@@ -161,6 +161,24 @@
           }
         }
       }
+
+      function handleFeeOptionBlur(event) {
+        var totalField = $(event.totalFieldId);
+        // sum the
+        var feesSum = 0;
+        $("#"+event.fieldset_id).find("input").map(function(index, input) {
+          var inputObj = $(input);
+          if (!inputObj.is(':disabled')) {
+            feesSum += parseFloat(inputObj.val());
+          }
+        });
+        totalField.val(feesSum.toFixed(2));
+      }
+
+      // this is overkill because the :first-child psuedo class is not working as expected
+      $(".fees").find("input:first-child").map(function(index, input) {
+        $(input).trigger('blur');
+      });
     });
   </script>
 </div>
