@@ -361,4 +361,14 @@ class TemplatePageTest extends CakeTestCase {
 		$second_page = $this->TemplatePage->findById(2);
 		$this->assertEquals(1, $second_page['TemplatePage']['order']);
 	}
+
+	public function testNameEditable() {
+		$this->assertFalse($this->TemplatePage->nameEditable('Validate Application'));
+		$this->assertTrue($this->TemplatePage->nameEditable('anything else'));
+	}
+
+	public function testOrderEditable() {
+		$this->assertFalse($this->TemplatePage->nameEditable('Validate Application'));
+		$this->assertTrue($this->TemplatePage->nameEditable('anything else'));
+	}
 }

@@ -89,7 +89,6 @@ class TemplatePage extends AppModel {
 		// make sure 'Validate Application' page is the last page
 		// we have to have $this->data to perform our task
 		if (is_null($this->data)) {
-			debug($options);
 			throw new Exception("Error Processing Request", 1);
 		} else {
 			$template = $this->getTemplate($this->data['TemplatePage']['template_id'], true);

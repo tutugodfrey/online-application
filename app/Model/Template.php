@@ -155,10 +155,6 @@ class Template extends AppModel {
 								)
 							);
 
-							if (!$TemplateField->save($newField)) {
-								debug('Failed to save field.');
-								debug($newField);
-							}
 							$fieldOrder = $fieldOrder + 1;
 						}
 					}

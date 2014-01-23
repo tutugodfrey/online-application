@@ -123,5 +123,17 @@ class TemplateTest extends CakeTestCase {
 		$this->Template->save($newTemplateData);
 		$this->assertTrue($this->Template->validates());
 		$this->assertEquals($expected_validationErrors, $this->Template->validationErrors);
+
+		$createdTemplate = $this->Template->read();
+		$this->assertEquals(1, count($createdTemplate['TemplatePages']), "we should have a new template with a 'Validate Application' page");
+		$createdTemplatePage = $createdTemplate['TemplatePages'][0];
+		$this->TemplatePage->id = $createdTemplatePage['id'];
+		$createdTemplatePage = $this->TemplatePage->read();
+		$this->assertEquals(4, count($createdTemplatePage['TemplateSections']), "The new page should have some sections");
+
+		// deleting the template will delete the associated children (sections and fields)
+		$this->TemplatePage->delete($createdTemplatePage['TemplatePage']['id']);
+		$createdTemplatePage = $this->TemplatePage->read();
+		$this->assertEquals(0, count($createdTemplatePage['TemplateSections']), "The new page should have no sections");
 	}
 }
