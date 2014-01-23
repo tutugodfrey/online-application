@@ -23,6 +23,7 @@ class TemplateField extends AppModel {
 			'parent_model_name' => 'TemplateSection',
 			'parent_model_foreign_key_name' => 'section_id',
 			'class_name' => 'TemplateField',
+			'children_model_name' => '',
 		)
 	);
 

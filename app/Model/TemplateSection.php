@@ -18,6 +18,7 @@ class TemplateSection extends AppModel {
 			'parent_model_name' => 'TemplatePage',
 			'parent_model_foreign_key_name' => 'page_id',
 			'class_name' => 'TemplateSection',
+			'children_model_name' => 'TemplateField'
 		)
 	);
 

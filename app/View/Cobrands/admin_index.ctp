@@ -31,7 +31,6 @@
 			<td><?php echo h($cobrand['Cobrand']['modified']); ?></td>
 			<td class="actions">
 				<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $cobrand['Cobrand']['id'])); ?>
-				<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $cobrand['Cobrand']['id']), null, __('Are you sure you want to delete # %s?', $cobrand['Cobrand']['id'])); ?>
 				<?php echo $this->Html->link(__('List Templates'), String::insert('/admin/cobrands/:id/templates', array('id' => $cobrand['Cobrand']['id']))); ?>
 			</td>
 		</tr>

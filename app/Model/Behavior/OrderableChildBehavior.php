@@ -64,15 +64,49 @@ class OrderableChildBehavior extends ModelBehavior {
 		}
 	}
 
+	private function __hasChildren($model) {
+		$hasChildren = false;
+		$childrenAlias = Inflector::pluralize($this->settings[$model->alias]['children_model_name']);
+		if (strlen($childrenAlias) > 0) {
+			$behaviorObject = $model->read();
+			$hasChildren = (count($behaviorObject[$childrenAlias]) > 0);
+		}
+
+		return $hasChildren;
+	}
+
+	private function __getChildren($model) {
+		return $model->data[Inflector::pluralize($this->settings[$model->alias]['children_model_name'])];
+	}
+
+	private function __getChildrenModelClassName($model) {
+		return Inflector::pluralize($this->settings[$model->alias]['children_model_name']);
+	}
+
 	public function beforeDelete(Model $model, $cascade = true) {
+		if ($this->__hasChildren($model)) {
+			// delete children
+			$children = $this->__getChildren($model);
+			$childObject = ClassRegistry::init($this->__getChildrenModelClassName($model));
+			foreach ($children as $child) {
+				$childObject->delete($child['id']);
+			}
+		}
 		$behaviorObject = $model->read();
-		$this->__parentId = $behaviorObject[$this->settings[$model->alias]['parent_model_name']]['id'];
+		if (array_key_exists($this->settings[$model->alias]['parent_model_name'], $behaviorObject)) {
+			$this->__parentId = $behaviorObject[$this->settings[$model->alias]['parent_model_name']]['id'];
+		} else {
+			$this->__parentId = null;
+		}
 	}
 
 	public function afterDelete(Model $model) {
+		if (is_null($this->__parentId)) {
+			return true;
+		}
+
 		// if the neighbors are not in sequence (0, 1, 3, 4)
 		// reorder the 'orders'
-
 		$parent = $this->__getParent($model, $this->__parentId);
 		$this->__neighbors = $parent[Inflector::pluralize($this->settings[$model->alias]['class_name'])];
 

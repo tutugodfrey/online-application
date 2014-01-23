@@ -448,6 +448,7 @@ class CobrandedOnlineapp extends CakeMigration {
 		$TemplateSection = ClassRegistry::init('TemplateSection');
 		$TemplateField = ClassRegistry::init('TemplateField');
 		$pageOrder = 0;
+		$pageId = 0;
 		foreach ($this->__pages as $page) {
 			$TemplatePage->create();
 			$TemplatePage->save(
@@ -461,9 +462,9 @@ class CobrandedOnlineapp extends CakeMigration {
 				)
 			);
 			$pageOrder = $pageOrder + 1;
-			$pageId = null;
+			$currentPage = $TemplatePage->findByName($page['name']);
+			$pageId = $currentPage['TemplatePage']['id'];
 			if (array_key_exists('sections', $page) && count($page['sections']) > 0) {
-				$pageId = $TemplatePage->id;
 				// add sections
 				$sections = $page['sections'];
 				$sectionOrder = 0;
@@ -522,8 +523,6 @@ class CobrandedOnlineapp extends CakeMigration {
 								debug($newField);
 							}
 							$fieldOrder = $fieldOrder + 1;
-
-							// TODO: fields can have follow on questions
 						}
 					}
 				}
@@ -820,7 +819,7 @@ class CobrandedOnlineapp extends CakeMigration {
 						),
 					)
 				)
-			)
+			),
 		),
 		array(
 			'name' => 'Products & Services Information',
@@ -1146,12 +1145,14 @@ class CobrandedOnlineapp extends CakeMigration {
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
+							'width' => 6,
 						),
 						array(
 							'name' => 'Acct #',
 							'type' => 0,
 							'required' => true,
 							'source' => 1,
+							'width' => 6,
 						),
 						array(
 							'name' => 'City',
@@ -1424,7 +1425,7 @@ class CobrandedOnlineapp extends CakeMigration {
 						)
 					)
 				)
-			)
+			),
 		),
 		array(
 			'name' => 'Ownership Information',
@@ -1587,7 +1588,7 @@ class CobrandedOnlineapp extends CakeMigration {
 						),
 					)
 				)
-			)
+			),
 		),
 		array(
 			'name' => 'Merchant Referral Program',
@@ -1659,219 +1660,6 @@ class CobrandedOnlineapp extends CakeMigration {
 							'width' => 4,
 						),
 					)
-				),
-				// TODO: add Validate Application info
-			),
-		),
-		array(
-			'name' => 'Validate Application',
-			'rep_only' => true,
-			'sections' => array(
-				array(
-					'name' => 'Rep only',
-					'fields' => array(
-						array(
-							'name' => 'Contractor Name',
-							'type' => 0,
-							'required' => true,
-							'source' => 1,
-							'width' => 12,
-						)
-					)
-				),
-				array(
-					'name' => 'Schedule of Fees Part I',
-					'fields' => array(
-						array(
-							'name' => 'Rate Discount %',
-							'type' => 0,
-							'required' => true,
-							'source' => 1,
-							'width' => 4,
-						),
-						array(
-							'name' => 'Rate Structure',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Interchange Pass Thru::Interchange Pass Thru,Downgrades At Cost::Downgrades At Cost,Cost Plus::Cost Plus,Bucketed::Bucketed,Bucketed (Rewards)::Bucketed (Rewards),Simply Swipe It Rates::Simply Swipe It Rates',
-							'width' => 4,
-						),
-						array(
-							'name' => 'Qualification Exemptions',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Visa/MC Interchange at Pass Thru::Visa/MC Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MC Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Qualified Consumer Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Non-Regulated Qualified Check Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Non-Regulated Qualified Check Cards,Visa/MC Cost Plus 0.05%::Visa/MC Cost Plus 0.05%,Visa/MC Cost Plus 0.10%::Visa/MC Cost Plus 0.10%,Visa/MC Cost Plus 0.15%::Visa/MC Cost Plus 0.15%,Visa/MC Cost Plus 0.20%::Visa/MC Cost Plus 0.20%,Visa/MC Cost Plus 0.25%::Visa/MC Cost Plus 0.25%,Visa/MC Cost Plus 0.30%::Visa/MC Cost Plus 0.30%,Visa/MC Cost Plus 0.35%::Visa/MC Cost Plus 0.35%,Visa/MC Cost Plus 0.40%::Visa/MC Cost Plus 0.40%,Visa/MC Cost Plus 0.45%::Visa/MC Cost Plus 0.45%,Visa/MC Cost Plus 0.50%::Visa/MC Cost Plus 0.50%,Visa/MC Cost Plus 0.55%::Visa/MC Cost Plus 0.55%,Visa/MC Cost Plus 0.60%::Visa/MC Cost Plus 0.60%,Visa/MC Cost Plus 0.65%::Visa/MC Cost Plus 0.65%,Visa/MC Cost Plus 0.70%::Visa/MC Cost Plus 0.70%,Visa/MC Cost Plus 0.75%::Visa/MC Cost Plus 0.75%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10::RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10,RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10::RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10,REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10         ::REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10         ',
-							'width' => 12,
-						),
-					),
-				),
-				array(
-					'name' => 'Schedule of Fees Part II',
-					'fields' => array(
-						array(
-							'name' => 'Start Up Fees',
-							'type' => 7,
-							'required' => false,
-							'source' => 1,
-							'width' => 3,
-							'default_value' => 'Application::25.00,Equipment::0.00,Expedite::0.00,Reprogramming::0.00,Training::0.00,Wireless Activation::0.00',
-						),
-						array(
-							'name' => 'Authorization Fees',
-							'type' => 7,
-							'required' => false,
-							'source' => 1,
-							'width' => 3,
-							'default_value' => "Visa/MC/JCB/DISC & Batch::0.10,American Express::0.00,ARU & Voice Authorization::0.65,Wireless::0.00",
-						),
-						array(
-							'name' => 'Monthly Fees',
-							'type' => 7,
-							'required' => false,
-							'source' => 1,
-							'width' => 3,
-							'default_value' => 'Statement::4.75,Monthly Minimum::25.00,Debit Access::0.00,EBT Access::0.00,Gateway Access::0.00,Wireless Access::0.00',
-						),
-						array(
-							'name' => 'Miscellaneous Fees',
-							'type' => 7,
-							'required' => false,
-							'source' => 1,
-							'width' => 3,
-							'default_value' => 'Annual File Fee::95.00,Chargeback::15.00',
-						),
-						array(
-							'name' => 'PIN Debit Fees',
-							'type' => 6,
-							'width' => 6
-						),
-						array(
-							'name' => 'PIN Debit Authorization',
-							'type' => 6,
-							'width' => 6
-						),
-						array(
-							'name' => 'PIN Debit Discount',
-							'type' => 0,
-							'width' => 6,
-							'required' => false,
-							'source' => 1,
-						),
-						array(
-							'name' => 'EBT Fees',
-							'type' => 0,
-							'width' => 6,
-							'required' => false,
-							'source' => 1,
-						),
-						array(
-							'name' => 'EBT Authorization',
-							'type' => 0,
-							'width' => 6,
-							'required' => false,
-							'source' => 1,
-						),
-						array(
-							'name' => 'EBT Discount',
-							'type' => 0,
-							'width' => 6,
-							'required' => false,
-							'source' => 1,
-						),
-						array(
-							'name' => 'Discount Paid',
-							'type' => 4,
-							'width' => 12,
-							'source' => 1,
-							'default_value' => 'Monthly::0,Daily::1'
-						),
-						array(
-							'name' => 'Amex Discount Rate',
-							'type' => 0,
-							'width' => 12,
-							'source' => 1,
-							'default_value' => '2.89',
-						),
-						array(
-							'name' => 'hr',
-							'type' => 8,
-							'width' => 12,
-							'source' => 2,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Site Inspection Information',
-							'type' => 6,
-							'width' => 12,
-							'source' => 2,
-							'default_value' => '',
-						),
-						array(
-							'name' => 'Does business appear legitimate?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes::0,No::1',
-							'width' => 12,
-						),
-						array(
-							'name' => 'Is site photo included with this application?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes::0,No::1',
-							'width' => 12,
-						),
-						array(
-							'name' => 'Is inventory sufficient for Business Type?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes::0,No::1',
-							'width' => 12,
-						),
-						array(
-							'name' => 'Are goods and services delivered at time of sale?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes::0,No::1',
-							'width' => 12,
-						),
-						array(
-							'name' => 'Is business open and operating?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes::0,No::1',
-							'width' => 12,
-						),
-						array(
-							'name' => 'Are Visa and MasterCard decals visible?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes::0,No::1',
-							'width' => 12,
-						),
-						array(
-							'name' => 'Any mail/telephone order sales activity?',
-							'type' => 4,
-							'required' => true,
-							'source' => 1,
-							'default_value' => 'Yes::0,No::1',
-							'width' => 12,
-						),
-						array(
-							'name' => 'Please type name to confirm if you visted the site',
-							'type' => 0,
-							'width' => 12,
-							'required' => false,
-							'source' => 1,
-						),
-					),
 				),
 			),
 		),
