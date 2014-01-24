@@ -100,6 +100,7 @@ class Template extends AppModel {
 
 			if (array_key_exists('sections', $page) && count($page['sections']) > 0) {
 				$pageId = $TemplatePage->id;
+
 				// add sections
 				$sections = $page['sections'];
 				$sectionOrder = 0;
@@ -116,6 +117,7 @@ class Template extends AppModel {
 							)
 						)
 					);
+
 					$sectionOrder = $sectionOrder + 1;
 					$sectionId = null;
 					if (array_key_exists('fields', $section) && count($section['fields']) > 0) {
@@ -154,6 +156,7 @@ class Template extends AppModel {
 									'rep_only' => (array_key_exists('rep_only', $field) ? $field['rep_only'] : false),
 								)
 							);
+							$TemplateField->save($newField);
 
 							$fieldOrder = $fieldOrder + 1;
 						}
