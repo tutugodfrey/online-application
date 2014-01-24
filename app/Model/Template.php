@@ -204,6 +204,7 @@ class Template extends AppModel {
 			'sections' => array(
 				array(
 					'name' => 'Rep only',
+					'rep_only' => true,
 					'fields' => array(
 						array(
 							'name' => 'Contractor Name',
@@ -211,11 +212,13 @@ class Template extends AppModel {
 							'required' => true,
 							'source' => 1,
 							'width' => 12,
+							'rep_only' => true,
 						)
 					)
 				),
 				array(
 					'name' => 'Schedule of Fees Part I',
+					'rep_only' => true,
 					'fields' => array(
 						array(
 							'name' => 'Rate Discount %',
@@ -223,6 +226,7 @@ class Template extends AppModel {
 							'required' => true,
 							'source' => 1,
 							'width' => 4,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Rate Structure',
@@ -231,6 +235,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Interchange Pass Thru::Interchange Pass Thru,Downgrades At Cost::Downgrades At Cost,Cost Plus::Cost Plus,Bucketed::Bucketed,Bucketed (Rewards)::Bucketed (Rewards),Simply Swipe It Rates::Simply Swipe It Rates',
 							'width' => 4,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Qualification Exemptions',
@@ -239,11 +244,13 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Visa/MC Interchange at Pass Thru::Visa/MC Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MC Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Qualified Consumer Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Non-Regulated Qualified Check Cards::Non-Qualified Transactions at Additional Visa/MC Cost Based on Non-Regulated Qualified Check Cards,Visa/MC Cost Plus 0.05%::Visa/MC Cost Plus 0.05%,Visa/MC Cost Plus 0.10%::Visa/MC Cost Plus 0.10%,Visa/MC Cost Plus 0.15%::Visa/MC Cost Plus 0.15%,Visa/MC Cost Plus 0.20%::Visa/MC Cost Plus 0.20%,Visa/MC Cost Plus 0.25%::Visa/MC Cost Plus 0.25%,Visa/MC Cost Plus 0.30%::Visa/MC Cost Plus 0.30%,Visa/MC Cost Plus 0.35%::Visa/MC Cost Plus 0.35%,Visa/MC Cost Plus 0.40%::Visa/MC Cost Plus 0.40%,Visa/MC Cost Plus 0.45%::Visa/MC Cost Plus 0.45%,Visa/MC Cost Plus 0.50%::Visa/MC Cost Plus 0.50%,Visa/MC Cost Plus 0.55%::Visa/MC Cost Plus 0.55%,Visa/MC Cost Plus 0.60%::Visa/MC Cost Plus 0.60%,Visa/MC Cost Plus 0.65%::Visa/MC Cost Plus 0.65%,Visa/MC Cost Plus 0.70%::Visa/MC Cost Plus 0.70%,Visa/MC Cost Plus 0.75%::Visa/MC Cost Plus 0.75%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10::RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10,RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10::RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10,REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10         ::REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10         ',
 							'width' => 12,
+							'rep_only' => true,
 						),
 					),
 				),
 				array(
 					'name' => 'Schedule of Fees Part II',
+					'rep_only' => true,
 					'fields' => array(
 						array(
 							'name' => 'Start Up Fees',
@@ -252,6 +259,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 3,
 							'default_value' => 'Application::25.00,Equipment::0.00,Expedite::0.00,Reprogramming::0.00,Training::0.00,Wireless Activation::0.00',
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Authorization Fees',
@@ -260,6 +268,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 3,
 							'default_value' => "Visa/MC/JCB/DISC & Batch::0.10,American Express::0.00,ARU & Voice Authorization::0.65,Wireless::0.00",
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Monthly Fees',
@@ -268,6 +277,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 3,
 							'default_value' => 'Statement::4.75,Monthly Minimum::25.00,Debit Access::0.00,EBT Access::0.00,Gateway Access::0.00,Wireless Access::0.00',
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Miscellaneous Fees',
@@ -276,16 +286,19 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 3,
 							'default_value' => 'Annual File Fee::95.00,Chargeback::15.00',
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'PIN Debit Fees',
 							'type' => 6,
-							'width' => 6
+							'width' => 6,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'PIN Debit Authorization',
 							'type' => 6,
-							'width' => 6
+							'width' => 6,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'PIN Debit Discount',
@@ -293,6 +306,7 @@ class Template extends AppModel {
 							'width' => 6,
 							'required' => false,
 							'source' => 1,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'EBT Fees',
@@ -300,6 +314,7 @@ class Template extends AppModel {
 							'width' => 6,
 							'required' => false,
 							'source' => 1,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'EBT Authorization',
@@ -307,6 +322,7 @@ class Template extends AppModel {
 							'width' => 6,
 							'required' => false,
 							'source' => 1,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'EBT Discount',
@@ -314,13 +330,15 @@ class Template extends AppModel {
 							'width' => 6,
 							'required' => false,
 							'source' => 1,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Discount Paid',
 							'type' => 4,
 							'width' => 12,
 							'source' => 1,
-							'default_value' => 'Monthly::0,Daily::1'
+							'default_value' => 'Monthly::0,Daily::1',
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Amex Discount Rate',
@@ -328,11 +346,13 @@ class Template extends AppModel {
 							'width' => 12,
 							'source' => 1,
 							'default_value' => '2.89',
+							'rep_only' => true,
 						),
 					),
 				),
 				array(
 					'name' => 'Site Inspection Information',
+					'rep_only' => true,
 					'fields' => array(
 						array(
 							'name' => 'Does business appear legitimate?',
@@ -341,6 +361,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Yes::0,No::1',
 							'width' => 12,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Is site photo included with this application?',
@@ -349,6 +370,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Yes::0,No::1',
 							'width' => 12,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Is inventory sufficient for Business Type?',
@@ -357,6 +379,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Yes::0,No::1',
 							'width' => 12,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Are goods and services delivered at time of sale?',
@@ -365,6 +388,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Yes::0,No::1',
 							'width' => 12,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Is business open and operating?',
@@ -373,6 +397,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Yes::0,No::1',
 							'width' => 12,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Are Visa and MasterCard decals visible?',
@@ -381,6 +406,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Yes::0,No::1',
 							'width' => 12,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Any mail/telephone order sales activity?',
@@ -389,6 +415,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'default_value' => 'Yes::0,No::1',
 							'width' => 12,
+							'rep_only' => true,
 						),
 						array(
 							'name' => 'Please type name to confirm if you visted the site',
@@ -396,6 +423,7 @@ class Template extends AppModel {
 							'width' => 12,
 							'required' => false,
 							'source' => 1,
+							'rep_only' => true,
 						),
 					),
 				),

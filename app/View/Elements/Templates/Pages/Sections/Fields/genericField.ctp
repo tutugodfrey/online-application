@@ -2,7 +2,8 @@
 	// suppress fields with a source of 0 == API
 	if ($field['source'] != 0) {
 		$label = ($field['required'] == true ? $field['name'] . '*' : $field['name']);
-		echo String::insert('<div class="col-md-:width">', array('width' => $field['width']));
+		$title = ($field['rep_only'] == true ? ' title="only the rep will see this"' : '');
+		echo String::insert('<div class="col-md-:width":title>', array('width' => $field['width'], 'title' => $title));
 		switch ($field['type']) {
 			case 0: // text
 				echo $this->Form->input($field['name'], array('label' => $label, 'class' => 'col-md-12'));

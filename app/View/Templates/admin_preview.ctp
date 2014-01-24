@@ -69,12 +69,18 @@
 		<?php
 			$is_admin = $this->Session->read('Auth.User.id') > 0;
 			foreach ($template['TemplatePages'] as $page):
-				$page_id = str_replace($bad_characters, '', $page['name']);
+				if ($is_admin || $page['rep_only'] !== true) {
+					$page_id = str_replace($bad_characters, '', $page['name']);
 			?>
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title">
-						<a data-toggle="collapse" data-parent="#page_accordion" href="#<?php echo $page_id ?>">
+						<a data-toggle="collapse" data-parent="#page_accordion" href="#<?php echo $page_id ?>"
+						<?php 
+						if ($page['rep_only'] == true) {
+							echo 'title="only the rep will see this"';
+						}
+						?>>
 							<?php echo $page['name'] ?>
 						</a>
 					</h4>
@@ -95,7 +101,11 @@
 											<div class="panel panel-default">
 												<div class="panel-heading">
 													<h4 class="panel-title">
-														<a data-toggle="collapse" data-parent="#section_accordion" href="#<?php echo $section_id ?>">
+														<a data-toggle="collapse" data-parent="#section_accordion" href="#<?php echo $section_id ?>" <?php 
+															if ($section['rep_only'] == true) {
+																echo 'title="only the rep will see this"';
+															}
+														?>>
 															<?php echo $section['name']; ?>
 														</a>
 													</h4>
@@ -119,9 +129,21 @@
 					</div>
 				</div>
 			</div>
-		<?php endforeach; ?><!-- end pages -->
+		<?php
+			}
+		endforeach; ?><!-- end pages -->
 		</div>
 	</div>
+
+	<style type="text/css">
+		/* TODO: move this into a css file */
+		#page_accordion div.panel-body {
+			padding: 2px 15px;
+		}
+		.panel-group .panel+.panel {
+			margin-top: 2;
+		}
+	</style>
 
 	<script type="text/javascript">
 		/* TODO: move this into a javascript file */
