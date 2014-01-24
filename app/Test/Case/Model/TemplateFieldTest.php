@@ -18,6 +18,7 @@ class TemplateFieldTest extends CakeTestCase {
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
 	);
+
 	public $autoFixtures = false;
 
 	public function setUp() {
@@ -27,7 +28,6 @@ class TemplateFieldTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
-
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
