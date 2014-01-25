@@ -250,8 +250,8 @@ class CobrandedOnlineapp extends CakeMigration {
 					),
 					'indexes' => array(
 						'PRIMARY' => array(
-						'column' => 'id',
-						'unique' => 1
+							'column' => 'id',
+							'unique' => 1
 						),
 					),
 				),
@@ -296,6 +296,7 @@ class CobrandedOnlineapp extends CakeMigration {
 		if ($direction == 'down') {
 			echo "\nDrop the foreign key relationship for cobrand and template on the onlineapp_users table\n";
 			$Cobrand = ClassRegistry::init('Cobrand');
+			$Cobrand->useDbConfig = 'test';
 			$Cobrand->query("
 				ALTER TABLE onlineapp_users
 				DROP CONSTRAINT IF EXISTS onlineapp_users_cobrand_fk CASCADE;
@@ -377,6 +378,7 @@ class CobrandedOnlineapp extends CakeMigration {
 				", array('id' => $axiaCobrandId)));
 
 			echo "\nCreate the foreign key relationship for cobrand and template\n";
+			$Cobrand->useDbConfig = 'test';
 			$Cobrand->query("
 				ALTER TABLE onlineapp_users
 				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);

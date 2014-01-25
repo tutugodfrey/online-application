@@ -44,11 +44,11 @@ class OnlineappCobrandedApplications extends CakeMigration {
 					'indexes' => array(
 						'PRIMARY' => array(
 							'column' => 'id',
-							'unique' => true,
+							'unique' => 1,
 						),
 						'UNIQUE_UUID' => array(
 							'column' => 'uuid',
-							'unique' => true,
+							'unique' => 1,
 						),
 					),
 				),
@@ -84,7 +84,7 @@ class OnlineappCobrandedApplications extends CakeMigration {
 					'indexes' => array(
 						'PRIMARY' => array(
 							'column' => 'id',
-							'unique' => true,
+							'unique' => 1,
 						),
 					),
 				),
@@ -109,6 +109,7 @@ class OnlineappCobrandedApplications extends CakeMigration {
 		if ($direction == 'down') {
 			echo "\nDrop the foreign key relationship for onlineapp_cobranded_application_values and onlineapp_cobranded_applications table\n";
 			$CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+			$CobrandedApplication->useDbConfig = 'test';
 			$CobrandedApplication->query("
 				ALTER TABLE onlineapp_cobranded_application_values
 				DROP CONSTRAINT IF EXISTS onlineapp_cobranded_applications_applications_values_fk CASCADE;
@@ -117,7 +118,6 @@ class OnlineappCobrandedApplications extends CakeMigration {
 				ALTER TABLE onlineapp_cobranded_applications
 				DROP CONSTRAINT onlineapp_users_cobranded_applications_fk;
 			");
-			
 		}
 		return true;
 	}
@@ -133,6 +133,7 @@ class OnlineappCobrandedApplications extends CakeMigration {
 		if ($direction == 'up') {
 			echo "\nCreate the foreign key relationship for onlineapp_cobranded_application_values and onlineapp_cobranded_applications\n";
 			$CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+			$CobrandedApplication->useDbConfig = 'test';
 			$CobrandedApplication->query("
 				ALTER TABLE onlineapp_cobranded_application_values
 				ADD CONSTRAINT onlineapp_cobranded_applications_applications_values_fk FOREIGN KEY (cobranded_application_id) REFERENCES onlineapp_cobranded_applications (id);
