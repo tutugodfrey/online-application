@@ -44,7 +44,7 @@ class OnlineappCobrandedApplications extends CakeMigration {
 					'indexes' => array(
 						'PRIMARY' => array(
 							'column' => 'id',
-							'unique' => 1
+							'unique' => true,
 						),
 						'UNIQUE_UUID' => array(
 							'column' => 'uuid',
@@ -84,7 +84,7 @@ class OnlineappCobrandedApplications extends CakeMigration {
 					'indexes' => array(
 						'PRIMARY' => array(
 							'column' => 'id',
-							'unique' => 1
+							'unique' => true,
 						),
 					),
 				),
