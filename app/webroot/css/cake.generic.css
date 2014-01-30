@@ -279,9 +279,9 @@ fieldset fieldset div {
 	margin: 0 20px;
 }
 form div {
-	clear: both;
-	margin-bottom: 1em;
-	padding: .5em;
+	/*clear: both;*/
+	margin-bottom: 0;
+	padding: 0;
 	vertical-align: text-top;
 }
 form.onlineapp_preview_page div.panel-default {
@@ -597,4 +597,7 @@ div.multicolumn {
 	-webkit-column-gap: 20px;
 	column-count: 4;
 	column-gap: 20px;
+}
+.radio, .checkbox {
+	padding-left: 10px;
 }
