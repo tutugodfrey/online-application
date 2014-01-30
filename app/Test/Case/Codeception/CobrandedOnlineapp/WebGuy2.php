@@ -26,7 +26,7 @@ use Codeception\Module\Db;
  * @method void offsetUnset($offset)
 */
 
-class WebGuy extends \Codeception\AbstractGuy
+class WebGuy2 extends \Codeception\AbstractGuy
 {
     
     /**

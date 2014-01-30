@@ -3,7 +3,7 @@ class UsersLoginPage
 {
 	public static $URL = '/users/login';
 
-	// form fields and labeels
+	// form fields and labels
 	public static $userEmailField = 'UserEmail';
 	public static $userEmailLabel = 'Email';
 

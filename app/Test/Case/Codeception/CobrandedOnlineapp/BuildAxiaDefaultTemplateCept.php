@@ -1,7 +1,7 @@
 <?php
 use Codeception\Util\Debug;
 
-$I = new WebGuy($scenario);
+$I = new WebGuy2($scenario);
 $ULP = new UsersLoginPage($I);
 $CP = new CobrandPage($I);
 $TP = new TemplatePage($I);

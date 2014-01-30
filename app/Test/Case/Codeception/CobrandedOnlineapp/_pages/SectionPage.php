@@ -71,7 +71,7 @@ class SectionPage
 	 */
 	protected $webGuy;
 
-	public function __construct(WebGuy $I)
+	public function __construct(WebGuy2 $I)
 	{
 		$this->webGuy = $I;
 	}
@@ -79,7 +79,7 @@ class SectionPage
 	/**
 	 * @return SectionPage
 	 */
-	public static function of(WebGuy $I)
+	public static function of(WebGuy2 $I)
 	{
 		return new static($I);
 	}
