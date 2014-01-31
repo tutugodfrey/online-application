@@ -46,9 +46,8 @@ class TemplateTest extends CakeTestCase {
 		$expected = array();
 		$expected[1] = 'Template 1 for PN1';
 		$expected[2] = 'Template 2 for PN1';
-		$expected[3] = 'Template 1 for PN2';
 
-		$result = $this->Template->getList();
+		$result = $this->Template->getList(1);
 
 		$this->assertEquals($expected, $result);
 	}

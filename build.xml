@@ -50,6 +50,12 @@
     <mkdir dir="${basedir}/app/webroot/coverage"/>
     <mkdir dir="${basedir}/app/webroot/code-browser"/>
     <mkdir dir="${basedir}/app/webroot/api"/>
+    <exec executable="/usr/bin/git">
+	    <arg line="submodule update --init --recursive"/>
+    </exec>
+    <exec executable="/usr/bin/git">
+	    <arg line="submodule foreach git pull origin master"/>
+    </exec>
   </target>
 
   <target name="lint"
@@ -71,7 +77,7 @@
 
   <target name="migrate">
     <exec executable="${basedir}/app/Console/cake" failonerror="false">
-      <arg line="Migrations.migration status -c test -i test"/>
+      <arg line="Migrations.migration status"/>
     </exec>
     <exec executable="${basedir}/app/Console/cake" failonerror="false">
       <arg line="Migrations.migration run all -c test -i test"/>

@@ -36,7 +36,7 @@ class UsersController extends AppController {
             $token = null;
             $this->Session->setFlash('There was an error generating this token');
         }
-        $this->Session->setFlash('API access has been enabled for this user');            
+        $this->Session->setFlash('API access has been enabled for this user');
         $this->set(compact('token', 'password','id'));
         }
     }

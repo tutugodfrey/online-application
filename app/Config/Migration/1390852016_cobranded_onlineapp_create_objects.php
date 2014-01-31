@@ -265,6 +265,10 @@ class CobrandedOnlineappCreateObjects extends CakeMigration {
 						'type' => 'integer',
 						'unll' => false,
 					),
+					'template_id' => array(
+						'type' => 'integer',
+						'unll' => false,
+					),
 					'uuid' => array(
 						'type' => 'string',
 						'null' => false,
@@ -386,7 +390,9 @@ class CobrandedOnlineappCreateObjects extends CakeMigration {
 				ALTER TABLE onlineapp_cobranded_application_values
 				DROP CONSTRAINT IF EXISTS onlineapp_template_fields_applications_values_fk CASCADE;
 				ALTER TABLE onlineapp_cobranded_applications
-				DROP CONSTRAINT onlineapp_users_cobranded_applications_fk;"
+				DROP CONSTRAINT onlineapp_users_cobranded_applications_fk;
+				ALTER TABLE onlineapp_cobranded_applications
+				DROP CONSTRAINT onlineapp_templates_cobranded_applications_fk;"
 			);
 		}
 		return true;
@@ -421,6 +427,8 @@ class CobrandedOnlineappCreateObjects extends CakeMigration {
 				ADD CONSTRAINT onlineapp_template_fields_applications_values_fk FOREIGN KEY (template_field_id) REFERENCES onlineapp_template_fields (id);
 				ALTER TABLE onlineapp_cobranded_applications
 				ADD CONSTRAINT onlineapp_users_cobranded_applications_fk FOREIGN KEY (user_id) REFERENCES onlineapp_users (id);
+				ALTER TABLE onlineapp_cobranded_applications
+				ADD CONSTRAINT onlineapp_templates_cobranded_applications_fk FOREIGN KEY (template_id) REFERENCES onlineapp_templates (id);
 
 				INSERT INTO onlineapp_cobrands
 				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('A Charity for Charities', 'ACFC', 'TODO: add ACFC logo', current_timestamp, current_timestamp);

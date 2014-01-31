@@ -975,7 +975,6 @@ class ApplicationsController extends AppController {
                 // ***************
                 if ($this->request->is('post') || $this->request->is('put')) {
                     if (!$id && !$this->request->data['Application']['id']) {
-
                         // create a new application
                         $this->Application->create();
                         $hash = md5(String::uuid());
@@ -989,9 +988,7 @@ class ApplicationsController extends AppController {
                             $this->Application->set(array('user_id' => $this->Auth->user('id')));
                         $this->set('hash', $hash);
                         //$this->Application->test();
-                    }
-                    else {
-
+                    } else {
                         $this->Application->id = ($this->request->data['Application']['id'] ? $this->request->data['Application']['id'] : $id);
                         // check for appropriate hash
                         $application = $this->Application->read();
@@ -1002,6 +999,9 @@ class ApplicationsController extends AppController {
                     }
 
                     // PERFORM VALIDATION
+                    $application = $this->Application->read();
+                    debug($application);
+
                     if ($application['Application'] && in_array($application['Application']['status'], array('completed', 'signed'))) {
                         $this->request->data = $application;
                         $validation = false;
@@ -1017,9 +1017,13 @@ class ApplicationsController extends AppController {
                     if ($validation === true) {
                         // SAVE THE DATA
                         $this->Application->set($this->request->data);
+                        debug($this->request->data);
                         //.if ($this->Auth->user('id')) $this->Application->set(array('user_id' => $this->Auth->user('id')));
                         if ($this->Application->save($this->request->data, array('validate' => false))) {
                             // REDIRECT TO THE NEXT STEP
+                            debug($this->Application->id);
+                            debug(array('action' => 'add', 2, $this->Application->id, $hash));
+#                            $this->redirect('http://www.google.com');
                             $this->redirect(array('action' => 'add', 2, $this->Application->id, $hash));
                         }
                     } else {

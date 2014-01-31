@@ -23,13 +23,23 @@ class CobrandedApplication extends AppModel {
 		/*
 		'id' => array(),
 		*/
+		'user_id' => array(
+			'rule' => array('numeric'),
+			'allowEmpty' => false,
+			'required' => true,
+		),
 		'uuid' => array(
 			'rule' => array('uuid'),
 			'message' => 'Invalid UUID',
 			'allowEmpty' => false,
-			//'required' => false,
+			'required' => true,
 			//'last' => false, // Stop validation after this rule
 			//'on' => 'create', // Limit validation to 'create' or 'update' operations
+		),
+		'template_id' => array(
+			'rule' => array('numeric'),
+			'allowEmpty' => false,
+			'required' => true,
 		),
 		/*
 		'created' => array(),
@@ -48,6 +58,10 @@ class CobrandedApplication extends AppModel {
 			'className' => 'User',
 			'foreignKey' => 'user_id',
 		),
+		'Template' => array(
+			'className' => 'Template',
+			'foreignKey' => 'template_id'
+		)
 	);
 
 /**
@@ -57,7 +71,7 @@ class CobrandedApplication extends AppModel {
  */
 	public $hasMany = array(
 		'CobrandedApplicationValues' => array(
-			'className' => 'CobrandedApplicationValue',
+			'className' => 'OnlineappCobrandedApplicationValue',
 			'foreignKey' => 'cobranded_application_id',
 			'dependent' => true,
 			'conditions' => '',
@@ -70,5 +84,72 @@ class CobrandedApplication extends AppModel {
 			'counterQuery' => ''
 		),
 	);
+
+	public function afterSave($created, $options) {
+		if ($created === true) {
+			$applicationId = $this->data['CobrandedApplication']['id'];
+			$template = $this->Template->find('first', array(
+				'conditions' => array('Template.id' => $this->data['CobrandedApplication']['template_id']),
+				'contain' => array(
+					'TemplatePages' => array(
+						'TemplateSections' => array(
+							'TemplateFields' => array(
+								'fields' => array('id', 'type', 'name', 'default_value', 'merge_field_name', 'order', 'width')
+							)
+						),
+					),
+				),
+			));
+
+			// seed the cobranded application values
+			foreach ($template['TemplatePages'] as $page) {
+				foreach ($page['TemplateSections'] as $section) {
+					foreach ($section['TemplateFields'] as $field) {
+						// types with multiple values/options are handled differently
+						switch ($field['type'])
+						{
+							case 4: // 'radio':
+							case 5: // 'percents':
+							case 7: // 'fees':
+								// split default_value on ',' and append split[1] to the merge_field_name
+								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
+									$keyValuePair = split('::', $keyValuePairStr);
+									$this->__addApplicationValue(
+										array(
+											'cobranded_application_id' => $applicationId,
+											'template_field_id' => $field['id'],
+											'name' => $field['merge_field_name'].$keyValuePair[($field['type'] == 7 ? 0 : 1)], // fees use the display name because a default value is in second position
+										)
+									);
+								}
+								break;
+
+							case 6:
+							case 8:
+								// noop for label or hr items
+								break;
+
+							default:
+								// call $this->__addApplicationValue();
+								$this->__addApplicationValue(
+									array(
+										'cobranded_application_id' => $applicationId,
+										'template_field_id' => $field['id'],
+										'name' => $field['merge_field_name'],
+									)
+								);
+								break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private function __addApplicationValue($applicationValueData) {
+		// save this info
+		$this->CobrandedApplicationValues->create();
+		$this->CobrandedApplicationValues->save($applicationValueData);
+	}
 
 }

@@ -17,11 +17,11 @@ modules:
         - Db
     config:
         PhpBrowser:
-            url: 'https://app-travis-test.axiapayments.com'
+            url: 'https://app-travis-dev.axiapayments.com'
         Db:
-            dsn: 'pgsql:host=localhost;dbname=test_legacy'
+            dsn: 'pgsql:host=localhost;dbname=axia_legacy'
             user: 'axia'
             password: 'ax!a'
-            dump: 'app/Test/Case/Codeception/_data/test_legacy_dump.sql'
+            dump: ''
             populate: false
             cleanup: false

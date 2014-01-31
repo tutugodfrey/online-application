@@ -66,8 +66,8 @@ class OrderableChildBehavior extends ModelBehavior {
 
 	private function __hasChildren($model) {
 		$hasChildren = false;
-		$childrenAlias = Inflector::pluralize($this->settings[$model->alias]['children_model_name']);
-		if (strlen($childrenAlias) > 0) {
+		if (strlen($this->settings[$model->alias]['children_model_name']) > 0) {
+			$childrenAlias = Inflector::pluralize($this->settings[$model->alias]['children_model_name']);
 			$behaviorObject = $model->read();
 			$hasChildren = (count($behaviorObject[$childrenAlias]) > 0);
 		}

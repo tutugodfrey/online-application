@@ -15,6 +15,8 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.onlineappCobrand',
+		'app.onlineappTemplate',
 		'app.onlineappCobrandedApplication',
 	);
 
@@ -25,6 +27,8 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+		$this->Template = ClassRegistry::init('Template');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 
 		// load data
@@ -38,8 +42,11 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function tearDown() {
 		$this->CobrandedApplication->deleteAll(true, false);
-
+		$this->Template->deleteAll(true, false);
+		$this->Cobrand->deleteAll(true, false);
 		unset($this->CobrandedApplication);
+		unset($this->Template);
+		unset($this->Cobrand);
 
 		parent::tearDown();
 	}
@@ -47,7 +54,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 	public function testValidation() {
 		// create a new appliction
 		// only validation currently in place is for the uuid
-		$expectedValidationErrors = array('uuid' => array('Invalid UUID'));
+		$expectedValidationErrors = array(
+			'uuid' => array('Invalid UUID'),
+			'user_id' => array('This field cannot be left blank'),
+			'template_id' => array('This field cannot be left blank'),
+		);
 		$this->CobrandedApplication->create(array('uuid' => ''));
 		$this->assertFalse($this->CobrandedApplication->validates());
 		$this->assertEquals(
@@ -58,7 +69,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// testing go right path
 		$expectedValidationErrors = array();
-		$this->CobrandedApplication->create(array('uuid' => String::uuid()));
+		$this->CobrandedApplication->create(
+			array(
+				'uuid' => String::uuid(),
+				'user_id' => 1,
+				'template_id' => 1,
+			)
+		);
+
 		$this->assertTrue($this->CobrandedApplication->validates());
 		$this->assertEquals(
 			$expectedValidationErrors,

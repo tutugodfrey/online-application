@@ -1,6 +1,6 @@
 <?php
 class User extends AppModel {
-    public $actsAs = array('Search.Searchable');
+    public $actsAs = array('Search.Searchable', 'Containable');
     
     //Group Constants
     const ADMIN_GROUP_ID = 1;
@@ -12,7 +12,6 @@ class User extends AppModel {
     const HOOZA = 59;
     const FIRE_SPRING = 102;
     const INSPIRE_PAY = 69;
-    
     
     public $useTable = 'onlineapp_users';
     public $validate = array(
