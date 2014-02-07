@@ -18,7 +18,7 @@
 		</dd>
 		<dt><?php echo __('Uuid'); ?></dt>
 		<dd>
-			<?php echo h($cobrandedApplication['CobrandedApplication']['uuid']); ?>
+			<?php echo $this->Html->link($cobrandedApplication['CobrandedApplication']['uuid'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Created'); ?></dt>
