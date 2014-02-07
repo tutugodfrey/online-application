@@ -305,7 +305,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'PIN Debit Fees',
 							'type' => 6,
-							'width' => 6,
+							'width' => 12,
 							'rep_only' => true,
 						),
 						array(
@@ -329,7 +329,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'EBT Fees',
 							'type' => 6,
-							'width' => 6,
+							'width' => 12,
 							'rep_only' => true,
 						),
 						array(

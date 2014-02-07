@@ -6,6 +6,7 @@
 		echo String::insert('<div class="col-md-:width":title>', array('width' => $field['width'], 'title' => $title));
 		switch ($field['type']) {
 			case 0: // text
+				// TODO: implement a sub type for nanp phone number, money, ssn, zip, email, tax id?!?, length of time, MID, routing#, account#, AE SE#,
 				echo $this->Form->input($field['name'], array('label' => $label, 'class' => 'col-md-12'));
 				break;
 
@@ -17,13 +18,13 @@
 				echo $this->Form->input($field['name'], array('type' => 'time', 'label' => $label));
 				break;
 
-			case 3: // checkboxes
+			case 3: // checkbox
 				echo $this->Html->div('checkbox',
 					$this->Form->checkbox($field['name']) . $this->Form->label($field['name'])
 				);
 				break;
 
-			case 4: // radios
+			case 4: // radio group
 				$radio_options_string = $field['default_value'];
 				$radio_options = array();
 				foreach (split(',', $radio_options_string) as $key_value_pair_str) {
@@ -34,7 +35,7 @@
 				echo $this->Form->input($field['name'], $options);
 				break;
 
-			case 5: // percent
+			case 5: // percent group
 				$field_id = str_replace($bad_characters, '', $field['name']);
 				echo "<fieldset id='" . $field_id ."' class='percent'>";
 				echo "<legend>" . $field['name'] . "</legend>";

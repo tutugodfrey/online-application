@@ -123,6 +123,9 @@
 </script>
 
 <style type="text/css">
+	#wizard input {
+		padding: 0;
+	}
 	#wizard .nav.nav-pills {
 		padding: 13px;
 	}
