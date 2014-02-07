@@ -277,7 +277,7 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 //$fieldId = $FP->createIfMissing('Bank Name', $sectionId, 12, 0, true, 1, '', 'BankName', '', null);
 $fieldId = $FP->createIfMissing('Do you currently accept American Express?', $sectionId, 6, 4, true, 1,  'Yes::Exist,No::New', 'AE', '', null);
 $fieldId = $FP->createIfMissing('Please Provide Existing SE#', $sectionId, 6, 0, false, 1, '', 'AmexNum', '', null);
-$fieldId = $FP->createIfMissing('Do you want to accept American Express', $sectionId, 12, 4, false, 1, 'Yes::Yes,No::No', 'AENew_', '', null);
+$fieldId = $FP->createIfMissing('Do you want to accept American Express?', $sectionId, 12, 4, false, 1, 'Yes::Yes,No::No', 'AENew_', '', null);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
