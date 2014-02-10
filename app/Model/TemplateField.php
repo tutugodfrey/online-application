@@ -6,7 +6,31 @@ App::uses('AppModel', 'Model');
  */
 class TemplateField extends AppModel {
 
-	public $fieldTypes = array('text', 'date', 'time', 'checkbox', 'radio', 'percents', 'label', 'fees', 'hr');
+	public $fieldTypes = array(
+		'text',             //  0 - free form
+		'date',             //  1 - yyyy/mm/dd
+		'time',             //  2 - hh:mm:ss
+		'checkbox',         //  3 - 
+		'radio',            //  4 - 
+		'percents',         //  5 - (group of percent)
+		'label',            //  6 - no validation
+		'fees',             //  7 - (group of money?)
+		'hr',               //  8 - no validation
+/* newer types ;) */
+		'phoneUS',          //  9 - (###) ###-####
+		'money',            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
+		'percent',          // 11 - (0-100)%
+		'ssn',              // 12 - ###-##-####
+		'state',            // 13 - us state
+		'zip',              // 14 - #####[-####]
+		'email',            // 15 - 
+		'lengthoftime',     // 16 - [#+] [year|month|day]s
+		'creditcard',       // 17
+		//'taxId',          // 18 - ?
+		//'bankRoutingNumber',// 19 - #########
+		//'bankAccountNumber',// 20 - ?
+		//'amexSENumber',     // 21 - ?
+	);
 
 	public $sourceTypes = array('api', 'user', 'n/a');
 

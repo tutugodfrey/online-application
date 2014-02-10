@@ -1,10 +1,8 @@
 
-
 <div class='container'>
 	<div class="row">
 		<section id="wizard">
-
-			<form id="commentForm" method="get" action="" class="form-horizontal">
+			<form id="onlineapp" method="get" action="">
 				<div id="rootwizard">
 					<ul>
 						<?php
@@ -26,14 +24,21 @@
 						?>
 					</ul>
 
+					<ul class="pager wizard">
+						<li class="previous first" style="display:none;"><a href="#">First</a></li>
+						<li class="previous"><a href="#">Previous</a></li>
+						<li class="next last" style="display:none;"><a href="#">Last</a></li>
+						<li class="next"><a href="#">Next</a></li>
+					</ul>
+
 					<div class="tab-content">
+
 					<?php
 					for ($index = 0; $index < $numberOfPages; $index ++) {
 						$displayIndex = 1 + $index;
 						$templatePage = $templatePages[$index];
 						$active = ($displayIndex == 1 ? ' active' : '');
 						?>
-
 						<div class="tab-pane<?php echo $active ?>" id="tab<?php echo $displayIndex ?>">
 							<div class="container">
 								<div class="row">
@@ -47,8 +52,10 @@
 											</div>
 											<div class="panel-body">
 												<div class="row">
-												<?php echo $this->Element('Templates/Pages/Sections/Fields/genericField',
-													array("fields" => $section['TemplateFields'], "bad_characters" => $bad_characters)); ?>
+												<?php
+												echo $this->Element('Templates/Pages/Sections/Fields/genericField',
+													array("fields" => $section['TemplateFields'], "bad_characters" => $bad_characters));
+												?>
 												</div>
 											</div>
 										</div>
@@ -71,54 +78,51 @@
 					</ul>
 				</div>
 			</form>
-
 		</section>
 	</div>
 </div>
 
-<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
+<script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
+<script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
 <script type="text/javascript" src="/js/jquery.bootstrap.wizard.js"></script>
 
 <script type="text/javascript">
+	var onWindowResize = function() {
+		var totalWidth = $("#wizard .nav-pills").css("width").replace('px', '');
+		var numberOfChildren = $("#wizard .nav-pills>li").length;
+		var newWidth = Math.floor(totalWidth/(numberOfChildren-1))-$("#wizard .nav-pills").css('padding').replace('px','');
+		$("#wizard .nav-pills>li>a>div.connecting-line").css("width", newWidth);
+	};
+
+	var onTabChange = function(tab, navigation, index) {
+		var $valid = $("#onlineapp").valid();
+		if(!$valid) {
+			$validator.focusInvalid();
+			return false;
+		}
+	};
+
+	var $validator;
+
 	$(document).ready(function() {
-		var $validator = $("#commentForm").validate({
+		$(window).resize(onWindowResize);
+
+		setTimeout(function() {$(window).trigger('resize')}, 500);
+
+		$validator = $("#onlineapp").validate({
 			rules: {
-				emailfield: {
-					required: true,
-					email: true,
-					minlength: 3
-				},
-				namefield: {
-					required: true,
-					minlength: 3
-				},
-				urlfield: {
-					required: true,
-					minlength: 3,
-					url: true
+				// no quoting necessary
+				'CorpPhone': {
+					phoneUS: true
 				}
 			}
 		});
 
 		$('#rootwizard').bootstrapWizard({
 			'tabClass': 'nav nav-pills',
-			'onNext': function(tab, navigation, index) {
-				var $valid = $("#commentForm").valid();
-				if(!$valid) {
-					$validator.focusInvalid();
-					return false;
-				}
-			}
+			'onNext': onTabChange
 		});
-
-		$(window).resize(function() {
-			var totalWidth = $("#wizard .nav-pills").css("width").replace('px', '');
-			var numberOfChildren = $("#wizard .nav-pills>li").length;
-			var newWidth = Math.floor(totalWidth/(numberOfChildren-1))-$("#wizard .nav-pills").css('padding').replace('px','');
-			$("#wizard .nav-pills>li>a>div.connecting-line").css("width", newWidth);
-		});
-
-		$(window).trigger('resize');
 	});
 </script>
 

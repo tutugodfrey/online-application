@@ -3,24 +3,24 @@
 	if ($field['source'] != 0) {
 		$label = ($field['required'] == true ? $field['name'] . '*' : $field['name']);
 		$title = ($field['rep_only'] == true ? ' title="only the rep will see this"' : '');
+		$fieldId = $field['merge_field_name'];
 		echo String::insert('<div class="col-md-:width":title>', array('width' => $field['width'], 'title' => $title));
 		switch ($field['type']) {
 			case 0: // text
-				// TODO: implement a sub type for nanp phone number, money, ssn, zip, email, tax id?!?, length of time, MID, routing#, account#, AE SE#,
-				echo $this->Form->input($field['name'], array('label' => $label, 'class' => 'col-md-12'));
+				echo $this->Form->input($field['name'], array('label' => $label, 'class' => 'col-md-12', 'id' => $fieldId, 'name' => $fieldId));
 				break;
 
 			case 1: // date
-				echo $this->Form->input($field['name'], array('type' => 'date', 'label' => $label));
+				echo $this->Form->input($field['name'], array('type' => 'date', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId));
 				break;
 
 			case 2: // time
-				echo $this->Form->input($field['name'], array('type' => 'time', 'label' => $label));
+				echo $this->Form->input($field['name'], array('type' => 'time', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId));
 				break;
 
 			case 3: // checkbox
 				echo $this->Html->div('checkbox',
-					$this->Form->checkbox($field['name']) . $this->Form->label($field['name'])
+					$this->Form->checkbox($field['name'], array('id' => $fieldId)) . $this->Form->label($fieldId, $field['name'])
 				);
 				break;
 
@@ -31,12 +31,12 @@
 					$key_value_pair = split('::', $key_value_pair_str);
 					$radio_options[$key_value_pair[1]] = $key_value_pair[0];
 				}
-				$options = array('options' => $radio_options, 'empty' => __('(choose one)'), 'label' => $label);
+				$options = array('options' => $radio_options, 'empty' => __('(choose one)'), 'label' => $label, 'id' => $fieldId);
 				echo $this->Form->input($field['name'], $options);
 				break;
 
 			case 5: // percent group
-				$field_id = str_replace($bad_characters, '', $field['name']);
+				$field_id = str_replace($bad_characters, '', $fieldId);
 				echo "<fieldset id='" . $field_id ."' class='percent'>";
 				echo "<legend>" . $field['name'] . "</legend>";
 				$percent_options_string = $field['default_value'];
@@ -91,6 +91,29 @@
 			case 8:
 				echo $this->Html->tag('hr');
 				break;
+
+			// 'phoneUS',       //  9 - (###) ###-####
+			// 'ssn',           // 12 - ###-##-####
+			// 'zip',           // 14 - #####[-####]
+			case 9:
+			case 12:
+			case 14:
+				echo $this->Form->input($field['name'], array('label' => $label, 'class' => 'col-md-12', 'id' => $fieldId, 'name' => $fieldId));
+				break;
+
+			// 'money',         // 10 - $###.##
+			// 'percent',       // 11 - (0-100)%
+
+			// 'state',         // 13 - us state
+
+			// 'email',         // 15 - 
+			case 15:
+				echo $this->Form->input($field['name'], array('type' => 'email', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId));
+				break;
+
+			// 'lengthoftime',  // 16 - [#+] [year|month|day]s
+			// 'creditcard',    // 17 - 
+
 
 			default:
 				echo '***** UNRECOGNIZED FIELD TYPE [' . $field['type'] . '] for field [' . $field['merge_field_name'] . ']*****';
