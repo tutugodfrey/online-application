@@ -13,6 +13,7 @@ class AllTestsTest extends PHPUnit_Framework_TestSuite {
 		$suite->addTestDirectory($path . 'Controller' . DS);
 		$suite->addTestDirectory($path . 'Model' . DS);
 		$suite->addTestDirectory($path . 'View' . DS);
+		$suite->addTestDirectory($path . 'View' . DS . 'Helper');
 		return $suite;
 	}
 
