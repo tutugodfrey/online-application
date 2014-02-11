@@ -13,7 +13,7 @@
 							$displayIndex = 1 + $index;
 							$displayText = $templatePage['name'];
 						?>
-							<li>
+							<li title="<?php echo $pageDescription ?>">
 								<a href="#tab<?php echo $displayIndex ?>" data-toggle="tab">
 									<span class="badge"><?php echo $displayIndex; ?></span>
 									<div class="connecting-line"></div>
@@ -24,64 +24,20 @@
 						?>
 					</ul>
 
-					<ul class="pager wizard">
-						<li class="previous first" style="display:none;"><a href="#">First</a></li>
-						<li class="previous"><a href="#">Previous</a></li>
-						<li class="next last" style="display:none;"><a href="#">Last</a></li>
-						<li class="next"><a href="#">Next</a></li>
-					</ul>
+					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
 
 					<div class="tab-content">
 
-					<?php
-					for ($index = 0; $index < $numberOfPages; $index ++) {
-						$displayIndex = 1 + $index;
-						$templatePage = $templatePages[$index];
-						$active = ($displayIndex == 1 ? ' active' : '');
-						?>
-						<div class="tab-pane<?php echo $active ?>" id="tab<?php echo $displayIndex ?>">
-							<div class="container">
-								<div class="row">
-								<?php
-								foreach ($templatePage['TemplateSections'] as $section) {
-									?>
-									<div class="col-md-<?php echo $section['width']; ?>">
-										<div class="panel panel-default">
-											<div class="panel-heading">
-												<h4 class="panel-title"><?php echo $section['name']; ?></h4>
-											</div>
-											<div class="panel-body">
-												<div class="row">
-												<?php
-												echo $this->Element('Templates/Pages/Sections/Fields/genericField',
-													array("fields" => $section['TemplateFields'], "bad_characters" => $bad_characters));
-												?>
-												</div>
-											</div>
-										</div>
-									</div>
-									<?php
-								}
-								?>
-								</div>
-							</div>
-						</div>
-						<?php
-					}
-					?>
+					<?php echo $this->Element('Templates/Pages/templatePage', array('numberOfPages' => $numberOfPages, 'templatePage' => $templatePage, 'requireRequiredFields' => $requireRequiredFields)) ?>
+
 					</div>
-					<ul class="pager wizard">
-						<li class="previous first" style="display:none;"><a href="#">First</a></li>
-						<li class="previous"><a href="#">Previous</a></li>
-						<li class="next last" style="display:none;"><a href="#">Last</a></li>
-						<li class="next"><a href="#">Next</a></li>
-					</ul>
+
+					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
 				</div>
 			</form>
 		</section>
 	</div>
 </div>
-
 
 <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
 <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
