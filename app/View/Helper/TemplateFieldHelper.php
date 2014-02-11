@@ -15,29 +15,41 @@ class TemplateFieldHelper extends Helper {
 
 		// suppress fields with a source of 0 == API
 		if ($field['source'] != 0) {
+			$fieldOptions = array();
 			$label = ($field['required'] == true ? $field['name'] . '*' : $field['name']);
+			$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
 			$title = ($field['rep_only'] == true ? ' title="only the rep will see this"' : '');
 			// TODO: if rep_only and the merchant is inputting data, don't show this field
 			$fieldId = $field['merge_field_name'];
+			$fieldOptions = Hash::insert($fieldOptions, 'name', $fieldId);
+			$fieldOptions = Hash::insert($fieldOptions, 'id', $fieldId);
 			$retVal = $retVal .  String::insert('<div class="col-md-:width":title>', array('width' => $field['width'], 'title' => $title));
+			$requiredProp = ($field['required'] && $requireRequiredFields) ? true : false;
+			$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
 
-			$requiedProp = ($field['required'] && $requireRequiredFields) ? true : false;
 			switch ($field['type']) {
 				case 0: // text
-					$retVal = $retVal . $this->Form->input($field['name'], array('type' => 'text', 'label' => $label, 'class' => 'col-md-12', 'id' => $fieldId, 'name' => $fieldId, 'required' => $requiedProp));
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				case 1: // date
-					$retVal = $retVal . $this->Form->input($field['name'], array('type' => 'date', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId, 'required' => $requiedProp, 'empty' => true));
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'date');
+					$fieldOptions = Hash::insert($fieldOptions, 'empty', true);
+					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				case 2: // time
-					$retVal = $retVal . $this->Form->input($field['name'], array('type' => 'time', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId, 'required' => $requiedProp, 'empty' => true));
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
+					$fieldOptions = Hash::insert($fieldOptions, 'empty', true);
+					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				case 3: // checkbox
 					$retVal = $retVal . $this->Html->div('checkbox',
-						$this->Form->checkbox($field['name'], array('id' => $fieldId, 'required' => $requiedProp)) . $this->Form->label($fieldId, $field['name'])
+						$this->Form->checkbox($field['name'], $fieldOptions).
+						$this->Form->label($fieldId, $field['name'])
 					);
 					break;
 
@@ -48,33 +60,42 @@ class TemplateFieldHelper extends Helper {
 						$keyValuePair = split('::', $keyValuePairStr);
 						$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
 					}
-					$options = array('options' => $radioOptions, 'empty' => __('(choose one)'), 'label' => $label, 'id' => $fieldId, 'required' => $requiedProp);
-					$retVal = $retVal . $this->Form->input($field['name'], $options);
+					$fieldOptions = Hash::insert($fieldOptions, 'empty', __('(choose one)'));
+					$fieldOptions = Hash::insert($fieldOptions, 'options', $radioOptions);
+					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				case 5: // percent group
-					$cleanFieldId = str_replace($this->badCharacters, '', $fieldId);
+					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'number');
+					$fieldOptions = Hash::insert($fieldOptions, 'onkeypress', 'if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;');
+					$fieldOptions = Hash::insert($fieldOptions, 'onblur', '$.event.trigger({type: "percentOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});');
+					$fieldOptions = Hash::insert($fieldOptions, 'min', 0);
+					$fieldOptions = Hash::insert($fieldOptions, 'max', 100);
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+
 					$retVal = $retVal . '<fieldset id="'.$cleanFieldId.'" class="percent">';
 					$retVal = $retVal . "<legend>" . $field['name'] . "</legend>";
-					$percentOptionsString = $field['default_value'];
-					foreach (split(',', $percentOptionsString) as $keyValuePairStr) {
+					$optionsString = $field['default_value'];
+
+					foreach (split(',', $optionsString) as $keyValuePairStr) {
 						$keyValuePair = split('::', $keyValuePairStr);
-						$retVal = $retVal . $this->Form->input(
-							str_replace($this->badCharacters, '', $keyValuePair[0]),
-							array(
-								'type' => 'number',
-								'id' => $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]),
-								'onkeypress' => 'if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;',
-								'onblur' => '$.event.trigger({type: "percentOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});',
-								'min' => 0,
-								'max' => 100,
-								'class' => 'col-md-12',
-								'required' => $requiedProp,
-							)
-						);
+						$fieldOptions['id'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
+						$fieldOptions['name'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
+						$fieldOptions['label'] = $keyValuePair[1];
+						$retVal = $retVal . $this->Form->input(str_replace($this->badCharacters, '', $keyValuePair[0]), $fieldOptions);
 					}
 					// lastly add the total
-					$retVal = $retVal . $this->Form->input('Total', array('id' => $cleanFieldId . '_Total', 'disabled' => 'disabled', 'onclick' => 'return false;', 'class' => String::insert('col-md-:width', array('width' => $field['width'])), 'required' => $requiedProp));
+					$retVal = $retVal . $this->Form->input('Total',
+						array(
+							'id' => $cleanFieldId . '_Total',
+							'name' => $cleanFieldId . '_Total',
+							'disabled' => 'disabled',
+							'onclick' => 'return false;',
+							'class' => 'col-md-'.$field['width'],
+							'required' => $requiredProp
+						)
+					);
 					$retVal = $retVal . "</fieldset>";
 					break;
 
@@ -82,28 +103,36 @@ class TemplateFieldHelper extends Helper {
 					$retVal = $retVal . $this->Html->tag('h4', $field['name'], array());
 					break;
 
-				case 7: // fees
-					$cleanFieldId = str_replace($this->badCharacters, '', $field['name']);
+				case 7: // fees group
+					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'onkeypress', 'if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;');
+					$fieldOptions = Hash::insert($fieldOptions, 'onblur', '$.event.trigger({type: "feeOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+
 					$retVal = $retVal . '<fieldset id="' . $cleanFieldId .'" class="fees">';
 					$retVal = $retVal . "<legend>" . $field['name'] . "</legend>";
-					$percentOptionsString = $field['default_value'];
-					foreach (split(',', $percentOptionsString) as $keyValuePairStr) {
+					$optionsString = $field['default_value'];
+
+					foreach (split(',', $optionsString) as $keyValuePairStr) {
 						$keyValuePair = split('::', $keyValuePairStr);
-						$retVal = $retVal . $this->Form->input(
-							$keyValuePair[0].' $',
-							array(
-								'type' => 'text',
-								'id' => $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]),
-								'onkeypress' => 'if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;',
-								'onblur' => '$.event.trigger({type: "feeOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});',
-								'class' => 'col-md-12',
-								'value' => $keyValuePair[1],
-								'required' => $requiedProp,
-							)
-						);
+						$fieldOptions['id'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
+						$fieldOptions['name'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
+						$fieldOptions['label'] = $keyValuePair[0];
+						$fieldOptions['value'] = $keyValuePair[1];
+						$retVal = $retVal . $this->Form->input(str_replace($this->badCharacters, '', $keyValuePair[0]).' $', $fieldOptions);
 					}
 					// lastly add the total
-					$retVal = $retVal . $this->Form->input('Total', array('id' => $cleanFieldId . '_Total', 'disabled' => 'disabled', 'onclick' => 'return false;', 'class' => String::insert('col-md-:width', array('width' => $field['width'])), 'required' => $requiedProp));
+					$retVal = $retVal . $this->Form->input('Total',
+						array(
+							'id' => $cleanFieldId . '_Total',
+							'name' => $cleanFieldId . '_Total',
+							'disabled' => 'disabled',
+							'onclick' => 'return false;',
+							'class' => 'col-md-'.$field['width'],
+							'required' => $requiredProp
+						)
+					);
 					$retVal = $retVal . "</fieldset>";
 					break;
 
@@ -117,7 +146,14 @@ class TemplateFieldHelper extends Helper {
 				case 9:
 				case 12:
 				case 14:
-					$retVal = $retVal . $this->Form->input($field['name'], array('label' => $label, 'class' => String::insert('col-md-:width', array('width' => $field['width'])), 'id' => $fieldId, 'name' => $fieldId, 'required' => $requiedProp));
+					$retVal = $retVal . $this->Form->input(
+						$field['name'],
+						array(
+							'label' => $label,
+							'class' => String::insert('col-md-:width', array('width' => $field['width'])),
+							'id' => $fieldId,
+							'name' => $fieldId,
+							'required' => $requiredProp));
 					break;
 
 				// 'money',         // 10 - $###.##
@@ -127,7 +163,7 @@ class TemplateFieldHelper extends Helper {
 
 				// 'email',         // 15 - 
 				case 15:
-					$retVal = $retVal . $this->Form->input($field['name'], array('type' => 'email', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId, 'required' => $requiedProp));
+					$retVal = $retVal . $this->Form->input($field['name'], array('type' => 'email', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId, 'required' => $requiredProp));
 					break;
 
 				// 'lengthoftime',  // 16 - [#+] [year|month|day]s
