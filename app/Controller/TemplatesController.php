@@ -89,5 +89,6 @@ class TemplatesController extends NestedResourceController {
 		$this->set('template', $template);
 		$this->set('logoPositionTypes', $this->Template->logoPositionTypes);
 		$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
+		$this->set('requireRequiredFields', true);
 	}
 }
