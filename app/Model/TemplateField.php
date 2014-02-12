@@ -21,11 +21,11 @@ class TemplateField extends AppModel {
 		'money',            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
 		'percent',          // 11 - (0-100)%
 		'ssn',              // 12 - ###-##-####
-		'state',            // 13 - us state
-		'zip',              // 14 - #####[-####]
-		'email',            // 15 - 
-		'lengthoftime',     // 16 - [#+] [year|month|day]s
-		'creditcard',       // 17
+		'zipUS',            // 13 - #####[-####]
+		'email',            // 14 - 
+		'lengthoftime',     // 15 - [#+] [year|month|day]s
+		'creditcard',       // 16
+		'url',              // 17
 		//'taxId',          // 18 - ?
 		//'bankRoutingNumber',// 19 - #########
 		//'bankAccountNumber',// 20 - ?

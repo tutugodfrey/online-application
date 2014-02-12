@@ -56,13 +56,13 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 $fieldId = $FP->createIfMissing('Legal Business Name', $sectionId, 12, 0, true, 1, '', 'CorpName', '', null);
 $fieldId = $FP->createIfMissing('Mailing Address', $sectionId, 12, 0, true, 1, '', 'CorpAddress', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 1, '', 'CorpCity', '', null);
-$fieldId = $FP->createIfMissing('State', $sectionId, 4, 0, true, 1, '', 'CorpState', '', null);
-$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 0, true, 1, '', 'CorpZip', '', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 0, true, 1, '', 'CorpPhone', '', null);
-$fieldId = $FP->createIfMissing('Fax', $sectionId, 12, 0, true, 1,'', 'CorpFax', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 4, 4, true, 1, 'AL::Alabama,AK::Alaska,AZ::Arizona,AR::Arkansas,CA::California,CO::Colorado,CT::Connecticut,DE::Delaware,DC::District Of Columbia,FL::Florida,GA::Georgia,HI::Hawaii,ID::Idaho,IL::Illinois,IN::Indiana,IA::Iowa,KS::Kansas,KY::Kentucky,LA::Louisiana,ME::Maine,MD::Maryland,MA::Massachusetts,MI::Michigan,MN::Minnesota,MS::Mississippi,MO::Missouri,MT::Montana,NE::Nebraska,NV::Nevada,NH::New Hampshire,NJ::New Jersey,NM::New Mexico,NY::New York,NC::North Carolina,ND::North Dakota,OH::Ohio,OK::Oklahoma,OR::Oregon,PA::Pennsylvania,RI::Rhode Island,SC::South Carolina,SD::South Dakota,TN::Tennessee,TX::Texas,UT::Utah,VT::Vermont,VA::Virginia,WA::Washington,WV::West Virginia,WI::Wisconsin,WY::Wyoming', 'CorpState', '', null);
+$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, true, 1, '', 'CorpZip', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, true, 1, '', 'CorpPhone', '', null);
+$fieldId = $FP->createIfMissing('Fax', $sectionId, 12, 9, true, 1,'', 'CorpFax', '', null);
 $fieldId = $FP->createIfMissing('Corp Contact Name', $sectionId, 12, 0, true, 1, '', 'CorpContact', '', null);
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 1, '', 'CorpTitle', '', null);
-$fieldId = $FP->createIfMissing('Email', $sectionId, 12, 0, true, 1, '', 'Email', '', null);
+$fieldId = $FP->createIfMissing('Email', $sectionId, 12, 14, true, 1, '', 'Email', '', null);
 
 // go back to the sections page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -78,13 +78,13 @@ $fieldId = $FP->createIfMissing('Same As Corporate Information', $sectionId, 12,
 $fieldId = $FP->createIfMissing('Business Name (DBA)', $sectionId, 12, 0, true, 1, '', 'DBA', '', null);
 $fieldId = $FP->createIfMissing('Mailing Address', $sectionId, 12, 0, true, 1, '', 'Address', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 1, '', 'City', '', null);
-$fieldId = $FP->createIfMissing('State', $sectionId, 4, 0, true, 1, '', 'State', '', null);
-$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 0, true, 1, '', 'Zip', '', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 0, true, 1, '', 'PhoneNumber', '', null);
-$fieldId = $FP->createIfMissing('Fax', $sectionId, 12, 0, true, 1,'', 'FaxNumber', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 4, 4, true, 1, 'AL::Alabama,AK::Alaska,AZ::Arizona,AR::Arkansas,CA::California,CO::Colorado,CT::Connecticut,DE::Delaware,DC::District Of Columbia,FL::Florida,GA::Georgia,HI::Hawaii,ID::Idaho,IL::Illinois,IN::Indiana,IA::Iowa,KS::Kansas,KY::Kentucky,LA::Louisiana,ME::Maine,MD::Maryland,MA::Massachusetts,MI::Michigan,MN::Minnesota,MS::Mississippi,MO::Missouri,MT::Montana,NE::Nebraska,NV::Nevada,NH::New Hampshire,NJ::New Jersey,NM::New Mexico,NY::New York,NC::North Carolina,ND::North Dakota,OH::Ohio,OK::Oklahoma,OR::Oregon,PA::Pennsylvania,RI::Rhode Island,SC::South Carolina,SD::South Dakota,TN::Tennessee,TX::Texas,UT::Utah,VT::Vermont,VA::Virginia,WA::Washington,WV::West Virginia,WI::Wisconsin,WY::Wyoming', 'State', '', null);
+$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, true, 1, '', 'Zip', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, true, 1, '', 'PhoneNumber', '', null);
+$fieldId = $FP->createIfMissing('Fax', $sectionId, 12, 9, true, 1,'', 'FaxNumber', '', null);
 $fieldId = $FP->createIfMissing('Corp Contact Name', $sectionId, 12, 0, true, 1, '', 'Contact', '', null);
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 1, '', 'Title', '', null);
-$fieldId = $FP->createIfMissing('Email', $sectionId, 12, 0, true, 1, '', 'Email', '', null);
+$fieldId = $FP->createIfMissing('Email', $sectionId, 12, 14, true, 1, '', 'Email', '', null);
 
 // go back to the sections page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -97,8 +97,8 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
 $fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 1, '', 'Tax ID', '', null);
-$fieldId = $FP->createIfMissing('Website',$sectionId, 12, 0, true, 1, '', 'WebAddress', '', null);
-$fieldId = $FP->createIfMissing('Customer Service Phone',$sectionId, 12, 0, true, 1, '', 'Customer Service Phone', '', null);
+$fieldId = $FP->createIfMissing('Website',$sectionId, 12, 17, true, 1, '', 'WebAddress', '', null);
+$fieldId = $FP->createIfMissing('Customer Service Phone',$sectionId, 12, 9, true, 1, '', 'Customer Service Phone', '', null);
 $fieldId = $FP->createIfMissing('Business Open Date', $sectionId, 12, 1, true, 1, '', 'OpenDate', '', null);
 $fieldId = $FP->createIfMissing('Length of Current Ownership',$sectionId, 12, 0, true, 1, '', 'Ownership Length', '', null);
 $fieldId = $FP->createIfMissing('Existing Axia Merchant?', $sectionId, 6, 4, true, 1, 'Yes::Yes,No::No', 'Existing_Axia_Merchant_', '', null);
@@ -127,7 +127,7 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 $fieldId = $FP->createIfMissing('Merchant Ownes/Leases', $sectionId, 12,4, true, 1, 'Owns::owns,Leases::leases', 'merchant_', '', null);
 $fieldId = $FP->createIfMissing('Landlord Name', $sectionId, 12, 0, false, 1, '', 'Landlord', '', null);
-$fieldId = $FP->createIfMissing('Landlord Phone', $sectionId, 12, 0, false, 1, '', 'Landlord Phone', '', null);
+$fieldId = $FP->createIfMissing('Landlord Phone', $sectionId, 12, 9, false, 1, '', 'Landlord Phone', '', null);
 
 
 // add another page for this template
@@ -197,11 +197,11 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 $fieldId = $FP->createIfMissing('Bank Name', $sectionId, 12, 0, true, 1, '', 'BankName', '', null);
 $fieldId = $FP->createIfMissing('Contact Name', $sectionId, 12, 0, false, 1, '', 'BankContact', '', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 0, false, 1, '', 'BankPhone', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, false, 1, '', 'BankPhone', '', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, false, 1, '', 'BankAddress', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, false, 1, '', 'BankCity', '', null);
-$fieldId = $FP->createIfMissing('State', $sectionId, 4, 0, false, 1, '', 'BankState', '', null);
-$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 0, false, 1, '', 'BankZip', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 4, 4, false, 1, 'AL::Alabama,AK::Alaska,AZ::Arizona,AR::Arkansas,CA::California,CO::Colorado,CT::Connecticut,DE::Delaware,DC::District Of Columbia,FL::Florida,GA::Georgia,HI::Hawaii,ID::Idaho,IL::Illinois,IN::Indiana,IA::Iowa,KS::Kansas,KY::Kentucky,LA::Louisiana,ME::Maine,MD::Maryland,MA::Massachusetts,MI::Michigan,MN::Minnesota,MS::Mississippi,MO::Missouri,MT::Montana,NE::Nebraska,NV::Nevada,NH::New Hampshire,NJ::New Jersey,NM::New Mexico,NY::New York,NC::North Carolina,ND::North Dakota,OH::Ohio,OK::Oklahoma,OR::Oregon,PA::Pennsylvania,RI::Rhode Island,SC::South Carolina,SD::South Dakota,TN::Tennessee,TX::Texas,UT::Utah,VT::Vermont,VA::Virginia,WA::Washington,WV::West Virginia,WI::Wisconsin,WY::Wyoming', 'BankState', '', null);
+$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, false, 1, '', 'BankZip', '', null);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -238,10 +238,10 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 $fieldId = $FP->createIfMissing('Business Name', $sectionId, 12, 0, true, 1, '', 'TradeRef1', '', null);
 $fieldId = $FP->createIfMissing('Contact Person', $sectionId, 12, 0, true, 1, '', 'TradeRefContact', '', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 0, true, 1, '', 'TradeRefPhone1', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, true, 1, '', 'TradeRefPhone1', '', null);
 $fieldId = $FP->createIfMissing('Acct #', $sectionId, 6, 0, true, 1, '', 'TradeRefAccount1', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 6, 0, true, 1, '', 'TradeRefCity1', '', null);
-$fieldId = $FP->createIfMissing('State', $sectionId, 6, 0, true, 1, '', 'TradeRefState1', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 6, 4, true, 1, 'AL::Alabama,AK::Alaska,AZ::Arizona,AR::Arkansas,CA::California,CO::Colorado,CT::Connecticut,DE::Delaware,DC::District Of Columbia,FL::Florida,GA::Georgia,HI::Hawaii,ID::Idaho,IL::Illinois,IN::Indiana,IA::Iowa,KS::Kansas,KY::Kentucky,LA::Louisiana,ME::Maine,MD::Maryland,MA::Massachusetts,MI::Michigan,MN::Minnesota,MS::Mississippi,MO::Missouri,MT::Montana,NE::Nebraska,NV::Nevada,NH::New Hampshire,NJ::New Jersey,NM::New Mexico,NY::New York,NC::North Carolina,ND::North Dakota,OH::Ohio,OK::Oklahoma,OR::Oregon,PA::Pennsylvania,RI::Rhode Island,SC::South Carolina,SD::South Dakota,TN::Tennessee,TX::Texas,UT::Utah,VT::Vermont,VA::Virginia,WA::Washington,WV::West Virginia,WI::Wisconsin,WY::Wyoming', 'TradeRefState1', '', null);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -254,10 +254,10 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 $fieldId = $FP->createIfMissing('Business Name', $sectionId, 12, 0, true, 1, '', 'TradeRef2', '', null);
 $fieldId = $FP->createIfMissing('Contact Person', $sectionId, 12, 0, true, 1, '', 'TradeRefContact2', '', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 0, true, 1, '', 'TradeRefPhone2', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, true, 1, '', 'TradeRefPhone2', '', null);
 $fieldId = $FP->createIfMissing('Acct #', $sectionId, 6, 0, true, 1, '', 'TradeRefAccount2', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 6, 0, true, 1, '', 'TradeRefCity2', '', null);
-$fieldId = $FP->createIfMissing('State', $sectionId, 6, 0, true, 1, '', 'TradeRefState2', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 6, 4, true, 1, 'AL::Alabama,AK::Alaska,AZ::Arizona,AR::Arkansas,CA::California,CO::Colorado,CT::Connecticut,DE::Delaware,DC::District Of Columbia,FL::Florida,GA::Georgia,HI::Hawaii,ID::Idaho,IL::Illinois,IN::Indiana,IA::Iowa,KS::Kansas,KY::Kentucky,LA::Louisiana,ME::Maine,MD::Maryland,MA::Massachusetts,MI::Michigan,MN::Minnesota,MS::Mississippi,MO::Missouri,MT::Montana,NE::Nebraska,NV::Nevada,NH::New Hampshire,NJ::New Jersey,NM::New Mexico,NY::New York,NC::North Carolina,ND::North Dakota,OH::Ohio,OK::Oklahoma,OR::Oregon,PA::Pennsylvania,RI::Rhode Island,SC::South Carolina,SD::South Dakota,TN::Tennessee,TX::Texas,UT::Utah,VT::Vermont,VA::Virginia,WA::Washington,WV::West Virginia,WI::Wisconsin,WY::Wyoming', 'TradeRefState2', '', null);
 
 // add another page for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
@@ -365,12 +365,12 @@ $fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, true, 1, '', 'Pr
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 1, '', 'Owner1Title', '', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 1, '', 'Owner1Address', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 1, '', 'Owner1City', '', null);
-$fieldId = $FP->createIfMissing('State', $sectionId, 4, 0, true, 1, '', 'Owner1State', '', null);
-$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 0, true, 1, '', 'Owner1Zip', '', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 0, true, 1, '', 'Owner1Phone', '', null);
-$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 0, true, 1, '', 'Owner1Fax', '', null);
-$fieldId = $FP->createIfMissing('Email', $sectionId, 4, 0, true, 1, '', 'Owner1Email', '', null);
-$fieldId = $FP->createIfMissing('SSN', $sectionId, 4, 0, true, 1, '', 'Owner1SSN', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 4, 4, true, 1, 'AL::Alabama,AK::Alaska,AZ::Arizona,AR::Arkansas,CA::California,CO::Colorado,CT::Connecticut,DE::Delaware,DC::District Of Columbia,FL::Florida,GA::Georgia,HI::Hawaii,ID::Idaho,IL::Illinois,IN::Indiana,IA::Iowa,KS::Kansas,KY::Kentucky,LA::Louisiana,ME::Maine,MD::Maryland,MA::Massachusetts,MI::Michigan,MN::Minnesota,MS::Mississippi,MO::Missouri,MT::Montana,NE::Nebraska,NV::Nevada,NH::New Hampshire,NJ::New Jersey,NM::New Mexico,NY::New York,NC::North Carolina,ND::North Dakota,OH::Ohio,OK::Oklahoma,OR::Oregon,PA::Pennsylvania,RI::Rhode Island,SC::South Carolina,SD::South Dakota,TN::Tennessee,TX::Texas,UT::Utah,VT::Vermont,VA::Virginia,WA::Washington,WV::West Virginia,WI::Wisconsin,WY::Wyoming', 'Owner1State', '', null);
+$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, true, 1, '', 'Owner1Zip', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, true, 1, '', 'Owner1Phone', '', null);
+$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, true, 1, '', 'Owner1Fax', '', null);
+$fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, true, 1, '', 'Owner1Email', '', null);
+$fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, true, 1, '', 'Owner1SSN', '', null);
 $fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, true, 1, '', 'Owner1DOB', '', null);
 
 // next go to the sections for this page
@@ -388,12 +388,12 @@ $fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, true, 1, '', 'Ow
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 1, '', 'Owner2Title', '', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 1, '', 'Owner2Address', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 1, '', 'Owner2City', '', null);
-$fieldId = $FP->createIfMissing('State', $sectionId, 4, 0, true, 1, '', 'Owner2State', '', null);
-$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 0, true, 1, '', 'Owner2Zip', '', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 0, true, 1, '', 'Owner2Phone', '', null);
-$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 0, true, 1, '', 'Owner2Fax', '', null);
-$fieldId = $FP->createIfMissing('Email', $sectionId, 4, 0, true, 1, '', 'Owner2Email', '', null);
-$fieldId = $FP->createIfMissing('SSN', $sectionId, 4, 0, true, 1, '', 'Owner2SSN', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 4, 4, true, 1, 'AL::Alabama,AK::Alaska,AZ::Arizona,AR::Arkansas,CA::California,CO::Colorado,CT::Connecticut,DE::Delaware,DC::District Of Columbia,FL::Florida,GA::Georgia,HI::Hawaii,ID::Idaho,IL::Illinois,IN::Indiana,IA::Iowa,KS::Kansas,KY::Kentucky,LA::Louisiana,ME::Maine,MD::Maryland,MA::Massachusetts,MI::Michigan,MN::Minnesota,MS::Mississippi,MO::Missouri,MT::Montana,NE::Nebraska,NV::Nevada,NH::New Hampshire,NJ::New Jersey,NM::New Mexico,NY::New York,NC::North Carolina,ND::North Dakota,OH::Ohio,OK::Oklahoma,OR::Oregon,PA::Pennsylvania,RI::Rhode Island,SC::South Carolina,SD::South Dakota,TN::Tennessee,TX::Texas,UT::Utah,VT::Vermont,VA::Virginia,WA::Washington,WV::West Virginia,WI::Wisconsin,WY::Wyoming', 'Owner2State', '', null);
+$fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, true, 1, '', 'Owner2Zip', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, true, 1, '', 'Owner2Phone', '', null);
+$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, true, 1, '', 'Owner2Fax', '', null);
+$fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, true, 1, '', 'Owner2Email', '', null);
+$fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, true, 1, '', 'Owner2SSN', '', null);
 $fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, true, 1, '', 'Owner2DOB', '', null);
 
 // add another page for this template
@@ -414,10 +414,10 @@ Debug::debug($sectionId);
 // fields
 $fieldId = $FP->createIfMissing('Referral Business 1', $sectionId, 4, 0, true, 1, '', 'Referral1Business', '', null);
 $fieldId = $FP->createIfMissing('Owner/Officer 1', $sectionId, 4, 0, true, 1, '', 'Referral1Owner/Officer', '', null);
-$fieldId = $FP->createIfMissing('Phone # 1', $sectionId, 4, 0, true, 1, '', 'Referral1Phone', '', null);
+$fieldId = $FP->createIfMissing('Phone # 1', $sectionId, 4, 9, true, 1, '', 'Referral1Phone', '', null);
 $fieldId = $FP->createIfMissing('Referral Business 2', $sectionId, 4, 0, true, 1, '', 'Referral2Business', '', null);
 $fieldId = $FP->createIfMissing('Owner/Officer 2', $sectionId, 4, 0, true, 1, '', 'Referral2Owner/Officer', '', null);
-$fieldId = $FP->createIfMissing('Phone # 2', $sectionId, 4, 0, true, 1, '', 'Referral2Phone', '', null);
+$fieldId = $FP->createIfMissing('Phone # 2', $sectionId, 4, 9, true, 1, '', 'Referral2Phone', '', null);
 $fieldId = $FP->createIfMissing('Referral Business 3', $sectionId, 4, 0, true, 1, '', 'Referral3Business', '', null);
 $fieldId = $FP->createIfMissing('Owner/Officer 3', $sectionId, 4, 0, true, 1, '', 'Referral3Owner/Officer', '', null);
-$fieldId = $FP->createIfMissing('Phone # 3', $sectionId, 4, 0, true, 1, '', 'Referral3Phone', '', null);
+$fieldId = $FP->createIfMissing('Phone # 3', $sectionId, 4, 9, true, 1, '', 'Referral3Phone', '', null);

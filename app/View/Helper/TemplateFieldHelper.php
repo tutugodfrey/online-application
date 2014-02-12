@@ -141,33 +141,62 @@ class TemplateFieldHelper extends Helper {
 					break;
 
 				// 'phoneUS',       //  9 - (###) ###-####
-				// 'ssn',           // 12 - ###-##-####
-				// 'zip',           // 14 - #####[-####]
 				case 9:
-				case 12:
-				case 14:
-					$retVal = $retVal . $this->Form->input(
-						$field['name'],
-						array(
-							'label' => $label,
-							'class' => String::insert('col-md-:width', array('width' => $field['width'])),
-							'id' => $fieldId,
-							'name' => $fieldId,
-							'required' => $requiredProp));
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'phoneUS');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				// 'money',         // 10 - $###.##
+				case 10:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+
+					break;
 				// 'percent',       // 11 - (0-100)%
-
-				// 'state',         // 13 - us state
-
-				// 'email',         // 15 - 
-				case 15:
-					$retVal = $retVal . $this->Form->input($field['name'], array('type' => 'email', 'label' => $label, 'id' => $fieldId, 'name' => $fieldId, 'required' => $requiredProp));
+				case 11:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'percent');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
 					break;
 
-				// 'lengthoftime',  // 16 - [#+] [year|month|day]s
-				// 'creditcard',    // 17 - 
+				// 'ssn',           // 12 - ###-##-####
+				case 12:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'ssn');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+					break;
+
+				// 'zipUS',           // 13 - #####[-####]
+				case 13:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'zipUS');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+					break;
+
+				// 'email',         // 14 - 
+				case 14:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'email');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+					break;
+
+				// 'lengthoftime',  // 15 - [#+] [year|month|day]s
+				// 'creditcard',    // 16 - 
+
+
+				// 'url'            // 17 - http(s)?://...
+				case 17:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'url');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+					break;
 
 				default:
 					$retVal = $retVal . '***** UNRECOGNIZED FIELD TYPE [' . $field['type'] . '] for field [' . $field['merge_field_name'] . ']*****';
