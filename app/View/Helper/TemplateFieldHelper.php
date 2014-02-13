@@ -49,20 +49,34 @@ class TemplateFieldHelper extends Helper {
 				case 3: // checkbox
 					$retVal = $retVal . $this->Html->div('checkbox',
 						$this->Form->checkbox($field['name'], $fieldOptions).
-						$this->Form->label($fieldId, $field['name'])
+						$this->Form->label($fieldId, $label)
 					);
 					break;
 
-				case 4: // radio group (select)
+				case 4: // radio group (inline)
 					$radioOptionsString = $field['default_value'];
-					$radioOptions = array();
+					$lis = "";
 					foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
 						$keyValuePair = split('::', $keyValuePairStr);
 						$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
+						$lis = $lis.$this->Html->tag('li',
+							$this->Html->tag('label',
+								$this->Html->tag(
+									'input',
+									null, // no value <input />
+									array(
+										'type' => 'radio',
+										'name' => $fieldId,
+										'id' => $fieldId,
+										'value' => $keyValuePair[1]
+									)
+								).' '.$keyValuePair[0]
+							)
+						);
 					}
-					$fieldOptions = Hash::insert($fieldOptions, 'empty', __('(choose one)'));
-					$fieldOptions = Hash::insert($fieldOptions, 'options', $radioOptions);
-					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+					$retVal = $retVal.
+						$this->Html->tag('label', $label).
+						$this->Html->tag('ul', $lis, array('class' => 'list-inline'));
 					break;
 
 				case 5: // percent group
@@ -193,7 +207,6 @@ class TemplateFieldHelper extends Helper {
 				// 'lengthoftime',  // 15 - [#+] [year|month|day]s
 				// 'creditcard',    // 16 - 
 
-
 				// 'url'            // 17 - http(s)?://...
 				case 17:
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'url');
@@ -215,6 +228,25 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+					break;
+
+				// 'select'         // 20
+				case 20:
+					$radioOptionsString = $field['default_value'];
+					$radioOptions = array();
+					foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
+						$keyValuePair = split('::', $keyValuePairStr);
+						$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
+					}
+					$fieldOptions = Hash::insert($fieldOptions, 'empty', __('(choose one)'));
+					$fieldOptions = Hash::insert($fieldOptions, 'options', $radioOptions);
+					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+					break;
+
+				case 21:
+					$retVal = $retVal.
+						$this->Html->tag('label', $field['name'], array('for', $fieldId)).
+						$this->Form->textarea($field['name'], $fieldOptions);
 					break;
 
 				default:

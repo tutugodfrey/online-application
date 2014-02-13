@@ -24,14 +24,16 @@ class TemplateField extends AppModel {
 		'zipcodeUS',        // 13 - #####[-####]
 		'email',            // 14 - 
 		'lengthoftime',     // 15 - [#+] [year|month|day]s
-		'creditcard',       // 16
-		'url',              // 17
+		'creditcard',       // 16 - 
+		'url',              // 17 - 
 		'number',           // 18 - (#)+.(#)+
 		'digits',           // 19 - (#)+
-		//'taxId',          // 20 - ?
-		//'bankRoutingNumber',// 21 - #########
-		//'bankAccountNumber',// 22 - ?
-		//'amexSENumber',     // 23 - ?
+		'select',           // 20 - 
+		'text',             // 21 -
+		//'taxId',          // 22 - ?
+		//'bankRoutingNumber',// 23 - #########
+		//'bankAccountNumber',// 24 - ?
+		//'amexSENumber',     // 25 - ?
 	);
 
 	public $sourceTypes = array('api', 'user', 'n/a');

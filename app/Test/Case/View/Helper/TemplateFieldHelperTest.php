@@ -269,7 +269,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 				'<div class="checkbox">'.
 					'<input type="hidden" name="merge_field_name" id="merge_field_name_" value="0"/>'.
 					'<input type="checkbox" name="merge_field_name"  label="name*" id="merge_field_name" required="required" value="1"/>'.
-					'<label for="merge_field_name">name</label>'.
+					'<label for="merge_field_name">name*</label>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -279,14 +279,15 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['default_value'] = 'name1::value1,name2::value2';
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
-				'<div class="input select">'.
-					'<label for="merge_field_name">name*</label>'.
-					'<select name="merge_field_name" id="merge_field_name" required="required">'."\n".
-						'<option value="">(choose one)</option>'."\n".
-						'<option value="value1">name1</option>'."\n".
-						'<option value="value2">name2</option>'."\n".
-					'</select>'.
-				'</div>'.
+				'<label>name*</label>'.
+				'<ul class="list-inline">'.
+					'<li>'.
+						'<label><input type="radio" name="merge_field_name" id="merge_field_name" value="value1"> name1</label>'.
+					'</li>'.
+					'<li>'.
+						'<label><input type="radio" name="merge_field_name" id="merge_field_name" value="value2"> name2</label>'.
+					'</li>'.
+				'</ul>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-4-name-id-merg_field_name-1'
@@ -447,6 +448,32 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-19-name-id-merg_field_name-1'
+		);
+		$options['type'] = 20;
+		$options['default_value'] = 'name1::value1,name2::value2';
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input select">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<select name="merge_field_name" id="merge_field_name" required="required">'."\n".
+						'<option value="">(choose one)</option>'."\n".
+						'<option value="value1">name1</option>'."\n".
+						'<option value="value2">name2</option>'."\n".
+					'</select>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-20-name-id-merg_field_name-1'
+		);
+		$options['type'] = 21;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<label for="for" merge_field_name="merge_field_name">name</label>'.
+				'<textarea name="merge_field_name" label="name*" id="merge_field_name" required="required">'.
+				'</textarea>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-20-name-id-merg_field_name-1'
 		);
 		$options['type'] = -1;
 		$this->assertEquals(

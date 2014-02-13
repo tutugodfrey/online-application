@@ -135,6 +135,7 @@
 <style type="text/css">
 	#wizard input {
 		padding: 0;
+		height: 30px;
 	}
 	#wizard .nav.nav-pills {
 		padding: 13px;
@@ -179,11 +180,13 @@
 	#wizard .nav-pills>li:last-child>a {
 		width: 26px;
 	}
-	#wizard input {
-		height: 30px;
-	}
-	#wizard input[type="checkbox"] {
+	#wizard input[type="checkbox"],  #wizard input[type="radio"] {
 		height: 18px;
+	}
+	#wizard input[type="radio"] {
+		float: left;
+		margin-top: 0;
+		margin-right: 5px;
 	}
 	#wizard .input-group-addon {
 		padding: 8px 22px 6px 10px;
@@ -191,5 +194,8 @@
 	#wizard select {
 		margin-top: 5px;
 		margin-bottom: 10px;
+	}
+	#wizard textarea {
+		width: 100%;
 	}
 </style>

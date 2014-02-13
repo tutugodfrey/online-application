@@ -19,7 +19,7 @@
 			<td>
 				<?php echo $this->Html->link($cobrandedApplication['Template']['name'], String::insert('/admin/templates/:id/templatepages', array('id' => $cobrandedApplication['Template']['id']))); ?>
 			</td>
-			<td><?php echo h($cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
+			<td><?php echo $this->Html->link($cobrandedApplication['CobrandedApplication']['uuid'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['created']); ?>&nbsp;</td>
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td class="actions">

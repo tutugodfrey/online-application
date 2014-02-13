@@ -126,27 +126,70 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function admin_add() {
-		if ($this->request->is('post')) {
-			$this->CobrandedApplication->create();
-			if ($this->CobrandedApplication->save($this->request->data)) {
-				$this->Session->setFlash(__('The application has been saved'));
+		// look up the user to make sure the we don't get stale session data
+		$this->User->read(null, $this->Session->read('Auth.User.id'));
+
+		if (is_null($this->User->field('template_id'))) {
+			if ($this->request->is('post')) {
+				// save the template_id for the user
+				$this->User->read(null, $this->User->id);
+				$this->User->set('template_id', $this->request->data['CobrandedApplication']['template_id']);
+				$this->User->save();
+
+				// now try to save with the data from the user model
+				if ($this->__createOnlineappForUser($this->User, $this->request->data['CobrandedApplication']['uuid'])) {
+					$this->Session->setFlash(__('Application created'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
+				}
+			} else {
+				$this->CobrandedApplication->create(
+					array(
+						'user_id' => $this->Session->read('Auth.User.id'),
+						'uuid' => String::uuid()
+					)
+				);
+				$this->request->data = $this->CobrandedApplication->data;
+			}
+			$users = $this->CobrandedApplication->User->find('list', array('order' => 'firstname, lastname'));
+			$this->set(compact('users'));
+			$templates = $this->CobrandedApplication->User->Template->getList();
+			$this->set(compact('templates'));
+		} else {
+			// just create it, we know all the info
+			if ($this->__createOnlineappForUser($this->User)) {
+				$this->Session->setFlash(__('Application created'));
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
 			}
-		} else {
-			$this->CobrandedApplication->create(
-				array(
-					'user_id' => $this->Session->read('Auth.User.id'),
-					'uuid' => String::uuid()
-				)
-			);
-			$this->request->data = $this->CobrandedApplication->data;
 		}
-		$users = $this->CobrandedApplication->User->find('list', array('order' => 'firstname, lastname'));
-		$this->set(compact('users'));
-		$templates = $this->CobrandedApplication->User->Template->getList();
-		$this->set(compact('templates'));
+	}
+
+/**
+ * __createOnlineappForUser method
+ *
+ * @param none
+ * @return [true|false] depending on if the onlineapp was created
+ */
+	private function __createOnlineappForUser($user, $uuid = null) {
+		if (is_null($uuid)) {
+			$uuid = String::uuid();
+		}
+
+		$this->CobrandedApplication->create(
+			array(
+				'user_id' => $this->User->field('id', array('User.id' => $user->id)),
+				'uuid' => $uuid,
+				'template_id' => $this->User->field('template_id', array('User.id' => $user->id)),
+			)
+		);
+debug($this->CobrandedApplication->data);
+		if ($this->CobrandedApplication->save()) {
+			return true;
+		}
+		return false;
 	}
 
 /**
