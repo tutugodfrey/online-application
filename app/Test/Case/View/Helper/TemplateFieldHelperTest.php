@@ -334,10 +334,6 @@ class TemplateFieldHelperTest extends CakeTestCase {
 						'<label for="merge_field_name_name2">name2</label>'.
 						'<input name="merge_field_name_name2" id="merge_field_name_name2" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;feeOptionBlur&quot;, origin: this, totalFieldId: &quot;#merge_field_name_Total&quot;, &quot;fieldset_id&quot;: &quot;merge_field_name&quot;});" class="col-md-12" value="value2" type="text"/>'.
 					'</div>'.
-					'<div class="input text">'.
-						'<label for="merge_field_name_Total">Total</label>'.
-						'<input name="merge_field_name_Total" id="merge_field_name_Total" disabled="disabled" onclick="return false;" class="col-md-1" required="required" type="text"/>'.
-					'</div>'.
 				'</fieldset>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -348,6 +344,109 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this"><hr></div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-8-name-id-merg_field_name-1'
+		);
+		$options['type'] = 9;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input text">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-vtype="phoneUS" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-9-name-id-merg_field_name-1'
+		);
+		$options['type'] = 10;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<label for="merge_field_name">name*</label>'.
+				'<div class="input-group col-md-12">'.
+					'<span class="input-group-addon col-md-1">$</span>'.
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" type="text" data-vtype="money" class="col-md-11">'.
+					'</input>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-10-name-id-merg_field_name-1'
+		);
+		$options['type'] = 11;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input-group col-md-12">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" type="text" data-vtype="digits" class="col-md-11" min="0" max="100">'.
+					'</input>'.
+					'<span class="input-group-addon col-md-1">%</span>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-11-name-id-merg_field_name-1'
+		);
+		$options['type'] = 12;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input text">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-vtype="ssn" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-12-name-id-merg_field_name-1'
+		);
+		$options['type'] = 13;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input text">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-vtype="zipcodeUS" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-13-name-id-merg_field_name-1'
+		);
+		$options['type'] = 14;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input email">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" class="col-md-12" type="email"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-14-name-id-merg_field_name-1'
+		);
+		$options['type'] = 17;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input url">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" type="url" id="merge_field_name" required="required" class="col-md-12"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-17-name-id-merg_field_name-1'
+		);
+		$options['type'] = 18;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input text">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-vtype="number" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-18-name-id-merg_field_name-1'
+		);
+		$options['type'] = 19;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input text">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-vtype="digits" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only-19-name-id-merg_field_name-1'
 		);
 
 		// TODO: add tests for type in [9-15]

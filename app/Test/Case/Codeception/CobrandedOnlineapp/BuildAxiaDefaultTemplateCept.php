@@ -150,9 +150,9 @@ $fieldId = $FP->createIfMissing('Business Type', $sectionId, 12, 4, true, 1, 'Re
 $fieldId = $FP->createIfMissing('Products/Services Sold', $sectionId, 12, 0, true, 1, '', 'Products Services Sold', '', null);
 $fieldId = $FP->createIfMissing('Return Policy', $sectionId, 12, 0, true, 1, '', 'Return Policy', '', null);
 $fieldId = $FP->createIfMissing('Days Until Product Delivery', $sectionId, 12, 0, true, 1, '', 'Days Until Product Delivery', '', null);
-$fieldId = $FP->createIfMissing('Monthly Volume', $sectionId, 4, 0, true, 1, '', 'MonthlyVol', '', null);
-$fieldId = $FP->createIfMissing('Average Ticket', $sectionId, 4, 0, true, 1, '', 'AvgTicket', '', null);
-$fieldId = $FP->createIfMissing('Highest Ticket', $sectionId, 4, 0, true, 1, '', 'MaxSalesAmt', '', null);
+$fieldId = $FP->createIfMissing('Monthly Volume', $sectionId, 4, 19, true, 1, '', 'MonthlyVol', '', null);
+$fieldId = $FP->createIfMissing('Average Ticket', $sectionId, 4, 19, true, 1, '', 'AvgTicket', '', null);
+$fieldId = $FP->createIfMissing('Highest Ticket', $sectionId, 4, 19, true, 1, '', 'MaxSalesAmt', '', null);
 $fieldId = $FP->createIfMissing('Current Processor', $sectionId, 12, 0, true, 1, '', 'MaxSalesAmt', '', null);
 $fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 1, 'Card Present Swiped::Card Present Swiped,Card Present Imprint::Card Present Imprint,Card Not Present (Keyed)::Card Not Present (Keyed),Card Not Present (Internet)::Card Not Present (Internet)', 'Method of Sales', '', null);
 $fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 1, 'Direct To Customer::Direct To Customer,Direct To Business::Direct To Business,Direct To Government::Direct To Government', 'Percent Of Product Sold', '', null);
@@ -301,7 +301,7 @@ $sectionId = $SP->createIfMissing('Terminal/Software Type(1)', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // fields
-$fieldId = $FP->createIfMissing('Quantity', $sectionId, 2, 0, true, 1, '', 'QTY1', '', null);
+$fieldId = $FP->createIfMissing('Quantity', $sectionId, 2, 19, true, 1, '', 'QTY1', '', null);
 $fieldId = $FP->createIfMissing('Type', $sectionId, 3, 0, true, 1, '', 'Terminal1', '', null);
 $fieldId = $FP->createIfMissing('Do You Use Autoclose?', $sectionId, 3, 4, true, 1, 'Yes::Yes,No::No', 'AutoClose', '', null);
 $fieldId = $FP->createIfMissing('If Yes, What Time?', $sectionId, 4, 2, false, 1, '', 'Autoclose Time', '', null);
@@ -315,7 +315,7 @@ $fieldId = $FP->createIfMissing('Invoice #', $sectionId, 2, 3, false, 1, '', 'In
 $fieldId = $FP->createIfMissing('Purchasing Cards', $sectionId, 2, 3, false, 1, '', 'Purchasing Cards', '', null);
 $fieldId = $FP->createIfMissing('Do you accept Debit on this terminal?', $sectionId, 4, 4, true, 1, 'Yes::Yes,No::No', 'term_accept_debit', '', null);
 $fieldId = $FP->createIfMissing('If Yes, what type of PIN Pad?', $sectionId, 4, 0, false, 1, '', 'PinPad1', '', null);
-$fieldId = $FP->createIfMissing('PIN Pad Quantity', $sectionId, 4, 0, false, 1, '', 'QTY - PP1', '', null);
+$fieldId = $FP->createIfMissing('PIN Pad Quantity', $sectionId, 4, 19, false, 1, '', 'QTY - PP1', '', null);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -327,7 +327,7 @@ $sectionId = $SP->createIfMissing('Terminal/Software Type(2)', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // fields
-$fieldId = $FP->createIfMissing('Quantity', $sectionId, 2, 0, true, 1, '', 'QTY2', '', null);
+$fieldId = $FP->createIfMissing('Quantity', $sectionId, 2, 19, true, 1, '', 'QTY2', '', null);
 $fieldId = $FP->createIfMissing('Type', $sectionId, 3, 0, true, 1, '', 'Terminal2', '', null);
 $fieldId = $FP->createIfMissing('Do You Use Autoclose?', $sectionId, 3, 4, true, 1, 'Yes::Yes,No::No', 'AutoClose_2', '', null);
 $fieldId = $FP->createIfMissing('If Yes, What Time?', $sectionId, 4, 2, false, 1, '', 'Autoclose Time 2', '', null);
@@ -341,7 +341,7 @@ $fieldId = $FP->createIfMissing('Invoice #', $sectionId, 2, 3, false, 1, '', 'In
 $fieldId = $FP->createIfMissing('Purchasing Cards', $sectionId, 2, 3, false, 1, '', 'Purchasing Cards_2', '', null);
 $fieldId = $FP->createIfMissing('Do you accept Debit on this terminal?', $sectionId, 4, 4, true, 1, 'Yes::Yes,No::No', 'term_accept_debit_2', '', null);
 $fieldId = $FP->createIfMissing('If Yes, what type of PIN Pad?', $sectionId, 4, 0, false, 1, '', 'PinPad2', '', null);
-$fieldId = $FP->createIfMissing('PIN Pad Quantity', $sectionId, 4, 0, false, 1, '', 'QTY - PP2', '', null);
+$fieldId = $FP->createIfMissing('PIN Pad Quantity', $sectionId, 4, 19, false, 1, '', 'QTY - PP2', '', null);
 
 
 // add another page for this template
@@ -360,7 +360,7 @@ $sectionId = $SP->createIfMissing('OWNER / OFFICER (1)', $pageId, 6);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // fields
-$fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 0, true, 1, '', 'OwnerEquity', '', null);
+$fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 11, true, 1, '', 'OwnerEquity', '', null);
 $fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, true, 1, '', 'Principal', '', null);
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 1, '', 'Owner1Title', '', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 1, '', 'Owner1Address', '', null);
@@ -383,7 +383,7 @@ $sectionId = $SP->createIfMissing('OWNER / OFFICER (2)', $pageId, 6);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // fields
-$fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 0, true, 1, '', 'Owner2Equity', '', null);
+$fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 11, true, 1, '', 'Owner2Equity', '', null);
 $fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, true, 1, '', 'Owner2Name', '', null);
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 1, '', 'Owner2Title', '', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 1, '', 'Owner2Address', '', null);

@@ -21,15 +21,17 @@ class TemplateField extends AppModel {
 		'money',            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
 		'percent',          // 11 - (0-100)%
 		'ssn',              // 12 - ###-##-####
-		'zipUS',            // 13 - #####[-####]
+		'zipcodeUS',        // 13 - #####[-####]
 		'email',            // 14 - 
 		'lengthoftime',     // 15 - [#+] [year|month|day]s
 		'creditcard',       // 16
 		'url',              // 17
-		//'taxId',          // 18 - ?
-		//'bankRoutingNumber',// 19 - #########
-		//'bankAccountNumber',// 20 - ?
-		//'amexSENumber',     // 21 - ?
+		'number',           // 18 - (#)+.(#)+
+		'digits',           // 19 - (#)+
+		//'taxId',          // 20 - ?
+		//'bankRoutingNumber',// 21 - #########
+		//'bankAccountNumber',// 22 - ?
+		//'amexSENumber',     // 23 - ?
 	);
 
 	public $sourceTypes = array('api', 'user', 'n/a');
@@ -47,7 +49,7 @@ class TemplateField extends AppModel {
 			'parent_model_name' => 'TemplateSection',
 			'parent_model_foreign_key_name' => 'section_id',
 			'class_name' => 'TemplateField',
-			'children_model_name' => '',
+			'children_model_name' => null,
 		)
 	);
 
@@ -89,6 +91,14 @@ class TemplateField extends AppModel {
 		'TemplateSection' => array(
 			'className' => 'TemplateSection',
 			'foreignKey' => 'section_id',
+		)
+	);
+
+	public $hasMany = array(
+		'CobrandedApplicationValues' => array(
+			'className' => 'CobrandedApplicationValue',
+			'foreignKey' => 'template_field_id',
+			'dependent' => true
 		)
 	);
 

@@ -60,20 +60,24 @@ class CobrandedApplicationsController extends AppController {
 		$users = $this->CobrandedApplication->User->find('list');
 		$this->set(compact('users'));
 
-		$template = $this->CobrandedApplication->Template->find(
+		$template = $this->CobrandedApplication->find(
 			'first', array(
 				'contain' => array(
-					'Cobrand',
-					'TemplatePages' => array(
-						'TemplateSections' => array(
-							'TemplateFields'
+					'Template' => array(
+						'Cobrand',
+						'TemplatePages' => array(
+							'TemplateSections' => array(
+								'TemplateFields' => array(
+									'CobrandedApplicationValues'
+								)
+							)
 						)
 					)
 				),
 				'conditions' => array('Template.id' => $this->request->data['Template']['id'])
 			)
 		);
-		$this->set('templatePages', $template['TemplatePages']);
+		$this->set('templatePages', $template['Template']['TemplatePages']);
 		$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 
 		// if it is a rep viewing/editing the application don't require fields to be filled in

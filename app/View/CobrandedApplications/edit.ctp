@@ -10,6 +10,9 @@
 						for ($index = 0; $index < $numberOfPages; $index ++) {
 							$templatePage = $templatePages[$index];
 							$pageDescription = $templatePage['description'];
+							if (strlen($pageDescription) == 0) {
+								$pageDescription = $templatePage['name'];
+							}
 							$displayIndex = 1 + $index;
 							$displayText = $templatePage['name'];
 						?>
@@ -51,6 +54,45 @@
 		$("#wizard .nav-pills>li>a>div.connecting-line").css("width", newWidth);
 	};
 
+	function handlePercentOptionBlur(event) {
+		var totalField = $(event.totalFieldId);
+		var startingTotalValue = parseInt(totalField.val());
+		var originatingField = $(event.origin);
+		if (totalField.val() == "") {
+			// stuff the new value value
+			totalField.val(originatingField.val());
+		} else {
+			var newTotal = parseInt(startingTotalValue) + parseInt(originatingField.val());
+			if (newTotal <= 100) {
+				totalField.val(newTotal);
+			} else {
+				// start from the top of the fieldset and all sum the inputs
+				// except for the originatingField
+				var percentSum = 0;
+				$("#"+event.fieldset_id).find("input").map(function(index, input) {
+					var inputObj = $(input);
+					if (!inputObj.is(':disabled') &&
+							inputObj.attr("id") != originatingField.attr("id")) {
+						if (inputObj.val() != '') {
+							percentSum += parseInt(inputObj.val());
+						}
+					}
+				});
+
+				var newTotal = percentSum + parseInt(originatingField.val());
+				if (newTotal <= 100) {
+					// set it
+					parseInt(originatingField.val());
+					totalField.val(newTotal);
+				} else {
+					var maxOriginatingValue = 100 - percentSum;
+					originatingField.val(maxOriginatingValue < 0 ? 0 : maxOriginatingValue);
+					totalField.val(100);
+				}
+			}
+		}
+	}
+
 	var onTabChange = function(tab, navigation, index) {
 		var $valid = $("#onlineapp").valid();
 		if(!$valid) {
@@ -64,16 +106,23 @@
 	$(document).ready(function() {
 		$(window).resize(onWindowResize);
 
-		setTimeout(function() {$(window).trigger('resize')}, 500);
+		setTimeout(function() {$(window).trigger('resize')}, 10);
 
-		$validator = $("#onlineapp").validate({
-			rules: {
-				// no quoting necessary
-				'CorpPhone': {
-					phoneUS: true
-				}
+		$(document).on("percentOptionBlur", handlePercentOptionBlur);
+
+		var validationRules = {};
+		$("#onlineapp input[data-vtype]").map(function(index, input) {
+			var currentInput = $(input);
+			if (typeof(validationRules[currentInput.attr('id')]) == 'undefined') {
+				var rule = new Object();
+				rule[currentInput.attr('data-vtype')] = true;
+				validationRules[currentInput.attr('id')] = rule;
+			} else {
+				alert('Already added a rule for ['+input['id']+']');
 			}
 		});
+
+		$validator = $("#onlineapp").validate({ rules: validationRules });
 
 		$('#rootwizard').bootstrapWizard({
 			'tabClass': 'nav nav-pills',
@@ -128,5 +177,18 @@
 	}
 	#wizard .nav-pills>li:last-child>a {
 		width: 26px;
+	}
+	#wizard input {
+		height: 30px;
+	}
+	#wizard input[type="checkbox"] {
+		height: 18px;
+	}
+	#wizard .input-group-addon {
+		padding: 8px 22px 6px 10px;
+	}
+	#wizard select {
+		margin-top: 5px;
+		margin-bottom: 10px;
 	}
 </style>

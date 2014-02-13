@@ -78,7 +78,9 @@ class TemplatesController extends NestedResourceController {
 					'Cobrand',
 					'TemplatePages' => array(
 						'TemplateSections' => array(
-							'TemplateFields'
+							'TemplateFields' => array(
+								'CobrandedApplicationValues'
+							)
 						)
 					)
 				),

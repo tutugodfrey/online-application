@@ -53,7 +53,7 @@ class TemplateFieldHelper extends Helper {
 					);
 					break;
 
-				case 4: // radio group
+				case 4: // radio group (select)
 					$radioOptionsString = $field['default_value'];
 					$radioOptions = array();
 					foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
@@ -122,17 +122,6 @@ class TemplateFieldHelper extends Helper {
 						$fieldOptions['value'] = $keyValuePair[1];
 						$retVal = $retVal . $this->Form->input(str_replace($this->badCharacters, '', $keyValuePair[0]).' $', $fieldOptions);
 					}
-					// lastly add the total
-					$retVal = $retVal . $this->Form->input('Total',
-						array(
-							'id' => $cleanFieldId . '_Total',
-							'name' => $cleanFieldId . '_Total',
-							'disabled' => 'disabled',
-							'onclick' => 'return false;',
-							'class' => 'col-md-'.$field['width'],
-							'required' => $requiredProp
-						)
-					);
 					$retVal = $retVal . "</fieldset>";
 					break;
 
@@ -152,16 +141,30 @@ class TemplateFieldHelper extends Helper {
 				case 10:
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-11');
+					$retVal = $retVal.$this->Html->tag('label', $label, array('for' => $fieldId)).
+					$this->Html->tag(
+						'div',
+						$this->Html->tag('span', '$', array('class' => 'input-group-addon col-md-1')).
+						$this->Html->tag('input', '', $fieldOptions),
+						array('class' => 'input-group col-md-12')
+					);
 
 					break;
 				// 'percent',       // 11 - (0-100)%
 				case 11:
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'percent');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-11');
+					$fieldOptions = Hash::insert($fieldOptions, 'min', '0');
+					$fieldOptions = Hash::insert($fieldOptions, 'max', '100');
+					$retVal = $retVal.$this->Html->tag(
+						'div',
+						$this->Html->tag('label', $label, array('for' => $fieldId)).
+						$this->Html->tag('input', '', $fieldOptions).
+						$this->Html->tag('span', '%', array('class' => 'input-group-addon col-md-1')),
+						array('class' => 'input-group col-md-12')
+					);
 					break;
 
 				// 'ssn',           // 12 - ###-##-####
@@ -172,10 +175,10 @@ class TemplateFieldHelper extends Helper {
 					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
 					break;
 
-				// 'zipUS',           // 13 - #####[-####]
+				// 'zipcodeUS',           // 13 - #####[-####]
 				case 13:
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'zipUS');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'zipcodeUS');
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
 					break;
@@ -196,6 +199,22 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'url');
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+					break;
+
+				// 'number'         // 18 - (#)+.(#)+
+				case 18:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+					break;
+
+				// 'digits',        // 19 - (#)+
+				case 19:
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				default:
