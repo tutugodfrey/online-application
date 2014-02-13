@@ -46,6 +46,14 @@ class CobrandedApplicationsController extends AppController {
 		if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 			throw new NotFoundException(__('Invalid application'));
 		}
+		// the application will post back data that needs to be inserted into the
+		// CobrandedApplicationValues table
+		if ($this->request->is('ajax')) {
+			$this->disableCache();
+			// process the data
+			
+		}
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->CobrandedApplication->save($this->request->data)) {
 				$this->Session->setFlash(__('The application has been saved'));
@@ -57,6 +65,7 @@ class CobrandedApplicationsController extends AppController {
 			$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
 			$this->request->data = $this->CobrandedApplication->find('first', $options);
 		}
+
 		$users = $this->CobrandedApplication->User->find('list');
 		$this->set(compact('users'));
 

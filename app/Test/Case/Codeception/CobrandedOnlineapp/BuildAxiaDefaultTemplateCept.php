@@ -74,7 +74,7 @@ $sectionId = $SP->createIfMissing('LOCATION INFORMATION', $pageId, 6);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Same As Corporate Information', $sectionId, 12, 3, false, 1, '', 'SameAsCorpInfo', '', null);
+//$fieldId = $FP->createIfMissing('Same As Corporate Information', $sectionId, 12, 3, false, 1, '', 'SameAsCorpInfo', '', null);
 $fieldId = $FP->createIfMissing('Business Name (DBA)', $sectionId, 12, 0, true, 1, '', 'DBA', '', null);
 $fieldId = $FP->createIfMissing('Mailing Address', $sectionId, 12, 0, true, 1, '', 'Address', '', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 1, '', 'City', '', null);
@@ -90,7 +90,7 @@ $fieldId = $FP->createIfMissing('Email', $sectionId, 12, 14, true, 1, '', 'Email
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-$sectionId = $SP->createIfMissing('ADDITIONAL BUSINESS INFORMATION', $pageId, 6);
+$sectionId = $SP->createIfMissing('ADDITIONAL BUSINESS INFORMATION', $pageId, 12);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
