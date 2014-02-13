@@ -410,9 +410,9 @@ class CobrandedOnlineappCreateObjects extends CakeMigration {
 			// add the constraints and seed some data
 			$this->db->execute(
 				"ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);
+				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id) ;
 				ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_template_fk FOREIGN KEY (template_id) REFERENCES onlineapp_templates (id);
+				ADD CONSTRAINT onlineapp_users_template_fk FOREIGN KEY (template_id) REFERENCES onlineapp_templates (id) ON DELETE SET NULL;
 				ALTER TABLE onlineapp_templates
 				ADD CONSTRAINT onlineapp_template_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);
 				ALTER TABLE onlineapp_template_pages
