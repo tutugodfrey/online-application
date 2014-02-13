@@ -50,7 +50,8 @@
 	var onWindowResize = function() {
 		var totalWidth = $("#wizard .nav-pills").css("width").replace('px', '');
 		var numberOfChildren = $("#wizard .nav-pills>li").length;
-		var newWidth = Math.floor(totalWidth/(numberOfChildren-1))-$("#wizard .nav-pills").css('padding').replace('px','');
+		var padding = $("#wizard .nav-pills").css('padding-left').replace('px','');
+		var newWidth = Math.floor(totalWidth/(numberOfChildren-1))-padding;
 		$("#wizard .nav-pills>li>a>div.connecting-line").css("width", newWidth);
 	};
 
