@@ -448,8 +448,12 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-19-name-id-merg_field_name-1'
 		);
-
-		// TODO: add tests for type in [9-15]
+		$options['type'] = -1;
+		$this->assertEquals(
+			'<div class="col-md-1" title="only the rep will see this">***** UNRECOGNIZED FIELD TYPE [-1] for field [merge_field_name]*****</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
+			'user-required-rep_only--1-name-id-merg_field_name-1'
+		);
 	}
 
 	private function __buildFieldObject($options = array('source' => null, 'required' => null, 'rep_only' => null, 'type' => null, 'name' => null, 'id' => null, 'merge_field_name' => null, 'width' => null, 'default_value' => '')) {
