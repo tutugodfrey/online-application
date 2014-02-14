@@ -77,15 +77,23 @@ class CobrandedApplicationsController extends AppController {
 						'TemplatePages' => array(
 							'TemplateSections' => array(
 								'TemplateFields' => array(
-									'CobrandedApplicationValues'
+									'CobrandedApplicationValues' => array(
+										'conditions' => array(
+											'cobranded_application_id' => $this->request->data['CobrandedApplication']['id']
+										)
+									)
 								)
 							)
 						)
 					)
 				),
-				'conditions' => array('Template.id' => $this->request->data['Template']['id'])
+				'conditions' => array(
+					'Template.id' => $this->request->data['Template']['id'],
+					'CobrandedApplication.id' => $this->request->data['CobrandedApplication']['id'],
+				)
 			)
 		);
+
 		$this->set('templatePages', $template['Template']['TemplatePages']);
 		$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 
