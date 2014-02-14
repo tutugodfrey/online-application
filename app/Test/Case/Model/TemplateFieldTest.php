@@ -168,6 +168,70 @@ class TemplateFieldTest extends CakeTestCase {
 		$this->TemplateField->create($new_field_data);
 		$this->asserttrue($this->TemplateField->validates());
 		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+
+		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
+		$new_field_data = array(
+			'name' => 'required text field from user w/o default',
+			'width' => 6,
+			'type' => 4, // (radio)
+			'required' => 1,
+			'source' => 1,
+			'merge_field_name' => '',
+			'order' => 0,
+			'section_id' => 1,
+		);
+		$expected_validationErrors = array();
+		$this->TemplateField->create($new_field_data);
+		$this->asserttrue($this->TemplateField->validates());
+		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+
+		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
+		$new_field_data = array(
+			'name' => 'required text field from user w/o default',
+			'width' => 6,
+			'type' => 5, // (radio)
+			'required' => 1,
+			'source' => 1,
+			'merge_field_name' => '',
+			'order' => 0,
+			'section_id' => 1,
+		);
+		$expected_validationErrors = array();
+		$this->TemplateField->create($new_field_data);
+		$this->asserttrue($this->TemplateField->validates());
+		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+
+		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
+		$new_field_data = array(
+			'name' => 'required text field from user w/o default',
+			'width' => 6,
+			'type' => 7, // (radio)
+			'required' => 1,
+			'source' => 1,
+			'merge_field_name' => '',
+			'order' => 0,
+			'section_id' => 1,
+		);
+		$expected_validationErrors = array();
+		$this->TemplateField->create($new_field_data);
+		$this->asserttrue($this->TemplateField->validates());
+		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+
+		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
+		$new_field_data = array(
+			'name' => 'required text field from user w/o default',
+			'width' => 6,
+			'type' => 20, // (radio)
+			'required' => 1,
+			'source' => 1,
+			'merge_field_name' => '',
+			'order' => 0,
+			'section_id' => 1,
+		);
+		$expected_validationErrors = array();
+		$this->TemplateField->create($new_field_data);
+		$this->asserttrue($this->TemplateField->validates());
+		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
 	}
 
 	public function testSaveNew() {

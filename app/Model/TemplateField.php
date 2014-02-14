@@ -75,7 +75,7 @@ class TemplateField extends AppModel {
 			'message' => array('Template field source cannot be empty'),
 		),
 		'merge_field_name' => array(
-			'rule' => array('notempty'),
+			'rule' => array('validMergeFieldName'),
 			'message' => array('Template field merge_field_name cannot be empty'),
 		),
 		'order' => array(
@@ -87,6 +87,28 @@ class TemplateField extends AppModel {
 			'message' => array('Invalid section_id value used'),
 		),
 	);
+
+	public function validMergeFieldName($check) {
+		$valid = false;
+		if (strlen($this->data['TemplateField']['merge_field_name']) == 0) {
+			// if the field type is in (4, 5, 7, 20) then the merge_field_name value can be empty
+			switch ($this->data['TemplateField']['type']) {
+				case 4:
+				case 5:
+				case 7:
+				case 20:
+					$valid = true;
+					break;
+
+				default:
+					// no op, $valid is already false
+					break;
+			}
+		} else {
+			$valid = true;
+		}
+		return $valid;
+	}
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $belongsTo = array(
