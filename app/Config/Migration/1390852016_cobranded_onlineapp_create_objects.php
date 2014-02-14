@@ -435,8 +435,6 @@ class CobrandedOnlineappCreateObjects extends CakeMigration {
 				INSERT INTO onlineapp_cobrands
 				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('Axia', 'AX', '/img/axia_logo.png', current_timestamp, current_timestamp);
 				INSERT INTO onlineapp_cobrands
-				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('Hooza', 'HZ', '/img/hooza_logo.jpg', current_timestamp, current_timestamp);
-				INSERT INTO onlineapp_cobrands
 				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('Inspire', 'IN', 'TODO: add IN logo', current_timestamp, current_timestamp);
 				INSERT INTO onlineapp_cobrands
 				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('Passport', 'PP', 'TODO: add PP logo', current_timestamp, current_timestamp);

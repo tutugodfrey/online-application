@@ -375,7 +375,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input-group col-md-12">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" type="text" data-vtype="digits" class="col-md-11" min="0" max="100">'.
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" type="text" data-vtype="digits" class="col-md-2" min="0" max="100">'.
 					'</input>'.
 					'<span class="input-group-addon col-md-1">%</span>'.
 				'</div>'.

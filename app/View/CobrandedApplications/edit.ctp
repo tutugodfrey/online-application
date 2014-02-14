@@ -34,7 +34,7 @@
 					<?php echo $this->Element('Templates/Pages/templatePage', array('numberOfPages' => $numberOfPages, 'templatePage' => $templatePage, 'requireRequiredFields' => $requireRequiredFields)) ?>
 
 					</div>
-
+					<div>Fields marked with * are required.</div>
 					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
 				</div>
 			</form>
