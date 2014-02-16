@@ -42,11 +42,36 @@
 	</div>
 </div>
 
+
 <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
 <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
 <script type="text/javascript" src="/js/jquery.bootstrap.wizard.js"></script>
 
 <script type="text/javascript">
+	var quickAdd = function(e) {
+		e.preventDefault();
+
+		var target = $(e.target);
+debugger;
+		if ($validator.element(target) === true) {
+			var data = {
+				'id': target.attr('data-value-id'),
+				'value': target.val()
+			};
+
+			$.ajax({
+				method: 'post',
+				url: document.location.pathname.replace('/edit/', '/quickAdd/'),
+				data: data,
+				context: document.body
+			}).done(function(response) {
+				// noop
+			}).error(function() {
+				alert('failed to update application value');
+			});
+		}
+	};
+
 	var onWindowResize = function() {
 		var totalWidth = $("#wizard .nav-pills").css("width").replace('px', '');
 		var numberOfChildren = $("#wizard .nav-pills>li").length;
@@ -129,6 +154,10 @@
 			'tabClass': 'nav nav-pills',
 			'onNext': onTabChange
 		});
+
+		// set up the onBlur handler for all of the appliction input fields
+		$('#wizard input').on('change', quickAdd);
+		// TODO: also need to handle select and radio inputs
 	});
 </script>
 

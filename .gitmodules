@@ -10,3 +10,6 @@
 [submodule "app/Plugin/search"]
 	path = app/Plugin/search
 	url = https://github.com/CakeDC/search.git
+[submodule "app/Plugin/TwitterBootstrap"]
+	path = app/Plugin/TwitterBootstrap
+	url = git://github.com/slywalker/TwitterBootstrap.git

@@ -17,6 +17,8 @@ class TemplateFieldTest extends CakeTestCase {
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
+		'app.onlineappCobrandedApplication',
+		'app.onlineappCobrandedApplicationValue',
 	);
 
 	public $autoFixtures = false;
@@ -28,6 +30,8 @@ class TemplateFieldTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
+		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
@@ -35,9 +39,13 @@ class TemplateFieldTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
+		$this->loadFixtures('OnlineappCobrandedApplication');
+		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 	}
 
 	public function tearDown() {
+		$this->CobrandedApplicationValue->deleteAll(true, false);
+		$this->CobrandedApplication->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
@@ -51,6 +59,8 @@ class TemplateFieldTest extends CakeTestCase {
 				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
 		$this->Cobrand->query($query);
 
+		unset($this->CobrandedApplicationValue);
+		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
 		unset($this->TemplateSection);
 		unset($this->TemplatePage);
@@ -330,7 +340,6 @@ class TemplateFieldTest extends CakeTestCase {
 	}
 
 	public function testReordering_MiddleToLast() {
-		
 		// make sure the order values are what we expect
 		$first = $this->TemplateField->findById(1);
 		$this->assertEquals(0, $first['TemplateField']['order']);

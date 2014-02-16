@@ -9,7 +9,7 @@ class AppController extends Controller {
                     'fields' => array('username' => 'email'),
                     'scope' => array('User.active' => 1))),
             'loginAction' => array('controller' => 'users', 'action' => 'login'),
-            'loginRedirect' => array('controller' => 'applications', 'action' => 'index', 'admin' => true),            
+            'loginRedirect' => array('controller' => 'applications', 'action' => 'index', 'admin' => true),
             'logoutRedirect' => array('controller' => 'users', 'action' => 'login')
         ),
         'Session',
@@ -17,10 +17,14 @@ class AppController extends Controller {
         'RequestHandler'
     );
     public $helpers = array(
-        'Html' => array('className' => 'BoostCake.BoostCakeHtml'),
-        'Form' => array('className' => 'BoostCake.BoostCakeForm'),
-        'Paginator' => array('className' => 'BoostCake.BoostCakePaginator'),
+        'Html' => array(
+            'className' => 'TwitterBootstrap.BootstrapHtml'),
+        'Form' => array(
+            'className' => 'TwitterBootstrap.BootstrapForm'),
+        'Paginator' => array(
+            'className' => 'TwitterBootstrap.BootstrapPaginator'),
         'Session',
+        'Js' => array('AppJs'),
         /*'Ajax', 'Javascript'*/);
 
     public function beforeFilter() {

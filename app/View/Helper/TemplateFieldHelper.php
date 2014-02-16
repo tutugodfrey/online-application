@@ -26,6 +26,11 @@ class TemplateFieldHelper extends Helper {
 			$retVal = $retVal .  String::insert('<div class="col-md-:width":title>', array('width' => $field['width'], 'title' => $title));
 			$requiredProp = ($field['required'] && $requireRequiredFields) ? true : false;
 			$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
+			// TODO: move the ['CobrandedApplicationValues'][0]['id'] data fetch into the model
+			if ($field['type'] < 4 && $field['type'] > 7) {
+				$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $field['CobrandedApplicationValues'][0]['id']);
+				$fieldOptions = Hash::insert($fieldOptions, 'value', $field['CobrandedApplicationValues'][0]['value']);
+			}
 
 			switch ($field['type']) {
 				case 0: // text
@@ -54,6 +59,10 @@ class TemplateFieldHelper extends Helper {
 					break;
 
 				case 4: // radio group (inline)
+				/*
+				TODO: rethink model for cases with multiple values
+				      because we need access to the application value
+				*/
 					$radioOptionsString = $field['default_value'];
 					$lis = "";
 					foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
@@ -153,17 +162,7 @@ class TemplateFieldHelper extends Helper {
 
 				// 'money',         // 10 - $###.##
 				case 10:
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-11');
-					$retVal = $retVal.$this->Html->tag('label', $label, array('for' => $fieldId)).
-					$this->Html->tag(
-						'div',
-						$this->Html->tag('span', '$', array('class' => 'input-group-addon col-md-1')).
-						$this->Html->tag('input', '', $fieldOptions),
-						array('class' => 'input-group col-md-12')
-					);
-
+					$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $label, $fieldId);
 					break;
 				// 'percent',       // 11 - (0-100)%
 				case 11:
@@ -256,6 +255,20 @@ class TemplateFieldHelper extends Helper {
 			$retVal = $retVal . '</div>';
 		}
 
+		return $retVal;
+	}
+
+	private function __buildMoneyField($fieldOptions, $label, $fieldId) {
+		$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+		$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
+		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-11');
+		$retVal = $this->Html->tag('label', $label, array('for' => $fieldId)).
+		$this->Html->tag(
+			'div',
+			$this->Html->tag('span', '$', array('class' => 'input-group-addon col-md-1')).
+			$this->Html->tag('input', '', $fieldOptions),
+			array('class' => 'input-group col-md-12')
+		);
 		return $retVal;
 	}
 }

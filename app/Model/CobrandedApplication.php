@@ -118,7 +118,7 @@ class CobrandedApplication extends AppModel {
 										array(
 											'cobranded_application_id' => $applicationId,
 											'template_field_id' => $field['id'],
-											'name' => $field['merge_field_name'].$keyValuePair[($field['type'] == 7 ? 0 : 1)], // fees use the display name because a default value is in second position
+											'name' => $keyValuePair[($field['type'] == 7 ? 0 : 1)], // fees use the display name because a default value is in second position
 										)
 									);
 								}
@@ -144,6 +144,36 @@ class CobrandedApplication extends AppModel {
 				}
 			}
 		}
+	}
+
+	public function getTemplateAndAssociatedValues($cobranded_application_id) {
+		$this->id = $cobranded_application_id;
+		$application = $this->read();
+
+		return $this->find(
+			'first', array(
+				'contain' => array(
+					'Template' => array(
+						'Cobrand',
+						'TemplatePages' => array(
+							'TemplateSections' => array(
+								'TemplateFields' => array(
+									'CobrandedApplicationValues' => array(
+										'conditions' => array(
+											'cobranded_application_id' => $cobranded_application_id,
+										)
+									)
+								)
+							)
+						)
+					)
+				),
+				'conditions' => array(
+					'Template.id' => $application['Template']['id'],
+					'CobrandedApplication.id' => $cobranded_application_id,
+				)
+			)
+		);
 	}
 
 	private function __addApplicationValue($applicationValueData) {

@@ -18,7 +18,66 @@ class CobrandedApplicationsController extends AppController {
  * @var array
  */
 	public $components = array('Email', 'RequestHandler', 'Security', 'Search.Prg');
+
 	public $helper = array('TemplateField');
+
+	public function beforeFilter() {
+		$this->Auth->allow('quickAdd');
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = false;
+		//$this->DebugKit->
+	}
+
+	public function quickAdd($uuid = null) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if($this->RequestHandler->isAjax()) {
+			if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
+				throw new NotFoundException(__('Invalid application'));
+			}
+
+			if (strlen($this->request->data['id']) == 0) {
+				throw new NotFoundException(__('Invalid application value id'));
+			}
+
+			$this->RequestHandler->setContent('json', 'application/json');
+
+			if (!$this->CobrandedApplication->CobrandedApplicationValues->hasAny(
+					array(
+						'id' => $this->request->data['id'],
+					))) {
+				throw new NotFoundException(__('Invalid application value'));
+			}
+
+			// make sure the value has changed
+			$applicationValue = $this->CobrandedApplication->CobrandedApplicationValues->find($this->request->data['id']);
+			if ($applicationValue['CobrandedApplicationValue']['value'] != $this->request->data['value']) {
+				$this->CobrandedApplication->CobrandedApplicationValues->id = $this->request->data['id'];
+				$succeeded = false;
+				if ($this->CobrandedApplication->CobrandedApplicationValues->savefield('value', $this->request->data['value'])) {
+					$response = 'CobrandedApplicationValue with id ['.$this->request->data['id'].'] succeeded';
+					$succeeded = true;
+				} else {
+					$response = 'Failed to update CobrandedApplicationValue with id ['.$this->request->data['id'].']';
+				}
+				$response = json_encode($response);
+				$this->set(compact('response', 'succeeded'));
+				$this->set('_serialize', 'response');
+				$this->render('quickAdd');
+			} else {
+				$error = json_encode("Application Value could not be saved. Try later");
+				$this->set(compact('error'));
+				$this->set('_serialize', 'error');
+				$this->render('error');
+			}
+		} else {
+			$error = array("Not an Ajax request");
+			$this->set(compact('error'));
+			$this->set('_serialize', 'error');
+			$this->render('error');
+		}
+	}
+
 
 /**
  * view method
@@ -46,13 +105,6 @@ class CobrandedApplicationsController extends AppController {
 		if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-		// the application will post back data that needs to be inserted into the
-		// CobrandedApplicationValues table
-		if ($this->request->is('ajax')) {
-			$this->disableCache();
-			// process the data
-			
-		}
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->CobrandedApplication->save($this->request->data)) {
@@ -69,32 +121,10 @@ class CobrandedApplicationsController extends AppController {
 		$users = $this->CobrandedApplication->User->find('list');
 		$this->set(compact('users'));
 
-		$template = $this->CobrandedApplication->find(
-			'first', array(
-				'contain' => array(
-					'Template' => array(
-						'Cobrand',
-						'TemplatePages' => array(
-							'TemplateSections' => array(
-								'TemplateFields' => array(
-									'CobrandedApplicationValues' => array(
-										'conditions' => array(
-											'cobranded_application_id' => $this->request->data['CobrandedApplication']['id']
-										)
-									)
-								)
-							)
-						)
-					)
-				),
-				'conditions' => array(
-					'Template.id' => $this->request->data['Template']['id'],
-					'CobrandedApplication.id' => $this->request->data['CobrandedApplication']['id'],
-				)
-			)
-		);
+		$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id']);
 
 		$this->set('templatePages', $template['Template']['TemplatePages']);
+		$this->set('cobrandedApplicationValues', $template['CobrandedApplicationValues']);
 		$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 
 		// if it is a rep viewing/editing the application don't require fields to be filled in
@@ -193,7 +223,7 @@ class CobrandedApplicationsController extends AppController {
 				'template_id' => $this->User->field('template_id', array('User.id' => $user->id)),
 			)
 		);
-debug($this->CobrandedApplication->data);
+
 		if ($this->CobrandedApplication->save()) {
 			return true;
 		}
