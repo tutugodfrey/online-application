@@ -56,8 +56,6 @@
 		<exec executable="/usr/bin/git">
 			<arg line="submodule foreach git pull origin master"/>
 		</exec>
-		<delete file="app/Config/database.php" failonerror="false"/>
-		<copy file="/var/lib/jenkins/project_config/database.php" tofile="app/Config/database.php"/>
 	</target>
 
 	<target name="lint"
