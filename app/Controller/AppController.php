@@ -17,12 +17,9 @@ class AppController extends Controller {
         'RequestHandler'
     );
     public $helpers = array(
-        'Html' => array(
-            'className' => 'TwitterBootstrap.BootstrapHtml'),
-        'Form' => array(
-            'className' => 'TwitterBootstrap.BootstrapForm'),
-        'Paginator' => array(
-            'className' => 'TwitterBootstrap.BootstrapPaginator'),
+        'Html' => array('className' => 'BoostCake.BoostCakeHtml'),
+        'Form' => array('className' => 'BoostCake.BoostCakeForm'),
+        'Paginator' => array('className' => 'BoostCake.BoostCakePaginator'),
         'Session',
         'Js' => array('AppJs'),
         /*'Ajax', 'Javascript'*/);
