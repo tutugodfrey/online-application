@@ -75,7 +75,7 @@ CakePlugin::load('Search');
 CakePlugin::load('DebugKit');
 CakePlugin::load('Migrations');
 CakePlugin::load('Utils');
-CakePlugin::load('BootCake');
+CakePlugin::load('BoostCake');
 Configure::load('app_config');
 
 /**

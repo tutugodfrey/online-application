@@ -161,7 +161,8 @@ class CobrandedApplication extends AppModel {
 									'CobrandedApplicationValues' => array(
 										'conditions' => array(
 											'cobranded_application_id' => $cobranded_application_id,
-										)
+										),
+										'order' => array('id')
 									)
 								)
 							)
@@ -174,6 +175,66 @@ class CobrandedApplication extends AppModel {
 				)
 			)
 		);
+	}
+
+	public function getApplicationValue($id) {
+		if (is_null($this->CobrandedApplicationValue)) {
+			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+		}
+		return $this->CobrandedApplicationValue->findById($id);
+	}
+
+	public function saveApplicationValue($data) {
+		$response = array('success' => false);
+
+		// grab the appliction value with $data['id']
+		$appValue = $this->getApplicationValue($data['id']);
+
+		// if the value is different
+		if ($appValue['CobrandedApplicationValue']['value'] != $data['value']) {
+			// try to update it
+			$appValue['CobrandedApplicationValue']['value'] = $data['value'];
+			if ($this->CobrandedApplicationValue->save($appValue)) {
+				// value saved
+				$response['success'] = true;
+				// if the template field has a type of 4, all other options must be set to null
+				if ($appValue['TemplateField']['type'] == 4) {
+					// this could be an after save callback
+					$radioOptions = $this->CobrandedApplicationValue->find(
+						'all',
+						array('conditions' => array(
+							'template_field_id' => $appValue['TemplateField']['id'],
+							'cobranded_application_id' => $appValue['CobrandedApplication']['id'],
+						))
+					);
+					foreach ($radioOptions as $radioOption) {
+						if ($radioOption['CobrandedApplicationValue']['id'] != intval($data['id'])) {
+							// udpate the value to null
+							$radioOption['CobrandedApplicationValue']['value'] = null;
+							if (!$this->CobrandedApplicationValue->save($radioOption)) {
+								$response['success'] = false;
+							}
+						}
+					}
+				}
+			} else {
+				// something went wrong
+				$response = Hash::insert(
+					$response,
+					'msg',
+					'failed to update application value with id ['.$data['id'].']. Check the sql log for more details'
+				);
+			}
+		} else {
+			// let the consumer know the value did not change
+			$response = Hash::insert(
+				$response,
+				'msg',
+				'failed to update application value with id ['.$data['id'].'] because the value did not change'
+			);
+		}
+
+		return $response;
 	}
 
 	private function __addApplicationValue($applicationValueData) {

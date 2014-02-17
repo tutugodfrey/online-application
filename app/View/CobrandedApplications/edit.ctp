@@ -50,26 +50,44 @@
 <script type="text/javascript">
 	var quickAdd = function(e) {
 		e.preventDefault();
-
 		var target = $(e.target);
-debugger;
-		if ($validator.element(target) === true) {
-			var data = {
-				'id': target.attr('data-value-id'),
-				'value': target.val()
-			};
+		var data = {};
 
-			$.ajax({
-				method: 'post',
-				url: document.location.pathname.replace('/edit/', '/quickAdd/'),
-				data: data,
-				context: document.body
-			}).done(function(response) {
-				// noop
-			}).error(function() {
-				alert('failed to update application value');
-			});
+		// handle radio buttons and checkboxes don't need to be validated
+		if (target.is(":radio")) {
+			data['id'] = target.attr('data-value-id');
+			data['value'] = target.is(":checked"); // not really needed...
+			data['template_field_id'] = target.attr('data-field-id');
+			persist(data);
+		} else if(target.is(":checkbox")) {
+			data['id'] = target.attr('data-value-id');
+			data['value'] = target.is(":checked"); // not really needed...
+			persist(data);
+		} else {
+			// need to validate the
+			if ($validator.element(target) === true) {
+				data['id'] = target.attr('data-value-id');
+				data['value'] = target.val();
+
+				persist(data);
+			}
 		}
+	};
+
+	var persist = function(data) {
+		$.ajax({
+			method: 'post',
+			url: document.location.pathname.replace('/edit/', '/quickAdd/'),
+			data: data,
+			context: document.body
+		}).done(function(response) {
+			// noop
+			//debugger;
+			//alert('field updated');
+		}).error(function() {
+			debugger;
+			alert('failed to update application value');
+		});
 	};
 
 	var onWindowResize = function() {
@@ -157,7 +175,8 @@ debugger;
 
 		// set up the onBlur handler for all of the appliction input fields
 		$('#wizard input').on('change', quickAdd);
-		// TODO: also need to handle select and radio inputs
+		$('#wizard select').on('change', quickAdd);
+		$('#wizard textarea').on('change', quickAdd);
 	});
 </script>
 

@@ -41,25 +41,10 @@ class CobrandedApplicationsController extends AppController {
 			}
 
 			$this->RequestHandler->setContent('json', 'application/json');
+			$response = $this->CobrandedApplication->saveApplicationValue($this->request->data);
 
-			if (!$this->CobrandedApplication->CobrandedApplicationValues->hasAny(
-					array(
-						'id' => $this->request->data['id'],
-					))) {
-				throw new NotFoundException(__('Invalid application value'));
-			}
-
-			// make sure the value has changed
-			$applicationValue = $this->CobrandedApplication->CobrandedApplicationValues->find($this->request->data['id']);
-			if ($applicationValue['CobrandedApplicationValue']['value'] != $this->request->data['value']) {
-				$this->CobrandedApplication->CobrandedApplicationValues->id = $this->request->data['id'];
-				$succeeded = false;
-				if ($this->CobrandedApplication->CobrandedApplicationValues->savefield('value', $this->request->data['value'])) {
-					$response = 'CobrandedApplicationValue with id ['.$this->request->data['id'].'] succeeded';
-					$succeeded = true;
-				} else {
-					$response = 'Failed to update CobrandedApplicationValue with id ['.$this->request->data['id'].']';
-				}
+			if ($response['success'] == true) {
+				// all good
 				$response = json_encode($response);
 				$this->set(compact('response', 'succeeded'));
 				$this->set('_serialize', 'response');

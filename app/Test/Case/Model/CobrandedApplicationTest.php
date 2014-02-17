@@ -176,7 +176,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'required' => true,
 										'source' => (int) 1,
 										'default_value' => '',
-										'merge_field_name' => 'required_text_from_user_with_default',
+										'merge_field_name' => 'required_text_from_user_without_default',
 										'order' => (int) 0,
 										'section_id' => (int) 1,
 										'created' => '2013-12-18 14:10:17',
@@ -187,7 +187,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 												'cobranded_application_id' => (int) 1,
 												'template_field_id' => (int) 1,
 												'name' => 'Field 1',
-												'value' => 'Lorem ipsum dolor sit amet',
+												'value' => null,
 												'created' => '2014-01-23 17:28:15',
 												'modified' => '2014-01-23 17:28:15'
 											)
@@ -203,7 +203,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'required' => true,
 										'source' => (int) 1,
 										'default_value' => '',
-										'merge_field_name' => 'required_text_from_user_with_default',
+										'merge_field_name' => 'required_text_from_user_without_default',
 										'order' => (int) 1,
 										'section_id' => (int) 1,
 										'created' => '2013-12-18 14:10:17',
@@ -220,13 +220,58 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'required' => true,
 										'source' => (int) 1,
 										'default_value' => '',
-										'merge_field_name' => 'required_text_from_user_with_default',
+										'merge_field_name' => 'required_text_from_user_without_default',
 										'order' => (int) 2,
 										'section_id' => (int) 1,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array()
-									)
+									),
+									(int) 3 => array(
+										'id' => 4,
+										'name' => 'field 4',
+										'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+										'rep_only' => false,
+										'width' => 12,
+										'type' => 4,
+										'required' => true,
+										'source' => 1,
+										'default_value' => 'name1::value1,name2::value2,name3::value3',
+										'merge_field_name' => 'required_radio_from_user_without_default',
+										'order' => 3,
+										'section_id' => 1,
+										'created' => '2013-12-18 14:10:17',
+										'modified' => '2013-12-18 14:10:17',
+										'CobrandedApplicationValues' => array(
+											array(
+												'id' => 2,
+												'cobranded_application_id' => 1,
+												'template_field_id' => 4,
+												'name' => 'name1',
+												'value' => null,
+												'created' => '2014-01-23 17:28:15',
+												'modified' => '2014-01-23 17:28:15',
+											),
+											array(
+												'id' => 3,
+												'cobranded_application_id' => 1,
+												'template_field_id' => 4,
+												'name' => 'name2',
+												'value' => null,
+												'created' => '2014-01-23 17:28:15',
+												'modified' => '2014-01-23 17:28:15',
+											),
+											array(
+												'id' => 4,
+												'cobranded_application_id' => 1,
+												'template_field_id' => 4,
+												'name' => 'name3',
+												'value' => null,
+												'created' => '2014-01-23 17:28:15',
+												'modified' => '2014-01-23 17:28:15',
+											),
+										),
+									),
 								)
 							),
 							(int) 1 => array(
@@ -286,4 +331,129 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expected, $actual, 'getTemplateAndAssociatedValues test failed');
 	}
 
+	public function testSaveApplicationValue() {
+		// CUT (class under test) expects
+		$data = array(
+			'id' => 1,
+			'value' => 'new value'
+		);
+
+		// pre-check - verify the value exists and is what we expect
+		$expected = array(
+			'CobrandedApplicationValue' => array(
+				'id' => 1,
+				'cobranded_application_id' => 1,
+				'template_field_id' => 1,
+				'name' => 'Field 1',
+				'value' => null,
+				'created' => '2014-01-23 17:28:15',
+				'modified' => '2014-01-23 17:28:15',
+			),
+			'CobrandedApplication' => array(
+				'id' => 1,
+				'user_id' => 1,
+				'template_id' => 1,
+				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
+				'created' => '2014-01-24 09:07:08',
+				'modified' => '2014-01-24 09:07:08',
+			),
+			'TemplateField' => array(
+				'id' => 1,
+				'name' => 'field 1',
+				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+				'rep_only' => false,
+				'width' => 12,
+				'type' => 0,
+				'required' => true,
+				'source' => 1,
+				'default_value' => '',
+				'merge_field_name' => 'required_text_from_user_without_default',
+				'order' => 0,
+				'section_id' => 1,
+				'created' => '2013-12-18 14:10:17',
+				'modified' => '2013-12-18 14:10:17',
+			),
+		);
+		$actual = $this->CobrandedApplication->getApplicationValue(1);
+		$this->assertEquals($expected, $actual, 'expected to find application value with id of 1...');
+
+		// change the value
+		$expectedNewValue = 'newValue';
+		$inputData = array('id' => 1, 'value' => 'newValue');
+		$response = $this->CobrandedApplication->saveApplicationValue($inputData);
+
+		$this->assertTrue($response['success'], 'Expected save operation to return true');
+		$actual = $this->CobrandedApplication->getApplicationValue(1);
+		$this->assertEquals($expectedNewValue, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
+
+		// save again witht the same data
+		$response = $this->CobrandedApplication->saveApplicationValue($inputData);
+
+		$this->assertFalse($response['success'], 'Expected save operation to return true');
+		// also make sure the actual value is still newValue
+		$actual = $this->CobrandedApplication->getApplicationValue(1);
+		$this->assertEquals($expectedNewValue, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
+
+		// next save a app value with tmeplate type of 4 (radio)
+		$expected = array(
+			'CobrandedApplicationValue' => array(
+				'id' => 2,
+				'cobranded_application_id' => 1,
+				'template_field_id' => 4,
+				'name' => 'name1',
+				'value' => null,
+				'created' => '2014-01-23 17:28:15',
+				'modified' => '2014-01-23 17:28:15',
+			),
+			'CobrandedApplication' => array(
+				'id' => 1,
+				'user_id' => 1,
+				'template_id' => 1,
+				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
+				'created' => '2014-01-24 09:07:08',
+				'modified' => '2014-01-24 09:07:08',
+			),
+			'TemplateField' => array(
+				'id' => 4,
+				'name' => 'field 4',
+				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+				'rep_only' => false,
+				'width' => 12,
+				'type' => 4,
+				'required' => true,
+				'source' => 1,
+				'default_value' => 'name1::value1,name2::value2,name3::value3',
+				'merge_field_name' => 'required_radio_from_user_without_default',
+				'order' => 3,
+				'section_id' => 1,
+				'created' => '2013-12-18 14:10:17',
+				'modified' => '2013-12-18 14:10:17',
+			),
+		);
+		$actual = $this->CobrandedApplication->getApplicationValue(2);
+		$this->assertEquals($expected, $actual, 'expected to find application value with id of 4...');
+
+		$expectedNewValue = true;
+		$inputData = array('id' => 2, 'value' => true);
+		$response = $this->CobrandedApplication->saveApplicationValue($inputData);
+
+		$this->assertTrue($response['success'], 'Expected save operation to return true');
+		$actual = $this->CobrandedApplication->getApplicationValue(2);
+		$this->assertEquals($expectedNewValue, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
+
+		// now update id 3
+		$inputData = array('id' => 3, 'value' => true);
+		$response = $this->CobrandedApplication->saveApplicationValue($inputData);
+
+		$this->assertTrue($response['success'], 'Expected save operation to return true');
+		$actual = $this->CobrandedApplication->getApplicationValue(3);
+		$this->assertEquals($expectedNewValue, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
+
+		// and id 2 should have a value of  null
+		$actual = $this->CobrandedApplication->getApplicationValue(2);
+		$this->assertEquals(false, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
+		// and id 4 should have a value of  null
+		$actual = $this->CobrandedApplication->getApplicationValue(4);
+		$this->assertEquals(false, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
+	}
 }

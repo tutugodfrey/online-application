@@ -65,23 +65,25 @@ class TemplateFieldHelper extends Helper {
 				*/
 					$radioOptionsString = $field['default_value'];
 					$lis = "";
-					foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
-						$keyValuePair = split('::', $keyValuePairStr);
-						$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
+					$defaultValue = split(',', $field['default_value']);
+					$index = 0;
+					foreach ($field['CobrandedApplicationValues'] as $radioOption) {
+						$nameValuePair = split('::', $defaultValue[$index]);
 						$lis = $lis.$this->Html->tag('li',
 							$this->Html->tag('label',
 								$this->Html->tag(
 									'input',
-									null, // no value <input />
+									$nameValuePair[0], // no value <input />
 									array(
 										'type' => 'radio',
-										'name' => $fieldId,
-										'id' => $fieldId,
-										'value' => $keyValuePair[1]
+										'name' => $field['name'],
+										'data-value-id' => $radioOption['id'],
+										'checked' => ($radioOption['value'] == null ? '' : 'checked'),
 									)
-								).' '.$keyValuePair[0]
+								)
 							)
 						);
+						$index = $index + 1;
 					}
 					$retVal = $retVal.
 						$this->Html->tag('label', $label).

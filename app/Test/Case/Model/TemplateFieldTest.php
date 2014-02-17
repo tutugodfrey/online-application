@@ -258,7 +258,7 @@ class TemplateFieldTest extends CakeTestCase {
 			)
 		);
 		$this->TemplateField->save($template_field_data, array('validate' => false));
-		$expected_order_value = 3; // there are three fields already
+		$expected_order_value = 4; // there are three fields already
 		$this->assertEquals($expected_order_value, $this->TemplateField->field('order'));
 
 		// add another field
