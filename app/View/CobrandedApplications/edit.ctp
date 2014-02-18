@@ -63,6 +63,32 @@
 			data['id'] = target.attr('data-value-id');
 			data['value'] = target.is(":checked"); // not really needed...
 			persist(data);
+		} else if (target.hasClass('date')) {
+			// piece together the date from the name attribute
+			var name = target.attr('name');
+			var dateStr = 
+				$("#"+name+"Year").val()+'-'+
+				$("#"+name+"Month").val()+'-'+
+				$("#"+name+"Day").val();
+			var date = Date.parse(dateStr);
+			if (!isNaN(date)) {
+				if (dateStr.split('-').length == 3) {
+					data['id'] = target.attr('data-value-id');
+					data['value'] = dateStr;
+					persist(data);
+				}
+			}
+		} else if (target.hasClass('time')) {
+			// we need all time parts
+			var name = target.attr('name');
+			var timeStr = 
+				$("#"+name+"Hour").val()+':'+
+				$("#"+name+"Minute").val()+' '+
+				$("#"+name+"Meridian").val();
+
+			data['id'] = target.attr('data-value-id');
+			data['value'] = timeStr;
+			persist(data);
 		} else {
 			// need to validate the
 			if ($validator.element(target) === true) {
@@ -82,10 +108,7 @@
 			context: document.body
 		}).done(function(response) {
 			// noop
-			//debugger;
-			//alert('field updated');
 		}).error(function() {
-			debugger;
 			alert('failed to update application value');
 		});
 	};
@@ -100,40 +123,30 @@
 
 	function handlePercentOptionBlur(event) {
 		var totalField = $(event.totalFieldId);
-		var startingTotalValue = parseInt(totalField.val());
 		var originatingField = $(event.origin);
-		if (totalField.val() == "") {
-			// stuff the new value value
-			totalField.val(originatingField.val());
-		} else {
-			var newTotal = parseInt(startingTotalValue) + parseInt(originatingField.val());
-			if (newTotal <= 100) {
-				totalField.val(newTotal);
-			} else {
-				// start from the top of the fieldset and all sum the inputs
-				// except for the originatingField
-				var percentSum = 0;
-				$("#"+event.fieldset_id).find("input").map(function(index, input) {
-					var inputObj = $(input);
-					if (!inputObj.is(':disabled') &&
-							inputObj.attr("id") != originatingField.attr("id")) {
-						if (inputObj.val() != '') {
-							percentSum += parseInt(inputObj.val());
-						}
-					}
-				});
 
-				var newTotal = percentSum + parseInt(originatingField.val());
-				if (newTotal <= 100) {
-					// set it
-					parseInt(originatingField.val());
-					totalField.val(newTotal);
-				} else {
-					var maxOriginatingValue = 100 - percentSum;
-					originatingField.val(maxOriginatingValue < 0 ? 0 : maxOriginatingValue);
-					totalField.val(100);
+		// start from the top of the fieldset and all sum the inputs
+		// except for the originatingField
+		var percentSum = 0;
+		$("#"+event.fieldset_id).find("input").map(function(index, input) {
+			var inputObj = $(input);
+			if (!inputObj.is(':disabled') &&
+					inputObj.attr("id") != originatingField.attr("id")) {
+				if (inputObj.val() != '') {
+					percentSum += parseInt(inputObj.val());
 				}
 			}
+		});
+
+		var newTotal = percentSum + parseInt(originatingField.val());
+		if (newTotal <= 100) {
+			// set it
+			parseInt(originatingField.val());
+			totalField.val(newTotal);
+		} else {
+			var maxOriginatingValue = 100 - percentSum;
+			originatingField.val(maxOriginatingValue < 0 ? 0 : maxOriginatingValue);
+			totalField.val(100);
 		}
 	}
 

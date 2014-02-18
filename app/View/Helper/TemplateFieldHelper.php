@@ -40,13 +40,23 @@ class TemplateFieldHelper extends Helper {
 					break;
 
 				case 1: // date
+					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
+					$fieldOptions = Hash::insert($fieldOptions, 'name', $cleanFieldId);
+					$fieldOptions = Hash::insert($fieldOptions, 'id', $cleanFieldId);
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'date');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'date');
+					$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
 					$fieldOptions = Hash::insert($fieldOptions, 'empty', true);
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				case 2: // time
+					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
+					$fieldOptions = Hash::insert($fieldOptions, 'name', $cleanFieldId);
+					$fieldOptions = Hash::insert($fieldOptions, 'id', $cleanFieldId);
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'time');
+					$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
 					$fieldOptions = Hash::insert($fieldOptions, 'empty', true);
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
@@ -59,10 +69,6 @@ class TemplateFieldHelper extends Helper {
 					break;
 
 				case 4: // radio group (inline)
-				/*
-				TODO: rethink model for cases with multiple values
-				      because we need access to the application value
-				*/
 					$radioOptionsString = $field['default_value'];
 					$lis = "";
 					$defaultValue = split(',', $field['default_value']);
@@ -91,7 +97,7 @@ class TemplateFieldHelper extends Helper {
 					break;
 
 				case 5: // percent group
-					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
+					$cleanFieldId = str_replace($this->badCharacters, '', $field['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'number');
 					$fieldOptions = Hash::insert($fieldOptions, 'onkeypress', 'if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;');
 					$fieldOptions = Hash::insert($fieldOptions, 'onblur', '$.event.trigger({type: "percentOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});');
@@ -101,15 +107,16 @@ class TemplateFieldHelper extends Helper {
 
 					$retVal = $retVal . '<fieldset id="'.$cleanFieldId.'" class="percent">';
 					$retVal = $retVal . "<legend>" . $field['name'] . "</legend>";
-					$optionsString = $field['default_value'];
 
-					foreach (split(',', $optionsString) as $keyValuePairStr) {
-						$keyValuePair = split('::', $keyValuePairStr);
-						$fieldOptions['id'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
-						$fieldOptions['name'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
-						$fieldOptions['label'] = $keyValuePair[1];
-						$retVal = $retVal . $this->Form->input(str_replace($this->badCharacters, '', $keyValuePair[0]), $fieldOptions);
+					foreach ($field['CobrandedApplicationValues'] as $percentOption) {
+						$fieldOptions = Hash::insert($fieldOptions, 'id', $percentOption['name']);
+						$fieldOptions = Hash::insert($fieldOptions, 'name', $percentOption['name']);
+						$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
+						$fieldOptions = Hash::insert($fieldOptions, 'label', $percentOption['name']);
+						$fieldOptions = Hash::insert($fieldOptions, 'value', $percentOption['value']);
+						$retVal = $retVal . $this->Form->input($percentOption['name'], $fieldOptions);
 					}
+
 					// lastly add the total
 					$retVal = $retVal . $this->Form->input('Total',
 						array(

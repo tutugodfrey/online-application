@@ -30,7 +30,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-12">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name</label>'.
-					'<input name="merge_field_name" id="merge_field_name" data-value-id="id" value="" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" data-value-id="id1" value="" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -41,7 +41,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-12">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -52,7 +52,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-12" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -63,7 +63,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-12" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -74,7 +74,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -84,9 +84,9 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['type'] = 1;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
-			  '<div class="input date">'.
-			    '<label for="merge_field_name">name*</label>'.
-			    '<select name="merge_field_name" id="merge_field_nameMonth" required="required" data-value-id="id">'."\n".
+				'<div class="input date">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<select name="merge_field_name" id="merge_field_nameMonth" required="required" data-value-id="id1" class="date">'."\n".
 						'<option value=""></option>'."\n".
 						'<option value="01">January</option>'."\n".
 						'<option value="02">February</option>'."\n".
@@ -100,7 +100,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 						'<option value="10">October</option>'."\n".
 						'<option value="11">November</option>'."\n".
 						'<option value="12">December</option>'."\n".
-					'</select>-<select name="merge_field_name" id="merge_field_nameDay" required="required" data-value-id="id">'."\n".
+					'</select>-<select name="merge_field_name" id="merge_field_nameDay" required="required" data-value-id="id1" class="date">'."\n".
 						'<option value=""></option>'."\n".
 						'<option value="01">1</option>'."\n".
 						'<option value="02">2</option>'."\n".
@@ -133,7 +133,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 						'<option value="29">29</option>'."\n".
 						'<option value="30">30</option>'."\n".
 						'<option value="31">31</option>'."\n".
-					'</select>-<select name="merge_field_name" id="merge_field_nameYear" required="required" data-value-id="id">'."\n".
+					'</select>-<select name="merge_field_name" id="merge_field_nameYear" required="required" data-value-id="id1" class="date">'."\n".
 						'<option value=""></option>'."\n".
 						'<option value="2034">2034</option>'."\n".
 						'<option value="2033">2033</option>'."\n".
@@ -184,7 +184,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this"><div class="input time">'.
 				'<label for="merge_field_name">name*</label>'.
-				'<select name="merge_field_name" id="merge_field_nameHour" required="required" data-value-id="id">'."\n".
+				'<select name="merge_field_name" id="merge_field_nameHour" required="required" data-value-id="id1" class="time">'."\n".
 				'<option value=""></option>'."\n".
 				'<option value="01">1</option>'."\n".
 				'<option value="02">2</option>'."\n".
@@ -198,7 +198,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 				'<option value="10">10</option>'."\n".
 				'<option value="11">11</option>'."\n".
 				'<option value="12">12</option>'."\n".
-			'</select>:<select name="merge_field_name" id="merge_field_nameMinute" required="required" data-value-id="id">'."\n".
+			'</select>:<select name="merge_field_name" id="merge_field_nameMinute" required="required" data-value-id="id1" class="time">'."\n".
 				'<option value=""></option>'."\n".
 				'<option value="00">00</option>'."\n".
 				'<option value="01">01</option>'."\n".
@@ -260,7 +260,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 				'<option value="57">57</option>'."\n".
 				'<option value="58">58</option>'."\n".
 				'<option value="59">59</option>'."\n".
-				'</select> <select name="merge_field_name" id="merge_field_nameMeridian" required="required" data-value-id="id">'."\n".
+				'</select> <select name="merge_field_name" id="merge_field_nameMeridian" required="required" data-value-id="id1" class="time">'."\n".
 				'<option value=""></option>'."\n".
 				'<option value="am">am</option>'."\n".
 				'<option value="pm">pm</option>'."\n".
@@ -273,7 +273,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="checkbox">'.
 					'<input type="hidden" name="merge_field_name" id="merge_field_name_" value="0"/>'.
-					'<input type="checkbox" name="merge_field_name"  label="name*" id="merge_field_name" required="required" data-value-id="id" value="1"/>'.
+					'<input type="checkbox" name="merge_field_name"  label="name*" id="merge_field_name" required="required" data-value-id="id1" value="1"/>'.
 					'<label for="merge_field_name">name*</label>'.
 				'</div>'.
 			'</div>',
@@ -288,7 +288,12 @@ class TemplateFieldHelperTest extends CakeTestCase {
 				'<ul class="list-inline">'.
 					'<li>'.
 						'<label>'.
-							'<input type="radio" name="name" data-value-id="id" >name1</input>'.
+							'<input type="radio" name="name" data-value-id="id1" >name1</input>'.
+						'</label>'.
+					'</li>'.
+					'<li>'.
+						'<label>'.
+							'<input type="radio" name="name" data-value-id="id2" >name2</input>'.
 						'</label>'.
 					'</li>'.
 				'</ul>'.
@@ -299,19 +304,19 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['type'] = 5;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
-				'<fieldset id="merge_field_name" class="percent">'.
+				'<fieldset id="name" class="percent">'.
 					'<legend>name</legend>'.
 					'<div class="input number">'.
-						'<label for="merge_field_name_name1">value1</label>'.
-						'<input name="merge_field_name_name1" id="merge_field_name_name1" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#merge_field_name_Total&quot;, &quot;fieldset_id&quot;: &quot;merge_field_name&quot;});" min="0" max="100" class="col-md-12" type="number"/>'.
+						'<label for="name1">name1</label>'.
+						'<input name="name1" id="name1" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" class="col-md-12" data-value-id="id1" value="" type="number"/>'.
 					'</div>'.
 					'<div class="input number">'.
-						'<label for="merge_field_name_name2">value2</label>'.
-						'<input name="merge_field_name_name2" id="merge_field_name_name2" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#merge_field_name_Total&quot;, &quot;fieldset_id&quot;: &quot;merge_field_name&quot;});" min="0" max="100" class="col-md-12" type="number"/>'.
+						'<label for="name2">name2</label>'.
+						'<input name="name2" id="name2" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" class="col-md-12" data-value-id="id2" value="" type="number"/>'.
 					'</div>'.
 					'<div class="input text">'.
-						'<label for="merge_field_name_Total">Total</label>'.
-						'<input name="merge_field_name_Total" id="merge_field_name_Total" disabled="disabled" onclick="return false;" class="col-md-1" required="required" type="text"/>'.
+						'<label for="name_Total">Total</label>'.
+						'<input name="name_Total" id="name_Total" disabled="disabled" onclick="return false;" class="col-md-1" required="required" type="text"/>'.
 					'</div>'.
 				'</fieldset>'.
 			'</div>',
@@ -355,7 +360,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" data-vtype="phoneUS" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-vtype="phoneUS" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -367,7 +372,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 				'<label for="merge_field_name">name*</label>'.
 				'<div class="input-group col-md-12">'.
 					'<span class="input-group-addon col-md-1">$</span>'.
-					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" type="text" data-vtype="money" class="col-md-11">'.
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" type="text" data-vtype="money" class="col-md-11">'.
 					'</input>'.
 				'</div>'.
 			'</div>',
@@ -379,7 +384,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input-group col-md-12">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" type="text" data-vtype="digits" class="col-md-2" min="0" max="100">'.
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" type="text" data-vtype="digits" class="col-md-2" min="0" max="100">'.
 					'</input>'.
 					'<span class="input-group-addon col-md-1">%</span>'.
 				'</div>'.
@@ -392,7 +397,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" data-vtype="ssn" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-vtype="ssn" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -403,7 +408,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" data-vtype="zipcodeUS" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-vtype="zipcodeUS" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -414,7 +419,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input email">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" class="col-md-12" type="email"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" class="col-md-12" type="email"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -425,7 +430,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input url">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" type="url" id="merge_field_name" required="required" data-value-id="id" value="" class="col-md-12"/>'.
+					'<input name="merge_field_name" type="url" id="merge_field_name" required="required" data-value-id="id1" value="" class="col-md-12"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -436,7 +441,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" data-vtype="number" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-vtype="number" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -447,7 +452,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id" value="" data-vtype="digits" class="col-md-12" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-vtype="digits" class="col-md-12" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -459,7 +464,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input select">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<select name="merge_field_name" id="merge_field_name" required="required" data-value-id="id">'."\n".
+					'<select name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1">'."\n".
 						'<option value="">(choose one)</option>'."\n".
 						'<option value="value1">name1</option>'."\n".
 						'<option value="value2">name2</option>'."\n".
@@ -473,7 +478,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<label for="for" merge_field_name="merge_field_name">name</label>'.
-				'<textarea name="merge_field_name" label="name*" id="merge_field_name" required="required" data-value-id="id">'.
+				'<textarea name="merge_field_name" label="name*" id="merge_field_name" required="required" data-value-id="id1">'.
 				'</textarea>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
@@ -493,7 +498,14 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			$textField = Hash::insert($textField, $key, $options[$key]);
 		}
 		// mock the CobrandedApplicationValues relationship
-		$textField = Hash::insert($textField, 'CobrandedApplicationValues', array(array('id'=>'id', 'value' => '')));
+		$textField = Hash::insert(
+			$textField,
+			'CobrandedApplicationValues',
+			array(
+				array('name' => 'name1', 'id'=>'id1', 'value' => ''),
+				array('name' => 'name2', 'id'=>'id2', 'value' => '')
+			)
+		);
 		return $textField;
 	}
 }
