@@ -39,21 +39,37 @@ class TemplateFieldHelper extends Helper {
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
-				case 1: // date
+				case 1:  // 'date'
+				case 2:  // 'time'
+				case 9:  // 'phoneUS',       //  9 - (###) ###-####
+				case 12: // 'ssn',           // 12 - ###-##-####
+				case 13: // 'zipcodeUS',     // 13 - #####[-####]
+				case 18: // 'number'         // 18 - (#)+.(#)+
+				case 19: // 'digits',        // 19 - (#)+
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
-					break;
-
-				case 2: // time
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
+					if ($field['type'] == 1) {
+						$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
+					} else if ($field['type'] == 2) {
+						$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
+					} else if ($field['type'] == 9) {
+						$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'phoneUS');
+					} else if ($field['type'] == 12) {
+						$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'ssn');
+					} else if ($field['type'] == 13) {
+						$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'zipcodeUS');
+					} else if ($field['type'] == 18) {
+						$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
+					} else if ($field['type'] == 19) {
+						$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
+					}
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				case 3: // checkbox
+					if ($field['CobrandedApplicationValues'][0]['value'] == 'true') {
+						$fieldOptions = Hash::insert($fieldOptions, 'checked', 'checked');
+					}
 					$retVal = $retVal . $this->Html->div('checkbox',
 						$this->Form->checkbox($field['name'], $fieldOptions).
 						$this->Form->label($fieldId, $label)
@@ -153,14 +169,6 @@ class TemplateFieldHelper extends Helper {
 					$retVal = $retVal . $this->Html->tag('hr');
 					break;
 
-				// 'phoneUS',       //  9 - (###) ###-####
-				case 9:
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'phoneUS');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
-					break;
-
 				// 'money',         // 10 - $###.##
 				case 10:
 					$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $label, $fieldId);
@@ -181,24 +189,7 @@ class TemplateFieldHelper extends Helper {
 					);
 					break;
 
-				// 'ssn',           // 12 - ###-##-####
-				case 12:
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'ssn');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
-					break;
-
-				// 'zipcodeUS',           // 13 - #####[-####]
-				case 13:
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'zipcodeUS');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
-					break;
-
-				// 'email',         // 14 - 
-				case 14:
+				case 14: // 'url'            // 17 - http(s)?://...
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'email');
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
@@ -207,31 +198,13 @@ class TemplateFieldHelper extends Helper {
 				// 'lengthoftime',  // 15 - [#+] [year|month|day]s
 				// 'creditcard',    // 16 - 
 
-				// 'url'            // 17 - http(s)?://...
-				case 17:
+				case 17: // 'url'            // 17 - http(s)?://...
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'url');
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
-				// 'number'         // 18 - (#)+.(#)+
-				case 18:
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
-					break;
-
-				// 'digits',        // 19 - (#)+
-				case 19:
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-					$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
-					break;
-
-				// 'select'         // 20
-				case 20:
+				case 20: // 'select'         // 20
 					$radioOptionsString = $field['default_value'];
 					$radioOptions = array();
 					foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
@@ -243,7 +216,7 @@ class TemplateFieldHelper extends Helper {
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
-				case 21:
+				case 21: // textarea
 					$retVal = $retVal.
 						$this->Html->tag('label', $field['name'], array('for', $fieldId)).
 						$this->Form->textarea($field['name'], $fieldOptions);

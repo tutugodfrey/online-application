@@ -109,7 +109,6 @@ class CobrandedApplicationsController extends AppController {
 		$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id']);
 
 		$this->set('templatePages', $template['Template']['TemplatePages']);
-		$this->set('cobrandedApplicationValues', $template['CobrandedApplicationValues']);
 		$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 
 		// if it is a rep viewing/editing the application don't require fields to be filled in
