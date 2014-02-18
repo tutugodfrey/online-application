@@ -40,24 +40,16 @@ class TemplateFieldHelper extends Helper {
 					break;
 
 				case 1: // date
-					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
-					$fieldOptions = Hash::insert($fieldOptions, 'name', $cleanFieldId);
-					$fieldOptions = Hash::insert($fieldOptions, 'id', $cleanFieldId);
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'date');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'date');
-					$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
-					$fieldOptions = Hash::insert($fieldOptions, 'empty', true);
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 
 				case 2: // time
-					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
-					$fieldOptions = Hash::insert($fieldOptions, 'name', $cleanFieldId);
-					$fieldOptions = Hash::insert($fieldOptions, 'id', $cleanFieldId);
-					$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'time');
-					$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
-					$fieldOptions = Hash::insert($fieldOptions, 'empty', true);
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 					$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 					break;
 

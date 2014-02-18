@@ -63,32 +63,6 @@
 			data['id'] = target.attr('data-value-id');
 			data['value'] = target.is(":checked"); // not really needed...
 			persist(data);
-		} else if (target.hasClass('date')) {
-			// piece together the date from the name attribute
-			var name = target.attr('name');
-			var dateStr = 
-				$("#"+name+"Year").val()+'-'+
-				$("#"+name+"Month").val()+'-'+
-				$("#"+name+"Day").val();
-			var date = Date.parse(dateStr);
-			if (!isNaN(date)) {
-				if (dateStr.split('-').length == 3) {
-					data['id'] = target.attr('data-value-id');
-					data['value'] = dateStr;
-					persist(data);
-				}
-			}
-		} else if (target.hasClass('time')) {
-			// we need all time parts
-			var name = target.attr('name');
-			var timeStr = 
-				$("#"+name+"Hour").val()+':'+
-				$("#"+name+"Minute").val()+' '+
-				$("#"+name+"Meridian").val();
-
-			data['id'] = target.attr('data-value-id');
-			data['value'] = timeStr;
-			persist(data);
 		} else {
 			// need to validate the
 			if ($validator.element(target) === true) {

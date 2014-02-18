@@ -84,187 +84,22 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['type'] = 1;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
-				'<div class="input date">'.
+				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<select name="merge_field_name" id="merge_field_nameMonth" required="required" data-value-id="id1" class="date">'."\n".
-						'<option value=""></option>'."\n".
-						'<option value="01">January</option>'."\n".
-						'<option value="02">February</option>'."\n".
-						'<option value="03">March</option>'."\n".
-						'<option value="04">April</option>'."\n".
-						'<option value="05">May</option>'."\n".
-						'<option value="06">June</option>'."\n".
-						'<option value="07">July</option>'."\n".
-						'<option value="08">August</option>'."\n".
-						'<option value="09">September</option>'."\n".
-						'<option value="10">October</option>'."\n".
-						'<option value="11">November</option>'."\n".
-						'<option value="12">December</option>'."\n".
-					'</select>-<select name="merge_field_name" id="merge_field_nameDay" required="required" data-value-id="id1" class="date">'."\n".
-						'<option value=""></option>'."\n".
-						'<option value="01">1</option>'."\n".
-						'<option value="02">2</option>'."\n".
-						'<option value="03">3</option>'."\n".
-						'<option value="04">4</option>'."\n".
-						'<option value="05">5</option>'."\n".
-						'<option value="06">6</option>'."\n".
-						'<option value="07">7</option>'."\n".
-						'<option value="08">8</option>'."\n".
-						'<option value="09">9</option>'."\n".
-						'<option value="10">10</option>'."\n".
-						'<option value="11">11</option>'."\n".
-						'<option value="12">12</option>'."\n".
-						'<option value="13">13</option>'."\n".
-						'<option value="14">14</option>'."\n".
-						'<option value="15">15</option>'."\n".
-						'<option value="16">16</option>'."\n".
-						'<option value="17">17</option>'."\n".
-						'<option value="18">18</option>'."\n".
-						'<option value="19">19</option>'."\n".
-						'<option value="20">20</option>'."\n".
-						'<option value="21">21</option>'."\n".
-						'<option value="22">22</option>'."\n".
-						'<option value="23">23</option>'."\n".
-						'<option value="24">24</option>'."\n".
-						'<option value="25">25</option>'."\n".
-						'<option value="26">26</option>'."\n".
-						'<option value="27">27</option>'."\n".
-						'<option value="28">28</option>'."\n".
-						'<option value="29">29</option>'."\n".
-						'<option value="30">30</option>'."\n".
-						'<option value="31">31</option>'."\n".
-					'</select>-<select name="merge_field_name" id="merge_field_nameYear" required="required" data-value-id="id1" class="date">'."\n".
-						'<option value=""></option>'."\n".
-						'<option value="2034">2034</option>'."\n".
-						'<option value="2033">2033</option>'."\n".
-						'<option value="2032">2032</option>'."\n".
-						'<option value="2031">2031</option>'."\n".
-						'<option value="2030">2030</option>'."\n".
-						'<option value="2029">2029</option>'."\n".
-						'<option value="2028">2028</option>'."\n".
-						'<option value="2027">2027</option>'."\n".
-						'<option value="2026">2026</option>'."\n".
-						'<option value="2025">2025</option>'."\n".
-						'<option value="2024">2024</option>'."\n".
-						'<option value="2023">2023</option>'."\n".
-						'<option value="2022">2022</option>'."\n".
-						'<option value="2021">2021</option>'."\n".
-						'<option value="2020">2020</option>'."\n".
-						'<option value="2019">2019</option>'."\n".
-						'<option value="2018">2018</option>'."\n".
-						'<option value="2017">2017</option>'."\n".
-						'<option value="2016">2016</option>'."\n".
-						'<option value="2015">2015</option>'."\n".
-						'<option value="2014">2014</option>'."\n".
-						'<option value="2013">2013</option>'."\n".
-						'<option value="2012">2012</option>'."\n".
-						'<option value="2011">2011</option>'."\n".
-						'<option value="2010">2010</option>'."\n".
-						'<option value="2009">2009</option>'."\n".
-						'<option value="2008">2008</option>'."\n".
-						'<option value="2007">2007</option>'."\n".
-						'<option value="2006">2006</option>'."\n".
-						'<option value="2005">2005</option>'."\n".
-						'<option value="2004">2004</option>'."\n".
-						'<option value="2003">2003</option>'."\n".
-						'<option value="2002">2002</option>'."\n".
-						'<option value="2001">2001</option>'."\n".
-						'<option value="2000">2000</option>'."\n".
-						'<option value="1999">1999</option>'."\n".
-						'<option value="1998">1998</option>'."\n".
-						'<option value="1997">1997</option>'."\n".
-						'<option value="1996">1996</option>'."\n".
-						'<option value="1995">1995</option>'."\n".
-						'<option value="1994">1994</option>'."\n".
-					'</select></div></div>',
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-vtype="date" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-1-name-id-merg_field_name-1'
 		);
 		$options['type'] = 2;
 		$this->assertEquals(
-			'<div class="col-md-1" title="only the rep will see this"><div class="input time">'.
-				'<label for="merge_field_name">name*</label>'.
-				'<select name="merge_field_name" id="merge_field_nameHour" required="required" data-value-id="id1" class="time">'."\n".
-				'<option value=""></option>'."\n".
-				'<option value="01">1</option>'."\n".
-				'<option value="02">2</option>'."\n".
-				'<option value="03">3</option>'."\n".
-				'<option value="04">4</option>'."\n".
-				'<option value="05">5</option>'."\n".
-				'<option value="06">6</option>'."\n".
-				'<option value="07">7</option>'."\n".
-				'<option value="08">8</option>'."\n".
-				'<option value="09">9</option>'."\n".
-				'<option value="10">10</option>'."\n".
-				'<option value="11">11</option>'."\n".
-				'<option value="12">12</option>'."\n".
-			'</select>:<select name="merge_field_name" id="merge_field_nameMinute" required="required" data-value-id="id1" class="time">'."\n".
-				'<option value=""></option>'."\n".
-				'<option value="00">00</option>'."\n".
-				'<option value="01">01</option>'."\n".
-				'<option value="02">02</option>'."\n".
-				'<option value="03">03</option>'."\n".
-				'<option value="04">04</option>'."\n".
-				'<option value="05">05</option>'."\n".
-				'<option value="06">06</option>'."\n".
-				'<option value="07">07</option>'."\n".
-				'<option value="08">08</option>'."\n".
-				'<option value="09">09</option>'."\n".
-				'<option value="10">10</option>'."\n".
-				'<option value="11">11</option>'."\n".
-				'<option value="12">12</option>'."\n".
-				'<option value="13">13</option>'."\n".
-				'<option value="14">14</option>'."\n".
-				'<option value="15">15</option>'."\n".
-				'<option value="16">16</option>'."\n".
-				'<option value="17">17</option>'."\n".
-				'<option value="18">18</option>'."\n".
-				'<option value="19">19</option>'."\n".
-				'<option value="20">20</option>'."\n".
-				'<option value="21">21</option>'."\n".
-				'<option value="22">22</option>'."\n".
-				'<option value="23">23</option>'."\n".
-				'<option value="24">24</option>'."\n".
-				'<option value="25">25</option>'."\n".
-				'<option value="26">26</option>'."\n".
-				'<option value="27">27</option>'."\n".
-				'<option value="28">28</option>'."\n".
-				'<option value="29">29</option>'."\n".
-				'<option value="30">30</option>'."\n".
-				'<option value="31">31</option>'."\n".
-				'<option value="32">32</option>'."\n".
-				'<option value="33">33</option>'."\n".
-				'<option value="34">34</option>'."\n".
-				'<option value="35">35</option>'."\n".
-				'<option value="36">36</option>'."\n".
-				'<option value="37">37</option>'."\n".
-				'<option value="38">38</option>'."\n".
-				'<option value="39">39</option>'."\n".
-				'<option value="40">40</option>'."\n".
-				'<option value="41">41</option>'."\n".
-				'<option value="42">42</option>'."\n".
-				'<option value="43">43</option>'."\n".
-				'<option value="44">44</option>'."\n".
-				'<option value="45">45</option>'."\n".
-				'<option value="46">46</option>'."\n".
-				'<option value="47">47</option>'."\n".
-				'<option value="48">48</option>'."\n".
-				'<option value="49">49</option>'."\n".
-				'<option value="50">50</option>'."\n".
-				'<option value="51">51</option>'."\n".
-				'<option value="52">52</option>'."\n".
-				'<option value="53">53</option>'."\n".
-				'<option value="54">54</option>'."\n".
-				'<option value="55">55</option>'."\n".
-				'<option value="56">56</option>'."\n".
-				'<option value="57">57</option>'."\n".
-				'<option value="58">58</option>'."\n".
-				'<option value="59">59</option>'."\n".
-				'</select> <select name="merge_field_name" id="merge_field_nameMeridian" required="required" data-value-id="id1" class="time">'."\n".
-				'<option value=""></option>'."\n".
-				'<option value="am">am</option>'."\n".
-				'<option value="pm">pm</option>'."\n".
-			'</select></div></div>',
+			'<div class="col-md-1" title="only the rep will see this">'.
+				'<div class="input text">'.
+					'<label for="merge_field_name">name*</label>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-vtype="time12h" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-2-name-id-merg_field_name-1'
 		);
