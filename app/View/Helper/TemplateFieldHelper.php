@@ -63,10 +63,10 @@ class TemplateFieldHelper extends Helper {
 				case 4: // radio group (inline)
 					$radioOptionsString = $field['default_value'];
 					$lis = "";
-					$defaultValue = split(',', $field['default_value']);
+					$defaultValues = split(',', $field['default_value']);
 					$index = 0;
 					foreach ($field['CobrandedApplicationValues'] as $radioOption) {
-						$nameValuePair = split('::', $defaultValue[$index]);
+						$nameValuePair = split('::', $defaultValues[$index]);
 						$lis = $lis.$this->Html->tag('li',
 							$this->Html->tag('label',
 								$this->Html->tag(
@@ -130,21 +130,21 @@ class TemplateFieldHelper extends Helper {
 				case 7: // fees group
 					$cleanFieldId = str_replace($this->badCharacters, '', $field['merge_field_name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-					$fieldOptions = Hash::insert($fieldOptions, 'onkeypress', 'if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;');
-					$fieldOptions = Hash::insert($fieldOptions, 'onblur', '$.event.trigger({type: "feeOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});');
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 
 					$retVal = $retVal . '<fieldset id="' . $cleanFieldId .'" class="fees">';
 					$retVal = $retVal . "<legend>" . $field['name'] . "</legend>";
-					$optionsString = $field['default_value'];
+					$defaultValues = split(',', $field['default_value']);
 
-					foreach (split(',', $optionsString) as $keyValuePairStr) {
-						$keyValuePair = split('::', $keyValuePairStr);
-						$fieldOptions['id'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
-						$fieldOptions['name'] = $cleanFieldId . "_" . str_replace($this->badCharacters, '', $keyValuePair[0]);
-						$fieldOptions['label'] = $keyValuePair[0];
-						$fieldOptions['value'] = $keyValuePair[1];
-						$retVal = $retVal . $this->Form->input(str_replace($this->badCharacters, '', $keyValuePair[0]).' $', $fieldOptions);
+					$index = 0;
+					foreach ($field['CobrandedApplicationValues'] as $feeOption) {
+						$nameValuePair = split('::', $defaultValues[$index]);
+						$fieldOptions = Hash::insert($fieldOptions, 'name', $feeOption['name']);
+						$fieldOptions = Hash::insert($fieldOptions, 'id', $nameValuePair[1]);
+						$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $feeOption['id']);
+						$fieldOptions = Hash::insert($fieldOptions, 'value', $feeOption['value']);
+						$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $feeOption['name'], $nameValuePair[1]);
+						$index = $index + 1;
 					}
 					$retVal = $retVal . "</fieldset>";
 					break;
@@ -262,7 +262,7 @@ class TemplateFieldHelper extends Helper {
 	private function __buildMoneyField($fieldOptions, $label, $fieldId) {
 		$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 		$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
-		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-11');
+		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-10');
 		$retVal = $this->Html->tag('label', $label, array('for' => $fieldId)).
 		$this->Html->tag(
 			'div',

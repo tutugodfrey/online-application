@@ -171,13 +171,17 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<fieldset id="merge_field_name" class="fees">'.
 					'<legend>name</legend>'.
-					'<div class="input text">'.
-						'<label for="merge_field_name_name1">name1</label>'.
-						'<input name="merge_field_name_name1" id="merge_field_name_name1" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;feeOptionBlur&quot;, origin: this, totalFieldId: &quot;#merge_field_name_Total&quot;, &quot;fieldset_id&quot;: &quot;merge_field_name&quot;});" class="col-md-12" value="value1" type="text"/>'.
+					'<label for="value1">name1</label>'.
+					'<div class="input-group col-md-12">'.
+						'<span class="input-group-addon col-md-1">$</span>'.
+						'<input label="name*" name="name1" id="value1" required="required" type="text" class="col-md-10" data-value-id="id1" value="" data-vtype="money">'.
+						'</input>'.
 					'</div>'.
-					'<div class="input text">'.
-						'<label for="merge_field_name_name2">name2</label>'.
-						'<input name="merge_field_name_name2" id="merge_field_name_name2" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;feeOptionBlur&quot;, origin: this, totalFieldId: &quot;#merge_field_name_Total&quot;, &quot;fieldset_id&quot;: &quot;merge_field_name&quot;});" class="col-md-12" value="value2" type="text"/>'.
+					'<label for="value2">name2</label>'.
+					'<div class="input-group col-md-12">'.
+						'<span class="input-group-addon col-md-1">$</span>'.
+						'<input label="name*" name="name2" id="value2" required="required" type="text" class="col-md-10" data-value-id="id2" value="" data-vtype="money">'.
+						'</input>'.
 					'</div>'.
 				'</fieldset>'.
 			'</div>',
@@ -207,7 +211,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 				'<label for="merge_field_name">name*</label>'.
 				'<div class="input-group col-md-12">'.
 					'<span class="input-group-addon col-md-1">$</span>'.
-					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" type="text" data-vtype="money" class="col-md-11">'.
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" type="text" data-vtype="money" class="col-md-10">'.
 					'</input>'.
 				'</div>'.
 			'</div>',
