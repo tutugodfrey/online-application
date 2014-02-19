@@ -85,7 +85,7 @@ class TemplatePage extends AppModel {
 		return $this->nameEditable($pageName);
 	}
 
-	public function afterSave($created, $options) {
+	public function afterSave(/*$created, $options*/) {
 		// make sure 'Validate Application' page is the last page
 		// we have to have $this->data to perform our task
 		if (is_null($this->data)) {

@@ -68,7 +68,7 @@ class CobrandedApplicationsController extends AppController {
  * view method
  *
  * @throws NotFoundException
- * @param string $id
+ * @param string $uuid
  * @return void
  */
 	public function view($uuid = null) {
@@ -83,7 +83,7 @@ class CobrandedApplicationsController extends AppController {
  * edit method
  *
  * @throws NotFoundException
- * @param string $id
+ * @param string $uuid
  * @return void
  */
 	public function edit($uuid = null) {
@@ -240,6 +240,65 @@ class CobrandedApplicationsController extends AppController {
 		$this->set(compact('users'));
 		$templates = $this->CobrandedApplication->User->Template->getList();
 		$this->set(compact('templates'));
+	}
+
+/**
+ * admin_export method
+ * 
+ * @throws NotFoundException
+ * @param string $uuid
+ * @return void
+ */
+	public function admin_export($id = null) {
+		if (!$this->CobrandedApplication->exists($id)) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$options = array(
+			'conditions' => array(
+				'CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id
+			)
+		);
+
+		$app = $this->CobrandedApplication->find('first', $options);
+
+		$keys = '"MID"';
+		$values = '""';
+		foreach ($app['CobrandedApplicationValues'] as $appKey => $appValue) {
+			if ($app['CobrandedApplicationValues'][$appKey]['name'] == 'AENotExisting' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'AENotNew' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'DiscNotNew' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'NoAutoclose' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'NoAutoClose_2' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debitYes' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debitNo' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debit_2Yes' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debit_2No' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'QTY - PP1' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'QTY - PP2') {
+				// skip me
+			} else {
+				$keys = $keys.',"'.$app['CobrandedApplicationValues'][$appKey]['name'].'"';
+				$values = $values.',"'.$app['CobrandedApplicationValues'][$appKey]['value'].'"';
+			}
+		}
+
+		// the easy way...
+		$this->set('keys', $keys);
+		$this->set('values', $values);
+
+		// the hard way... :(
+		$appValues = $app['CobrandedApplicationValues'];
+		$this->set(compact('appValues'));
+
+/*
+		header("Content-type: text/csv");
+		header("Content-Disposition: attachment; filename=\"{$id}.csv\"");
+		header("Expires: 0");
+		header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+		header("Pragma: public");
+*/
+		$csv = $this->render('/Elements/cobranded_applications/export', false);
 	}
 
 /**

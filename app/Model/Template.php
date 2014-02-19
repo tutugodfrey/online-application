@@ -220,6 +220,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 12,
 							'rep_only' => true,
+							'merge_field_name' => 'ContracotrID',
 						)
 					)
 				),
@@ -333,15 +334,6 @@ class Template extends AppModel {
 							'rep_only' => true,
 						),
 						array(
-							'name' => 'EBT Authorization',
-							'type' => 10,
-							'width' => 6,
-							'required' => false,
-							'source' => 1,
-							'rep_only' => true,
-							'merge_field_name' => 'EBTTranFee',
-						),
-						array(
 							'name' => 'EBT Discount',
 							'type' => 11,
 							'width' => 6,
@@ -351,13 +343,13 @@ class Template extends AppModel {
 							'merge_field_name' => 'EBTDiscRate'
 						),
 						array(
-							'name' => 'Discount Paid',
-							'type' => 4,
-							'width' => 12,
+							'name' => 'EBT Authorization',
+							'type' => 10,
+							'width' => 6,
+							'required' => false,
 							'source' => 1,
-							'default_value' => 'Monthly::Monthly,Daily::Daily',
 							'rep_only' => true,
-							'merge_field_name' => 'Discount Paid',
+							'merge_field_name' => 'EBTTranFee',
 						),
 						array(
 							'name' => 'Amex Discount Rate',
@@ -368,6 +360,15 @@ class Template extends AppModel {
 							'rep_only' => true,
 							'merge_field_name' => 'Amex Discount Rate',
 						),
+						/*array(
+							'name' => 'Discount Paid',
+							'type' => 4,
+							'width' => 12,
+							'source' => 1,
+							'default_value' => 'Monthly::Monthly,Daily::Daily',
+							'rep_only' => true,
+							'merge_field_name' => 'Discount Paid',
+						),*/
 					),
 				),
 				array(
@@ -382,7 +383,7 @@ class Template extends AppModel {
 							'default_value' => 'Yes::150,No::151',
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'CheckBox'
+							'merge_field_name' => 'Check Box'
 						),
 						array(
 							'name' => 'Is site photo included with this application?',
@@ -392,7 +393,7 @@ class Template extends AppModel {
 							'default_value' => 'Yes::152,No::153',
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'CheckBox'
+							'merge_field_name' => 'Check Box'
 						),
 						array(
 							'name' => 'Is inventory sufficient for Business Type?',
@@ -402,7 +403,7 @@ class Template extends AppModel {
 							'default_value' => 'Yes::154,No::155',
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'CheckBox'
+							'merge_field_name' => 'Check Box'
 						),
 						array(
 							'name' => 'Are goods and services delivered at time of sale?',
@@ -412,7 +413,7 @@ class Template extends AppModel {
 							'default_value' => 'Yes::156,No::157',
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'CheckBox'
+							'merge_field_name' => 'Check Box',
 						),
 						array(
 							'name' => 'Is business open and operating?',
@@ -422,6 +423,7 @@ class Template extends AppModel {
 							'default_value' => 'Yes::158,No::159',
 							'width' => 12,
 							'rep_only' => true,
+							'merge_field_name' => 'Check Box',
 						),
 						array(
 							'name' => 'Are Visa and MasterCard decals visible?',
@@ -431,6 +433,7 @@ class Template extends AppModel {
 							'default_value' => 'Yes::160,No::161',
 							'width' => 12,
 							'rep_only' => true,
+							'merge_field_name' => 'Check Box',
 						),
 						array(
 							'name' => 'Any mail/telephone order sales activity?',
@@ -440,7 +443,7 @@ class Template extends AppModel {
 							'default_value' => 'Yes::162,No::163',
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'CheckBox'
+							'merge_field_name' => 'Check Box'
 						),
 						array(
 							'name' => 'Please type name to confirm if you visted the site',

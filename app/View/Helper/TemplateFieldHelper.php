@@ -9,7 +9,7 @@ class TemplateFieldHelper extends Helper {
 
 	public $badCharacters = array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\'');
 
-	public function buildField($field, $requireRequiredFields) {
+	public function buildField($field, $requireRequired) {
 
 		$retVal = '';
 
@@ -24,7 +24,7 @@ class TemplateFieldHelper extends Helper {
 			$fieldOptions = Hash::insert($fieldOptions, 'name', $fieldId);
 			$fieldOptions = Hash::insert($fieldOptions, 'id', $fieldId);
 			$retVal = $retVal .  String::insert('<div class="col-md-:width":title>', array('width' => $field['width'], 'title' => $title));
-			$requiredProp = ($field['required'] && $requireRequiredFields) ? true : false;
+			$requiredProp = ($field['required'] && $requireRequired) ? true : false;
 			$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
 			// TODO: move the ['CobrandedApplicationValues'][0]['id'] data fetch into the model
 			if ($field['type'] < 4 || $field['type'] > 7) {

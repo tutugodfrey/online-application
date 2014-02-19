@@ -76,7 +76,7 @@ class CobrandedApplication extends AppModel {
 			'dependent' => true,
 			'conditions' => '',
 			'fields' => '',
-			'order' => '',
+			'order' => 'id',
 			'limit' => '',
 			'offset' => '',
 			'exclusive' => '',
@@ -85,7 +85,7 @@ class CobrandedApplication extends AppModel {
 		),
 	);
 
-	public function afterSave($created, $options) {
+	public function afterSave($created/*, $options*/) {
 		if ($created === true) {
 			$applicationId = $this->data['CobrandedApplication']['id'];
 			$template = $this->Template->find('first', array(
@@ -106,19 +106,19 @@ class CobrandedApplication extends AppModel {
 				foreach ($page['TemplateSections'] as $section) {
 					foreach ($section['TemplateFields'] as $field) {
 						// types with multiple values/options are handled differently
-						switch ($field['type'])
-						{
+						switch ($field['type']) {
 							case 4: // 'radio':
 							case 5: // 'percents':
 							case 7: // 'fees':
 								// split default_value on ',' and append split[1] to the merge_field_name
 								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
 									$keyValuePair = split('::', $keyValuePairStr);
+									$name = $field['merge_field_name'].$keyValuePair[1];
 									$this->__addApplicationValue(
 										array(
 											'cobranded_application_id' => $applicationId,
 											'template_field_id' => $field['id'],
-											'name' => $keyValuePair[($field['type'] == 7 ? 0 : 1)], // fees use the display name because a default value is in second position
+											'name' => $name,
 										)
 									);
 								}
@@ -146,8 +146,8 @@ class CobrandedApplication extends AppModel {
 		}
 	}
 
-	public function getTemplateAndAssociatedValues($cobranded_application_id) {
-		$this->id = $cobranded_application_id;
+	public function getTemplateAndAssociatedValues($applicationId) {
+		$this->id = $applicationId;
 		$application = $this->read();
 
 		return $this->find(
@@ -160,7 +160,7 @@ class CobrandedApplication extends AppModel {
 								'TemplateFields' => array(
 									'CobrandedApplicationValues' => array(
 										'conditions' => array(
-											'cobranded_application_id' => $cobranded_application_id,
+											'cobranded_application_id' => $applicationId,
 										),
 										'order' => array('id')
 									)
@@ -171,17 +171,17 @@ class CobrandedApplication extends AppModel {
 				),
 				'conditions' => array(
 					'Template.id' => $application['Template']['id'],
-					'CobrandedApplication.id' => $cobranded_application_id,
+					'CobrandedApplication.id' => $applicationId,
 				)
 			)
 		);
 	}
 
-	public function getApplicationValue($id) {
+	public function getApplicationValue($valueId) {
 		if (is_null($this->CobrandedApplicationValue)) {
 			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 		}
-		return $this->CobrandedApplicationValue->findById($id);
+		return $this->CobrandedApplicationValue->findById($valueId);
 	}
 
 	public function saveApplicationValue($data) {

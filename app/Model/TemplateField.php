@@ -88,7 +88,7 @@ class TemplateField extends AppModel {
 		),
 	);
 
-	public function validMergeFieldName($check) {
+	public function validMergeFieldName(/*$check*/) {
 		$valid = false;
 		if (strlen($this->data['TemplateField']['merge_field_name']) == 0) {
 			// if the field type is in (4, 5, 7, 20) then the merge_field_name value can be empty
