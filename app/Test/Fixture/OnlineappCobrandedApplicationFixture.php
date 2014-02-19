@@ -12,7 +12,7 @@ class OnlineappCobrandedApplicationFixture extends CakeTestFixture {
  */
 	public $records = array(
 		array(
-			'id' => 1,
+//			'id' => 1,
 			'user_id' => 1,
 			'template_id' => 1,
 			'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',

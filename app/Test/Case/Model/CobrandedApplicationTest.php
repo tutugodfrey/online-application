@@ -31,6 +31,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->User = ClassRegistry::init('OnlineappUser');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -77,6 +78,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->TemplatePage);
 		unset($this->Template);
 		unset($this->Cobrand);
+		unset($this->User);
 
 		parent::tearDown();
 	}
@@ -455,5 +457,315 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// and id 4 should have a value of  null
 		$actual = $this->CobrandedApplication->getApplicationValue(4);
 		$this->assertEquals(false, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
+	}
+
+	public function testBuildExportData() {
+		// build a new template with each type of field on one page
+		$this->Template->create(
+			array(
+				'name' => 'Template For exporting',
+				'description' => 'This template will be used in phpunit to test the export feature',
+				'cobrand_id' => 2,
+				'logo_position' => 0,
+				'created' => '2007-03-18 10:41:31',
+				'modified' => '2007-03-18 10:41:31',
+			)
+		);
+		$template = $this->Template->save();
+		// delete the page that is created by default
+		$this->TemplatePage->delete($template['TemplatePages']['0']['id']);
+
+		$this->TemplatePage->create(
+			array(
+				'template_id' => $this->Template->id,
+				'name' => 'Page 1',
+				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+				'template_id' => $this->Template->id,
+				'rep_only' => false,
+				'created' => '2013-12-18 09:26:45',
+				'modified' => '2013-12-18 09:26:45'
+			)
+		);
+		$this->TemplatePage->save();
+
+		$this->TemplateSection->create(
+			array(
+				'name' => 'Page Section 1',
+				'width' => 12,
+				'rep_only' => false,
+				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+				'page_id' => $this->TemplatePage->id,
+			)
+		);
+		$this->TemplateSection->save();
+
+		// loop through the field types and create one of each type
+		for ($i=0; $i < count($this->TemplateField->fieldTypes); $i++) { 
+			$this->TemplateField->create(
+				array(
+					'name' => 'field '.$i.' ('.$this->TemplateField->fieldTypes[$i].')',
+					'width' => 12,
+					'type' => $i,
+					'required' => 1,
+					'source' => 1,
+					'default_value' => 'name1::value1,name2::value2,name3::value3',
+					'merge_field_name' => 'required_'.$this->TemplateField->fieldTypes[$i].'_from_user_without_default',
+					'section_id' => $this->TemplateSection->id,
+					'rep_only' => false,
+				)
+			);
+			$this->TemplateField->save();
+		}
+
+		$templateFields = $this->TemplateField->find(
+			'list',
+			array(
+				'conditions' => array('section_id' => $this->TemplateSection->id)
+			)
+		);
+
+		// next, create an application from this template
+		// create a user
+		$this->User->create(
+			array(
+				'email' => 'testing@axiapayments.com',
+				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
+				'group_id' => 1,
+				'created' => '2014-01-24 11:02:22',
+				'modified' => '2014-01-24 11:02:22',
+				'token' => 'sometokenvalue',
+				'token_used' => '2014-01-24 11:02:22',
+				'token_uses' => 1,
+				'firstname' => 'testuser1firstname',
+				'lastname' => 'testuser1lastname',
+				'extension' => 1,
+				'active' => 1,
+				'api_password' => 'notset',
+				'api_enabled' => 1,
+				'api' => 1,
+				'cobrand_id' => 2,
+				'template_id' => $this->Template->id,
+			)
+		);
+		$this->User->save();
+
+		// create the application
+		$appCreateData = array(
+			'user_id' => $this->User->id,
+			'template_id' => $this->Template->id,
+			'uuid' => String::uuid(),
+		);
+		$this->CobrandedApplication->create($appCreateData);
+		$this->CobrandedApplication->save();
+
+		// export a empty application
+		$expectedKeys = 
+			'"MID",'.
+			'"required_text_from_user_without_default",'.
+			'"required_date_from_user_without_default",'.
+			'"required_time_from_user_without_default",'.
+			'"required_checkbox_from_user_without_default",'.
+			'"required_radio_from_user_without_defaultvalue1",'.
+			'"required_radio_from_user_without_defaultvalue2",'.
+			'"required_radio_from_user_without_defaultvalue3",'.
+			'"required_percents_from_user_without_defaultvalue1",'.
+			'"required_percents_from_user_without_defaultvalue2",'.
+			'"required_percents_from_user_without_defaultvalue3",'.
+			'"required_fees_from_user_without_defaultvalue1",'.
+			'"required_fees_from_user_without_defaultvalue2",'.
+			'"required_fees_from_user_without_defaultvalue3",'.
+			'"required_phoneUS_from_user_without_default",'.
+			'"required_money_from_user_without_default",'.
+			'"required_percent_from_user_without_default",'.
+			'"required_ssn_from_user_without_default",'.
+			'"required_zipcodeUS_from_user_without_default",'.
+			'"required_email_from_user_without_default",'.
+			'"required_lengthoftime_from_user_without_default",'.
+			'"required_creditcard_from_user_without_default",'.
+			'"required_url_from_user_without_default",'.
+			'"required_number_from_user_without_default",'.
+			'"required_digits_from_user_without_default",'.
+			'"required_select_from_user_without_default",'.
+			'"required_text_from_user_without_default",'.
+			'"oaID",'.
+			'"api",'.
+			'"aggregated"';
+		$expectedValues = 
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"",'.
+			'"2",'.
+			'"",'.
+			'""';
+
+		$actualKeys = '';
+		$actualValues = '';
+		$this->CobrandedApplication->buildExportData($this->CobrandedApplication->id, $actualKeys, $actualValues);
+		$this->assertEquals($expectedKeys, $actualKeys, 'Empty application keys were not what we expected');
+		$this->assertEquals($expectedValues, $actualValues, 'Empty application values were not what we expected');
+
+		// now insert values into the fields
+		$app = $this->CobrandedApplication->read();
+
+		try {
+			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
+				$templateField = $this->TemplateField->find(
+					'first',
+					array(
+						"conditions" => array(
+							"TemplateField.id" => $value['template_field_id']
+						)
+					)
+				);
+				$newValue = '';
+				switch ($templateField['TemplateField']['type']) {
+					case 0:
+						$newValue = 'text';
+						break;
+					case 1:
+						$newValue = '2000-01-01';
+						break;
+					case 2:
+						$newValue = '08:00 pm';
+						break;
+					case 3:
+						$newValue = 'true';
+						break;
+					case 4:
+						$newValue = 'true';
+						break;
+					case 5:
+						$newValue = '10';
+						break;
+					case 6: // label
+						$newValue = 'label';
+						break;
+					case 7:
+						$newValue = '10.00';
+						break;
+					case 8: // hr
+						$newValue = 'hr';
+						break;
+					case 9:
+						$newValue = '8005551234';
+						break;
+					case 10:
+						$newValue = '10.00';
+						break;
+					case 11:
+						$newValue = '50';
+						break;
+					case 12:
+						$newValue = '123-45-6789';
+						break;
+					case 13:
+						$newValue = '12345-1234';
+						break;
+					case 14:
+						$newValue = 'name@domain.com';
+						break;
+					case 15:
+						$newValue = '10 months';
+						break;
+					case 16:
+						$newValue = '4111-1111-1111-1111';
+						break;
+					case 17:
+						$newValue = 'http://www.domain.com';
+						break;
+					case 18:
+						$newValue = '12.82234';
+						break;
+					case 19:
+						$newValue = '1234567890';
+						break;
+					case 20:
+						$newValue = 'true';
+						break;
+					case 21:
+						$newValue = 'a whole lot of text can go into this field...';
+						break;
+
+					default:
+						throw new Exception("Unknown type encountered [".$templateField['TemplateField']['type']."]", 1);
+						break;
+				}
+
+				$value['value'] = $newValue;
+				$this->CobrandedApplicationValue->save($value);
+			}
+		} catch(Exception $e) {
+			// eat this error
+			debug($e);
+		}
+
+		$expectedValues = 
+			'"",'.
+			'"text",'.
+			'"2000-01-01",'.
+			'"08:00 pm",'.
+			'"true",'.
+			'"On",'.
+			'"On",'.
+			'"On",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"10.00",'.
+			'"10.00",'.
+			'"10.00",'.
+			'"8005551234",'.
+			'"10.00",'.
+			'"50",'.
+			'"123-45-6789",'.
+			'"12345-1234",'.
+			'"name@domain.com",'.
+			'"10 months",'.
+			'"4111-1111-1111-1111",'.
+			'"http://www.domain.com",'.
+			'"12.82234",'.
+			'"1234567890",'.
+			'"true",'.
+			'"a whole lot of text can go into this field...",'.
+			'"2",'.
+			'"",'.
+			'""';
+
+		$actualKeys = '';
+		$actualValues = '';
+		$this->CobrandedApplication->buildExportData($this->CobrandedApplication->id, $actualKeys, $actualValues);
+
+		// the keys should not have changed
+		$this->assertEquals($expectedKeys, $actualKeys, 'Filled out application keys were not what we expected');
+		$this->assertEquals($expectedValues, $actualValues, 'Filled out application values were not what we expected');
+
+		// clean up
+		$this->CobrandedApplication->delete($this->CobrandedApplication->id);
+		$this->User->delete($this->User->id);
+		$this->Template->delete($this->Template->id);
 	}
 }
