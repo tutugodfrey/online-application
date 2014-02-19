@@ -159,7 +159,7 @@ class TemplateFieldHelper extends Helper {
 						$fieldOptions = Hash::insert($fieldOptions, 'id', $nameValuePair[1]);
 						$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $feeOption['id']);
 						$fieldOptions = Hash::insert($fieldOptions, 'value', $feeOption['value']);
-						$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $feeOption['name'], $nameValuePair[1]);
+						$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $nameValuePair[0], $nameValuePair[1]);
 						$index = $index + 1;
 					}
 					$retVal = $retVal . "</fieldset>";

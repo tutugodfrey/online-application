@@ -334,15 +334,6 @@ class Template extends AppModel {
 							'rep_only' => true,
 						),
 						array(
-							'name' => 'EBT Discount',
-							'type' => 11,
-							'width' => 6,
-							'required' => false,
-							'source' => 1,
-							'rep_only' => true,
-							'merge_field_name' => 'EBTDiscRate'
-						),
-						array(
 							'name' => 'EBT Authorization',
 							'type' => 10,
 							'width' => 6,
@@ -350,6 +341,15 @@ class Template extends AppModel {
 							'source' => 1,
 							'rep_only' => true,
 							'merge_field_name' => 'EBTTranFee',
+						),
+						array(
+							'name' => 'EBT Discount',
+							'type' => 11,
+							'width' => 6,
+							'required' => false,
+							'source' => 1,
+							'rep_only' => true,
+							'merge_field_name' => 'EBTDiscRate'
 						),
 						array(
 							'name' => 'Amex Discount Rate',

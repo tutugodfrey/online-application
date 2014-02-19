@@ -1,5 +1,7 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('TemplateField', 'Model');
+
 /**
  * CobrandedApplication Model
  *
@@ -71,7 +73,7 @@ class CobrandedApplication extends AppModel {
  */
 	public $hasMany = array(
 		'CobrandedApplicationValues' => array(
-			'className' => 'OnlineappCobrandedApplicationValue',
+			'className' => 'CobrandedApplicationValue',
 			'foreignKey' => 'cobranded_application_id',
 			'dependent' => true,
 			'conditions' => '',
@@ -237,10 +239,115 @@ class CobrandedApplication extends AppModel {
 		return $response;
 	}
 
+	public function buildExportData($appId, &$keys = '', &$values = '') {
+		$options = array(
+			'conditions' => array(
+				'CobrandedApplication.' . $this->primaryKey => $appId
+			),
+		);
+		$app = $this->find('first', $options);
+
+		$keys = '"MID"';
+		$values = '""';
+		$referrals = array('','','');
+
+		$this->TemplateField = ClassRegistry::init('TemplateField');
+
+		foreach ($app['CobrandedApplicationValues'] as $appKey => $appValue) {
+			// could use strrpos != false to check for these names
+			if ($app['CobrandedApplicationValues'][$appKey]['name'] == 'AENotExisting' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'AENotNew' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'DiscNotNew' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'NoAutoclose' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'NoAutoClose_2' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debitYes' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debitNo' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debit_2Yes' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'term_accept_debit_2No' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'QTY - PP1' ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == 'QTY - PP2') {
+
+				// skip me
+			} else if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Business" ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Owner/Officer" ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Phone") {
+
+				$referrals[0] = $referrals[0].' '.$app['CobrandedApplicationValues'][$appKey]['value'];
+				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Phone") {
+					$keys = $this->__addKey($keys, 'Referral1');
+					$values = $this->__addValue($values, $referrals[0]);
+				}
+			} else if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Business" ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Owner/Officer" ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Phone") {
+
+				$referrals[1] = $referrals[1].' '.$app['CobrandedApplicationValues'][$appKey]['value'];
+				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Phone") {
+					$keys = $this->__addKey($keys, 'Referral2');
+					$values = $this->__addValue($values, $referrals[1]);
+				}
+			} else if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Business" ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Owner/Officer" ||
+				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Phone") {
+
+				$referrals[2] = $referrals[2].' '.$app['CobrandedApplicationValues'][$appKey]['value'];
+				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Phone") {
+					$keys = $this->__addKey($keys, 'Referral3');
+					$values = $this->__addValue($values, $referrals[2]);
+				}
+			} else {
+				// just addit
+				$keys = $this->__addKey($keys, $app['CobrandedApplicationValues'][$appKey]['name']);
+
+				// look up the template field that this value was built from
+				$templateField = $this->TemplateField->find(
+					'first',
+					array(
+						'conditions' => array('id' => $app['CobrandedApplicationValues'][$appKey]['template_field_id']),
+						'recursive' => -1
+					)
+				);
+				if ($templateField['TemplateField']['type'] == 4 ||
+					$templateField['TemplateField']['type'] == 5) {
+					// dealing with a multiple option input/field
+					// need to special case the OwnerType because it expects "Yes"/"Off" instead of "On"/"Off"
+					if ($app['CobrandedApplicationValues'][$appKey]['value'] == 'true') {
+						if ($this->__startsWith($app['CobrandedApplicationValues'][$appKey]['name'], "Owner Type - ")) {
+							$values = $this->__addValue($values, 'Yes');
+						} else {
+							$values = $this->__addValue($values, 'On');
+						}
+					} else {
+						$values = $this->__addValue($values, 'Off');
+					}
+				} else {
+					$values = $this->__addValue($values, $app['CobrandedApplicationValues'][$appKey]['value']);
+				}
+			}
+		}
+		unset($this->TemplateField);
+
+		// add "oaID", "api", "aggregated" to the end of the keys and values
+		$keys = $keys.',"oaID","api","aggregated"';
+		$values = $values.',"'.$app['CobrandedApplication']['id'].'","",""';
+	}
+
+	private function __addKey($keys, $newKey) {
+		return $keys.',"'.$newKey.'"';
+	}
+
+	private function __addValue($values, $newValue) {
+		return $values.',"'.$newValue.'"';
+	}
+
 	private function __addApplicationValue($applicationValueData) {
 		// save this info
 		$this->CobrandedApplicationValues->create();
 		$this->CobrandedApplicationValues->save($applicationValueData);
+	}
+
+	private function __startsWith($haystack, $needle) {
+		return $needle === "" || strpos($haystack, $needle) === 0;
 	}
 
 }

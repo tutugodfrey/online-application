@@ -1,4 +1,4 @@
-"MID","Owner Type - Corp","Owner Type - Sole Prop","Owner Type - LLC","Owner Type - Partnership","Owner Type - Non Profit","Owner Type - Other","CorpStatus","CorpName","CorpAddress","CorpCity","CorpState","CorpZip","CorpPhone","CorpFax","TaxID","CorpContact","Title","EMail","Existing Axia Merchant - Yes","Existing Axia Merchant - No","Current MID","DBA","Address","City","State","Zip","PhoneNum","FaxNum","Customer Service Phone","WebAddress","Contact","LocTitle","OpenDate","Ownership Length","General Comments","OwnerEquity","Principal","Owner1Title","Owner1Address","Owner1City","Owner1State","Owner1Zip","Owner1Phone","Owner1Fax","Owner1Email","OwnerSSN","Owner1DOB","Owner2Equity","Owner2Name","Owner2Title","Owner2Address","Owner2City","Owner2State","Owner2Zip","Owner2Phone","Owner2Fax","Owner2Email","Owner2SSN","Owner2DOB","TradeRefName","TradeRefContact","TradeRefPhone1","TradeRefAccount1","TradeRefCity1","TradeRefSt1","TradeRef2","TradeRefContact2","TradeRefPhone2","TradeRefAccount2","TradeRefCity2","TradeRefSt2","Retail","Restaurant","Lodging","MOTO","Internet","Grocery","Products Services Sold","Return Policy","Days Until Product Delivery","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","MonthlyVol","AvgTicket","MaxSalesAmt","Previous Processor","Card Present Swiped","Card Present Imprint","Card Not Present - Keyed","Card Not Present - Internet","Direct to Consumer","Direct to Business","Direct to Government","BankName","BankContact","BankPhone","BankAddress","BankCity","BankState","BankZip","RoutingNum","AccountNum","FeesRoutingNum","FeesAccountNum","Check Box 8","Check Box 9","Check Box 14","Check Box 13","Where is inventory housed","Customer Service","Product Shipment","Handling of Returns","Cardholder Billing","By what methods to sales take place ie Internet trade shows etc ","Monthly Recurring","QUARTERLY","SEMIANUALLY","ANNUALLY","Text83","Text86","Text84","Text87","Text88","Text85","AEExist","AENew","AmexNum","DiscNew","Referral1","Referral2","Referral3","QTY1","Terminal1","Axia","Merchant","PinPad1","AVS","Server","Invoice","Tips","Purchasing Cards","Autoclose","Autoclose Time 1","QTY2","Terminal2","Axia_3","Merchant_3","PinPad2","AVS_2","Server_2","Invoice_2","Tips_2","Purchasing Cards_2","Autoclose_2","Autoclose Time 2","Retail Store","Office","Industrial","Residence","Trade","Site Inspection Other","Owns","Leases","Landlord","Landlord Phone","DiscRate1","Rate Structure","Downgrades","CreditAppFee","TranFee","StatementFee","AnnualFee","CreditEquipmentFee","AmexPerItem","MinimumFee","ChargebackFee","CreditExpediteFee","VoiceAuth","DebitMonthlyAccessFee","CreditReprogramFee","MobileTran","EBTStmtFee","CreditVirtualTrainingFee","GatewayFee","CreditMobileSetupFee","MobileFee","Tax","Total","DebitTranFee","EBTDiscRate","DebitDiscountRate","EBTTranFee","ContractorID","Amex Discount Rate","Check Box150","Check Box151","Check Box158","Check Box159","Check Box154","Check Box155","Check Box156","Check Box157","Check Box158","Check Box159","Check Box160","Check Box161","Check Box162","Check Box163","oaID","api","aggregated"
+"MID","Owner Type - Corp","Owner Type - Sole Prop","Owner Type - LLC","Owner Type - Partnership","Owner Type - Non Profit","Owner Type - Other","CorpStatus","CorpName","CorpAddress","CorpCity","CorpState","CorpZip","CorpPhone","CorpFax","TaxID","CorpContact","Title","EMail","Existing Axia Merchant - Yes","Existing Axia Merchant - No","Current MID","DBA","Address","City","State","Zip","PhoneNum","FaxNum","Customer Service Phone","WebAddress","Contact","LocTitle","OpenDate","Ownership Length","General Comments","OwnerEquity","Principal","Owner1Title","Owner1Address","Owner1City","Owner1State","Owner1Zip","Owner1Phone","Owner1Fax","Owner1Email","OwnerSSN","Owner1DOB","Owner2Equity","Owner2Name","Owner2Title","Owner2Address","Owner2City","Owner2State","Owner2Zip","Owner2Phone","Owner2Fax","Owner2Email","Owner2SSN","Owner2DOB","TradeRefName","TradeRefContact","TradeRefPhone1","TradeRefAccount1","TradeRefCity1","TradeRefSt1","TradeRef2","TradeRefContact2","TradeRefPhone2","TradeRefAccount2","TradeRefCity2","TradeRefSt2","Retail","Restaurant","Lodging","MOTO","Internet","Grocery","Products Services Sold","Return Policy","Days Until Product Delivery","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","MonthlyVol","AvgTicket","MaxSalesAmt","Previous Processor","Card Present Swiped","Card Present Imprint","Card Not Present - Keyed","Card Not Present - Internet","Direct to Consumer","Direct to Business","Direct to Government","BankName","BankContact","BankPhone","BankAddress","BankCity","BankState","BankZip","RoutingNum","AccountNum","FeesRoutingNum","FeesAccountNum","Check Box 8","Check Box 9","Check Box 14","Check Box 13","Where is inventory housed","Customer Service","Product Shipment","Handling of Returns","Cardholder Billing","By what methods to sales take place ie Internet trade shows etc ","Monthly Recurring","QUARTERLY","SEMIANUALLY","ANNUALLY","Text83","Text86","Text84","Text87","Text88","Text85","AEExist","AENew","AmexNum","DiscNew","Referral1","Referral2","Referral3","QTY1","Terminal1","Axia","Merchant","PinPad1","AVS","Server","Invoice","Tips","Purchasing Cards","Autoclose","Autoclose Time 1","QTY2","Terminal2","Axia_3","Merchant_3","PinPad2","AVS_2","Server_2","Invoice_2","Tips_2","Purchasing Cards_2","Autoclose_2","Autoclose Time 2","Retail Store","Office","Industrial","Residence","Trade","Site Inspection Other","Owns","Leases","Landlord","Landlord Phone","DiscRate1","Rate Structure","Downgrades","CreditAppFee","TranFee","StatementFee","AnnualFee","CreditEquipmentFee","AmexPerItem","MinimumFee","ChargebackFee","CreditExpediteFee","VoiceAuth","DebitMonthlyAccessFee","CreditReprogramFee","MobileTran","EBTStmtFee","CreditVirtualTrainingFee","GatewayFee","CreditMobileSetupFee","MobileFee","Tax","Total","DebitTranFee","EBTDiscRate","DebitDiscountRate","EBTTranFee","ContractorID","Amex Discount Rate","Check Box150","Check Box151","Check Box152","Check Box153","Check Box154","Check Box155","Check Box156","Check Box157","Check Box158","Check Box159","Check Box160","Check Box161","Check Box162","Check Box163","oaID","api","aggregated"
 <?php
     if ($data['Multipass']['merchant_id']) {
         echo '"' . $data['Multipass']['merchant_id'] . '",';
@@ -11,22 +11,24 @@
     echo ($data['Application']['ownership_type'] == 'partnership' ? '"Yes",' : '"Off",');
     echo ($data['Application']['ownership_type'] == 'non profit' ? '"Yes",' : '"Off",');
     echo ($data['Application']['ownership_type'] == 'other' ? '"Yes",' : '"Off",');
-        if ($data['Application']['ownership_type'] == 'corporation'){
-            echo '"Corporation",';
-        }
-        if ($data['Application']['ownership_type'] == 'sole prop'){
-             echo '"Sole Prop",';
-        }
-        if ($data['Application']['ownership_type'] == 'llc'){
-            echo '"Limited Liability",';
-        }
-        if ($data['Application']['ownership_type'] == 'partnership'){
-            echo '"Partnership",';
-        }
-        if ($data['Application']['ownership_type'] == 'non profit'){
-            echo '"Exempt",';
-        }
-        
+    if ($data['Application']['ownership_type'] == 'corporation'){
+        echo '"Corporation",';
+    }
+    if ($data['Application']['ownership_type'] == 'sole prop'){
+         echo '"Sole Prop",';
+    }
+    if ($data['Application']['ownership_type'] == 'llc'){
+        echo '"Limited Liability",';
+    }
+    if ($data['Application']['ownership_type'] == 'partnership'){
+        echo '"Partnership",';
+    }
+    if ($data['Application']['ownership_type'] == 'non profit'){
+        echo '"Exempt",';
+    }
+    if ($data['Application']['ownership_type'] == 'other'){
+        echo '"Other",';
+    }
     echo '"' . $data['Application']['legal_business_name'] . '",';
     echo '"' . $data['Application']['mailing_address'] . '",';
     echo '"' . $data['Application']['mailing_city'] . '",';

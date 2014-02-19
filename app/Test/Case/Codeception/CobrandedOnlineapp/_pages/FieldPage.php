@@ -29,6 +29,9 @@ class FieldPage
 	public static $templateFieldRequiredField = 'TemplateFieldRequired';
 	public static $templateFieldRequiredLabel = 'Required';
 
+	public static $templateFieldRepOnlyField = 'TemplateFieldRepOnly';
+	public static $templateFieldRepOnlyLabel = 'Rep Only';
+
 	public static $templateFieldSourceField = 'TemplateFieldSource';
 	public static $templateFieldSourceLabel = 'Source';
 
@@ -107,6 +110,7 @@ class FieldPage
 		$this->webGuy->see(static::$templateFieldWidthLabel);
 		$this->webGuy->see(static::$templateFieldTypeLabel);
 		$this->webGuy->see(static::$templateFieldRequiredLabel);
+		$this->webGuy->see(static::$templateFieldRepOnlyLabel);
 		$this->webGuy->see(static::$templateFieldSourceLabel);
 		$this->webGuy->see(static::$templateFieldDefaultValueLabel);
 		$this->webGuy->see(static::$templateFieldMergeFieldNameLabel);
@@ -114,7 +118,7 @@ class FieldPage
 		$this->webGuy->see(static::$submitButtonLabel);
 	}
 
-	public function fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder = null) {
+	public function fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder = null, $fieldRepOnly = false) {
 		if (!is_null($fieldOrder)) {
 			$this->webGuy->fillField(static::$templateFieldOrderField, $fieldOrder);
 		}
@@ -126,20 +130,25 @@ class FieldPage
 		} else {
 			$this->webGuy->uncheckOption(static::$templateFieldRequiredField, $fieldRequired);
 		}
+		if ($fieldRepOnly == true) {
+			$this->webGuy->checkOption(static::$TemplateFieldRepOnly, $fieldRepOnly);
+		} else {
+			$this->webGuy->uncheckOption(static::$TemplateFieldRepOnly, $fieldRepOnly);
+		}
 		$this->webGuy->selectOption(static::$templateFieldSourceField, $fieldSource);
 		$this->webGuy->fillField(static::$templateFieldDefaultValueField, $fieldDefaultValue);
 		$this->webGuy->fillField(static::$templateFieldMergeFieldNameField , $fieldMergeFieldName);
 		$this->webGuy->fillField(static::$descriptionField, $fieldDescription);
 	}
 
-	public function createIfMissing($fieldName, $parentId, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder) {
+	public function createIfMissing($fieldName, $parentId, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder, $fieldRepOnly = false) {
 		$fieldId = $this->getSectionId($fieldName, $parentId);
 		if (strlen($fieldId) == 0) {
 			// create it
 			$this->webGuy->seeCurrentUrlMatches(static::likeRoute('~^', '$~', '', ''));
 			$this->webGuy->click(static::$newButtonLabel);
 			//$this->checkForm();
-			$this->fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder);
+			$this->fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder, $fieldRepOnly);
 			$this->webGuy->click(static::$submitButtonLabel);
 			$this->webGuy->seeCurrentUrlMatches(static::likeRoute('~^', '$~', '', ''));
 			$fieldId = $this->getSectionId($fieldName, $parentId);
