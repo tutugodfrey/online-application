@@ -246,7 +246,7 @@ class CobrandedApplicationsController extends AppController {
  * admin_export method
  * 
  * @throws NotFoundException
- * @param string $uuid
+ * @param string $id
  * @return void
  */
 	public function admin_export($id = null) {
