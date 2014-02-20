@@ -16,7 +16,7 @@ class TemplateField extends AppModel {
 		'label',            //  6 - no validation
 		'fees',             //  7 - (group of money?)
 		'hr',               //  8 - no validation
-/* newer types ;) */
+/* newer types */
 		'phoneUS',          //  9 - (###) ###-####
 		'money',            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
 		'percent',          // 11 - (0-100)%

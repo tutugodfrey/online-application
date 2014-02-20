@@ -114,7 +114,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 
 					$retVal = $retVal . '<fieldset id="'.$cleanFieldId.'" class="percent">';
-					$retVal = $retVal . "<legend>" . $field['name'] . "</legend>";
+					$retVal = $retVal . '<legend>'.$field['name'].' <span class="small">(total must equal 100%)</span></legend>';
 
 					foreach ($field['CobrandedApplicationValues'] as $percentOption) {
 						$fieldOptions = Hash::insert($fieldOptions, 'id', $percentOption['name']);

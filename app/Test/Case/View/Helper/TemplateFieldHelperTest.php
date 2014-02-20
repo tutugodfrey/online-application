@@ -140,7 +140,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<fieldset id="name" class="percent">'.
-					'<legend>name</legend>'.
+					'<legend>name <span class="small">(total must equal 100%)</span></legend>'.
 					'<div class="input number">'.
 						'<label for="name1">name1</label>'.
 						'<input name="name1" id="name1" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" class="col-md-12" data-value-id="id1" value="" type="number"/>'.

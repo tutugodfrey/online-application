@@ -131,9 +131,9 @@ class FieldPage
 			$this->webGuy->uncheckOption(static::$templateFieldRequiredField, $fieldRequired);
 		}
 		if ($fieldRepOnly == true) {
-			$this->webGuy->checkOption(static::$TemplateFieldRepOnly, $fieldRepOnly);
+			$this->webGuy->checkOption(static::$templateFieldRepOnlyField, $fieldRepOnly);
 		} else {
-			$this->webGuy->uncheckOption(static::$TemplateFieldRepOnly, $fieldRepOnly);
+			$this->webGuy->uncheckOption(static::$templateFieldRepOnlyField, $fieldRepOnly);
 		}
 		$this->webGuy->selectOption(static::$templateFieldSourceField, $fieldSource);
 		$this->webGuy->fillField(static::$templateFieldDefaultValueField, $fieldDefaultValue);
