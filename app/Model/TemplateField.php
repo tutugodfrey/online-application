@@ -29,7 +29,7 @@ class TemplateField extends AppModel {
 		'number',           // 18 - (#)+.(#)+
 		'digits',           // 19 - (#)+
 		'select',           // 20 - 
-		'text',             // 21 -
+		'textArea',         // 21 -
 		//'taxId',          // 22 - ?
 		//'bankRoutingNumber',// 23 - #########
 		//'bankAccountNumber',// 24 - ?

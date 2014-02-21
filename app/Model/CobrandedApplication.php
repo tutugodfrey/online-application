@@ -194,7 +194,6 @@ class CobrandedApplication extends AppModel {
 
 		// if the value is different
 		if ($appValue['CobrandedApplicationValue']['value'] != $data['value']) {
-			// try to update it
 			$appValue['CobrandedApplicationValue']['value'] = $data['value'];
 			if ($this->CobrandedApplicationValue->save($appValue)) {
 				// value saved
@@ -224,7 +223,7 @@ class CobrandedApplication extends AppModel {
 				$response = Hash::insert(
 					$response,
 					'msg',
-					'failed to update application value with id ['.$data['id'].']. Check the sql log for more details'
+					'failed to update application value with id ['.$data['id'].'], value ['.$data['value'].'].'
 				);
 			}
 		} else {

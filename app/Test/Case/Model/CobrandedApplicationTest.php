@@ -174,7 +174,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 										'rep_only' => false,
 										'width' => (int) 12,
-										'type' => (int) 0,
+										'type' => (int) 1,
 										'required' => true,
 										'source' => (int) 1,
 										'default_value' => '',
@@ -334,10 +334,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 	}
 
 	public function testSaveApplicationValue() {
+		// TODO: handle application value not found
+
 		// CUT (class under test) expects
 		$data = array(
 			'id' => 1,
-			'value' => 'new value'
+			'value' => null
 		);
 
 		// pre-check - verify the value exists and is what we expect
@@ -365,7 +367,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 				'rep_only' => false,
 				'width' => 12,
-				'type' => 0,
+				'type' => 1,
 				'required' => true,
 				'source' => 1,
 				'default_value' => '',
@@ -380,9 +382,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expected, $actual, 'expected to find application value with id of 1...');
 
 		// change the value
-		$expectedNewValue = 'newValue';
-		$inputData = array('id' => 1, 'value' => 'newValue');
+		$expectedNewValue = '2014-01-01';
+		$inputData = array('id' => 1, 'value' => '2014-01-01');
 		$response = $this->CobrandedApplication->saveApplicationValue($inputData);
+
+		// tests for the other types are performed by testBuildExportData
+		// we should also test the other invalid types...
 
 		$this->assertTrue($response['success'], 'Expected save operation to return true');
 		$actual = $this->CobrandedApplication->getApplicationValue(1);
@@ -460,72 +465,16 @@ class CobrandedApplicationTest extends CakeTestCase {
 	}
 
 	public function testBuildExportData() {
-		// build a new template with each type of field on one page
-		$this->Template->create(
+		// create a new application from template with id 4
+		// or find the template with a name = 'Template used to test afterSave of app values'
+		$template = $this->Template->find(
+			'first',
 			array(
-				'name' => 'Template For exporting',
-				'description' => 'This template will be used in phpunit to test the export feature',
-				'cobrand_id' => 2,
-				'logo_position' => 0,
-				'created' => '2007-03-18 10:41:31',
-				'modified' => '2007-03-18 10:41:31',
-			)
-		);
-		$template = $this->Template->save();
-		// delete the page that is created by default
-		$this->TemplatePage->delete($template['TemplatePages']['0']['id']);
-
-		$this->TemplatePage->create(
-			array(
-				'template_id' => $this->Template->id,
-				'name' => 'Page 1',
-				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-				'template_id' => $this->Template->id,
-				'rep_only' => false,
-				'created' => '2013-12-18 09:26:45',
-				'modified' => '2013-12-18 09:26:45'
-			)
-		);
-		$this->TemplatePage->save();
-
-		$this->TemplateSection->create(
-			array(
-				'name' => 'Page Section 1',
-				'width' => 12,
-				'rep_only' => false,
-				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-				'page_id' => $this->TemplatePage->id,
-			)
-		);
-		$this->TemplateSection->save();
-
-		// loop through the field types and create one of each type
-		for ($i=0; $i < count($this->TemplateField->fieldTypes); $i++) { 
-			$this->TemplateField->create(
-				array(
-					'name' => 'field '.$i.' ('.$this->TemplateField->fieldTypes[$i].')',
-					'width' => 12,
-					'type' => $i,
-					'required' => 1,
-					'source' => 1,
-					'default_value' => 'name1::value1,name2::value2,name3::value3',
-					'merge_field_name' => 'required_'.$this->TemplateField->fieldTypes[$i].'_from_user_without_default',
-					'section_id' => $this->TemplateSection->id,
-					'rep_only' => false,
+				'conditions' => array(
+					'name' => 'Template used to test afterSave of app values',
 				)
-			);
-			$this->TemplateField->save();
-		}
-
-		$templateFields = $this->TemplateField->find(
-			'list',
-			array(
-				'conditions' => array('section_id' => $this->TemplateSection->id)
 			)
 		);
-
-		// next, create an application from this template
-		// create a user
 		$this->User->create(
 			array(
 				'email' => 'testing@axiapayments.com',
@@ -544,19 +493,19 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'api_enabled' => 1,
 				'api' => 1,
 				'cobrand_id' => 2,
-				'template_id' => $this->Template->id,
+				'template_id' => $template['Template']['id'],
 			)
 		);
-		$this->User->save();
-
-		// create the application
-		$appCreateData = array(
+		$user = $this->User->save();
+		$applictionData = array(
 			'user_id' => $this->User->id,
-			'template_id' => $this->Template->id,
+			'template_id' => $template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
-		$this->CobrandedApplication->create($appCreateData);
-		$this->CobrandedApplication->save();
+
+		$this->CobrandedApplication->create($applictionData);
+
+		$cobrandedApplication = $this->CobrandedApplication->save();
 
 		// export a empty application
 		$expectedKeys = 
@@ -580,13 +529,13 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"required_ssn_from_user_without_default",'.
 			'"required_zipcodeUS_from_user_without_default",'.
 			'"required_email_from_user_without_default",'.
-			'"required_lengthoftime_from_user_without_default",'.
-			'"required_creditcard_from_user_without_default",'.
+			//'"required_lengthoftime_from_user_without_default",'.
+			//'"required_cc_from_user_without_default",'.
 			'"required_url_from_user_without_default",'.
 			'"required_number_from_user_without_default",'.
 			'"required_digits_from_user_without_default",'.
 			'"required_select_from_user_without_default",'.
-			'"required_text_from_user_without_default",'.
+			'"required_textArea_from_user_without_default",'.
 			'"oaID",'.
 			'"api",'.
 			'"aggregated"';
@@ -616,8 +565,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"",'.
 			'"",'.
 			'"",'.
-			'"",'.
-			'"",'.
 			'"2",'.
 			'"",'.
 			'""';
@@ -631,96 +578,93 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// now insert values into the fields
 		$app = $this->CobrandedApplication->read();
 
-		try {
-			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
-				$templateField = $this->TemplateField->find(
-					'first',
-					array(
-						"conditions" => array(
-							"TemplateField.id" => $value['template_field_id']
-						)
+		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
+			$templateField = $this->TemplateField->find(
+				'first',
+				array(
+					"conditions" => array(
+						"TemplateField.id" => $value['template_field_id']
 					)
-				);
-				$newValue = '';
-				switch ($templateField['TemplateField']['type']) {
-					case 0:
-						$newValue = 'text';
-						break;
-					case 1:
-						$newValue = '2000-01-01';
-						break;
-					case 2:
-						$newValue = '08:00 pm';
-						break;
-					case 3:
-						$newValue = 'true';
-						break;
-					case 4:
-						$newValue = 'true';
-						break;
-					case 5:
-						$newValue = '10';
-						break;
-					case 6: // label
-						$newValue = 'label';
-						break;
-					case 7:
-						$newValue = '10.00';
-						break;
-					case 8: // hr
-						$newValue = 'hr';
-						break;
-					case 9:
-						$newValue = '8005551234';
-						break;
-					case 10:
-						$newValue = '10.00';
-						break;
-					case 11:
-						$newValue = '50';
-						break;
-					case 12:
-						$newValue = '123-45-6789';
-						break;
-					case 13:
-						$newValue = '12345-1234';
-						break;
-					case 14:
-						$newValue = 'name@domain.com';
-						break;
-					case 15:
-						$newValue = '10 months';
-						break;
-					case 16:
-						$newValue = '4111-1111-1111-1111';
-						break;
-					case 17:
-						$newValue = 'http://www.domain.com';
-						break;
-					case 18:
-						$newValue = '12.82234';
-						break;
-					case 19:
-						$newValue = '1234567890';
-						break;
-					case 20:
-						$newValue = 'true';
-						break;
-					case 21:
-						$newValue = 'a whole lot of text can go into this field...';
-						break;
+				)
+			);
+			$newValue = '';
+			switch ($templateField['TemplateField']['type']) {
+				case 0:
+					$newValue = 'text';
+					break;
+				case 1:
+					$newValue = '2000-01-01';
+					break;
+				case 2:
+					$newValue = '08:00 pm';
+					break;
+				case 3:
+					$newValue = 'true';
+					break;
+				case 4:
+					$newValue = 'true';
+					break;
+				case 5:
+					$newValue = '10';
+					break;
+				case 6: // label
+					$newValue = 'label';
+					break;
+				case 7:
+					$newValue = '10.00';
+					break;
+				case 8: // hr
+					$newValue = 'hr';
+					break;
+				case 9:
+					$newValue = '8005551234';
+					break;
+				case 10:
+					$newValue = '10.00';
+					break;
+				case 11:
+					$newValue = '50';
+					break;
+				case 12:
+					$newValue = '123-45-6789';
+					break;
+				case 13:
+					$newValue = '12345-1234';
+					break;
+				case 14:
+					$newValue = 'name@domain.com';
+					break;
+				/*
+				case 15:
+					$newValue = '10 months';
+					break;
+				case 16:
+					$newValue = '4111-1111-1111-1111';
+					break;
+				*/
+				case 17:
+					$newValue = 'http://www.domain.com';
+					break;
+				case 18:
+					$newValue = '12.82234';
+					break;
+				case 19:
+					$newValue = '1234567890';
+					break;
+				case 20:
+					$newValue = 'true';
+					break;
+				case 21:
+					$newValue = 'a whole lot of text can go into this field...';
+					break;
 
-					default:
-						throw new Exception("Unknown type encountered [".$templateField['TemplateField']['type']."]", 1);
-						break;
-				}
-
-				$value['value'] = $newValue;
-				$this->CobrandedApplicationValue->save($value);
+				default:
+					throw new Exception("Unknown type encountered [".$templateField['TemplateField']['type']."]", 1);
+					break;
 			}
-		} catch(Exception $e) {
-			// eat this error
-			debug($e);
+
+			$value['value'] = $newValue;
+			$this->CobrandedApplicationValue->save($value);
 		}
 
 		$expectedValues = 
@@ -744,8 +688,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"123-45-6789",'.
 			'"12345-1234",'.
 			'"name@domain.com",'.
-			'"10 months",'.
-			'"4111-1111-1111-1111",'.
+			//'"10 months",'.
+			//'"4111-1111-1111-1111",'.
 			'"http://www.domain.com",'.
 			'"12.82234",'.
 			'"1234567890",'.
@@ -768,4 +712,5 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->User->delete($this->User->id);
 		$this->Template->delete($this->Template->id);
 	}
+
 }
