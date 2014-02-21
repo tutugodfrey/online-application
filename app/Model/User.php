@@ -53,9 +53,11 @@ class User extends AppModel {
 			),
 		),
 	);
+
 	public $virtualFields = array(
-	'fullname' => 'firstname || \' \' || lastname'
+		'fullname' => 'firstname || \' \' || lastname'
 	);
+
 	public $displayField = 'fullname';
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
