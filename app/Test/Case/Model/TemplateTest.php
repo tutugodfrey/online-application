@@ -4,10 +4,13 @@ App::uses('Template', 'Model');
 
 class TemplateTest extends CakeTestCase {
 
+	public $dropTables = false;
+
 	public $fixtures = array(
 		'app.onlineappCobrand',
 		'app.onlineappTemplate'
 	);
+
 	public $autoFixtures = false;
 
 	public function setUp() {

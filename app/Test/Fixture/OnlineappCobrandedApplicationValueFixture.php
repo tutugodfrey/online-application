@@ -6,6 +6,25 @@
 class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 
 /**
+ * Fields
+ *
+ * @var array
+ */
+	public $fields = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'key' => 'primary'),
+		'cobranded_application_id' => array('type' => 'integer', 'null' => false),
+		'template_field_id' => array('type' => 'integer', 'null' => false),
+		'name' => array('type' => 'string', 'null' => false),
+		'value' => array('type' => 'string', 'null' => true),
+		'created' => array('type' => 'datetime', 'null' => false),
+		'modified' => array('type' => 'datetime', 'null' => false),
+		'indexes' => array(
+			'PRIMARY' => array('unique' => true, 'column' => 'id')
+		),
+		'tableParameters' => array()
+	);
+
+/**
  * Records
  *
  * @var array

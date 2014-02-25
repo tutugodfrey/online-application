@@ -9,11 +9,14 @@ App::uses('TemplatePage', 'Model');
  */
 class TemplatePageTest extends CakeTestCase {
 
+	public $dropTables = false;
+
 	public $fixtures = array(
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage'
 	);
+
 	public $autoFixtures = false;
 
 	public static function setUpBeforeClass() {
@@ -31,7 +34,6 @@ class TemplatePageTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
-
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');

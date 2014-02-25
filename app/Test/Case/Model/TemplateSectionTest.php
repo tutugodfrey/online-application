@@ -10,12 +10,15 @@ App::uses('TemplateSection', 'Model');
  */
 class TemplateSectionTest extends CakeTestCase {
 
+	public $dropTables = false;
+
 	public $fixtures = array(
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 	);
+
 	public $autoFixtures = false;
 
 	public function setUp() {

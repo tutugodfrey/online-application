@@ -1,5 +1,32 @@
 <?php
 class OnlineappTemplateSectionFixture extends CakeTestFixture {
+
+/**
+ * Fields
+ *
+ * @var array
+ */
+	public $fields = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => false),
+		'description' => array('type' => 'text', 'null' => true, 'length' => 1073741824),
+		'rep_only' => array('type' => 'boolean', 'null' => false, 'default' => false),
+		'width' => array('type' => 'integer', 'null' => false, 'default' => '12'),
+		'page_id' => array('type' => 'integer', 'null' => false),
+		'order' => array('type' => 'integer', 'null' => false),
+		'created' => array('type' => 'datetime', 'null' => false),
+		'modified' => array('type' => 'datetime', 'null' => false),
+		'indexes' => array(
+			'PRIMARY' => array('unique' => true, 'column' => 'id')
+		),
+		'tableParameters' => array()
+	);
+
+/**
+ * Records
+ *
+ * @var array
+ */
 	public $records = array(
 		array(
 			'name' => 'Page Section 1',

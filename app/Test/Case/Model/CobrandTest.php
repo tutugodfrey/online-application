@@ -8,7 +8,10 @@ App::uses('Cobrand', 'Model');
 class CobrandTest extends CakeTestCase {
 
 	public $fixtures = array('app.onlineappCobrand');
+
 	public $autoFixtures = false;
+
+	public $dropTables = false;
 
 	public function setUp() {
 		parent::setUp();

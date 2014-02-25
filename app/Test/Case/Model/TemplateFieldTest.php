@@ -11,6 +11,8 @@ App::uses('TemplateField', 'Model');
  */
 class TemplateFieldTest extends CakeTestCase {
 
+	public $dropTables = false;
+
 	public $fixtures = array(
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
