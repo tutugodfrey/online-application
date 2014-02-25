@@ -19,7 +19,9 @@ class TemplateFieldHelper extends Helper {
 			$label = ($field['required'] == true ? $field['name'] . '*' : $field['name']);
 			$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
 			$title = ($field['rep_only'] == true ? ' title="only the rep will see this"' : '');
-			// TODO: if rep_only and the merchant is inputting data, don't show this field
+			// TODO:
+			//    if rep_only and the merchant/end-user is inputting data
+			//    then don't show this field
 			$fieldId = $field['merge_field_name'];
 			$fieldOptions = Hash::insert($fieldOptions, 'name', $fieldId);
 			$fieldOptions = Hash::insert($fieldOptions, 'id', $fieldId);
