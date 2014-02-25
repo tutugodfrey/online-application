@@ -70,6 +70,94 @@ class Template extends AppModel {
 		return $this->Cobrand->read();
 	}
 
+	public function getTemplateApiFields($templateId) {
+		return $this->getTemplateFields($templateId, 0, false);
+	}
+
+	public function getTemplateUserFields($templateId) {
+		return $this->getTemplateFields($templateId, 1, false);
+	}
+
+	public function getTemplateRepFields($templateId) {
+		return $this->getTemplateFields($templateId, 1, true);
+	}
+
+	// to return all fields call VVV with only the templateId
+	public function getTemplateFields($templateId, $fieldSource = null, $rep_only = null, $required = null) {
+		// build the conditions array
+		$conditions = array(
+			'field.section_id = section.id',
+		);
+
+		$fields = array(
+			'field.merge_field_name',
+			'field.type',
+			'field.required',
+			'field.name',
+			'field.description',
+			'field.source',
+			'field.rep_only'
+		);
+
+		if (!is_null($fieldSource)) {
+			$conditions['field.source'] = $fieldSource;
+		}
+
+		if (!is_null($rep_only)) {
+			$conditions['field.rep_only'] = $rep_only;
+		}
+
+		if (!is_null($required)) {
+			$conditions['field.required'] = $required;
+		}
+
+		$fields = $this->find('all',
+			array(
+				'joins' => array(
+					array(
+						'table' => 'onlineapp_template_pages',
+						'alias' => 'page',
+						'foreignKey' => 'onlineapp_template_pages.template_id',
+						'conditions' => array(
+							'page.template_id = Template.id'
+						),
+					),
+					array(
+						'table' => 'onlineapp_template_sections',
+						'alias' => 'section',
+						'foreignKey' => 'onlineapp_template_sections.page_id',
+						'conditions' => array(
+							'section.page_id = page.id'
+						),
+					),
+					array(
+						'table' => 'onlineapp_template_fields',
+						'alias' => 'field',
+						'foreignKey' => 'onlineapp_template_fields.section_id',
+						'conditions' => $conditions
+					),
+				),
+				'fields' => $fields,
+				'conditions' => array(
+					'"Template".id' => $templateId
+				),
+				'order' => array('field.id'),
+			)
+		);
+
+		$formattedData = array();
+		$TemplateField = ClassRegistry::init('TemplateField');
+		foreach ($fields as $key => $value) {
+			$formattedData[$value['field']['merge_field_name']] = array(
+				"type" => $TemplateField->fieldTypes[$value['field']['type']],
+				"required" => $value['field']['required'],
+				"description" => $value['field']['description'],
+			);
+		}
+
+		return $formattedData;
+	}
+
 	public function beforeDelete() {
 		$templateToDelete = $this->read();
 		$pages = $templateToDelete['TemplatePages'];

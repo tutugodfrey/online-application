@@ -130,12 +130,14 @@ class UsersController extends AppController {
 
 	function admin_edit($id) {
 		$this->User->id = $id;
+		$this->User->read();
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('assigned_managers', $this->User->getAssignedManagerIds($id));
 		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
 		$this->set('cobrands', $this->User->Cobrand->getList());
-		$this->set('templates', $this->User->Template->getList());
+		$user = $this->User->read();
+		$this->set('templates', $this->User->Template->getList($user['User']['cobrand_id']));
 		// TODO: add templates
 		if (empty($this->request->data)){
 			$this->request->data = $this->User->read();

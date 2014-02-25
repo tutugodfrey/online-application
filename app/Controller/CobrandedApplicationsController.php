@@ -22,10 +22,22 @@ class CobrandedApplicationsController extends AppController {
 	public $helper = array('TemplateField');
 
 	public function beforeFilter() {
+		parent::beforeFilter();
 		$this->Auth->allow('quickAdd');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
-		//$this->DebugKit->
+
+		if (($this->params['ext'] == 'json' || $this->request->accepts('application/json'))) {
+			$this->Security->unlockedActions= array('api_add');
+		}
+	}
+
+	public function beforeRender() {
+		parent::beforeRender();
+		if ($this->request->accepts('application/json')) {
+			Configure::write('debug', 0);
+			$this->disableCache();
+		}
 	}
 
 	public function quickAdd($uuid = null) {
@@ -63,6 +75,62 @@ class CobrandedApplicationsController extends AppController {
 		}
 	}
 
+/**
+ * api_add method
+ *
+ * @param none (post data)
+ * @return void
+ */
+	public function api_add() {
+		$this->autoRender = false;
+		$response = array('success' => false);
+
+		if ($this->request->is('get')) {
+			// dump the template form
+			// pull the template_id from the db because the Auth object could be cached
+			$user = $this->User->find(
+				'first', 
+				array(
+					'conditions' => array('User.id' => $this->Auth->user('id')),
+				)
+			);
+
+			if (!is_null($user['User']['template_id'])) {
+				$response['success'] = true;
+				$response['template'] = array(
+					'id' => $user['User']['template_id'],
+					'fields' => $this->User->Template->getTemplateApiFields($user['User']['template_id']),
+				);
+			} else {
+				$response = Hash::insert(
+					$response,
+					'msg',
+					'A template has not been configured for partners with id ['.$user['User']['cobrand_id'].']');
+			}
+		} else if ($this->request->is('post')) {
+			switch ($this->Auth->user('cobrand_id')) {
+				case 8: // Appfolio
+					$response['success'] = true;
+					$response['data'] = $this->request->data;
+					$response = Hash::insert($response, 'msg', 'here is the data that was passed to us ');
+					// next steps, 
+					break;
+
+				default:
+					// no other api partners have been set up as of yet
+					$response = Hash::insert(
+						$response,
+						'msg',
+						'This API has not been enabled for partners with id ['.$this->Auth->user('cobrand_id').']');
+					break;
+			}
+		} else {
+			$response = Hash::insert($response, 'msg', 'Expecting POST data.');
+		}
+
+		echo json_encode($response);
+		$this->redirect(null, 200);
+	}
 
 /**
  * view method
@@ -176,7 +244,7 @@ class CobrandedApplicationsController extends AppController {
 			}
 			$users = $this->CobrandedApplication->User->find('list', array('order' => 'firstname, lastname'));
 			$this->set(compact('users'));
-			$templates = $this->CobrandedApplication->User->Template->getList();
+			$templates = $this->CobrandedApplication->User->Template->getList($this->Auth->user('cobrand_id'));
 			$this->set(compact('templates'));
 		} else {
 			// just create it, we know all the info

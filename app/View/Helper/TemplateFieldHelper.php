@@ -28,8 +28,10 @@ class TemplateFieldHelper extends Helper {
 			$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
 			// TODO: move the ['CobrandedApplicationValues'][0]['id'] data fetch into the model
 			if ($field['type'] < 4 || $field['type'] > 7) {
-				$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $field['CobrandedApplicationValues'][0]['id']);
-				$fieldOptions = Hash::insert($fieldOptions, 'value', $field['CobrandedApplicationValues'][0]['value']);
+				if (is_array($field) && count($field['CobrandedApplicationValues']) > 0) {
+					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $field['CobrandedApplicationValues'][0]['id']);
+					$fieldOptions = Hash::insert($fieldOptions, 'value', $field['CobrandedApplicationValues'][0]['value']);
+				}
 			}
 
 			switch ($field['type']) {

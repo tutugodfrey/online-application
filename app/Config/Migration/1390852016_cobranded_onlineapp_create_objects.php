@@ -441,7 +441,9 @@ class CobrandedOnlineappCreateObjects extends CakeMigration {
 				INSERT INTO onlineapp_cobrands
 				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('PaymentSpring', 'PS', 'TODO: add PS logo', current_timestamp, current_timestamp);
 				INSERT INTO onlineapp_cobrands
-				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('Shortcut', 'SC', 'TODO: add SC logo', current_timestamp, current_timestamp);"
+				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('Shortcut', 'SC', 'TODO: add SC logo', current_timestamp, current_timestamp);
+				INSERT INTO onlineapp_cobrands
+				(partner_name, partner_name_short, logo_url, created, modified) VALUES ('Appfolio', 'AF', 'TODO: add AF logo', current_timestamp, current_timestamp);"
 			);
 		}
 		return true;

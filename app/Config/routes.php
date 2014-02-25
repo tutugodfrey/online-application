@@ -34,35 +34,35 @@
 /**
  * Enable routing for the api to route to domain.com/api/controller/action.json
  */
-  Router::connect('/api/:controller/:action/*', array('prefix' => 'api', 'api' => TRUE));
+	Router::connect('/api/:controller/:action/*', array('prefix' => 'api', 'api' => TRUE));
 
 /**
  *  Template routes
 */
-  Router::connect('/admin/cobrands/:parent_controller_id/templates',
-    array('controller' => 'templates', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
-  Router::connect('/admin/cobrands/:parent_controller_id/templates/:action/*',
-    array('controller' => 'templates', 'action' => null, 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/cobrands/:parent_controller_id/templates',
+		array('controller' => 'templates', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/cobrands/:parent_controller_id/templates/:action/*',
+		array('controller' => 'templates', 'action' => null, 'prefix' => 'admin', 'admin' => true));
 
-  Router::connect('/admin/templates/:parent_controller_id/templatepages',
-    array('controller' => 'templatePages', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
-  Router::connect('/admin/templates/:parent_controller_id/templatepages/:action/*',
-    array('controller' => 'templatePages', 'action' => null, 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/templates/:parent_controller_id/templatepages',
+		array('controller' => 'templatePages', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/templates/:parent_controller_id/templatepages/:action/*',
+		array('controller' => 'templatePages', 'action' => null, 'prefix' => 'admin', 'admin' => true));
 
-  Router::connect('/admin/templatepages/:parent_controller_id/templatesections',
-    array('controller' => 'templateSections', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
-  Router::connect('/admin/templatepages/:parent_controller_id/templatesections/:action/*',
-    array('controller' => 'templateSections', 'action' => null, 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/templatepages/:parent_controller_id/templatesections',
+		array('controller' => 'templateSections', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/templatepages/:parent_controller_id/templatesections/:action/*',
+		array('controller' => 'templateSections', 'action' => null, 'prefix' => 'admin', 'admin' => true));
 
-  Router::connect('/admin/templatesections/:parent_controller_id/templatefields',
-    array('controller' => 'templateFields', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
-  Router::connect('/admin/templatesections/:parent_controller_id/templatefields/:action/*',
-    array('controller' => 'templateFields', 'action'=>null, 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/templatesections/:parent_controller_id/templatefields',
+		array('controller' => 'templateFields', 'action'=>'index', 'prefix' => 'admin', 'admin' => true));
+	Router::connect('/admin/templatesections/:parent_controller_id/templatefields/:action/*',
+		array('controller' => 'templateFields', 'action'=>null, 'prefix' => 'admin', 'admin' => true));
 
 /**
  * Allow JSON extensions to be properly parsed
- */        
-        Router::parseExtensions('json','xml');
+ */
+	Router::parseExtensions('json','xml');
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

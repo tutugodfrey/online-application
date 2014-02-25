@@ -133,13 +133,15 @@ class CobrandedApplication extends AppModel {
 
 							default:
 								// call $this->__addApplicationValue();
-								$this->__addApplicationValue(
-									array(
-										'cobranded_application_id' => $applicationId,
-										'template_field_id' => $field['id'],
-										'name' => $field['merge_field_name'],
-									)
+								$newApplicationValue = array(
+									'cobranded_application_id' => $applicationId,
+									'template_field_id' => $field['id'],
+									'name' => $field['merge_field_name'],
 								);
+								if ($field['type'] != 20 && strlen($field['default_value']) > 0) {
+									$newApplicationValue = Hash::insert($newApplicationValue, 'value', $field['default_value']);
+								}
+								$this->__addApplicationValue($newApplicationValue);
 								break;
 						}
 					}

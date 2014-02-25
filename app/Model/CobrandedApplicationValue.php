@@ -101,7 +101,6 @@ class CobrandedApplicationValue extends AppModel {
 		return true;
 	}
 
-
 	private function __validApplicationValue($data, $field) {
 		$retVal = false;
 		$trimmedDataValue = trim($data['value']);

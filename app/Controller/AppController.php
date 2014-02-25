@@ -16,6 +16,7 @@ class AppController extends Controller {
         'DebugKit.Toolbar',
         'RequestHandler'
     );
+
     public $helpers = array(
         'Html' => array('className' => 'BoostCake.BoostCakeHtml'),
         'Form' => array('className' => 'BoostCake.BoostCakeForm'),
@@ -27,17 +28,25 @@ class AppController extends Controller {
     public function beforeFilter() {
         // Force SSL
         $excludeSSL = array("multipass_callback","document_callback");
-        if (!$this->RequestHandler->isSSL() && !in_array($this->request->action, $excludeSSL))$this->redirect('https://' . env('HTTP_HOST') . $this->request->here);
-        if ($this->params['ext'] == 'json' || $this->request->accepts('application/json')){
+        if (!$this->RequestHandler->isSSL() &&
+            !in_array($this->request->action, $excludeSSL)) {
+
+            $this->redirect('https://' . env('HTTP_HOST') . $this->request->here);
+        }
+
+        if ($this->params['ext'] == 'json' ||
+            $this->request->accepts('application/json')) {
+
             $this->Auth->authenticate = array(
-                    'Basic' => array(
+                'Basic' => array(
                     'realm' => 'api',
                     'fields' => array('username' => 'token','password' => 'api_password'),
                     'scope' => array('User.active' => 1)
-                    )
-                );
-            if(!$this->Auth->login()){
-                $this->apiLog ();
+                )
+            );
+
+            if (!$this->Auth->login()) {
+                $this->apiLog();
             }
         }
     }
@@ -45,7 +54,7 @@ class AppController extends Controller {
     public function isAuthorized() {
         // Load the User model to retrieve group info
         $this->loadModel('User');
- 
+
         if ($this->params['ext'] == 'json' || $this->request->accepts('application/json')){
             $this->apiLog();
             $conditions = array('Apip.ip_address >>=' => $this->request->clientIP(), 'Apip.user_id' => $this->Auth->user('id'));
@@ -124,35 +133,35 @@ class AppController extends Controller {
         if ($this->params['ext'] == 'json' || $this->request->accepts('application/json')){
             $this->loadModel('ApiLog');
             if($this->request->is('post') || $this->request->is('put')){
-                    $request = serialize($this->request->data);
+                $request = serialize($this->request->data);
             } elseif($this->request->is('get')) {
                 $request = serialize($this->request->query);
-            }   
+            }
             $apiUser = $this->ApiLog->User->find('first', array(
                 'conditions' => array('User.token' => env('PHP_AUTH_USER'),
                     array("NOT" => array('User.token' => null))),
                 'fields' => array('User.id'),
                 'recursive' => -1
             ));
+
             if (!$this->Auth->user('id')) {
                 $authStatus = 'Failure';
             } else {
                 $authStatus = 'Success';
             }
+
             $this->ApiLog->create();
             $apiLog = array(
-                   'auth_status' => $authStatus,
-                   'user_id' => $apiUser['User']['id'],
-                   'user_token' => env('PHP_AUTH_USER'),
-                   'request_type' => $this->request->method(),
-                   'ip_address' => $this->request->clientIp(),
-                   'request_url' => $this->request->host().$this->request->here,
-                   'request_string' => $request);
-            if ($this->ApiLog->save($apiLog)) {
-                return true;
-            } else {
-                return false;
-            }
+                'auth_status' => $authStatus,
+                'user_id' => $apiUser['User']['id'],
+                'user_token' => env('PHP_AUTH_USER'),
+                'request_type' => $this->request->method(),
+                'ip_address' => $this->request->clientIp(),
+                'request_url' => $this->request->host().$this->request->here,
+                'request_string' => $request
+            );
+
+            return $this->ApiLog->save($apiLog);
         }
     } 
 }
