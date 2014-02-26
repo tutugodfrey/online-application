@@ -477,6 +477,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				)
 			)
 		);
+		// todo: move this user create into setup
 		$this->User->create(
 			array(
 				'email' => 'testing@axiapayments.com',
@@ -531,13 +532,20 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"required_ssn_from_user_without_default",'.
 			'"required_zipcodeUS_from_user_without_default",'.
 			'"required_email_from_user_without_default",'.
-			//'"required_lengthoftime_from_user_without_default",'.
-			//'"required_cc_from_user_without_default",'.
 			'"required_url_from_user_without_default",'.
 			'"required_number_from_user_without_default",'.
 			'"required_digits_from_user_without_default",'.
 			'"required_select_from_user_without_default",'.
 			'"required_textArea_from_user_without_default",'.
+			'"Referral1",'.
+			'"Referral2",'.
+			'"Referral3",'.
+			'"Owner Type - Corp",'.
+			'"Owner Type - Sole Prop",'.
+			'"Owner Type - LLC",'.
+			'"Owner Type - Partnership",'.
+			'"Owner Type - Non Profit",'.
+			'"Owner Type - Other",'.
 			'"oaID",'.
 			'"api",'.
 			'"aggregated"';
@@ -567,6 +575,15 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"",'.
 			'"",'.
 			'"",'.
+			'"",'.
+			'"",'.
+			'"Referral3",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
 			'"2",'.
 			'"",'.
 			'""';
@@ -697,6 +714,15 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"1234567890",'.
 			'"true",'.
 			'"a whole lot of text can go into this field...",'.
+			'"text text text",'.
+			'"text text text",'.
+			'"text text text",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
 			'"2",'.
 			'"",'.
 			'""';
@@ -711,6 +737,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// clean up
 		$this->CobrandedApplication->delete($this->CobrandedApplication->id);
+		// todo: move this to the tear down
 		$this->User->delete($this->User->id);
 		$this->Template->delete($this->Template->id);
 	}

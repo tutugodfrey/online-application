@@ -22,9 +22,6 @@ class CobrandedApplication extends AppModel {
  * @var array
  */
 	public $validate = array(
-		/*
-		'id' => array(),
-		*/
 		'user_id' => array(
 			'rule' => array('numeric'),
 			'allowEmpty' => false,
@@ -43,13 +40,8 @@ class CobrandedApplication extends AppModel {
 			'allowEmpty' => false,
 			'required' => true,
 		),
-		/*
-		'created' => array(),
-		'modified' => array(),
-		*/
 	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 /**
  * belongsTo association
  * 
@@ -216,6 +208,7 @@ class CobrandedApplication extends AppModel {
 							$radioOption['CobrandedApplicationValue']['value'] = null;
 							if (!$this->CobrandedApplicationValue->save($radioOption)) {
 								$response['success'] = false;
+								$response['msg'] = 'failed to update application value with id ['.$radioOption['id'].'], to a value of null.';
 							}
 						}
 					}
@@ -338,7 +331,7 @@ class CobrandedApplication extends AppModel {
 	}
 
 	private function __addValue($values, $newValue) {
-		return $values.',"'.$newValue.'"';
+		return $values.',"'.trim($newValue).'"';
 	}
 
 	private function __addApplicationValue($applicationValueData) {
