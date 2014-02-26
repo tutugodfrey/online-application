@@ -94,9 +94,9 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
+		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
@@ -743,12 +743,5 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// the keys should not have changed
 		$this->assertEquals($expectedKeys, $actualKeys, 'Filled out application keys were not what we expected');
 		$this->assertEquals($expectedValues, $actualValues, 'Filled out application values were not what we expected');
-
-		// clean up
-		$this->CobrandedApplication->delete($this->CobrandedApplication->id);
-		// todo: move this to the tear down
-		$this->User->delete($this->User->id);
-		$this->Template->delete($this->Template->id);
 	}
-
 }

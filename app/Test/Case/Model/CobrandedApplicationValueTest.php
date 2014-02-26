@@ -93,10 +93,9 @@ class CobrandedApplicationValueTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		$this->User->delete($this->__user['OnlineappUser']['id']);
-
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
+		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);

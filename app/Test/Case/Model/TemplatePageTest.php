@@ -14,7 +14,9 @@ class TemplatePageTest extends CakeTestCase {
 	public $fixtures = array(
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
-		'app.onlineappTemplatePage'
+		'app.onlineappTemplatePage',
+		'app.onlineappTemplateSection',
+		'app.onlineappTemplateField',
 	);
 
 	public $autoFixtures = false;

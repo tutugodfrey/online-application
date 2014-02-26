@@ -17,6 +17,7 @@ class TemplateSectionTest extends CakeTestCase {
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
+		'app.onlineappTemplateField',
 	);
 
 	public $autoFixtures = false;

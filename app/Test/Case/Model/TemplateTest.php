@@ -8,7 +8,10 @@ class TemplateTest extends CakeTestCase {
 
 	public $fixtures = array(
 		'app.onlineappCobrand',
-		'app.onlineappTemplate'
+		'app.onlineappTemplate',
+		'app.onlineappTemplatePage',
+		'app.onlineappTemplateSection',
+		'app.onlineappTemplateField',
 	);
 
 	public $autoFixtures = false;
@@ -138,4 +141,21 @@ class TemplateTest extends CakeTestCase {
 		$createdTemplatePage = $this->TemplatePage->read();
 		$this->assertEquals(0, count($createdTemplatePage['TemplateSections']), "The new page should have no sections");
 	}
+
+	public function testGetTemplateApiFields() {
+		
+	}
+
+	public function testGetTemplateUserFields() {
+		
+	}
+
+	public function testGetTemplateRepFields() {
+		
+	}
+
+	public function testGetTemplateFields() {
+		
+	}
+
 }
