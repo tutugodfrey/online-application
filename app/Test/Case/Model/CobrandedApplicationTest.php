@@ -26,6 +26,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.onlineappCobrandedApplicationValue',
 	);
 
+	private $__template;
+	private $__user;
+
 /**
  * setUp method
  *
@@ -50,6 +53,39 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplateField');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+
+		$this->__template = $this->Template->find(
+			'first',
+			array(
+				'conditions' => array(
+					'name' => 'Template used to test afterSave of app values',
+				)
+			)
+		);
+
+		$this->User->create(
+			array(
+				'email' => 'testing@axiapayments.com',
+				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
+				'group_id' => 1,
+				'created' => '2014-01-24 11:02:22',
+				'modified' => '2014-01-24 11:02:22',
+				'token' => 'sometokenvalue',
+				'token_used' => '2014-01-24 11:02:22',
+				'token_uses' => 1,
+				'firstname' => 'testuser1firstname',
+				'lastname' => 'testuser1lastname',
+				'extension' => 1,
+				'active' => 1,
+				'api_password' => 'notset',
+				'api_enabled' => 1,
+				'api' => 1,
+				'cobrand_id' => 2,
+				'template_id' => $this->__template['Template']['id'],
+			)
+		);
+
+		$this->__user = $this->User->save();
 	}
 
 /**
@@ -58,6 +94,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
@@ -469,45 +506,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 	public function testBuildExportData() {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
-		$template = $this->Template->find(
-			'first',
-			array(
-				'conditions' => array(
-					'name' => 'Template used to test afterSave of app values',
-				)
-			)
-		);
-		// todo: move this user create into setup
-		$this->User->create(
-			array(
-				'email' => 'testing@axiapayments.com',
-				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
-				'group_id' => 1,
-				'created' => '2014-01-24 11:02:22',
-				'modified' => '2014-01-24 11:02:22',
-				'token' => 'sometokenvalue',
-				'token_used' => '2014-01-24 11:02:22',
-				'token_uses' => 1,
-				'firstname' => 'testuser1firstname',
-				'lastname' => 'testuser1lastname',
-				'extension' => 1,
-				'active' => 1,
-				'api_password' => 'notset',
-				'api_enabled' => 1,
-				'api' => 1,
-				'cobrand_id' => 2,
-				'template_id' => $template['Template']['id'],
-			)
-		);
-		$user = $this->User->save();
 		$applictionData = array(
-			'user_id' => $this->User->id,
-			'template_id' => $template['Template']['id'],
+			'user_id' => $this->__user['OnlineappUser']['id'],
+			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
-
 		$this->CobrandedApplication->create($applictionData);
-
 		$cobrandedApplication = $this->CobrandedApplication->save();
 
 		// export a empty application
@@ -546,6 +550,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Owner Type - Partnership",'.
 			'"Owner Type - Non Profit",'.
 			'"Owner Type - Other",'.
+			'"Unknown Type for testing",'.
 			'"oaID",'.
 			'"api",'.
 			'"aggregated"';
@@ -584,6 +589,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",'.
 			'"Off",'.
 			'"Off",'.
+			'"",'.
 			'"2",'.
 			'"",'.
 			'""';
@@ -678,12 +684,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 					break;
 
 				default:
-					throw new Exception("Unknown type encountered [".$templateField['TemplateField']['type']."]", 1);
+					// ignore this
 					break;
 			}
 
 			$value['value'] = $newValue;
-			$this->CobrandedApplicationValue->save($value);
+			if ($templateField['TemplateField']['type'] != 9999) {
+				$this->CobrandedApplicationValue->save($value);
+			}
 		}
 
 		$expectedValues = 
@@ -723,6 +731,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Yes",'.
 			'"Yes",'.
 			'"Yes",'.
+			'"",'.
 			'"2",'.
 			'"",'.
 			'""';

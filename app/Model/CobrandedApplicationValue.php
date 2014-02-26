@@ -85,6 +85,7 @@ class CobrandedApplicationValue extends AppModel {
 	);
 
 	public function beforeSave() {
+		$retVal = true;
 		// only validate in the update case, ignore durring create; null will not be valid in all cases
 		if (key_exists('id', $this->data[$this->alias])) {
 			// look up the value's template field
@@ -96,16 +97,16 @@ class CobrandedApplicationValue extends AppModel {
 					)
 				)
 			);
-			return $this->__validApplicationValue($this->data[$this->alias], $field['TemplateField']);
+			$retVal = $this->__validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
 		}
-		return true;
+		return $retVal;
 	}
 
-	private function __validApplicationValue($data, $field) {
+	private function __validApplicationValue($data, $fieldType) {
 		$retVal = false;
 		$trimmedDataValue = trim($data['value']);
 
-		switch ($field['type']) {
+		switch ($fieldType) {
 			case 0:  // text      - no validation
 			case 3:  // checkbox  - no validation
 			case 4:  // radio     - no validation
@@ -169,7 +170,7 @@ class CobrandedApplicationValue extends AppModel {
 				break;
 
 			case 19: // digits    - (#)+
-				$retVal = preg_match("/\d+/", $trimmedDataValue);
+				$retVal = (preg_match("/\d+/", $trimmedDataValue) > 0);
 				break;
 
 			default:

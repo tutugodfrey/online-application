@@ -26,6 +26,9 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		'app.onlineappCobrandedApplication',
 	);
 
+	private $__template;
+	private $__user;
+
 /**
  * setUp method
  *
@@ -50,6 +53,38 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplateField');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+
+		$this->__template = $this->Template->find(
+			'first',
+			array(
+				'conditions' => array(
+					'name' => 'Template used to test afterSave of app values',
+				)
+			)
+		);
+
+		$this->User->create(
+			array(
+				'email' => 'testing@axiapayments.com',
+				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
+				'group_id' => 1,
+				'created' => '2014-01-24 11:02:22',
+				'modified' => '2014-01-24 11:02:22',
+				'token' => 'sometokenvalue',
+				'token_used' => '2014-01-24 11:02:22',
+				'token_uses' => 1,
+				'firstname' => 'testuser1firstname',
+				'lastname' => 'testuser1lastname',
+				'extension' => 1,
+				'active' => 1,
+				'api_password' => 'notset',
+				'api_enabled' => 1,
+				'api' => 1,
+				'cobrand_id' => 2,
+				'template_id' => $this->__template['Template']['id'],
+			)
+		);
+		$this->__user = $this->User->save();
 	}
 
 /**
@@ -58,6 +93,8 @@ class CobrandedApplicationValueTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		$this->User->delete($this->__user['OnlineappUser']['id']);
+
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
@@ -130,39 +167,9 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 	public function testBeforeSaveValidation() {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
-		$template = $this->Template->find(
-			'first',
-			array(
-				'conditions' => array(
-					'name' => 'Template used to test afterSave of app values',
-				)
-			)
-		);
-		$this->User->create(
-			array(
-				'email' => 'testing@axiapayments.com',
-				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
-				'group_id' => 1,
-				'created' => '2014-01-24 11:02:22',
-				'modified' => '2014-01-24 11:02:22',
-				'token' => 'sometokenvalue',
-				'token_used' => '2014-01-24 11:02:22',
-				'token_uses' => 1,
-				'firstname' => 'testuser1firstname',
-				'lastname' => 'testuser1lastname',
-				'extension' => 1,
-				'active' => 1,
-				'api_password' => 'notset',
-				'api_enabled' => 1,
-				'api' => 1,
-				'cobrand_id' => 2,
-				'template_id' => $template['Template']['id'],
-			)
-		);
-		$user = $this->User->save();
 		$applictionData = array(
-			'user_id' => $this->User->id,
-			'template_id' => $template['Template']['id'],
+			'user_id' => $this->__user['OnlineappUser']['id'],
+			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
 
@@ -249,6 +256,33 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->CobrandedApplication->delete($this->CobrandedApplication->id);
 		$this->User->delete($this->User->id);
 		$this->Template->delete($this->Template->id);
+	}
+
+	public function testSaveAppValueWithUnknonFieldType() {
+		// create a new application from template with id 4
+		// or find the template with a name = 'Template used to test afterSave of app values'
+		$applictionData = array(
+			'user_id' => $this->__user['OnlineappUser']['id'],
+			'template_id' => $this->__template['Template']['id'],
+			'uuid' => String::uuid(),
+		);
+
+		$this->CobrandedApplication->create($applictionData);
+		$cobrandedApplication = $this->CobrandedApplication->save();
+		$applicationAndValues = $this->CobrandedApplicationValue->find(
+			'all',
+			array(
+				'conditions' => array('cobranded_application_id' => $this->CobrandedApplication->id)
+			)
+		);
+
+		// lastly, test trying to save 'Unknown Type for testing'
+		$unknownFieldType = $applicationAndValues[count($applicationAndValues)-1];
+		$unknownFieldType['CobrandedApplicationValue']['value'] = 'a new value';
+
+		$this->setExpectedException('Exception', 'Unknown field type, cannot validate it.', 1);
+
+		$this->CobrandedApplicationValue->save($unknownFieldType['CobrandedApplicationValue']);
 	}
 
 	private function __testInvalidAndValidAppValues($typeString, $appValue, $invalid, $valid) {
