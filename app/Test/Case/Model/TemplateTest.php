@@ -6,6 +6,8 @@ class TemplateTest extends CakeTestCase {
 
 	public $dropTables = false;
 
+	public $autoFixtures = false;
+
 	public $fixtures = array(
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
@@ -16,15 +18,19 @@ class TemplateTest extends CakeTestCase {
 		'app.onlineappCobrandedApplication',
 	);
 
-	public $autoFixtures = false;
+	private $__template;
+	private $__user;
 
 	public function setUp() {
 		parent::setUp();
+		$this->User = ClassRegistry::init('OnlineappUser');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
+		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
@@ -32,9 +38,46 @@ class TemplateTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
+		$this->loadFixtures('OnlineappCobrandedApplication');
+		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+
+		$this->__template = $this->Template->find(
+			'first',
+			array(
+				'conditions' => array(
+					'name' => 'Template used to test getFields',
+				)
+			)
+		);
+
+		$this->User->create(
+			array(
+				'email' => 'testing@axiapayments.com',
+				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
+				'group_id' => 1,
+				'created' => '2014-01-24 11:02:22',
+				'modified' => '2014-01-24 11:02:22',
+				'token' => 'sometokenvalue',
+				'token_used' => '2014-01-24 11:02:22',
+				'token_uses' => 1,
+				'firstname' => 'testuser1firstname',
+				'lastname' => 'testuser1lastname',
+				'extension' => 1,
+				'active' => 1,
+				'api_password' => 'notset',
+				'api_enabled' => 1,
+				'api' => 1,
+				'cobrand_id' => 2,
+				'template_id' => $this->__template['Template']['id'],
+			)
+		);
+		$this->__user = $this->User->save();
 	}
 
 	public function tearDown() {
+		$this->CobrandedApplicationValue->deleteAll(true, false);
+		$this->CobrandedApplication->deleteAll(true, false);
+		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
@@ -48,8 +91,14 @@ class TemplateTest extends CakeTestCase {
 				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
 		$this->Cobrand->query($query);
 
+		unset($this->CobrandedApplicationValue);
+		unset($this->CobrandedApplication);
+		unset($this->TemplateField);
+		unset($this->TemplateSection);
+		unset($this->TemplatePage);
 		unset($this->Template);
 		unset($this->Cobrand);
+		unset($this->User);
 		parent::tearDown();
 	}
 

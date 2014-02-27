@@ -74,14 +74,6 @@ class Template extends AppModel {
 		return $this->getTemplateFields($templateId, 0, false);
 	}
 
-	public function getTemplateUserFields($templateId) {
-		return $this->getTemplateFields($templateId, 1, false);
-	}
-
-	public function getTemplateRepFields($templateId) {
-		return $this->getTemplateFields($templateId, 1, true);
-	}
-
 	// to return all fields call VVV with only the templateId
 	public function getTemplateFields($templateId, $fieldSource = null, $repOnly = null, $required = null) {
 		// build the conditions array

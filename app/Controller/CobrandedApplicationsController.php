@@ -85,16 +85,16 @@ class CobrandedApplicationsController extends AppController {
 		$this->autoRender = false;
 		$response = array('success' => false);
 
+		$user = $this->User->find(
+			'first', 
+			array(
+				'conditions' => array('User.id' => $this->Auth->user('id')),
+			)
+		);
+
 		if ($this->request->is('get')) {
 			// dump the template form
 			// pull the template_id from the db because the Auth object could be cached
-			$user = $this->User->find(
-				'first', 
-				array(
-					'conditions' => array('User.id' => $this->Auth->user('id')),
-				)
-			);
-
 			if (!is_null($user['User']['template_id'])) {
 				$response['success'] = true;
 				$response['template'] = array(
@@ -110,10 +110,7 @@ class CobrandedApplicationsController extends AppController {
 		} else if ($this->request->is('post')) {
 			switch ($this->Auth->user('cobrand_id')) {
 				case 8: // Appfolio
-					$response['success'] = true;
-					$response['data'] = $this->request->data;
-					$response = Hash::insert($response, 'msg', 'here is the data that was passed to us ');
-					// next steps, 
+					$response = $this->CobrandedApplication->saveFields($user['User'], $this->request->data);
 					break;
 
 				default:
@@ -227,7 +224,9 @@ class CobrandedApplicationsController extends AppController {
 				$this->User->save();
 
 				// now try to save with the data from the user model
-				if ($this->__createOnlineappForUser($this->User, $this->request->data['CobrandedApplication']['uuid'])) {
+				$user = $this->User->read();
+				$response = $this->CobrandedApplication->createOnlineappForUser($user['User'], $this->request->data['CobrandedApplication']['uuid']);
+				if ($response['success'] == true) {
 					$this->Session->setFlash(__('Application created'));
 					$this->redirect(array('action' => 'index'));
 				} else {
@@ -248,38 +247,15 @@ class CobrandedApplicationsController extends AppController {
 			$this->set(compact('templates'));
 		} else {
 			// just create it, we know all the info
-			if ($this->__createOnlineappForUser($this->User)) {
+			$user = $this->User->read();
+			$response = $this->CobrandedApplication->createOnlineappForUser($user['User']);
+			if ($response['success'] == true) {
 				$this->Session->setFlash(__('Application created'));
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
 			}
 		}
-	}
-
-/**
- * __createOnlineappForUser method
- *
- * @param none
- * @return [true|false] depending on if the onlineapp was created
- */
-	private function __createOnlineappForUser($user, $uuid = null) {
-		if (is_null($uuid)) {
-			$uuid = String::uuid();
-		}
-
-		$this->CobrandedApplication->create(
-			array(
-				'user_id' => $this->User->field('id', array('User.id' => $user->id)),
-				'uuid' => $uuid,
-				'template_id' => $this->User->field('template_id', array('User.id' => $user->id)),
-			)
-		);
-
-		if ($this->CobrandedApplication->save()) {
-			return true;
-		}
-		return false;
 	}
 
 /**

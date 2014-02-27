@@ -233,6 +233,159 @@ class CobrandedApplication extends AppModel {
 		return $response;
 	}
 
+
+/**
+ * createOnlineappForUser
+ *
+ * @param 
+ *     $user object
+ *     $uuid string [optional]
+ * 
+ * @returns
+ *     $response array(
+ *         success [true|false] depending on if the onlineapp was created
+ *         cobrandedApplicationId int
+ */
+	public function createOnlineappForUser($user, $uuid = null) {
+		$response = array('success' => false, 'cobrandedApplication' => array('id' => null, 'uuid' => null));
+		if (is_null($uuid)) {
+			$uuid = String::uuid();
+		}
+
+		$this->create(
+			array(
+				'user_id' => $user['id'],
+				'uuid' => $uuid,
+				'template_id' => $user['template_id'],
+			)
+		);
+
+		if ($this->save()) {
+			$response['success'] = true;
+			$response['cobrandedApplication'] = array(
+				'id' => $this->id,
+				'uuid' => $uuid,
+			);
+		}
+		return $response;
+	}
+
+
+/**
+ * saveFields
+ * 
+ * 	create an application for $user
+ *  populate it with the passed $fieldsData
+ *  if is the $fieldsData valid then save it
+ *  otherwise:
+ *      compile a list of the problems,
+ *      send the response back and
+ *      delete the cobranded application that was created
+ * 
+ * @params
+ *     $user model
+ *     $fieldData array
+ * 
+ * @returns
+ *     $response array
+ */
+	public function saveFields($user, $fieldsData) {
+		// default our response
+		$response = array(
+			'success' => false,
+			'validationErrors' => array(),
+			'application_id' => null,
+		);
+
+		// create an application for $userId
+		$createAppResponse = $this->createOnlineappForUser($user);
+		if ($createAppResponse['success'] == true) {
+			// populate it with the passed $fieldsData
+			$newApp = $this->find(
+				'first',
+				array(
+					'conditions' => array(
+						'CobrandedApplication.id' => $createAppResponse['cobrandedApplication']['id']
+					)
+				)
+			);
+
+			$this->TemplateField = ClassRegistry::init('TemplateField');
+
+			// save the application values
+			foreach ($fieldsData as $key => $value) {
+				$value = trim($value);
+
+				// look up the field type from the name
+				$appValue = $this->CobrandedApplicationValues->find(
+					'first',
+					array(
+						'conditions' => array(
+							'cobranded_application_id' => $newApp['CobrandedApplication']['id'],
+							'CobrandedApplicationValues.name' => $key
+						)
+					)
+				);
+
+				// is the TemplateField associated with the application value?
+				// I am not sure why this would be missing...
+				$templateField = null;
+				if (key_exists('TemplateField', $appValue)) {
+					$templateField = $appValue['TemplateField'];
+				} else {
+					// look it up
+					$templateField = $this->TemplateField->find(
+						'first',
+						array(
+							'conditions' => array(
+								'TemplateField.id' => $appValue['CobrandedApplicationValues']['template_field_id']
+							)
+						)
+					);
+					$templateField = $templateField['TemplateField'];
+				}
+
+				// if the field is rep_only == true, skip it because this value cannot be set via the api
+				if ($templateField['rep_only'] == false) {
+					// update the value
+					$appValue['CobrandedApplicationValues']['value'] = $value;
+
+					// handle required and empty first
+					if ($templateField['required'] == true && empty($value) == true) {
+						// update our validationErrors array
+						$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, 'required');
+					} else {
+						// only validate if we are not empty
+						if (empty($value) == false) {
+							// is the value valid?
+							$validValue =  $this->CobrandedApplicationValues->validApplicationValue($appValue['CobrandedApplicationValues'], $templateField['type']);
+							if ($validValue) {
+								// save it
+								$this->CobrandedApplicationValues->save($appValue);
+							} else {
+								// update our validationErrors array
+								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $typeStr);
+							}
+						}
+					}
+				}
+			}
+
+			unset($this->TemplateField);
+
+			$response['success'] = (count($response['validationErrors']) == 0);
+		}
+
+		if ($response['success'] == false) {
+			// delete the app
+			$this->delete($createAppResponse['cobrandedApplication']['id']);
+		} else {
+			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
+		}
+		return $response;
+	}
+
 	public function buildExportData($appId, &$keys = '', &$values = '') {
 		$options = array(
 			'conditions' => array(
@@ -326,10 +479,25 @@ class CobrandedApplication extends AppModel {
 		$values = $values.',"'.$app['CobrandedApplication']['id'].'","",""';
 	}
 
+
+/**
+ * __addKey
+ * 
+ * @params
+ *     $keys array
+ *     $newKey string
+ */
 	private function __addKey($keys, $newKey) {
 		return $keys.',"'.$newKey.'"';
 	}
 
+/**
+ * __addValue
+ * 
+ * @params
+ *     $values array
+ *     $newValue string
+ */
 	private function __addValue($values, $newValue) {
 		return $values.',"'.trim($newValue).'"';
 	}

@@ -113,6 +113,19 @@ class User extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'CobrandedApplication' => array(
+			'className' => 'CobrandedApplication',
+			'foreignKey' => 'user_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
 		'Epayment' => array(
 			'className' => 'Epayment',
 			'foreignKey' => 'user_id',
@@ -209,20 +222,24 @@ class User extends AppModel {
 					'order' => array('fullname')));
 				return $managers;
 		}
-public function getAssignedManagerIds($userId){
-		$assignedManagers =  $this->UsersManager->find('all', array(
-								'conditions' => array('user_id' => $userId),
-								'fields' => array('manager_id')
-						));
+
+	public function getAssignedManagerIds($userId){
+		$assignedManagers =  $this->UsersManager->find(
+			'all',
+			array(
+				'conditions' => array('user_id' => $userId),
+				'fields' => array('manager_id')
+			)
+		);
 		$assignedManagerIds = Set::classicExtract($assignedManagers, '{n}.UsersManager.manager_id');
-		
+
 //        return $this->find('list', array(
 //                                'conditions' => array('id' => $assignedManagerIds),
 //                                'fields' => array('id', 'fullname'),
 //                                'order' => array('fullname')));
 
 		return $assignedManagerIds;
-}
+	}
 /**
  * Get an array of all the assigned user ids to a specific user
  */

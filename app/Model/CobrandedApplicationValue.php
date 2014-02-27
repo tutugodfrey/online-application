@@ -97,12 +97,12 @@ class CobrandedApplicationValue extends AppModel {
 					)
 				)
 			);
-			$retVal = $this->__validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
+			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
 		}
 		return $retVal;
 	}
 
-	private function __validApplicationValue($data, $fieldType) {
+	public function validApplicationValue($data, $fieldType) {
 		$retVal = false;
 		$trimmedDataValue = trim($data['value']);
 
