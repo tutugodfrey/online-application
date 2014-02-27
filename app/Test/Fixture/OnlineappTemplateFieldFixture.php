@@ -588,5 +588,38 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
+		/*
+		Add TemplateFields for 
+		*/
+		array(
+			'name' => 'Text field',
+			'width' => 12,
+			'description' => '',
+			'type' => 0,
+			'required' => 1,
+			'source' => 0,
+			'default_value' => '',
+			'merge_field_name' => 'required_text_from_api_without_default',
+			'order' => 0,
+			'section_id' => 5,
+			'rep_only' => false,
+			'created' => '2013-12-18 14:10:17',
+			'modified' => '2013-12-18 14:10:17'
+		),
+		array(
+			'name' => 'Text field',
+			'width' => 12,
+			'description' => '',
+			'type' => 0,
+			'required' => 1,
+			'source' => 1,
+			'default_value' => '',
+			'merge_field_name' => 'required_text_from_user_without_default_repOnly',
+			'order' => 1,
+			'section_id' => 5,
+			'rep_only' => false,
+			'created' => '2013-12-18 14:10:17',
+			'modified' => '2013-12-18 14:10:17'
+		),
 	);
 }

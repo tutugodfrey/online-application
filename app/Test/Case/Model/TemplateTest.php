@@ -12,6 +12,8 @@ class TemplateTest extends CakeTestCase {
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
+		'app.onlineappCobrandedApplicationValue',
+		'app.onlineappCobrandedApplication',
 	);
 
 	public $autoFixtures = false;
@@ -27,6 +29,9 @@ class TemplateTest extends CakeTestCase {
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
+		$this->loadFixtures('OnlineappTemplatePage');
+		$this->loadFixtures('OnlineappTemplateSection');
+		$this->loadFixtures('OnlineappTemplateField');
 	}
 
 	public function tearDown() {
@@ -143,19 +148,29 @@ class TemplateTest extends CakeTestCase {
 	}
 
 	public function testGetTemplateApiFields() {
-		
-	}
-
-	public function testGetTemplateUserFields() {
-		
-	}
-
-	public function testGetTemplateRepFields() {
-		
-	}
-
-	public function testGetTemplateFields() {
-		
+		$templates = $this->Template->find('all', array('order' => 'Template.id'));
+		$expectedFields = array(
+			array(), // all fields are expected to be from the user
+			array(), // all fields are expected to be from the user
+			array(), // all fields are expected to be from the user
+			array(), // all fields are expected to be from the user
+			array(
+				'required_text_from_api_without_default' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				)
+			), // one field from the user
+		);
+		$index = 0;
+		foreach ($templates as $key => $template) {
+			$actualFields = $this->Template->getTemplateApiFields($template['Template']['id']);
+			$this->assertEquals(
+				$expectedFields[$index],
+				$actualFields,
+				'Template with id ['.$index.'] did not match expected API fields');
+			$index = $index + 1;
+		}
 	}
 
 }

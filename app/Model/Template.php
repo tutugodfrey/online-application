@@ -83,7 +83,7 @@ class Template extends AppModel {
 	}
 
 	// to return all fields call VVV with only the templateId
-	public function getTemplateFields($templateId, $fieldSource = null, $rep_only = null, $required = null) {
+	public function getTemplateFields($templateId, $fieldSource = null, $repOnly = null, $required = null) {
 		// build the conditions array
 		$conditions = array(
 			'field.section_id = section.id',
@@ -103,8 +103,8 @@ class Template extends AppModel {
 			$conditions['field.source'] = $fieldSource;
 		}
 
-		if (!is_null($rep_only)) {
-			$conditions['field.rep_only'] = $rep_only;
+		if (!is_null($repOnly)) {
+			$conditions['field.rep_only'] = $repOnly;
 		}
 
 		if (!is_null($required)) {
@@ -148,8 +148,12 @@ class Template extends AppModel {
 		$formattedData = array();
 		$TemplateField = ClassRegistry::init('TemplateField');
 		foreach ($fields as $key => $value) {
+			$type = 'unknown';
+			if (key_exists($value['field']['type'], $TemplateField->fieldTypes)) {
+				$type = $TemplateField->fieldTypes[$value['field']['type']];
+			}
 			$formattedData[$value['field']['merge_field_name']] = array(
-				"type" => $TemplateField->fieldTypes[$value['field']['type']],
+				"type" => $type,
 				"required" => $value['field']['required'],
 				"description" => $value['field']['description'],
 			);

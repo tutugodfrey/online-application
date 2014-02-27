@@ -59,5 +59,13 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31'
 		),
+		array(
+			'name' => 'Template used to test getFields',
+			'description' => '',
+			'cobrand_id' => 2,
+			'logo_position' => 0,
+			'created' => '2007-03-18 10:41:31',
+			'modified' => '2007-03-18 10:41:31'
+		),
 	);
 }
