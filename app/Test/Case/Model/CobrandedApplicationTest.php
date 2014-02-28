@@ -502,7 +502,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$actual = $this->CobrandedApplication->getApplicationValue(4);
 		$this->assertEquals(false, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
 	}
-/*
+
 	public function testBuildExportData() {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
@@ -742,7 +742,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedKeys, $actualKeys, 'Filled out application keys were not what we expected');
 		$this->assertEquals($expectedValues, $actualValues, 'Filled out application values were not what we expected');
 	}
-*/
+
 	public function testSetFields() {
 		// knowns:
 		//     - user
