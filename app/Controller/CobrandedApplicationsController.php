@@ -1,6 +1,7 @@
 <?php
 App::uses('AppController', 'Controller');
 App::uses('TemplateField', 'View/Helper');
+App::uses('Setting', 'Model');
 /**
  * CobrandedApplications Controller
  *
@@ -30,6 +31,8 @@ class CobrandedApplicationsController extends AppController {
 		if (($this->params['ext'] == 'json' || $this->request->accepts('application/json'))) {
 			$this->Security->unlockedActions= array('api_add');
 		}
+		$this->fetchSettings();
+		$this->settings = Configure::read('Setting');
 	}
 
 	public function beforeRender() {
@@ -40,6 +43,14 @@ class CobrandedApplicationsController extends AppController {
 		}
 	}
 
+
+/**
+ * quickAdd method
+ *
+ * @param $uuid (optional)
+ * @throws NotFoundException
+ * @return void
+ */
 	public function quickAdd($uuid = null) {
 		$this->layout = 'ajax';
 		$this->autoRender = false;
@@ -98,7 +109,6 @@ class CobrandedApplicationsController extends AppController {
 			if (!is_null($user['User']['template_id'])) {
 				$response['success'] = true;
 				$response['template'] = array(
-					'id' => $user['User']['template_id'],
 					'fields' => $this->User->Template->getTemplateApiFields($user['User']['template_id']),
 				);
 			} else {
