@@ -372,7 +372,7 @@ class TemplatePageTest extends CakeTestCase {
 	}
 
 	public function testOrderEditable() {
-		$this->assertFalse($this->TemplatePage->nameEditable('Validate Application'));
-		$this->assertTrue($this->TemplatePage->nameEditable('anything else'));
+		$this->assertFalse($this->TemplatePage->orderEditable('Validate Application'));
+		$this->assertTrue($this->TemplatePage->orderEditable('anything else'));
 	}
 }
