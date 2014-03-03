@@ -444,7 +444,8 @@ class Template extends AppModel {
 							'rep_only' => true,
 							'merge_field_name' => 'Amex Discount Rate',
 						),
-						/*array(
+						/*
+						array(
 							'name' => 'Discount Paid',
 							'type' => 4,
 							'width' => 12,
@@ -452,7 +453,8 @@ class Template extends AppModel {
 							'default_value' => 'Monthly::Monthly,Daily::Daily',
 							'rep_only' => true,
 							'merge_field_name' => 'Discount Paid',
-						),*/
+						),
+						*/
 					),
 				),
 				array(
@@ -530,6 +532,16 @@ class Template extends AppModel {
 							'merge_field_name' => 'Check Box'
 						),
 						array(
+							'name' => 'hr',
+							'type' => 8,
+							'required' => true,
+							'source' => 1,
+							'default_value' => '',
+							'width' => 12,
+							'rep_only' => true,
+							'merge_field_name' => ''
+						),
+						array(
 							'name' => 'Please type name to confirm if you visted the site',
 							'type' => 0,
 							'width' => 12,
@@ -545,7 +557,6 @@ class Template extends AppModel {
 							'required' => true,
 							'source' => 1,
 							'rep_only' => true,
-							'merge_field_name' => 'site_survey_date'
 						),
 					),
 				),
