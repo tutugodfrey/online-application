@@ -104,11 +104,12 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'user-required-rep_only-2-name-id-merg_field_name-1'
 		);
 		$options['type'] = 3;
+		$options['values'] = array('true','');
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="checkbox">'.
 					'<input type="hidden" name="merge_field_name" id="merge_field_name_" value="0"/>'.
-					'<input type="checkbox" name="merge_field_name"  label="name*" id="merge_field_name" required="required" data-value-id="id1" value=""/>'.
+					'<input type="checkbox" name="merge_field_name"  label="name*" id="merge_field_name" required="required" data-value-id="id1" value="true" checked="checked"/>'.
 					'<label for="merge_field_name">name*</label>'.
 				'</div>'.
 			'</div>',
@@ -345,7 +346,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$value0 = '';
 		$value1 = '';
 		if (key_exists('values', $options)) {
-			$value1 = $options['values'][0];
+			$value0 = $options['values'][0];
 			$value1 = $options['values'][1];
 		}
 		$textField = Hash::insert(
