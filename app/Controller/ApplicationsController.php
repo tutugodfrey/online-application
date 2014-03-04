@@ -590,7 +590,6 @@ class ApplicationsController extends AppController {
 			  $response = $rightsignature->post('/api/templates/' . $this->settings['RS_TEMPLATE_GUID'] . '/prepackage.json', "<?xml version='1.0' encoding='UTF-8'?><callback_location></callback_location>");
 			 */
 
-
 			if ($application['Application']['api'] == 1) {
 				$response = $rightsignature->post('/api/templates/' . 'a_1544915_c2696c89c6604549a3d2c27b4d715705' . '/prepackage.json', "<?xml version='1.0' encoding='UTF-8'?><callback_location></callback_location>");
 			} ELSE {
@@ -609,14 +608,14 @@ class ApplicationsController extends AppController {
 				//$xml = $this->render('/Elements/applications/sign_document', false);
 				$xml = $this->requestAction(
 					array(
-				'controller' => 'Applications',
-				'action' => 'fill_rs_template'
+						'controller' => 'Applications',
+						'action' => 'fill_rs_template'
 					), array(
-				'pass' => array($id,$response['template']['guid']),
-				'return',
-				'bare' => 1
+						'pass' => array($id,$response['template']['guid']),
+						'return',
+						'bare' => 1
 					)
-			);
+				);
 				//else //If not simply send the documents
 				//$xml = $this->render('/Elements/applications/send_document', false);
 

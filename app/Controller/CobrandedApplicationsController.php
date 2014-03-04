@@ -43,7 +43,6 @@ class CobrandedApplicationsController extends AppController {
 		}
 	}
 
-
 /**
  * quickAdd method
  *
@@ -119,6 +118,8 @@ class CobrandedApplicationsController extends AppController {
 			}
 		} else if ($this->request->is('post')) {
 			switch ($this->Auth->user('cobrand_id')) {
+				// we may just want to open up the API access to all cobrands...
+				// this VVV way we require a code change if another partner wants to use the API
 				case 8: // Appfolio
 					$response = $this->CobrandedApplication->saveFields($user['User'], $this->request->data);
 					break;
@@ -137,21 +138,6 @@ class CobrandedApplicationsController extends AppController {
 
 		echo json_encode($response);
 		$this->redirect(null, 200);
-	}
-
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $uuid
- * @return void
- */
-	public function view($uuid = null) {
-		if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
-			throw new NotFoundException(__('Invalid application'));
-		}
-		$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
-		$this->set('cobrandedApplication', $this->CobrandedApplication->find('first', $options));
 	}
 
 /**
@@ -191,7 +177,6 @@ class CobrandedApplicationsController extends AppController {
 		$this->set('requireRequiredFields', false);
 	}
 
-
 /**
  * admin_index method
  *
@@ -200,21 +185,6 @@ class CobrandedApplicationsController extends AppController {
 	public function admin_index() {
 		$this->CobrandedApplication->recursive = 0;
 		$this->set('cobrandedApplications', $this->paginate());
-	}
-
-/**
- * admin_view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function admin_view($id = null) {
-		if (!$this->CobrandedApplication->exists($id)) {
-			throw new NotFoundException(__('Invalid application'));
-		}
-		$options = array('conditions' => array('CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id));
-		$this->set('cobrandedApplication', $this->CobrandedApplication->find('first', $options));
 	}
 
 /**
@@ -326,10 +296,29 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
+ * admin_copy method
+ * 
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function admin_copy($id = null) {
+		if (!$this->CobrandedApplication->exists($id)) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$flashMsg = 'Failed to copy application';
+		if ($this->CobrandedApplication->copyApplication($id, $this->Session->read('Auth.User.id'))) {
+			$flashMsg = 'Application copied';
+		}
+		$this->Session->setFlash(__($flashMsg));
+		$this->redirect(array('action' => 'index'));
+	}
+
+/**
  * admin_delete method
  *
  * @throws NotFoundException
- * @throws MethodNotAllowedException
  * @param string $id
  * @return void
  */
@@ -339,11 +328,11 @@ class CobrandedApplicationsController extends AppController {
 			throw new NotFoundException(__('Invalid application'));
 		}
 		$this->request->onlyAllow('post', 'delete');
+		$flashMsg = 'Application was not deleted';
 		if ($this->CobrandedApplication->delete()) {
-			$this->Session->setFlash(__('Application deleted'));
-			$this->redirect(array('action' => 'index'));
+			$flashMsg = 'Application deleted';
 		}
-		$this->Session->setFlash(__('Application was not deleted'));
+		$this->Session->setFlash(__($flashMsg));
 		$this->redirect(array('action' => 'index'));
 	}
 }

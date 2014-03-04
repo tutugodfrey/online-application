@@ -42,6 +42,9 @@ var onWindowResize = function() {
 	var numberOfChildren = $("#wizard .nav-pills>li").length;
 	var padding = $("#wizard .nav-pills").css('padding-left').replace('px','');
 	var newWidth = Math.floor(totalWidth/(numberOfChildren-1))-padding;
+	if (newWidth >= 917) {
+		newWidth = 915;
+	}
 	$("#wizard .nav-pills>li>a>div.connecting-line").css("width", newWidth);
 };
 

@@ -9,15 +9,26 @@ App::uses('TemplateField', 'Model');
  */
 class CobrandedApplication extends AppModel {
 
+
+/**
+ * Table to use
+ *
+ * @var string
+ */
 	public $useTable = 'onlineapp_cobranded_applications';
 
+/**
+ * Validation rules
+ *
+ * @var array
+ */
 	public $actsAs = array(
 		'Search.Searchable',
 		'Containable',
 	);
 
 /**
- * Validation rules
+ * Behaviors
  *
  * @var array
  */
@@ -79,6 +90,12 @@ class CobrandedApplication extends AppModel {
 		),
 	);
 
+/**
+ * afterSave
+ *
+ * @params
+ *     $created boolean
+ */
 	public function afterSave($created/*, $options*/) {
 		if ($created === true) {
 			$applicationId = $this->data['CobrandedApplication']['id'];
@@ -142,6 +159,12 @@ class CobrandedApplication extends AppModel {
 		}
 	}
 
+/**
+ * getTemplateAndAssociatedValues
+ *
+ * @params
+ *     $applicationId integer
+ */
 	public function getTemplateAndAssociatedValues($applicationId) {
 		$this->id = $applicationId;
 		$application = $this->read();
@@ -173,6 +196,12 @@ class CobrandedApplication extends AppModel {
 		);
 	}
 
+/**
+ * getApplicationValue
+ *
+ * @params
+ *     $valueId integer
+ */
 	public function getApplicationValue($valueId) {
 		if (is_null($this->CobrandedApplicationValue)) {
 			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
@@ -180,6 +209,12 @@ class CobrandedApplication extends AppModel {
 		return $this->CobrandedApplicationValue->findById($valueId);
 	}
 
+/**
+ * gsaveApplicationValue
+ *
+ * @params
+ *     $date array
+ */
 	public function saveApplicationValue($data) {
 		$response = array('success' => false);
 
@@ -386,6 +421,14 @@ class CobrandedApplication extends AppModel {
 		return $response;
 	}
 
+/**
+ * buildExportData
+ *
+ * @params
+ *     $appId int
+ *     $keys array
+ *     $values array
+ */
 	public function buildExportData($appId, &$keys = '', &$values = '') {
 		$options = array(
 			'conditions' => array(
@@ -481,6 +524,53 @@ class CobrandedApplication extends AppModel {
 
 
 /**
+ * copyApplication
+ * 
+ * @params
+ *     $appId int
+ *     $userId int
+ * @retuns
+ *     true|false depending on if the application was copied or not
+ */
+	public function copyApplication($appId, $userId) {
+		// create a new application for $userId
+		// need to look up the template_id from the appId
+		$app = $this->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $appId
+				),
+				'recursive' => -1,
+				'contain' => array('CobrandedApplicationValues'),
+			)
+		);
+
+		$this->create(
+			array(
+				'user_id' => $userId,
+				'uuid' => String::uuid(),
+				'template_id' => $app['CobrandedApplication']['template_id'],
+			)
+		);
+		if ($this->save()) {
+			$newApp = $this->read();
+
+			// copy each value over
+			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
+				if ($app['CobrandedApplicationValues'][$key]['name'] == 'Unknown Type for testing') {
+					// skip it
+				} else {
+					$newApp['CobrandedApplicationValues'][$key]['value'] = $app['CobrandedApplicationValues'][$key]['value'];
+					$this->CobrandedApplicationValues->save($newApp['CobrandedApplicationValues'][$key]);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+/**
  * __addKey
  * 
  * @params
@@ -502,12 +592,25 @@ class CobrandedApplication extends AppModel {
 		return $values.',"'.trim($newValue).'"';
 	}
 
+/**
+ * __addApplicationValue
+ * 
+ * @params
+ *     $applicationValueData array
+ */
 	private function __addApplicationValue($applicationValueData) {
 		// save this info
 		$this->CobrandedApplicationValues->create();
 		$this->CobrandedApplicationValues->save($applicationValueData);
 	}
 
+/**
+ * __startsWith
+ * 
+ * @params
+ *     $haystack string
+ *     $needle string
+ */
 	private function __startsWith($haystack, $needle) {
 		return $needle === "" || strpos($haystack, $needle) === 0;
 	}

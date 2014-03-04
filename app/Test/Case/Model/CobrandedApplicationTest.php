@@ -603,6 +603,281 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// now insert values into the fields
 		$app = $this->CobrandedApplication->read();
 
+		$this->__setSomeValuesBasedOnType($app);
+
+		$expectedValues = 
+			'"",'.
+			'"text",'.
+			'"2000-01-01",'.
+			'"08:00 pm",'.
+			'"true",'.
+			'"On",'.
+			'"On",'.
+			'"On",'.
+			'"Off",'.
+			'"Off",'.
+			'"Off",'.
+			'"10.00",'.
+			'"10.00",'.
+			'"10.00",'.
+			'"8005551234",'.
+			'"10.00",'.
+			'"50",'.
+			'"123-45-6789",'.
+			'"12345-1234",'.
+			'"name@domain.com",'.
+			//'"10 months",'.
+			//'"4111-1111-1111-1111",'.
+			'"http://www.domain.com",'.
+			'"12.82234",'.
+			'"1234567890",'.
+			'"true",'.
+			'"a whole lot of text can go into this field...",'.
+			'"text text text",'.
+			'"text text text",'.
+			'"text text text",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"Yes",'.
+			'"",'.
+			'"2",'.
+			'"",'.
+			'""';
+
+		$actualKeys = '';
+		$actualValues = '';
+		$this->CobrandedApplication->buildExportData($this->CobrandedApplication->id, $actualKeys, $actualValues);
+
+		// the keys should not have changed
+		$this->assertEquals($expectedKeys, $actualKeys, 'Filled out application keys were not what we expected');
+		$this->assertEquals($expectedValues, $actualValues, 'Filled out application values were not what we expected');
+	}
+
+	public function testSetFields() {
+		// knowns:
+		//     - user
+		//     - fieldsData
+		// pre-test:
+		//     - should not be cobrandedApplications for this user
+		$applications = $this->CobrandedApplication->find(
+			'all',
+			array(
+				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
+			)
+		);
+		$this->assertEquals(0, count($applications), 'Did not expect to find any applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		// set expected results
+		$expectedValidationErrors = array(
+			'required_text_from_api_without_default' => 'required',
+		);
+
+		// set knowns
+		$user = $this->__user['OnlineappUser'];
+		// update the template_id to be 5
+		$user['template_id'] = 5;
+
+		// first pass, use invalid fieldsData
+		$fieldsData = array(
+			'required_text_from_api_without_default' => '' // this guy is required
+		);
+
+		// execute the method under test
+		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
+
+		// assertions
+		$this->assertFalse($actualResponse['success'], 'saveFields with empty value for required field should fail');
+		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
+		$applications = $this->CobrandedApplication->find(
+			'all',
+			array(
+				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
+			)
+		);
+		$this->assertEquals(0, count($applications), 'Expect to find no applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		// this time use good data
+		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
+
+		// execute the method under test
+		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
+
+		// assertions
+		$this->assertTrue($actualResponse['success'], 'saveFields with valid data should succeed');
+		$this->assertEquals(array(), $actualResponse['validationErrors'], 'Expected no validation errors for valid $fieldsData');
+		$applications = $this->CobrandedApplication->find(
+			'all',
+			array(
+				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
+			)
+		);
+		$this->assertEquals(1, count($applications), 'Expect to find one application for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
+		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
+
+		for ($index=1; $index < 22; $index++) {
+			// 15 and 16 are not implemented yet
+			if ($index == 15 || $index == 16) {
+				// ignore for now
+			} else {
+				if ($index == 0 ||
+					$index == 3 ||
+					$index == 4 ||
+					$index == 5 ||
+					$index == 6 ||
+					$index == 7 ||
+					$index == 8 ||
+					$index == 20 ||
+					$index == 21) {
+					// no validation
+				} else {
+					// set the $expectedValidationErrors
+					$expectedValidationErrors['required_text_from_api_without_default'] = $this->TemplateField->fieldTypes[$index];
+
+					// update templateField's type
+					$templateField['type'] = $index;
+					$this->TemplateField->save($templateField);
+
+					// set the fieldsData
+					$fieldsData['required_text_from_api_without_default'] = $this->__invalidApiTestValue[$index];
+
+					// execute the method under test
+					$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
+					$this->assertFalse($actualResponse['success'], 'saveFields with empty value for required field should fail. $index ['.$index.']');
+					$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match ['.$index.']');
+				}
+			}
+		}
+	}
+
+	private $__invalidApiTestValue = array(
+		'text type is not validated',                                    //  0 - free form
+		'not a date',                                                    //  1 - yyyy/mm/dd
+		'not a time',                                                    //  2 - hh:mm:ss
+		'radio type is not validated',                                   //  3 - 
+		'label type is not validated',                                   //  4 - 
+		'100000',                                                        //  5 - (group of percent)
+		'label type is not validated',                                   //  6 - no validation
+		'fees type is not validated',                                    //  7 - (group of money?)
+		'hr type is not validated',                                      //  8 - no validation
+		'phoneUS',                                                       //  9 - (###) ###-####
+		'money same as fees',                                            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
+		'percent should be > 0 < 100',                                   // 11 - (0-100)%
+		'ssn value shoudl be ###-##-####',                               // 12 - ###-##-####
+		'zipcodeUS could include zip and the optional plus four value',  // 13 - #####[-####]
+		'email value shoudld be name@domainname.com',                    // 14 - 
+		'lengthoftime is not used yet',                                  // 15 - [#+] [year|month|day]s
+		'creditcard is not used yet',                                    // 16 - 
+		'url value should look like http://domain.com',                  // 17 - 
+		'number with a decimal',                                         // 18 - (#)+.(#)+
+		'digits only, nothing else',                                     // 19 - (#)+
+		'select... must be one of the default values',                   // 20 - *** need to implement this ***
+		'',                                                              // 21 - free form textarea
+	);
+
+	public function testCreateOnlineappForUser() {
+		$expectedResponse = array(
+			'success' => true,
+			'cobrandedApplication' => array(
+				'id' => 1, // testing for not null is the best we can do
+				'uuid' => 'some uuid', // no way of knowing this value...
+			),
+		);
+
+		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['OnlineappUser']);
+		$this->assertTrue($actualResponse['success'], 'createOnlineappForUser did not create an application');
+		$this->assertNotNull($actualResponse['cobrandedApplication']['id'], 'createOnlineappForUser should return a cobranded application id that is not null');
+
+		// next pass a uuid and guess at the id (id++)
+		$expectedResponse['cobrandedApplication']['id'] = $actualResponse['cobrandedApplication']['id']+1;
+		$uuid = String::uuid();
+		$expectedResponse['cobrandedApplication']['uuid'] = $uuid;
+		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['OnlineappUser'], $uuid);
+		$this->assertEquals($expectedResponse, $actualResponse, 'createOnlineappForUser response did not match the expected');
+	}
+
+	public function testCopyApplication() {
+		// knowns:
+		//     applicationId of the app we want to copy
+		// pre-test:
+		//     - should not any cobrandedApplications for this user
+		$apps = $this->CobrandedApplication->find(
+			'all',
+			array(
+				'conditions' => array(
+					'user_id' => $this->__user['OnlineappUser']['id']
+				),
+			)
+		);
+		$this->assertEquals(0, count($apps), 'Expected to find no apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		// create an app
+		$this->CobrandedApplication->create(
+			array(
+				'uuid' => String::uuid(),
+				'user_id' => $this->__user['OnlineappUser']['id'],
+				'template_id' => $this->__user['OnlineappUser']['template_id'],
+			)
+		);
+		$this->CobrandedApplication->save();
+		$apps = $this->CobrandedApplication->find(
+			'all',
+			array(
+				'conditions' => array(
+					'user_id' => $this->__user['OnlineappUser']['id']
+				),
+			)
+		);
+
+		// should now have 1 app
+		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		// update the values
+		$expectedApp = $apps[0];
+		$this->__setSomeValuesBasedOnType($expectedApp);
+
+		// next, copy this app
+		$this->CobrandedApplication->copyApplication($expectedApp['CobrandedApplication']['id'], $this->__user['OnlineappUser']['id']);
+
+		$apps = $this->CobrandedApplication->find(
+			'all',
+			array(
+				'conditions' => array(
+					'user_id' => $this->__user['OnlineappUser']['id']
+				),
+			)
+		);
+
+		// should now have 2 apps
+		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		// and they should have the same user_id and template_id
+		$this->assertEquals(
+			$expectedApp['CobrandedApplication']['user_id'],
+			$apps[1]['CobrandedApplication']['user_id'],
+			'Copied application should have the same userId'
+		);
+		$this->assertEquals(
+			$expectedApp['CobrandedApplication']['template_id'],
+			$apps[1]['CobrandedApplication']['template_id'],
+			'Copied application should have the same templateId'
+		);
+
+		// and CobrandedApplicationValues
+		foreach ($expectedApp['CobrandedApplicationValues'] as $key => $value) {
+			$expected = $apps[0]['CobrandedApplicationValues'][$key]['value'];
+			$actual = $apps[1]['CobrandedApplicationValues'][$key]['value'];
+			$this->assertEquals($expected, $actual,
+				"Copied applications value [$expected] did not match original [$actual]"
+			);
+		}
+	}
+
+	private function __setSomeValuesBasedOnType(&$app) {
 		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 			$templateField = $this->TemplateField->find(
 				'first',
@@ -691,200 +966,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 				$this->CobrandedApplicationValue->save($value);
 			}
 		}
-
-		$expectedValues = 
-			'"",'.
-			'"text",'.
-			'"2000-01-01",'.
-			'"08:00 pm",'.
-			'"true",'.
-			'"On",'.
-			'"On",'.
-			'"On",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"10.00",'.
-			'"10.00",'.
-			'"10.00",'.
-			'"8005551234",'.
-			'"10.00",'.
-			'"50",'.
-			'"123-45-6789",'.
-			'"12345-1234",'.
-			'"name@domain.com",'.
-			//'"10 months",'.
-			//'"4111-1111-1111-1111",'.
-			'"http://www.domain.com",'.
-			'"12.82234",'.
-			'"1234567890",'.
-			'"true",'.
-			'"a whole lot of text can go into this field...",'.
-			'"text text text",'.
-			'"text text text",'.
-			'"text text text",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"",'.
-			'"2",'.
-			'"",'.
-			'""';
-
-		$actualKeys = '';
-		$actualValues = '';
-		$this->CobrandedApplication->buildExportData($this->CobrandedApplication->id, $actualKeys, $actualValues);
-
-		// the keys should not have changed
-		$this->assertEquals($expectedKeys, $actualKeys, 'Filled out application keys were not what we expected');
-		$this->assertEquals($expectedValues, $actualValues, 'Filled out application values were not what we expected');
-	}
-
-	public function testSetFields() {
-		// knowns:
-		//     - user
-		//     - fieldsData
-		// pre-test:
-		//     - should not be cobrandedApplications for this user
-		$applications = $this->CobrandedApplication->find(
-			'all',
-			array(
-				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
-			)
-		);
-		$this->assertEquals(0, count($applications), 'Did not expect to find any applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
-
-		// TODO: tests -
-		// set expected results
-		$expectedValidationErrors = array(
-			'required_text_from_api_without_default' => 'required',
-		);
-
-		// set knowns
-		$user = $this->__user['OnlineappUser'];
-		// update the template_id to be 5
-		$user['template_id'] = 5;
-
-		// first pass, use invalid fieldsData
-		$fieldsData = array(
-			'required_text_from_api_without_default' => '' // this guy is required
-		);
-
-		// execute the method under test
-		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-
-		// assertions
-		$this->assertFalse($actualResponse['success'], 'saveFields with empty value for required field should fail');
-		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
-		$applications = $this->CobrandedApplication->find(
-			'all',
-			array(
-				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
-			)
-		);
-		$this->assertEquals(0, count($applications), 'Expect to find no applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
-
-		// this time use good data
-		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
-
-		// execute the method under test
-		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-
-		// assertions
-		$this->assertTrue($actualResponse['success'], 'saveFields with valid data should succeed');
-		$this->assertEquals(array(), $actualResponse['validationErrors'], 'Expected no validation errors for valid $fieldsData');
-		$applications = $this->CobrandedApplication->find(
-			'all',
-			array(
-				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
-			)
-		);
-		$this->assertEquals(1, count($applications), 'Expect to find one application for user with id ['.$this->__user['OnlineappUser']['id'].']');
-
-		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
-		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
-
-		for ($index=1; $index < 22; $index++) {
-			if ($index == 15 || $index == 16 /* not implemented yet*/) {
-				// ignore for now
-			} else {
-				if ($index == 0 ||
-					$index == 3 ||
-					$index == 4 ||
-					$index == 5 ||
-					$index == 6 ||
-					$index == 7 ||
-					$index == 8 ||
-					$index == 20 ||
-					$index == 21) {
-					// no validation
-				} else {
-					// set the $expectedValidationErrors
-					$expectedValidationErrors['required_text_from_api_without_default'] = $this->TemplateField->fieldTypes[$index];
-
-					// update templateField's type
-					$templateField['type'] = $index;
-					$this->TemplateField->save($templateField);
-
-					// set the fieldsData
-					$fieldsData['required_text_from_api_without_default'] = $this->__invalidApiTestValue[$index];
-
-					// execute the method under test
-					$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-					$this->assertFalse($actualResponse['success'], 'saveFields with empty value for required field should fail. $index ['.$index.']');
-					$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match ['.$index.']');
-				}
-			}
-		}
-	}
-
-	private $__invalidApiTestValue = array(
-		'text type is not validated',                                    //  0 - free form
-		'not a date',                                                    //  1 - yyyy/mm/dd
-		'not a time',                                                    //  2 - hh:mm:ss
-		'radio type is not validated',                                   //  3 - 
-		'label type is not validated',                                   //  4 - 
-		'100000',                                                        //  5 - (group of percent)
-		'label type is not validated',                                   //  6 - no validation
-		'fees type is not validated',                                    //  7 - (group of money?)
-		'hr type is not validated',                                      //  8 - no validation
-		'phoneUS',                                                       //  9 - (###) ###-####
-		'money same as fees',                                            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
-		'percent should be > 0 < 100',                                   // 11 - (0-100)%
-		'ssn value shoudl be ###-##-####',                               // 12 - ###-##-####
-		'zipcodeUS could include zip and the optional plus four value',  // 13 - #####[-####]
-		'email value shoudld be name@domainname.com',                    // 14 - 
-		'lengthoftime is not used yet',                                  // 15 - [#+] [year|month|day]s
-		'creditcard is not used yet',                                    // 16 - 
-		'url value should look like http://domain.com',                  // 17 - 
-		'number with a decimal',                                         // 18 - (#)+.(#)+
-		'digits only, nothing else',                                     // 19 - (#)+
-		'select... must be one of the default values',                   // 20 - *** need to implement this ***
-		'',                                                              // 21 - free form textarea
-	);
-
-	public function testCreateOnlineappForUser() {
-		$expectedResponse = array(
-			'success' => true,
-			'cobrandedApplication' => array(
-				'id' => 1, // testing for not null is the best we can do
-				'uuid' => 'some uuid', // no way of knowing this value...
-			),
-		);
-
-		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['OnlineappUser']);
-		$this->assertTrue($actualResponse['success'], 'createOnlineappForUser did not create an application');
-		$this->assertNotNull($actualResponse['cobrandedApplication']['id'], 'createOnlineappForUser should return a cobranded application id that is not null');
-
-		// next pass a uuid and guess at the id (id++)
-		$expectedResponse['cobrandedApplication']['id'] = $actualResponse['cobrandedApplication']['id']+1;
-		$uuid = String::uuid();
-		$expectedResponse['cobrandedApplication']['uuid'] = $uuid;
-		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['OnlineappUser'], $uuid);
-		$this->assertEquals($expectedResponse, $actualResponse, 'createOnlineappForUser response did not match the expected');
 	}
 
 }
