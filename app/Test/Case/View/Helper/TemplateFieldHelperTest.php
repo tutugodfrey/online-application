@@ -18,7 +18,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		//     $requireRequiredFields = <boolean>
 
 		// mock a field object
-		$options = array('source' => 0); // 0 ==> api
+		$options = array('source' => 0, 'values' => array('', '')); // 0 ==> api
 		$this->assertEmpty($this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), false), 'api fields are not displayed');
 		$this->assertEmpty($this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true), 'api fields are not displayed');
 
@@ -117,6 +117,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		);
 		$options['type'] = 4;
 		$options['default_value'] = 'name1::value1,name2::value2';
+		$options['values'] = array('','true');
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<label>name*</label>'.
@@ -128,7 +129,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 					'</li>'.
 					'<li>'.
 						'<label>'.
-							'<input type="radio" name="name" data-value-id="id2" >name2</input>'.
+							'<input type="radio" name="name" data-value-id="id2" checked="checked">name2</input>'.
 						'</label>'.
 					'</li>'.
 				'</ul>'.
@@ -136,6 +137,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-4-name-id-merg_field_name-1'
 		);
+		unset($options['values']);
 		$options['type'] = 5;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
@@ -331,18 +333,27 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		);
 	}
 
-	private function __buildFieldObject($options = array('source' => null, 'required' => null, 'rep_only' => null, 'type' => null, 'name' => null, 'id' => null, 'merge_field_name' => null, 'width' => null, 'default_value' => '')) {
+	private function __buildFieldObject($options = array('source' => null, 'required' => null, 'rep_only' => null, 'type' => null, 'name' => null, 'id' => null, 'merge_field_name' => null, 'width' => null, 'default_value' => '', 'values' => array('', ''))) {
 		$textField = array();
 		foreach ($options as $key => $value) {
-			$textField = Hash::insert($textField, $key, $options[$key]);
+			if ($key != 'values') {
+				$textField = Hash::insert($textField, $key, $options[$key]);
+			}
 		}
+
 		// mock the CobrandedApplicationValues relationship
+		$value0 = '';
+		$value1 = '';
+		if (key_exists('values', $options)) {
+			$value1 = $options['values'][0];
+			$value1 = $options['values'][1];
+		}
 		$textField = Hash::insert(
 			$textField,
 			'CobrandedApplicationValues',
 			array(
-				array('name' => 'name1', 'id'=>'id1', 'value' => ''),
-				array('name' => 'name2', 'id'=>'id2', 'value' => '')
+				array('name' => 'name1', 'id'=>'id1', 'value' => $value0),
+				array('name' => 'name2', 'id'=>'id2', 'value' => $value1),
 			)
 		);
 		return $textField;

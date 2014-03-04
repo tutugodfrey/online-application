@@ -444,13 +444,23 @@ class TemplateTest extends CakeTestCase {
 		$this->assertEquals($expectedTemplate, $actualTemplate['Template'], 'Expected to find a template with id of 5');
 
 		// make sure that no users are still referencing this template
-		$users = $this->User->find('all', array('conditions' => array('template_id' => $expectedTemplate['id'])));
+		$users = $this->User->find(
+			'all',
+			array(
+				'conditions' => array(
+					'template_id' => $expectedTemplate['id']
+				),
+				'recursive' => -1
+			)
+		);
 		foreach ($users as $key => $user) {
-			$user['User']['template_id'] = null;
+			$user['OnlineappUser']['template_id'] = null;
 			$this->User->save($user);
 		}
-		$this->Template->delete($actualTemplate['Template']['id']);
-		// look it up again
+
+		$this->Template->delete($expectedTemplate['id'], true);
+
+		// look it up again and verify it is missing
 		$actualTemplate = $this->Template->find(
 			'first',
 			array(
