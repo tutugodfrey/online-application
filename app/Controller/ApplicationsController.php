@@ -316,7 +316,8 @@ class ApplicationsController extends AppController {
 		$this->set('users', $this->Application->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id')));
 		$criteria = trim($this->passedArgs['search']);
 		$criteria = '%' . $criteria . '%';
-		$conditions = array('OR' => array(
+		$conditions = array(
+			'OR' => array(
 				'Application.legal_business_name ILIKE' => $criteria,
 				'Application.mailing_city ILIKE' => $criteria,
 				'Application.corp_contact_name ILIKE' => $criteria,
@@ -340,7 +341,7 @@ class ApplicationsController extends AppController {
 //        $this->paginate = array(
 //            'limit' => 50,
 //            'order' => array('Application.id' => 'desc'));
-	$this->paginate = $this->Application->paginationRules();
+		$this->paginate = $this->Application->paginationRules();
 		$applications = $this->paginate('Application', $conditions);
 		$this->set(compact('applications'));
 		$this->set('scaffoldFields', array_keys($this->Application->schema()));
@@ -461,14 +462,14 @@ class ApplicationsController extends AppController {
 			$this->set('data', $application);
 			$guid = $response['template']['guid'];
 			$xml = $this->requestAction(
-					array(
-				'controller' => 'Applications',
-				'action' => 'fs_xml'
-					), array(
-				'pass' => array($id, $guid),
-				'return',
-				'bare' => 1
-					)
+				array(
+					'controller' => 'Applications',
+					'action' => 'fs_xml'
+				), array(
+					'pass' => array($id, $guid),
+					'return',
+					'bare' => 1
+				)
 			);
 			$response = $rightsignature->post('/api/templates.json', $xml);
 			$response = json_decode($response, true);
