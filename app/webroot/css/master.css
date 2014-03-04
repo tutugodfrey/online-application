@@ -59,3 +59,15 @@ div.radio2 label, td.radio label {
 
 .center     { margin-left: auto; margin-right: auto; text-align: center; }
 .error      { color: #ff0000 }
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+    float: inherit; */
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin: 4px 5px 0;
+}

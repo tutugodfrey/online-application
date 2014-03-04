@@ -1000,30 +1000,25 @@ class ApplicationsController extends AppController {
 
 					// PERFORM VALIDATION
 					$application = $this->Application->read();
-					debug($application);
 
 					if ($application['Application'] && in_array($application['Application']['status'], array('completed', 'signed'))) {
 						$this->request->data = $application;
 						$validation = false;
 					} elseif ($application['Application'] && $application['Application']['status'] != 'saved') {
-							if ($this->request->data['Application']['location_type'] != 'other') {
+						if ($this->request->data['Application']['location_type'] != 'other') {
 							unset($this->request->data['Application']['location_type_other']);
 						}
 						$validation = $this->validate_steps(1, $this->request->data);
-					}
-					else
+					} else {
 						$validation = true;
+					}
 
 					if ($validation === true) {
 						// SAVE THE DATA
 						$this->Application->set($this->request->data);
-						debug($this->request->data);
 						//.if ($this->Auth->user('id')) $this->Application->set(array('user_id' => $this->Auth->user('id')));
 						if ($this->Application->save($this->request->data, array('validate' => false))) {
 							// REDIRECT TO THE NEXT STEP
-							debug($this->Application->id);
-							debug(array('action' => 'add', 2, $this->Application->id, $hash));
-#                            $this->redirect('http://www.google.com');
 							$this->redirect(array('action' => 'add', 2, $this->Application->id, $hash));
 						}
 					} else {
@@ -1031,6 +1026,7 @@ class ApplicationsController extends AppController {
 						$this->set('errors', $validation);
 					}
 				}
+
 				if ($id && $this->request->is('get')) {
 					$this->Application->id = $id;
 					$this->request->data = $this->Application->read();
