@@ -60,7 +60,7 @@ $this->Html->addCrumb(
 			<td><?php echo h($fieldTypes[$templateField['TemplateField']['type']]); ?>&nbsp;</td>
 			<td><?php echo $templateField['TemplateField']['required'] == 1 ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'required')) : ''; ?>&nbsp;</td>
 			<td><?php echo h($sourceTypes[$templateField['TemplateField']['source']]); ?>&nbsp;</td>
-			<td><?php echo h($templateField['TemplateField']['default_value']); ?>&nbsp;</td>
+			<td><?php echo h(String::truncate($templateField['TemplateField']['default_value']), 50); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['merge_field_name']); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['created']); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['modified']); ?>&nbsp;</td>
