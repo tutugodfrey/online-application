@@ -257,7 +257,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->Template->delete($this->Template->id);
 	}
 
-	public function testSaveAppValueWithUnknonFieldType() {
+	public function testSaveAppValueWithUnknownFieldType() {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
 		$applictionData = array(
