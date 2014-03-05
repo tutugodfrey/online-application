@@ -122,4 +122,12 @@ $(document).ready(function() {
 	$('#wizard fieldset.percent').each(function(index, item) {
 		$(item).find('input:first').trigger('blur');
 	});
+
+	$('div.tab-pane.active').on('click', function(e) {
+		var event = $(e).get(0);
+		if (event.altKey == true && event.shiftKey == true) {
+			// toggle the hidden property for all the $('.api_field')(s)
+			$('.api-field').toggle();
+		}
+	});
 });

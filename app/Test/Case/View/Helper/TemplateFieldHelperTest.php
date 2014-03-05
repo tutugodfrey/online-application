@@ -17,15 +17,23 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		//     $field = {object}
 		//     $requireRequiredFields = <boolean>
 
-		// mock a field object
-		$options = array('source' => 0, 'values' => array('', '')); // 0 ==> api
-		$this->assertEmpty($this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), false), 'api fields are not displayed');
-		$this->assertEmpty($this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true), 'api fields are not displayed');
+		// mock an api field object
+		$options = array(
+			'source' => 0, 'required' => false, 'rep_only' => false, 'type' => 0, 'name' => 'name', 'id' => 'id', 'merge_field_name' => 'merge_field_name', 'width' => 12, 'values' => array('', ''),
+		);
+		$this->assertEquals(
+			'<div class="col-md-12 api-field">'.
+				'<div class="input text">'.
+					'<label for="merge_field_name">name</label>'.
+					'<input name="merge_field_name" id="merge_field_name" disabled="disabled" data-value-id="id1" value="" class="col-md-12" type="text"/>'.
+				'</div>'.
+			'</div>',
+			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), false),
+			'api fields are displayed but hidden and disabled'
+		);
 
 		// all other tests will be with api == 1
-		$options = array(
-			'source' => 1, 'required' => false, 'rep_only' => false, 'type' => 0, 'name' => 'name', 'id' => 'id', 'merge_field_name' => 'merge_field_name', 'width' => 12,
-		);
+		$options['source'] = 1;
 		$this->assertEquals(
 			'<div class="col-md-12">'.
 				'<div class="input text">'.

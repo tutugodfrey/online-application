@@ -1932,10 +1932,9 @@ class ApplicationsController extends AppController {
 					} elseif (in_array($application['Application']['status'], array('completed', 'signed'))) {
 						$this->request->data = $application;
 						$validation = false;
-					}
-					else
+					} else {
 						$validation = $this->validate_hooza(6, $this->request->data);
-					//}
+					}
 
 					if ($validation === true) {
 						// SAVE THE DATA
@@ -1947,8 +1946,7 @@ class ApplicationsController extends AppController {
 						// REDIRECT TO THE END
 						$this->request->data = $this->Application->read();
 						//if ($this->Auth->user('group') != 'rep' && $this->Auth->user('group') != 'admin') $this->redirect(array('action'=>'end'));
-					}
-					else {
+					} else {
 						$this->set('id', ($id ? $id : $this->request->data['Application']['id']));
 						$this->set('errors', $validation);
 					}
@@ -1993,70 +1991,77 @@ class ApplicationsController extends AppController {
 	 * @todo depricate before pushing live
 	 */
 	function multipass_callback() {
-			App::uses('CakeEmail', 'Network/Email');
-			$Email = new CakeEmail();
-	if ($this->request->data) {
+		App::uses('CakeEmail', 'Network/Email');
+		$Email = new CakeEmail();
+		if ($this->request->data) {
 			$data = $this->request->data;
 			$Email->from(array('newapps@axiapayments.com' => 'Axia Online Applications'));
 			$Email->to('stanner@axiapayments.com');
 			$Email->subject('multipass');
 			if (!$data['Callback']['error']) {
-			$Email->send(
+				$Email->send(
 					$data['Callback']['callback_type'] . ' ' .
 					$data['Callback']['guid'] . ' ' .
 					$data['Callback']['Merchant']['merchant_id'] . ' ' .
 					$data['Callback']['Merchant']['device_id'] . ' ' .
 					$data['Callback']['Merchant']['username'] . ' ' .
 					$data['Callback']['Merchant']['pass']
-					);
+				);
 			} else {
 				$Email->send(
-				$data['Callback']['callback_type'] . ' ' .
-				$data['Callback']['guid'] . ' ' .
-				$data['Callback']['error']
-						);
+					$data['Callback']['callback_type'] . ' ' .
+					$data['Callback']['guid'] . ' ' .
+					$data['Callback']['error']
+				);
 			}
 			exit;
-	} else {
-		$this->Application->Multipass->callbackFailure();
-		exit;
-	}
-	
+		} else {
+			$this->Application->Multipass->callbackFailure();
+			exit;
+		}
 	/**
 	 * retrieve multipass data and pass it to client callback if one is present
 	 * @param array $data
 	 * @return array $multipassData
 	 */
 	}
+
 	function assignMultipass($data) {
 		App::uses('HttpSocket', 'Network/Http');
 		$HttpSocket = new HttpSocket();
 		$multipassData = $this->Application->Multipass->initializeMultipass($data);
 		if (isset($multipassData['Multipass']['merchant_id'])) {
-		$multipassArray = array('Callback' => array(
-			'callback_type' => 'Multipass',
-			'guid' => $data['Application']['guid'], 
-			'Merchant' => array(
-			'merchant_id' => $multipassData['Multipass']['merchant_id'],
-			'device_id' => $multipassData['Multipass']['device_number'], 
-			'username' => $multipassData['Multipass']['username'], 
-			'pass' => $multipassData['Multipass']['pass']
-				) 
-			));
-		$results = $HttpSocket->post($data['Application']['callback_url'], $multipassArray);
-		if ($results->code == 200) {return $multipassData;}
-		} else {
-			 $multipassArray = array('Callback' => array(
-			'callback_type' => 'Multipass',
-			'guid' => $data['Application']['guid'], 
-			'error' => 'Multipass Creation Failed'
-				) 
+			$multipassArray = array(
+				'Callback' => array(
+					'callback_type' => 'Multipass',
+					'guid' => $data['Application']['guid'], 
+					'Merchant' => array(
+						'merchant_id' => $multipassData['Multipass']['merchant_id'],
+						'device_id' => $multipassData['Multipass']['device_number'], 
+						'username' => $multipassData['Multipass']['username'], 
+						'pass' => $multipassData['Multipass']['pass']
+					)
+				)
 			);
-		$results = $HttpSocket->post($data['Application']['callback_url'], $multipassArray);
-		if ($results->code == 200) {return $multipassData;}
+			$results = $HttpSocket->post($data['Application']['callback_url'], $multipassArray);
+			if ($results->code == 200) {
+				return $multipassData;
+			}
+		} else {
+			 $multipassArray = array(
+			 	'Callback' => array(
+					'callback_type' => 'Multipass',
+					'guid' => $data['Application']['guid'], 
+					'error' => 'Multipass Creation Failed'
+				)
+			);
+			$results = $HttpSocket->post($data['Application']['callback_url'], $multipassArray);
+			if ($results->code == 200) {
+				return $multipassData;
+			}
 		}
 	}
-	
+
 	/**
 	 * @todo Consider refactoring
 	 */
@@ -2066,30 +2071,36 @@ class ApplicationsController extends AppController {
 			$this->Session->setFlash('Email sent to ' . $emailStr);
 		}
 		if ($this->request->data['Application']['email']) {
-			$applications = Set::combine($this->Application->find(
-									'all', array(
-								'conditions' => array(
-									'or' => array(
-										'corporate_email' => $this->request->data['Application']['email'],
-										'location_email' => $this->request->data['Application']['email'],
-										'owner1_email' => $this->request->data['Application']['email'],
-										'owner2_email' => $this->request->data['Application']['email']
-									)
-								)
-									)
-							), '{n}.Application.id', '{n}.Application');
+			$applications = Set::combine(
+				$this->Application->find(
+					'all',
+					array(
+						'conditions' => array(
+							'or' => array(
+								'corporate_email' => $this->request->data['Application']['email'],
+								'location_email' => $this->request->data['Application']['email'],
+								'owner1_email' => $this->request->data['Application']['email'],
+								'owner2_email' => $this->request->data['Application']['email']
+							)
+						)
+					)
+				),
+				'{n}.Application.id', '{n}.Application'
+			);
+
 			if ($applications) {
 				// Update the hash
 				$hash = md5(String::uuid());
 				$this->Application->updateAll(
-						array('hash' => "'" . $hash . "'"), array(
-					'or' => array(
-						'corporate_email' => $this->request->data['Application']['email'],
-						'location_email' => $this->request->data['Application']['email'],
-						'owner1_email' => $this->request->data['Application']['email'],
-						'owner2_email' => $this->request->data['Application']['email']
-					)
+					array('hash' => "'" . $hash . "'"),
+					array(
+						'or' => array(
+							'corporate_email' => $this->request->data['Application']['email'],
+							'location_email' => $this->request->data['Application']['email'],
+							'owner1_email' => $this->request->data['Application']['email'],
+							'owner2_email' => $this->request->data['Application']['email']
 						)
+					)
 				);
 				$this->Email->from = 'Axia Online Applications <' . EmailTimeline::NEWAPPS_EMAIL . '>';
 				$this->Email->to = $this->request->data['Application']['email'];
@@ -2118,7 +2129,6 @@ class ApplicationsController extends AppController {
 		if ($id) {
 			$this->Application->id = $id;
 			$this->request->data = $this->Application->read();
-
 
 			// Update the hash
 			$hash = md5(String::uuid());
@@ -2197,7 +2207,6 @@ class ApplicationsController extends AppController {
 	 * 
 	 * 
 	 */
-	
 	function emailMultipassToDataEntry($data, $multipassMerchantId) {
 		$csv = $this->Application->multipassCsv($data, $multipassMerchantId);      
 		$Email = new CakeEmail();
@@ -2361,7 +2370,6 @@ class ApplicationsController extends AppController {
 		if ($id) {
 			$this->Application->Coversheet->sendCoversheet($id);
 			unlink(WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
-
 		}
 	}
 
@@ -2371,19 +2379,23 @@ class ApplicationsController extends AppController {
 			exit;
 		}
 
-		$applications = Set::combine($this->Application->find(
-								'all', array(
-							'conditions' => array(
-								'or' => array(
-									'corporate_email' => $email,
-									'location_email' => $email,
-									'owner1_email' => $email,
-									'owner2_email' => $email
-								),
-								'hash' => $hash
-							)
-								)
-						), '{n}.Application.id', '{n}.Application');
+		$applications = Set::combine(
+			$this->Application->find(
+				'all', array(
+					'conditions' => array(
+						'or' => array(
+							'corporate_email' => $email,
+							'location_email' => $email,
+							'owner1_email' => $email,
+							'owner2_email' => $email
+						),
+						'hash' => $hash
+					)
+				)
+			),
+			'{n}.Application.id',
+			'{n}.Application'
+		);
 
 		if ($applications) {
 			$this->set('email', $email);

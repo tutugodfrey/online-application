@@ -552,7 +552,7 @@ $fieldId = $FP->createIfMissing('Average Ticket', $sectionId, 4, 10, true, 0, ''
 $fieldId = $FP->createIfMissing('Highest Ticket', $sectionId, 4, 10, true, 0, '', 'MaxSalesAmt', 'Estimated Maximum Transaction Amount', null);
 $fieldId = $FP->createIfMissing('Current Processor', $sectionId, 12, 0, true, 1, 'N/A', 'Previous Processor', 'Current ACH Provider', null);
 
-$fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 12, 11, true, 1, 100, 'Card Not Present (Internet)', 'Method of Sales', null);
+$fieldId = $FP->createIfMissing('Method of Sales - Written Pre-Authorized - Company', $sectionId, 12, 11, true, 1, 100, 'Card Not Present (Internet)', 'Written Pre-Authorized - Company', null);
 $fieldId = $FP->createIfMissing('% of Product Sold Merchant Initiated', $sectionId, 12, 11, true, 1, 50, 'Merchant Initiated', '', null);
 $fieldId = $FP->createIfMissing('% of Product Sold Consumer Initiated', $sectionId, 12, 11, true, 1, 50, 'Consumer Initiated', '', null);
 

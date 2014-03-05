@@ -70,3 +70,6 @@
 	font-size: 15px;
 	margin-bottom: 10px;
 }
+div.api-field {
+	display: none;
+}
