@@ -853,15 +853,21 @@ class Application extends AppModel {
 		);
 		return $paginateArray;
 	}
-	/**
-	 * massage data prior to saving
-	 * @param array $options
-	 * @return boolean
-	 */
+
+/**
+ * massage data prior to saving
+ * @param array $options
+ * @return boolean
+ */
 	public function beforeSave($options = array()) {
 		parent::beforeSave($options);
 		//when FireSpring/PaymentSpring hits the REST API copy location data to corp data
-		if ($this->data[$this->alias]['user_id'] === User::FIRE_SPRING && $this->data[$this->alias]['api'] === true) {
+		debug($this->data[$this->alias]);
+		if (isset($this->data[$this->alias]['user_id']) &&
+			$this->data[$this->alias]['user_id'] === User::FIRE_SPRING &&
+			isset($this->data[$this->alias]['api']) &&
+			$this->data[$this->alias]['api'] === true) {
+
 			$this->data[$this->alias]['location_address'] = $this->data[$this->alias]['mailing_address'];
 			$this->data[$this->alias]['location_city'] = $this->data[$this->alias]['mailing_city'];
 			$this->data[$this->alias]['location_state'] = $this->data[$this->alias]['mailing_state'];
@@ -904,6 +910,10 @@ class Application extends AppModel {
 			$this->_stripNonNumeric();
 		}
 		return true;
+	}
+
+	public function afterFind($results, $primary = false) {
+		parent::afterFind($results, $primary);
 	}
 
 	/**

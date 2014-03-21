@@ -1,6 +1,8 @@
 <?php
 App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
+App::uses('EmailTimeline', 'Model');
+App::uses('CakeEmail', 'Network/Email');
 
 /**
  * CobrandedApplication Model
@@ -8,7 +10,6 @@ App::uses('TemplateField', 'Model');
  * @property CobrandedApplicationValues $CobrandedApplicationValues
  */
 class CobrandedApplication extends AppModel {
-
 
 /**
  * Table to use
@@ -18,7 +19,7 @@ class CobrandedApplication extends AppModel {
 	public $useTable = 'onlineapp_cobranded_applications';
 
 /**
- * Validation rules
+ * Behaviors
  *
  * @var array
  */
@@ -28,7 +29,7 @@ class CobrandedApplication extends AppModel {
 	);
 
 /**
- * Behaviors
+ * Validation rules
  *
  * @var array
  */
@@ -96,7 +97,7 @@ class CobrandedApplication extends AppModel {
  * @params
  *     $created boolean
  */
-	public function afterSave($created/*, $options*/) {
+	public function afterSave($created, $options = array()) {
 		if ($created === true) {
 			$applicationId = $this->data['CobrandedApplication']['id'];
 			$template = $this->Template->find('first', array(
@@ -568,6 +569,74 @@ class CobrandedApplication extends AppModel {
 			return true;
 		}
 		return false;
+	}
+
+	public function findAppsByEmail($email) {
+		$apps = $this->find(
+			'all',
+			array(
+				'joins' => array(
+					array(
+						'alias' => 'CobrandedApplicationValue',
+						'table' => 'onlineapp_cobranded_application_values',
+						'type' => 'LEFT',
+						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"'
+					)
+				),
+				'conditions' => array(
+					'CobrandedApplicationValue.value' => $email,
+					// should probably check the state too
+				),
+				'order' => 'CobrandedApplication.created desc'
+			)
+		);
+
+		return $apps;
+	}
+
+/**
+ * sendFieldCompletionEmail
+ * 
+ * @params
+ *     $email string
+ * @returns
+ *     $response array
+ */
+	public function sendFieldCompletionEmail($email) {
+		$response = array(
+			'success' => false,
+			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
+		);
+
+		$hash = String::uuid();
+		$apps = $this->findAppsByEmail($email);
+		if (count($apps) == 0) {
+			$response['msg'] = 'Could not find any applications with the specified email address.';
+		} else {
+			// update the hash
+			foreach ($apps as $key => $app) {
+				$app['CobrandedApplication']['uuid'] = $hash;
+				$this->save($app);
+			}
+
+			// and send the email
+			$link = Router::url('/applications/index/', true).urlencode($email)."/{$hash}";
+
+			$Email = new CakeEmail('default');
+			$Email->emailFormat('text')
+				->from(array('newapps@axiapayments.com' => 'Axia Online Applications'))
+				->template('retrieve_applications')
+				->to($email)
+				->subject('Your Axia Applications')
+				->viewVars(array('email'=>$email, 'hash'=>$hash, 'link'=>$link))
+				->send();
+
+			// TODO: record that he email was sent
+
+			$response['success'] = true;
+			$response['msg'] = '';
+		}
+		return $response;
 	}
 
 /**

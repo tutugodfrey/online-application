@@ -154,7 +154,7 @@ class Template extends AppModel {
 		return $formattedData;
 	}
 
-	public function beforeDelete() {
+	public function beforeDelete($cascade = true) {
 		$templateToDelete = $this->read();
 		$pages = $templateToDelete['TemplatePages'];
 		if (count($pages) > 0) {
@@ -166,7 +166,7 @@ class Template extends AppModel {
 		}
 	}
 
-	public function afterSave($created, $options) {
+	public function afterSave($created, $options = array()) {
 		if ($created == true) {
 			$page = $this->__getValidateApplicationPageMetaData();
 			// add 'Validate Application' page

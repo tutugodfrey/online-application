@@ -30,3 +30,5 @@ ehthumbs.db
 Thumbs.db
 cache.properties
 /.project
+*.sublime-project
+*.sublime-workspace

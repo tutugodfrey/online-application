@@ -2,6 +2,8 @@
 App::uses('AppController', 'Controller');
 App::uses('TemplateField', 'View/Helper');
 App::uses('Setting', 'Model');
+App::uses('Validation', 'Utility');
+
 /**
  * CobrandedApplications Controller
  *
@@ -20,6 +22,11 @@ class CobrandedApplicationsController extends AppController {
  */
 	public $components = array('Email', 'RequestHandler', 'Security', 'Search.Prg');
 
+	public $permissions = array(
+		'add' => array('admin', 'rep', 'manager'),
+		'api_add' => array('api'),
+	);
+
 	public $helper = array('TemplateField');
 
 	public function beforeFilter() {
@@ -30,7 +37,23 @@ class CobrandedApplicationsController extends AppController {
 
 		if (($this->params['ext'] == 'json' || $this->request->accepts('application/json'))) {
 			$this->Security->unlockedActions= array('api_add');
+		} else {
+			// are we authenticated?
+			if (is_null($this->Auth->user('id'))) {
+				// not authenticated
+				// next -> were we passed a valid uuid?
+				$uuid = (isset($this->params['pass'][0]) ? $this->params['pass'][0] : '');
+				if (Validation::uuid($uuid)) {
+					// yup, allow edit action
+					$this->Auth->allow('edit');
+					// could look it up even
+				} else {
+					// invalid uuid - allow retrievel of their application via their email
+					$this->Auth->allow('retrieve', 'retrieve_thankyou');
+				}
+			}
 		}
+
 		$this->fetchSettings();
 		$this->settings = Configure::read('Setting');
 	}
@@ -141,40 +164,66 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
+ * retrieve
+ * 
+ * 
+ */
+	public function retrieve() {
+		$error = '';
+		if ($this->request->is('post')) {
+			// did we get a valid email?
+			$email = $this->request->data['CobrandedApplication']['email'];
+			if (Validation::email($email)) {
+				// yes, does this email have any applications associated with it?
+
+				// yes, update the application uuid and send the email via the model
+				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email);
+				debug($response);
+
+				$this->render('retrieve_thankyou');
+			} else {
+				$error = 'Invalid email address submitted.';
+			}
+		}
+
+		$this->set('error', $error);
+	}
+
+/**
  * edit method
  *
- * @throws NotFoundException
  * @param string $uuid
  * @return void
  */
 	public function edit($uuid = null) {
 		if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
-			throw new NotFoundException(__('Invalid application'));
-		}
-
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->CobrandedApplication->save($this->request->data)) {
-				$this->Session->setFlash(__('The application has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
-			}
+			// redirect to a retrieve page
+			$this->redirect(array('action' => 'retrieve'));
 		} else {
-			$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
-			$this->request->data = $this->CobrandedApplication->find('first', $options);
+			if ($this->request->is('post') || $this->request->is('put')) {
+				if ($this->CobrandedApplication->save($this->request->data)) {
+					$this->Session->setFlash(__('The application has been saved'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
+				}
+			} else {
+				$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
+				$this->request->data = $this->CobrandedApplication->find('first', $options);
+			}
+
+			$users = $this->CobrandedApplication->User->find('list');
+			$this->set(compact('users'));
+
+			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id']);
+
+			$this->set('templatePages', $template['Template']['TemplatePages']);
+			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
+
+			// if it is a rep viewing/editing the application don't require fields to be filled in
+			// but if they do have data, validate it
+			$this->set('requireRequiredFields', false);
 		}
-
-		$users = $this->CobrandedApplication->User->find('list');
-		$this->set(compact('users'));
-
-		$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id']);
-
-		$this->set('templatePages', $template['Template']['TemplatePages']);
-		$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
-
-		// if it is a rep viewing/editing the application don't require fields to be filled in
-		// but if they do have data, validate it
-		$this->set('requireRequiredFields', false);
 	}
 
 /**

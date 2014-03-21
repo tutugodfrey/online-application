@@ -84,7 +84,7 @@ class CobrandedApplicationValue extends AppModel {
 		)
 	);
 
-	public function beforeSave() {
+	public function beforeSave($options = array()) {
 		$retVal = true;
 		// only validate in the update case, ignore durring create; null will not be valid in all cases
 		if (key_exists('id', $this->data[$this->alias])) {
