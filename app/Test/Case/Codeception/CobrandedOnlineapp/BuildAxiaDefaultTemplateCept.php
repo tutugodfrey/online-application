@@ -557,7 +557,7 @@ $fieldId = $FP->createIfMissing('% of Product Sold Merchant Initiated', $section
 $fieldId = $FP->createIfMissing('% of Product Sold Consumer Initiated', $sectionId, 12, 11, true, 1, 50, 'Consumer Initiated', '', null);
 
 // create a new field
-$fieldId = $FP->createIfMissing('Ownership Type', $sectionId, 12, 0, true, 1, 'true', 'Owner Type - Corp', 'Ownership Type', null);
+$fieldId = $FP->createIfMissing('Ownership Type', $sectionId, 12, 0, true, 0, '', 'Ownership Type', 'Ownership Type', null);
 $fieldId = $FP->createIfMissing('Corporate Status', $sectionId, 12, 0, false, 1, '', 'CorpStatus', '', null, true);
 $fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 0, '', 'TaxID', 'Federal Tax ID #', null);
 
