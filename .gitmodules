@@ -16,3 +16,6 @@
 [submodule "cakephp"]
 	path = cakephp
 	url = https://github.com/cakephp/cakephp.git
+[submodule "app/Plugin/Phpunit"]
+	path = app/Plugin/Phpunit
+	url = https://github.com/dereuromark/cakephp-phpunit.git
