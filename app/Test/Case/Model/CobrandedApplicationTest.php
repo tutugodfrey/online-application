@@ -65,7 +65,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		$this->User->create(
 			array(
-				'email' => 'testing@axiapayments.com',
+				'email' => 'compact(varname)',
 				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
 				'group_id' => 1,
 				'created' => '2014-01-24 11:02:22',
@@ -220,6 +220,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'merge_field_name' => 'required_text_from_user_without_default',
 										'order' => (int) 0,
 										'section_id' => (int) 1,
+										'encrypt' => false,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array(
@@ -247,6 +248,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'merge_field_name' => 'required_text_from_user_without_default',
 										'order' => (int) 1,
 										'section_id' => (int) 1,
+										'encrypt' => false,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array()
@@ -264,6 +266,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'merge_field_name' => 'required_text_from_user_without_default',
 										'order' => (int) 2,
 										'section_id' => (int) 1,
+										'encrypt' => false,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array()
@@ -281,6 +284,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'merge_field_name' => 'required_radio_from_user_without_default',
 										'order' => 3,
 										'section_id' => 1,
+										'encrypt' => false,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array(
@@ -413,6 +417,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'merge_field_name' => 'required_text_from_user_without_default',
 				'order' => 0,
 				'section_id' => 1,
+				'encrypt' => false,
 				'created' => '2013-12-18 14:10:17',
 				'modified' => '2013-12-18 14:10:17',
 			),
@@ -472,6 +477,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'merge_field_name' => 'required_radio_from_user_without_default',
 				'order' => 3,
 				'section_id' => 1,
+				'encrypt' => false,
 				'created' => '2013-12-18 14:10:17',
 				'modified' => '2013-12-18 14:10:17',
 			),

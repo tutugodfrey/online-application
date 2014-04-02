@@ -50,6 +50,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input('default_value');
 		echo $this->Form->input('merge_field_name');
 		echo $this->Form->input('description');
+		echo $this->Form->input('encrypt');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

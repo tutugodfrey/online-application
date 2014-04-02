@@ -19,6 +19,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 		'merge_field_name' => array('type' => 'string', 'null' => true, 'default' => null),
 		'order' => array('type' => 'integer', 'null' => false),
 		'section_id' => array('type' => 'integer', 'null' => false),
+		'encrypt' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'created' => array('type' => 'datetime', 'null' => false),
 		'modified' => array('type' => 'datetime', 'null' => false),
 		'indexes' => array(
@@ -45,6 +46,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 0,
 			'section_id' => 1,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -60,6 +62,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 1,
 			'section_id' => 1,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -75,6 +78,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 2,
 			'section_id' => 1,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -90,6 +94,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 3,
 			'section_id' => 1,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -105,6 +110,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 0,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -120,6 +126,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 1,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -135,6 +142,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 2,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -150,6 +158,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 3,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -165,6 +174,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 4,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -180,6 +190,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 5,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -195,6 +206,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 6,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -210,6 +222,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 7,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -225,6 +238,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 8,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -240,6 +254,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 9,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -255,6 +270,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 10,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -270,6 +286,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 11,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -285,6 +302,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 12,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -300,6 +318,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 13,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -315,6 +334,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 14,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -330,6 +350,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 15,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -345,6 +366,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 16,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),*/
@@ -360,6 +382,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 17,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -375,6 +398,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 18,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -390,6 +414,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 19,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -405,6 +430,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 20,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -420,6 +446,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 21,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -435,6 +462,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 22,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -450,6 +478,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 23,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -465,6 +494,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 24,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -480,6 +510,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 25,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -495,6 +526,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 26,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -510,6 +542,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 27,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -525,6 +558,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 28,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -540,6 +574,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 29,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -555,6 +590,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 30,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -570,6 +606,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 31,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -585,6 +622,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 32,
 			'section_id' => 4,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -603,6 +641,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 0,
 			'section_id' => 5,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -618,6 +657,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 1,
 			'section_id' => 5,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -633,6 +673,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 1,
 			'section_id' => 5,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
@@ -648,6 +689,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 1,
 			'section_id' => 5,
 			'rep_only' => false,
+			'encrypt' => false,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),

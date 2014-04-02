@@ -45,6 +45,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input('default_value', array('div' => 'col-md-12'));
 		echo $this->Form->input('merge_field_name', array('div' => 'col-md-12'));
 		echo $this->Form->input('description', array('div' => 'col-md-12'));
+		echo $this->Form->input('encrypt', array('div' => 'col-md-6'));
 		echo $this->Form->hidden('section_id');
 		echo '</div>';
 	?>

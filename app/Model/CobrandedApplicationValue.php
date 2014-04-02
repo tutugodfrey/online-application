@@ -98,6 +98,16 @@ class CobrandedApplicationValue extends AppModel {
 				)
 			);
 			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
+
+			// check if field is set to encrypt
+			// if it is, encrypt and store data
+			if ($retVal && $field['TemplateField']['encrypt']) {
+				$data = $this->data[$this->alias]['value'];
+				if ($data !== '') {
+					$this->data[$this->alias]['value'] = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+						$data, 'cbc', Configure::read('Cryptable.iv')));
+				}
+			}
 		}
 		return $retVal;
 	}

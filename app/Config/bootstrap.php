@@ -76,6 +76,7 @@ CakePlugin::load('DebugKit');
 CakePlugin::load('Migrations');
 CakePlugin::load('Utils');
 CakePlugin::load('BoostCake');
+CakePlugin::load('Phpunit');
 Configure::load('app_config');
 
 /**

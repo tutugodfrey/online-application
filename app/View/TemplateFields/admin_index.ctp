@@ -47,6 +47,7 @@ $this->Html->addCrumb(
 			<th><?php echo $this->Paginator->sort('source'); ?></th>
 			<th><?php echo $this->Paginator->sort('default_value'); ?></th>
 			<th><?php echo $this->Paginator->sort('merge_field_name'); ?></th>
+			<th><?php echo $this->Paginator->sort('encrypt'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -62,6 +63,7 @@ $this->Html->addCrumb(
 			<td><?php echo h($sourceTypes[$templateField['TemplateField']['source']]); ?>&nbsp;</td>
 			<td><?php echo h(String::truncate($templateField['TemplateField']['default_value']), 50); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['merge_field_name']); ?>&nbsp;</td>
+			<td><?php echo $templateField['TemplateField']['encrypt'] == 1 ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'encrypted')) : ''; ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['created']); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['modified']); ?>&nbsp;</td>
 			<td class="actions">
