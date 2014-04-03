@@ -62,7 +62,7 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'order' => 1,
 			'section_id' => 1,
 			'rep_only' => false,
-			'encrypt' => false,
+			'encrypt' => true,
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),

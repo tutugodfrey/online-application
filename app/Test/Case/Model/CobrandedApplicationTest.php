@@ -248,10 +248,20 @@ class CobrandedApplicationTest extends CakeTestCase {
 										'merge_field_name' => 'required_text_from_user_without_default',
 										'order' => (int) 1,
 										'section_id' => (int) 1,
-										'encrypt' => false,
+										'encrypt' => true,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
-										'CobrandedApplicationValues' => array()
+										'CobrandedApplicationValues' => array(
+											(int) 0 => array(
+												'id' => (int) 5,
+												'cobranded_application_id' => (int) 1,
+												'template_field_id' => (int) 2,
+												'name' => 'Encrypt1',
+												'value' => null,
+												'created' => '2014-01-23 17:28:15',
+												'modified' => '2014-01-23 17:28:15'
+											)
+										)
 									),
 									(int) 2 => array(
 										'id' => (int) 3,
@@ -432,15 +442,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// tests for the other types are performed by testBuildExportData
 		// we should also test the other invalid types...
-
 		$this->assertTrue($response['success'], 'Expected save operation to return true');
 		$actual = $this->CobrandedApplication->getApplicationValue(1);
 		$this->assertEquals($expectedNewValue, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
 
 		// save again witht the same data
 		$response = $this->CobrandedApplication->saveApplicationValue($inputData);
-
 		$this->assertFalse($response['success'], 'Expected save operation to return true');
+
 		// also make sure the actual value is still newValue
 		$actual = $this->CobrandedApplication->getApplicationValue(1);
 		$this->assertEquals($expectedNewValue, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');

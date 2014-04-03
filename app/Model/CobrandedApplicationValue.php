@@ -97,6 +97,7 @@ class CobrandedApplicationValue extends AppModel {
 					)
 				)
 			);
+
 			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
 
 			// check if field is set to encrypt
@@ -189,5 +190,43 @@ class CobrandedApplicationValue extends AppModel {
 		}
 
 		return $retVal;
+	}
+
+/**
+ * afterFind
+ *
+ * @params
+ *     $results array
+ *     $primary boolean
+ */
+	public function afterFind($results, $primary = false) {
+		parent::afterFind($results, $primary);
+
+		if (!empty($results) && is_array($results)) {
+			foreach ($results as $resultKey => $resultValue) {
+				if (!empty($resultValue['CobrandedApplicationValue']) && is_array($resultValue['CobrandedApplicationValue'])) {
+					if ($resultValue['CobrandedApplicationValue']['value'] !== '' && $resultValue['CobrandedApplicationValue']['value'] !== null) {
+						$templateField = $this->TemplateField->find(
+							'first',
+							array(
+								'conditions' => array(
+									'TemplateField.id' => $resultValue['CobrandedApplicationValue']['template_field_id']
+								),
+							)
+						);
+
+						// only decrypt fields set to encrypt
+						if ($templateField['TemplateField']['encrypt']) {
+							$data = $resultValue['CobrandedApplicationValue']['value'];
+							$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+										base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
+							$results[$resultKey]['CobrandedApplicationValue']['value'] = $data;
+						}
+					}
+				}
+			}
+		}
+
+		return $results;
 	}
 }

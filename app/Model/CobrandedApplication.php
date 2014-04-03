@@ -159,49 +159,6 @@ class CobrandedApplication extends AppModel {
 			}
 		}
 	}
-
-/**
- * afterFind
- *
- * @params
- *     $results array
- *     $primary boolean
- */
-	public function afterFind($results, $primary = false) {
-		parent::afterFind($results, $primary);
-
-		if (!empty($results) && is_array($results)) {
-			foreach ($results as $resultKey => $resultValue) {
-				if (!empty($resultValue['Template']['TemplatePages']) && is_array($resultValue['Template']['TemplatePages'])) {
-					foreach ($resultValue['Template']['TemplatePages'] as $templatePageKey => $templatePage) {
-						if (!empty($templatePage['TemplateSections']) && is_array($templatePage['TemplateSections'])) {
-							foreach ($templatePage['TemplateSections'] as $templateSectionKey => $templateSection) {
-								if (!empty($templateSection) && is_array($templateSection)) {
-									foreach ($templateSection['TemplateFields'] as $templateFieldKey => $templateField) {
-										if ($templateField['encrypt']) {
-											if (!empty($templateField['CobrandedApplicationValues']) && is_array($templateField['CobrandedApplicationValues'])) {
-												foreach ($templateField['CobrandedApplicationValues'] as $valueArrayKey => $valueArray) {
-													if ($valueArray['value'] !== '') {
-														$data = $valueArray['value'];
-														$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
-															base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
-														$results[$resultKey]['Template']['TemplatePages'][$templatePageKey]['TemplateSections'][$templateSectionKey]
-															['TemplateFields'][$templateFieldKey]['CobrandedApplicationValues'][$valueArrayKey]['value'] = $data;
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return $results;
-	}
 	
 /**
  * getTemplateAndAssociatedValues

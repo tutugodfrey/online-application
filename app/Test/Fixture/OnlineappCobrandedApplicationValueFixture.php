@@ -45,17 +45,27 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 			'value' => null,
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
-		),array(
+		),
+		array(
 			'cobranded_application_id' => 1,
 			'template_field_id' => 4,
 			'name' => 'name2',
 			'value' => null,
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
-		),array(
+		),
+		array(
 			'cobranded_application_id' => 1,
 			'template_field_id' => 4,
 			'name' => 'name3',
+			'value' => null,
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 2,
+			'name' => 'Encrypt1',
 			'value' => null,
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'

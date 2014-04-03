@@ -173,9 +173,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		);
 
 		$this->CobrandedApplication->create($applictionData);
-
 		$cobrandedApplication = $this->CobrandedApplication->save();
-
 		$applicationAndValues = $this->CobrandedApplicationValue->find(
 			'all',
 			array(
@@ -280,8 +278,80 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$unknownFieldType['CobrandedApplicationValue']['value'] = 'a new value';
 
 		$this->setExpectedException('Exception', 'Unknown field type, cannot validate it.', 1);
-
 		$this->CobrandedApplicationValue->save($unknownFieldType['CobrandedApplicationValue']);
+	}
+
+	public function testApplicationValueEncryption() {
+		$applicationValue = $this->CobrandedApplicationValue->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplicationValue.name' => 'Encrypt1')
+			)
+		);
+		$this->assertEquals(null, $applicationValue['CobrandedApplicationValue']['value'], 'verify Encrypt1 application value is initially null');
+
+		$testValue = 'encryption testing';
+
+		// application value should be encrypted in database after this
+		$applicationValue['CobrandedApplicationValue']['value'] = $testValue;
+		$this->CobrandedApplicationValue->save($applicationValue);
+
+		// encrypt our test value for comparison
+		$encryptedTestValue = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+			$testValue, 'cbc', Configure::read('Cryptable.iv')));
+
+		$result = $this->db->query("SELECT * from onlineapp_cobranded_application_values where cobranded_application_id = 1 and name = 'Encrypt1'");
+		$encryptedDbValue = $result[0][0]['value'];
+		$this->assertEquals($encryptedTestValue, $encryptedDbValue, 'verify value is encrypted as expected in database');
+	}
+
+	public function testBeforeSaveEncryption() {
+		$applicationValue = $this->CobrandedApplicationValue->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplicationValue.name' => 'Encrypt1')
+			)
+		);
+		$this->assertEquals(null, $applicationValue['CobrandedApplicationValue']['value'],
+			'verify Encrypt1 application value is initially null');
+
+		$testValue = 'encryption testing';
+
+		// application value should be encrypted in database after this
+		$applicationValue['CobrandedApplicationValue']['value'] = $testValue;
+		$result = $this->CobrandedApplicationValue->save($applicationValue);
+
+		$this->assertEquals('XD+C8LSmk/u58hI1tyN88qlZtIRVvBa+', $result['CobrandedApplicationValue']['value'],
+			'verify value is encrypted as expected in database');
+	}
+
+	public function testAfterFind() {
+		$applicationValue = $this->CobrandedApplicationValue->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplicationValue.name' => 'Encrypt1')
+			)
+		);
+		$this->assertEquals(null, $applicationValue['CobrandedApplicationValue']['value'],
+			'verify Encrypt1 application value is initially null');
+
+		$testValue = 'encryption testing';
+
+		// application value should be encrypted in database after this
+		$applicationValue['CobrandedApplicationValue']['value'] = $testValue;
+		$this->CobrandedApplicationValue->save($applicationValue);
+
+		// retrieve application value
+		// value should get decrypted in afterFind()
+		$applicationValue = $this->CobrandedApplicationValue->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplicationValue.name' => 'Encrypt1')
+			)
+		);
+
+		$this->assertEquals('encryption testing', $applicationValue['CobrandedApplicationValue']['value'],
+			'verify value is decrypted as expected');
 	}
 
 	private function __testInvalidAndValidAppValues($typeString, $appValue, $invalid, $valid) {
