@@ -143,7 +143,7 @@ class CobrandedApplicationsController extends AppController {
 			switch ($this->Auth->user('cobrand_id')) {
 				// we may just want to open up the API access to all cobrands...
 				// this VVV way we require a code change if another partner wants to use the API
-				case 8: // Appfolio
+				case 7: // Appfolio
 					$response = $this->CobrandedApplication->saveFields($user['User'], $this->request->data);
 					break;
 

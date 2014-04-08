@@ -95,10 +95,10 @@ class DATABASE_CONFIG {
 		// convert to regex to test for '*-test'
 		if(isset($_SERVER['SERVER_NAME'])){
 		    switch($_SERVER['SERVER_NAME']){
-		        case 'todo-change-to-prod-onlineapp-url.axiapayments.com':
+		        	case 'todo-change-to-prod-onlineapp-url.axiapayments.com':
 					$this->default = $this->prod;
 					break;
-				case 'app-travis-test.axiapayments.com':
+				case 'app-sean-test.axiapayments.com':
 					$this->default = $this->test;
 					break;
 				default:

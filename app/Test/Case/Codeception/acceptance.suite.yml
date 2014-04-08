@@ -16,7 +16,7 @@ modules:
         - Db
     config:
         PhpBrowser:
-            url: 'https://app-travis-test.axiapayments.com'
+            url: 'https://app-sean-test.axiapayments.com'
         Db:
             dsn: 'pgsql:host=localhost;dbname=test_legacy'
             user: 'axia'
