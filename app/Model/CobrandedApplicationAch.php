@@ -10,11 +10,23 @@ class CobrandedApplicationAch extends AppModel {
 
 	public $useTable = 'onlineapp_cobranded_application_aches';
 
-/**
- * Validation rules
- *
- * @var array
- */
+	/**
+	 * Attach Model Behavoirs
+	 * @var array
+	 */
+	public $actsAs = array(
+		'Cryptable' => array(
+			'fields' => array(
+				'auth_type', 'routing_number', 'account_number'
+			)
+		)
+	);
+
+	/**
+	* Validation rules
+	*
+	* @var array
+	*/
 	public $validate = array(
 		'cobranded_application_id' => array(
 			'numeric' => array(
@@ -67,6 +79,4 @@ class CobrandedApplicationAch extends AppModel {
 			),
 		),
 	);
-
-// !!!!!  ADD CRYPTABLE BEHAVIOR
 }

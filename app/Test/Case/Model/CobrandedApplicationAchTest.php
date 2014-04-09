@@ -10,20 +10,20 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 	public $dropTables = false;
 	public $autoFixtures = false;
 
-/**
- * Fixtures
- *
- * @var array
- */
+	/**
+ 	* Fixtures
+ 	*
+ 	* @var array
+ 	*/
 	public $fixtures = array(
 		'app.onlineappCobrandedApplicationAch',
 	);
 
-/**
- * setUp method
- *
- * @return void
- */
+	/**
+	 * setUp method
+	 *
+	 * @return void
+ 	*/
 	public function setUp() {
 		parent::setUp();
 		$this->CobrandedApplicationAch = ClassRegistry::init('CobrandedApplicationAch');
@@ -31,11 +31,11 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappCobrandedApplicationAch');
 	}
 
-/**
- * tearDown method
- *
- * @return void
- */
+	/**
+ 	* tearDown method
+ 	*
+ 	* @return void
+ 	*/
 	public function tearDown() {
 		$this->CobrandedApplicationAch->deleteAll(true, false);
 		unset($this->CobrandedApplicationAch);
@@ -293,4 +293,55 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 		$this->assertTrue($this->CobrandedApplicationAch->validates());
 		$this->assertEquals($expectedValidationErrors, $this->CobrandedApplicationAch->validationErrors, 'verify create produces empty validationErrors array');
 	}
+
+	public function testEncryptAchValues() {
+		$newAch = array(
+			'cobranded_application_id' => 1,
+			'description' => 'Lorem ipsum dolor sit amet',
+			'auth_type' => 'Lorem ipsum dolor sit amet',
+			'routing_number' => 'Lorem ipsum dolor sit amet',
+			'account_number' => 'Lorem ipsum dolor sit amet',
+			'bank_name' => 'Lorem ipsum dolor sit amet',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		);
+
+		$this->CobrandedApplicationAch->save($newAch);
+
+		$testValue = 'Lorem ipsum dolor sit amet';
+
+		// encrypt our test value for comparison
+		$encryptedTestValue = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+			$testValue, 'cbc', Configure::read('Cryptable.iv')));
+
+		$expectedEncryptedAch = array(
+			'id' => 6,
+			'cobranded_application_id' => 1,
+			'description' => 'Lorem ipsum dolor sit amet',
+			'auth_type' => $encryptedTestValue,
+			'routing_number' => $encryptedTestValue,
+			'account_number' => $encryptedTestValue,
+			'bank_name' => 'Lorem ipsum dolor sit amet',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		);
+		
+		$result = $this->db->query("SELECT * from onlineapp_cobranded_application_aches where id = 6");
+		$encryptedDbValue = $result[0][0];
+		$this->assertEquals($expectedEncryptedAch, $encryptedDbValue, 'verify values are encrypted as expected in database');
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

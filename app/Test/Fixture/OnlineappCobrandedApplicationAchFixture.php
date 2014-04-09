@@ -37,9 +37,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'Lorem ipsum dolor sit amet',
-			'routing_number' => 'Lorem ipsum dolor sit amet',
-			'account_number' => 'Lorem ipsum dolor sit amet',
+			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'routing_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'account_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -47,9 +47,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'Lorem ipsum dolor sit amet',
-			'routing_number' => 'Lorem ipsum dolor sit amet',
-			'account_number' => 'Lorem ipsum dolor sit amet',
+			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'routing_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'account_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -57,9 +57,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'Lorem ipsum dolor sit amet',
-			'routing_number' => 'Lorem ipsum dolor sit amet',
-			'account_number' => 'Lorem ipsum dolor sit amet',
+			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'routing_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'account_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -67,9 +67,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'Lorem ipsum dolor sit amet',
-			'routing_number' => 'Lorem ipsum dolor sit amet',
-			'account_number' => 'Lorem ipsum dolor sit amet',
+			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'routing_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'account_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -77,9 +77,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'Lorem ipsum dolor sit amet',
-			'routing_number' => 'Lorem ipsum dolor sit amet',
-			'account_number' => 'Lorem ipsum dolor sit amet',
+			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'routing_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
+			'account_number' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
