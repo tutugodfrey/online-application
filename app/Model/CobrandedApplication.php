@@ -350,7 +350,10 @@ class CobrandedApplication extends AppModel {
 
 			// save the application values
 			foreach ($fieldsData as $key => $value) {
-				$value = trim($value);
+				// multirecord data will be in an array, don't trim the array
+				if (!is_array($value)) {
+					$value = trim($value);
+				}
 
 				// look up the field type from the name
 				$appValue = $this->CobrandedApplicationValues->find(
@@ -383,6 +386,29 @@ class CobrandedApplication extends AppModel {
 
 				// if the field is rep_only == true, skip it because this value cannot be set via the api
 				if ($templateField['rep_only'] == false) {
+
+					// 22 is multirecord data that needs to be handled by it's associated Model
+					if ($templateField['type'] == 22) {
+						if (!empty($templateField['default_value'])) {
+							$defaultValue = $templateField['default_value'];
+							$Model = ClassRegistry::init($defaultValue);
+				
+							foreach ($value as $key => $val) {
+								$val['cobranded_application_id'] = $newApp['CobrandedApplication']['id'];
+								$Model->create($val);
+								$success = $Model->save();
+								if (!$success) {
+									foreach ($Model->validationErrors as $key => $value) {
+										$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $value);
+									}
+								}
+							}
+							// multirecord data is validated and saved by it's associated Model
+							// we don't want to add this to $appValue['CobrandedApplicationValues']['value']
+							continue;
+						}
+					}
+
 					// update the value
 					$appValue['CobrandedApplicationValues']['value'] = $value;
 

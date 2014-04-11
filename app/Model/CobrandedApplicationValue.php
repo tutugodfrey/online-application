@@ -118,14 +118,15 @@ class CobrandedApplicationValue extends AppModel {
 		$trimmedDataValue = trim($data['value']);
 
 		switch ($fieldType) {
-			case 0:  // text      - no validation
-			case 3:  // checkbox  - no validation
-			case 4:  // radio     - no validation
-			case 6:  // label     - no validation
-			case 7:  // fees      - (group of money?)
-			case 8:  // hr        - no validation
-			case 20: // select    - no validation
-			case 21: // textArea  - no validation
+			case 0:  // text      		- no validation
+			case 3:  // checkbox  		- no validation
+			case 4:  // radio    	 	- no validation
+			case 6:  // label    	 	- no validation
+			case 7:  // fees     	 	- (group of money?)
+			case 8:  // hr       	 	- no validation
+			case 20: // select 			- no validation
+			case 21: // textArea		- no validation
+			case 22: // multirecord		- no validation here, will happen in the multirecord Model
 				// always valid
 				$retVal = true;
 				break;

@@ -88,7 +88,8 @@ class Template extends AppModel {
 			'field.name',
 			'field.description',
 			'field.source',
-			'field.rep_only'
+			'field.rep_only',
+			'field.default_value'
 		);
 
 		if (!is_null($fieldSource)) {
@@ -149,6 +150,16 @@ class Template extends AppModel {
 				"required" => $value['field']['required'],
 				"description" => $value['field']['description'],
 			);
+			if ($type == 'multirecord') {
+				if (!empty($value['field']['default_value'])) {
+					$defaultValue = $value['field']['default_value'];
+					$Model = ClassRegistry::init($defaultValue);
+					$schema = $Model->fields;
+					$formattedData[$value['field']['merge_field_name']] = array(
+						$schema
+					);
+				}
+			}
 		}
 
 		return $formattedData;

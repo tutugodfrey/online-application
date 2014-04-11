@@ -31,7 +31,7 @@ class CobrandedApplicationAch extends AppModel {
 		'cobranded_application_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				'message' => 'Numeric value expected',
+				'message' => 'numeric value expected',
 				//'allowEmpty' => false,
 				'required' => true,
 				//'last' => false, // Stop validation after this rule
@@ -41,7 +41,7 @@ class CobrandedApplicationAch extends AppModel {
 		'auth_type' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				'message' => 'auth_type is required',
+				'message' => 'auth type is required',
 				'allowEmpty' => false,
 				'required' => true,
 				//'last' => false, // Stop validation after this rule
@@ -49,29 +49,17 @@ class CobrandedApplicationAch extends AppModel {
 			),
 		),
 		'routing_number' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => 'routing_number is required',
-				'allowEmpty' => false,
-				'required' => true,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'account_number' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => 'account_number is required',
-				'allowEmpty' => false,
-				'required' => true,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
+       		'rule' => array('cc', 'fast', true, null), // third arg set to true - will use Luhn algorithm
+        	'message' => 'routing number is invalid'
+    	),
+    	'account_number' => array(
+        	'rule' => array('cc', 'fast', true, null), // third arg set to true - will use Luhn algorithm
+        	'message' => 'account number is invalid'
+    	),
 		'bank_name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				'message' => 'bank_name is required',
+				'message' => 'bank name is required',
 				'allowEmpty' => false,
 				'required' => true,
 				//'last' => false, // Stop validation after this rule
@@ -79,4 +67,41 @@ class CobrandedApplicationAch extends AppModel {
 			),
 		),
 	);
+
+    public $fields = array(
+		'description' => array(
+			'type' => 'text',
+			'required' => false,
+			'description' => 'Description'
+		),
+		'auth_type' => array(
+			'type' => 'text',
+			'required' => true,
+			'description' => 'Authorization Type'
+		),
+		'routing_number' => array(
+			'type' => 'text',
+			'required' => true,
+			'description' => 'Routing #'
+		),
+		'account_number' => array(
+			'type' => 'text',
+			'required' => true,
+			'description' => 'Account #'
+		),
+		'bank_name' => array(
+			'type' => 'text',
+			'required' => true,
+			'description' => 'Bank Name'
+		)
+    );
 }
+
+
+
+
+
+
+
+
+

@@ -30,10 +30,12 @@ class TemplateField extends AppModel {
 		'digits',           // 19 - (#)+
 		'select',           // 20 - 
 		'textArea',         // 21 -
-		//'taxId',          // 22 - ?
-		//'bankRoutingNumber',// 23 - #########
-		//'bankAccountNumber',// 24 - ?
-		//'amexSENumber',     // 25 - ?
+		'multirecord',		// 22 - multiple records
+		//'taxId',          // 23 - ?
+		//'bankRoutingNumber',// 24 - #########
+		//'bankAccountNumber',// 25 - ?
+		//'amexSENumber',     // 26 - ?
+		
 	);
 
 	public $sourceTypes = array('api', 'user', 'n/a');
