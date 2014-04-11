@@ -49,13 +49,15 @@ class CobrandedApplicationAch extends AppModel {
 			),
 		),
 		'routing_number' => array(
-       		'rule' => array('cc', 'fast', true, null), // third arg set to true - will use Luhn algorithm
-        	'message' => 'routing number is invalid'
-    	),
-    	'account_number' => array(
-        	'rule' => array('cc', 'fast', true, null), // third arg set to true - will use Luhn algorithm
-        	'message' => 'account number is invalid'
-    	),
+			'rule' => 'checkRoutingNumber',
+			'required' => true,
+			'message' => 'routing number is invalid'
+		),
+		'account_number' => array(
+			'rule' => 'numeric',
+			'required' => true,
+			'message' => 'account number is invalid'
+		),
 		'bank_name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
@@ -95,6 +97,34 @@ class CobrandedApplicationAch extends AppModel {
 			'description' => 'Bank Name'
 		)
     );
+
+    /**
+	 * Custom Validation Rule
+	 * Checks to see if the routing number entered passes Mod 10 (LUHN)
+	 * @param numeric $routingNumber
+	 * @return boolean
+	 */
+	function checkRoutingNumber($routingNumber = 0) {
+
+		$routingNumber = preg_replace('[\D]', '', $routingNumber['routing_number']); //only digits
+		if (strlen($routingNumber) != 9) {
+			return false;
+		}
+
+		$checkSum = 0;
+		for ($i = 0, $j = strlen($routingNumber); $i < $j; $i+= 3) {
+			//loop through routingNumber character by character
+			$checkSum += ($routingNumber[$i] * 3);
+			$checkSum += ($routingNumber[$i + 1] * 7);
+			$checkSum += ($routingNumber[$i + 2]);
+		}
+
+		if ($checkSum != 0 and ($checkSum % 10) == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 

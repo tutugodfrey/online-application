@@ -50,8 +50,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -63,8 +63,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -76,8 +76,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -89,8 +89,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -102,8 +102,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -127,8 +127,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 				'cobranded_application_id' => 1,
 				'description' => 'Lorem ipsum dolor sit amet',
 				'auth_type' => 'Lorem ipsum dolor sit amet',
-				'routing_number' => '4012888888881881',
-				'account_number' => '4012888888881881',
+				'routing_number' => '321174851',
+            	'account_number' => '9900000003',
 				'bank_name' => 'Lorem ipsum dolor sit amet',
 				'created' => '2014-01-23 17:28:15',
 				'modified' => '2014-01-23 17:28:15'
@@ -137,8 +137,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 				'cobranded_application_id' => 1,
 				'description' => 'Lorem ipsum dolor sit amet',
 				'auth_type' => 'Lorem ipsum dolor sit amet',
-				'routing_number' => '4012888888881881',
-				'account_number' => '4012888888881881',
+				'routing_number' => '321174851',
+            	'account_number' => '9900000003',
 				'bank_name' => 'Lorem ipsum dolor sit amet',
 				'created' => '2014-01-23 17:28:15',
 				'modified' => '2014-01-23 17:28:15'
@@ -157,8 +157,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -170,8 +170,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -183,8 +183,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -196,8 +196,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -209,8 +209,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -222,8 +222,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -235,8 +235,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 					'cobranded_application_id' => 1,
 					'description' => 'Lorem ipsum dolor sit amet',
 					'auth_type' => 'Lorem ipsum dolor sit amet',
-					'routing_number' => '4012888888881881',
-					'account_number' => '4012888888881881',
+					'routing_number' => '321174851',
+            		'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
 					'created' => '2014-01-23 17:28:15',
 					'modified' => '2014-01-23 17:28:15'
@@ -284,8 +284,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 				'cobranded_application_id' => 1,
 				'description' => 'Lorem ipsum dolor sit amet',
 				'auth_type' => 'Lorem ipsum dolor sit amet',
-				'routing_number' => '4012888888881881',
-				'account_number' => '4012888888881881',
+				'routing_number' => '321174851',
+            	'account_number' => '9900000003',
 				'bank_name' => 'Lorem ipsum dolor sit amet'
 			)
 		);
@@ -299,8 +299,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
 			'auth_type' => 'Lorem ipsum dolor sit amet',
-			'routing_number' => '4012888888881881',
-			'account_number' => '4012888888881881',
+			'routing_number' => '321174851',
+            'account_number' => '9900000003',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -308,12 +308,16 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 
 		$this->CobrandedApplicationAch->save($newAch);
 
-		$testValue = 'Lorem ipsum dolor sit amet';
-		$testAccountNumber = '4012888888881881';
+		$testAuthType = 'Lorem ipsum dolor sit amet';
+		$testRoutingNumber = '321174851';
+		$testAccountNumber = '9900000003';
 
 		// encrypt our test values for comparison
-		$encryptedTestValue = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
-			$testValue, 'cbc', Configure::read('Cryptable.iv')));
+		$encryptedTestAuthType = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+			$testAuthType, 'cbc', Configure::read('Cryptable.iv')));
+
+		$encryptedTestRoutingNumber = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+			$testRoutingNumber, 'cbc', Configure::read('Cryptable.iv')));
 
 		$encryptedTestAccountNumber = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 			$testAccountNumber, 'cbc', Configure::read('Cryptable.iv')));
@@ -322,8 +326,8 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 			'id' => 6,
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => $encryptedTestValue,
-			'routing_number' => $encryptedTestAccountNumber,
+			'auth_type' => $encryptedTestAuthType,
+			'routing_number' => $encryptedTestRoutingNumber,
 			'account_number' => $encryptedTestAccountNumber,
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
