@@ -747,7 +747,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 					$index == 7 ||
 					$index == 8 ||
 					$index == 20 ||
-					$index == 21) {
+					$index == 21 ||
+					$index == 22) {
 					// no validation
 				} else {
 					// set the $expectedValidationErrors
@@ -969,6 +970,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 					break;
 				case 21:
 					$newValue = 'a whole lot of text can go into this field...';
+					break;
+				case 22:
+					$newValue = null;
 					break;
 
 				default:
