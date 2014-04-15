@@ -38,7 +38,7 @@ class TemplateField extends AppModel {
 		
 	);
 
-	public $sourceTypes = array('api', 'user', 'n/a');
+	public $sourceTypes = array('api', 'user', 'api/user', 'n/a');
 
 	public $requiredTypes = array('no', 'yes');
 

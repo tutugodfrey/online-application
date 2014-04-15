@@ -208,7 +208,12 @@ class TemplateTest extends CakeTestCase {
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
-				)
+				),
+				'required_text_from_api_without_default_source_2' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
 			), // one field from the user
 		);
 		$index = 0;
@@ -395,6 +400,11 @@ class TemplateTest extends CakeTestCase {
 			),
 			array(
 				'required_text_from_api_without_default' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'required_text_from_api_without_default_source_2' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',

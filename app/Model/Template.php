@@ -93,7 +93,13 @@ class Template extends AppModel {
 		);
 
 		if (!is_null($fieldSource)) {
-			$conditions['field.source'] = $fieldSource;
+			// source 0 = api, source 2 = api/user
+			// in either of these cases, we want both 0 and 2 fields
+			if ($fieldSource == 0 || $fieldSource == 2) {
+				$conditions['field.source'] = array(0, 2);
+			} else {
+				$conditions['field.source'] = $fieldSource;
+			}
 		}
 
 		if (!is_null($repOnly)) {
@@ -252,7 +258,7 @@ class Template extends AppModel {
 									'section_id' => $sectionId,
 									'type' => $field['type'],
 									'required' => (array_key_exists('required', $field) ? $field['required'] : false),
-									'source' => (array_key_exists('source', $field) ? $field['source'] : 2), // 2 == n/a
+									'source' => (array_key_exists('source', $field) ? $field['source'] : 3), // 3 == n/a
 									'default_value' => (array_key_exists('default_value', $field) ? $field['default_value'] : ''),
 									'merge_field_name' => $merge_field_name,
 									'rep_only' => (array_key_exists('rep_only', $field) ? $field['rep_only'] : false),
