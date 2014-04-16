@@ -716,7 +716,15 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
-		$fieldsData['multirecord_from_api_with_default'] = array();
+		$fieldsData['multirecord_from_api_with_default'] = array(
+			array(
+				'description' => 'Lorem ipsum dolor sit amet',
+				'auth_type' => 'Lorem ipsum dolor sit amet',
+				'routing_number' => '321174851',
+            	'account_number' => '9900000003',
+				'bank_name' => 'Lorem ipsum dolor sit amet'
+			),
+		);
 
 		// execute the method under test
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
