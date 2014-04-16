@@ -205,23 +205,24 @@ class CobrandedApplicationValue extends AppModel {
 
 		if (!empty($results) && is_array($results)) {
 			foreach ($results as $resultKey => $resultValue) {
-				if (!empty($resultValue['CobrandedApplicationValue']) && is_array($resultValue['CobrandedApplicationValue'])) {
-					if ($resultValue['CobrandedApplicationValue']['value'] !== '' && $resultValue['CobrandedApplicationValue']['value'] !== null) {
+				if (!empty($resultValue['CobrandedApplicationValues']) && is_array($resultValue['CobrandedApplicationValues'])) {
+					if ($resultValue['CobrandedApplicationValues']['value'] !== '' && $resultValue['CobrandedApplicationValues']['value'] !== null) {
 						$templateField = $this->TemplateField->find(
 							'first',
 							array(
 								'conditions' => array(
-									'TemplateField.id' => $resultValue['CobrandedApplicationValue']['template_field_id']
+									'TemplateField.id' => $resultValue['CobrandedApplicationValues']['template_field_id']
 								),
+								'recursive' => -1
 							)
 						);
 
 						// only decrypt fields set to encrypt
 						if ($templateField['TemplateField']['encrypt']) {
-							$data = $resultValue['CobrandedApplicationValue']['value'];
+							$data = $resultValue['CobrandedApplicationValues']['value'];
 							$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 										base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
-							$results[$resultKey]['CobrandedApplicationValue']['value'] = $data;
+							$results[$resultKey]['CobrandedApplicationValues']['value'] = $data;
 						}
 					}
 				}
