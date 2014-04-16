@@ -716,6 +716,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
+		$fieldsData['multirecord_from_api_with_default'] = array();
 
 		// execute the method under test
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
@@ -734,7 +735,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
 		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
 
-		for ($index=1; $index < 22; $index++) {
+		for ($index=1; $index < 23; $index++) {
 			// 15 and 16 are not implemented yet
 			if ($index == 15 || $index == 16) {
 				// ignore for now
