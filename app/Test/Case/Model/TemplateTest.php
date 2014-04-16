@@ -214,6 +214,35 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
+				'multirecord_from_api_with_default' => array(
+					array(
+						'description' => array(
+							'type' => 'text',
+							'required' => false,
+							'description' => 'Description',
+						),
+						'auth_type' => array(
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Authorization Type',
+						),
+						'routing_number' => array(
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Routing #',
+						),
+						'account_number' => Array (
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Account #',
+						),
+						'bank_name' => array(
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Bank Name',
+						),
+					),
+				),
 			), // one field from the user
 		);
 		$index = 0;
