@@ -732,6 +732,32 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// assertions
 		$this->assertTrue($actualResponse['success'], 'saveFields with valid data should succeed');
 		$this->assertEquals(array(), $actualResponse['validationErrors'], 'Expected no validation errors for valid $fieldsData');
+
+		// test with bad routing number
+		$fieldsData['multirecord_from_api_with_default'] = array(
+			array(
+				'description' => 'Lorem ipsum dolor sit amet',
+				'auth_type' => 'Lorem ipsum dolor sit amet',
+				'routing_number' => '3211',
+            	'account_number' => '9900000003',
+				'bank_name' => 'Lorem ipsum dolor sit amet'
+			),
+		);
+
+		// set expected results
+		$expectedValidationErrors = array(
+			'routing_number' => array(
+				'routing number is invalid'
+			)
+		);
+
+		// execute the method under test
+		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
+
+		// assertions
+		$this->assertFalse($actualResponse['success'], 'saveFields with invalid value for required field should fail');
+		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
+
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
