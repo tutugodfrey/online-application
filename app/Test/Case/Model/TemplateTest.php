@@ -214,6 +214,35 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
+				'multirecord_from_api_with_default' => array(
+					array(
+						'description' => array(
+							'type' => 'text',
+							'required' => false,
+							'description' => 'Description',
+						),
+						'auth_type' => array(
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Authorization Type',
+						),
+						'routing_number' => array(
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Routing #',
+						),
+						'account_number' => Array (
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Account #',
+						),
+						'bank_name' => array(
+							'type' => 'text',
+							'required' => true,
+							'description' => 'Bank Name',
+						),
+					),
+				),
 			), // one field from the user
 		);
 		$index = 0;
@@ -425,6 +454,203 @@ class TemplateTest extends CakeTestCase {
 		$index = 0;
 		foreach ($templates as $key => $template) {
 			$actualFields = $this->Template->getTemplateFields($template['Template']['id'], null, null, true);
+			$this->assertEquals(
+				$expectedFields[$index],
+				$actualFields,
+				'Template with id ['.$index.'] did not match expected API fields');
+			$index = $index + 1;
+		}
+
+		$expectedFields = array(
+			array(
+				'required_text_from_user_without_default' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+				),
+				'required_radio_from_user_without_default' => Array (
+					'type' => 'radio',
+					'required' => true,
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+				),
+			),
+			array(), // all fields are expected to be from the user
+			array(), // all fields are expected to be from the user
+			array(
+				'required_text_from_user_without_default' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'required_date_from_user_without_default' => array(
+					'type' => 'date',
+					'required' => true,
+					'description' => '',
+				),
+				'required_time_from_user_without_default' => array(
+					'type' => 'time',
+					'required' => true,
+					'description' => '',
+				),
+				'required_checkbox_from_user_without_default' => array(
+					'type' => 'checkbox',
+					'required' => true,
+					'description' => '',
+				),
+				'required_radio_from_user_without_default' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percents_from_user_without_default' => array(
+					'type' => 'percents',
+					'required' => true,
+					'description' => '',
+				),
+				'label' => array(
+					'type' => 'label',
+					'required' => true,
+					'description' => '',
+				),
+				'required_fees_from_user_without_default' => array(
+					'type' => 'fees',
+					'required' => true,
+					'description' => '',
+				),
+				'hr' => array(
+					'type' => 'hr',
+					'required' => true,
+					'description' => '',
+				),
+				'required_phoneUS_from_user_without_default' => array(
+					'type' => 'phoneUS',
+					'required' => true,
+					'description' => '',
+				),
+				'required_money_from_user_without_default' => array(
+					'type' => 'money',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percent_from_user_without_default' => array(
+					'type' => 'percent',
+					'required' => true,
+					'description' => '',
+				),
+				'required_ssn_from_user_without_default' => array(
+					'type' => 'ssn',
+					'required' => true,
+					'description' => '',
+				),
+				'required_zipcodeUS_from_user_without_default' => array(
+					'type' => 'zipcodeUS',
+					'required' => true,
+					'description' => '',
+				),
+				'required_email_from_user_without_default' => array(
+					'type' => 'email',
+					'required' => true,
+					'description' => '',
+				),
+				'required_url_from_user_without_default' => array(
+					'type' => 'url',
+					'required' => true,
+					'description' => '',
+				),
+				'required_number_from_user_without_default' => array(
+					'type' => 'number',
+					'required' => true,
+					'description' => '',
+				),
+				'required_digits_from_user_without_default' => array(
+					'type' => 'digits',
+					'required' => true,
+					'description' => '',
+				),
+				'required_select_from_user_without_default' => array(
+					'type' => 'select',
+					'required' => true,
+					'description' => '',
+				),
+				'required_textArea_from_user_without_default' => array(
+					'type' => 'textArea',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral1Business' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral1Owner/Officer' => Array (
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral1Phone' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral2Business' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral2Owner/Officer' => Array (
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral2Phone' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral3Business' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral3Owner/Officer' => Array (
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Referral3Phone' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - ' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Unknown Type for testing' => Array (
+					'type' => 'unknown',
+					'required' => true,
+					'description' => '',
+				),
+			),
+			array(
+				'required_text_from_user_without_default_repOnly' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'' => array(
+					'type' => 'date',
+					'required' => true,
+					'description' => '',
+				),
+			), // one field from the user
+		);
+
+		// test source 1 - user only
+		$index = 0;
+		foreach ($templates as $key => $template) {
+			$actualFields = $this->Template->getTemplateFields($template['Template']['id'], 1, null, true);
 			$this->assertEquals(
 				$expectedFields[$index],
 				$actualFields,

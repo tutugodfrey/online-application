@@ -709,5 +709,21 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
+		array(
+			'name' => 'Multirecord field',
+			'width' => 12,
+			'description' => '',
+			'type' => 22,
+			'required' => 0,
+			'source' => 0,
+			'default_value' => 'CobrandedApplicationAch',
+			'merge_field_name' => 'multirecord_from_api_with_default',
+			'order' => 0,
+			'section_id' => 5,
+			'rep_only' => false,
+			'encrypt' => false,
+			'created' => '2013-12-18 14:10:17',
+			'modified' => '2013-12-18 14:10:17'
+		),
 	);
 }
