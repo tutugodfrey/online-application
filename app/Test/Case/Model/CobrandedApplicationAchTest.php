@@ -292,6 +292,25 @@ class CobrandedApplicationAchTest extends CakeTestCase {
 
 		$this->assertTrue($this->CobrandedApplicationAch->validates());
 		$this->assertEquals($expectedValidationErrors, $this->CobrandedApplicationAch->validationErrors, 'verify create produces empty validationErrors array');
+
+		// test bad routing number
+		$expectedValidationErrors = array(
+			'routing_number' => array('routing number is invalid')
+		);
+
+		$this->CobrandedApplicationAch->create(
+			array(
+				'cobranded_application_id' => 1,
+				'description' => 'Lorem ipsum dolor sit amet',
+				'auth_type' => 'Lorem ipsum dolor sit amet',
+				'routing_number' => '000000000',
+            	'account_number' => '9900000003',
+				'bank_name' => 'Lorem ipsum dolor sit amet'
+			)
+		);
+	
+		$this->assertFalse($this->CobrandedApplicationAch->validates());
+		$this->assertEquals($expectedValidationErrors, $this->CobrandedApplicationAch->validationErrors, 'verify create with invalid routing number');
 	}
 
 	public function testEncryptAchValues() {
