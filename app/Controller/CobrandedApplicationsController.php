@@ -140,20 +140,22 @@ class CobrandedApplicationsController extends AppController {
 					'A template has not been configured for partners with id ['.$user['User']['cobrand_id'].']');
 			}
 		} else if ($this->request->is('post')) {
-			switch ($this->Auth->user('cobrand_id')) {
-				// we may just want to open up the API access to all cobrands...
-				// this VVV way we require a code change if another partner wants to use the API
-				case 7: // Appfolio
+			// make sure user is api_enabled
+			if ($user['User']['api_enabled']) {
+				// also make sure a template is setup
+				if (!is_null($user['User']['template_id'])) {
 					$response = $this->CobrandedApplication->saveFields($user['User'], $this->request->data);
-					break;
-
-				default:
-					// no other api partners have been set up as of yet
+				} else {
 					$response = Hash::insert(
-						$response,
-						'msg',
-						'This API has not been enabled for partners with id ['.$this->Auth->user('cobrand_id').']');
-					break;
+					$response,
+					'msg',
+					'A template has not been configured for partners with id ['.$user['User']['cobrand_id'].']');
+				}
+			} else {
+				$response = Hash::insert(
+					$response,
+					'msg',
+					'This API has not been enabled for partners with id ['.$this->Auth->user('cobrand_id').']');
 			}
 		} else {
 			$response = Hash::insert($response, 'msg', 'Expecting POST data.');

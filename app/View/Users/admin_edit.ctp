@@ -12,7 +12,7 @@ echo $this->Form->input('firstname');
 echo $this->Form->input('lastname');
 echo $this->Form->input('group_id');
 echo $this->Form->input('extension');
-echo $this->Form->input('api', array('label'=> 'Enable API','type'=>'checkbox'));        
+echo $this->Form->input('api_enabled', array('label'=> 'Enable API','type'=>'checkbox'));        
 echo $this->Form->input('api_password', array('label'=> 'Api Password','type'=>'password', 'value'=>'', 'autocomplete'=>'off'));
 echo $this->Form->input('active', array('type' => 'checkbox'));
 echo $this->Form->input('Manager', array('label' => 'Select Manager(s)', 'multiple' => 'checkbox'));
@@ -25,7 +25,7 @@ echo $this->Form->input('AssignedRepresentative',array('label' => false,'multipl
 }?>
         
 <?php
-if ($this->request->data['User']['group_id'] == User::API_GROUP_ID) {
+if ($this->request->data['User']['api_enabled']) {
 echo $this->Form->input('token');
 echo $this->Form->input('token_used');
 echo $this->Form->input('token_uses');
