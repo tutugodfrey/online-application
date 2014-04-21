@@ -262,7 +262,17 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
 				),
-				'required_radio_from_user_without_default' => Array (
+				'required_radio_from_user_without_defaultvalue1' => Array (
+					'type' => 'radio',
+					'required' => true,
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+				),
+				'required_radio_from_user_without_defaultvalue2' => Array (
+					'type' => 'radio',
+					'required' => true,
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+				),
+				'required_radio_from_user_without_defaultvalue3' => Array (
 					'type' => 'radio',
 					'required' => true,
 					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
@@ -291,12 +301,32 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'required_radio_from_user_without_default' => array(
+				'required_radio_from_user_without_defaultvalue1' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'required_percents_from_user_without_default' => array(
+				'required_radio_from_user_without_defaultvalue2' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'required_radio_from_user_without_defaultvalue3' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percents_from_user_without_defaultvalue1' => array(
+					'type' => 'percents',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percents_from_user_without_defaultvalue2' => array(
+					'type' => 'percents',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percents_from_user_without_defaultvalue3' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
@@ -306,7 +336,17 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'required_fees_from_user_without_default' => array(
+				'required_fees_from_user_without_defaultvalue1' => array(
+					'type' => 'fees',
+					'required' => true,
+					'description' => '',
+				),
+				'required_fees_from_user_without_defaultvalue2' => array(
+					'type' => 'fees',
+					'required' => true,
+					'description' => '',
+				),
+				'required_fees_from_user_without_defaultvalue3' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
@@ -416,7 +456,32 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - ' => array(
+				'Owner Type - Corp' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Sole Prop' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - LLC' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Partnership' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Non Profit' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Other' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
@@ -468,7 +533,17 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
 				),
-				'required_radio_from_user_without_default' => Array (
+				'required_radio_from_user_without_defaultvalue1' => Array (
+					'type' => 'radio',
+					'required' => true,
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+				),
+				'required_radio_from_user_without_defaultvalue2' => Array (
+					'type' => 'radio',
+					'required' => true,
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+				),
+				'required_radio_from_user_without_defaultvalue3' => Array (
 					'type' => 'radio',
 					'required' => true,
 					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
@@ -497,12 +572,32 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'required_radio_from_user_without_default' => array(
+				'required_radio_from_user_without_defaultvalue1' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'required_percents_from_user_without_default' => array(
+				'required_radio_from_user_without_defaultvalue2' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'required_radio_from_user_without_defaultvalue3' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percents_from_user_without_defaultvalue1' => array(
+					'type' => 'percents',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percents_from_user_without_defaultvalue2' => array(
+					'type' => 'percents',
+					'required' => true,
+					'description' => '',
+				),
+				'required_percents_from_user_without_defaultvalue3' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
@@ -512,7 +607,17 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'required_fees_from_user_without_default' => array(
+				'required_fees_from_user_without_defaultvalue1' => array(
+					'type' => 'fees',
+					'required' => true,
+					'description' => '',
+				),
+				'required_fees_from_user_without_defaultvalue2' => array(
+					'type' => 'fees',
+					'required' => true,
+					'description' => '',
+				),
+				'required_fees_from_user_without_defaultvalue3' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
@@ -622,7 +727,32 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - ' => array(
+				'Owner Type - Corp' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Sole Prop' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - LLC' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Partnership' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Non Profit' => array(
+					'type' => 'radio',
+					'required' => true,
+					'description' => '',
+				),
+				'Owner Type - Other' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',

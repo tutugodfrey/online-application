@@ -151,20 +151,42 @@ class Template extends AppModel {
 			if (key_exists($value['field']['type'], $TemplateField->fieldTypes)) {
 				$type = $TemplateField->fieldTypes[$value['field']['type']];
 			}
-			$formattedData[$value['field']['merge_field_name']] = array(
-				"type" => $type,
-				"required" => $value['field']['required'],
-				"description" => $value['field']['description'],
-			);
-			if ($type == 'multirecord') {
-				if (!empty($value['field']['default_value'])) {
-					$defaultValue = $value['field']['default_value'];
-					$Model = ClassRegistry::init($defaultValue);
-					$schema = $Model->fields;
+
+			// types with multiple values/options are handled differently
+			switch ($type) {
+				case 'radio': // 'radio':
+				case 'percents': // 'percents':
+				case 'fees': // 'fees':
+					// split default_value on ',' and append split[1] to the merge_field_name
+					foreach (split(',', $value['field']['default_value']) as $keyValuePairStr) {
+						$keyValuePair = split('::', $keyValuePairStr);
+						$name = $value['field']['merge_field_name'].$keyValuePair[1];
+						$formattedData[$name] = array(
+								"type" => $type,
+								"required" => $value['field']['required'],
+								"description" => $value['field']['description'],
+						);
+					}
+					break;
+				
+				case 'multirecord':
+					if (!empty($value['field']['default_value'])) {
+						$defaultValue = $value['field']['default_value'];
+						$Model = ClassRegistry::init($defaultValue);
+						$schema = $Model->fields;
+						$formattedData[$value['field']['merge_field_name']] = array(
+							$schema
+						);
+					}
+					break;
+
+				default:
 					$formattedData[$value['field']['merge_field_name']] = array(
-						$schema
+						"type" => $type,
+						"required" => $value['field']['required'],
+						"description" => $value['field']['description'],
 					);
-				}
+					break;
 			}
 		}
 
