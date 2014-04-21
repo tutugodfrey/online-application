@@ -45,6 +45,9 @@ class FieldPage
 	public static $descriptionField = 'TemplateFieldDescription';
 	public static $descriptionLabel = 'Description';
 
+	public static $templateFieldEncryptField = 'TemplateFieldEncrypt';
+	public static $templateFieldEncryptLabel = 'Encrypt';
+
 	// buttons
 	public static $newButtonLabel = 'New Template Field';
 	public static $editButtonLabel = 'Edit';
@@ -117,9 +120,10 @@ class FieldPage
 		$this->webGuy->see(static::$templateFieldMergeFieldNameLabel);
 		$this->webGuy->see(static::$descriptionLabel);
 		$this->webGuy->see(static::$submitButtonLabel);
+		$this->webGuy->see(static::$templateFieldEncryptLabel);
 	}
 
-	public function fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder = null, $fieldRepOnly = false) {
+	public function fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder = null, $fieldRepOnly = false, $fieldEncrypt = false) {
 		if (!is_null($fieldOrder)) {
 			$this->webGuy->fillField(static::$templateFieldOrderField, $fieldOrder);
 		}
@@ -136,20 +140,25 @@ class FieldPage
 		} else {
 			$this->webGuy->uncheckOption(static::$templateFieldRepOnlyField, $fieldRepOnly);
 		}
+		if ($fieldEncrypt == true) {
+			$this->webGuy->checkOption(static::$templateFieldEncryptField, $fieldEncrypt);
+		} else {
+			$this->webGuy->uncheckOption(static::$templateFieldEncryptField, $fieldEncrypt);
+		}
 		$this->webGuy->selectOption(static::$templateFieldSourceField, $fieldSource);
 		$this->webGuy->fillField(static::$templateFieldDefaultValueField, $fieldDefaultValue);
 		$this->webGuy->fillField(static::$templateFieldMergeFieldNameField , $fieldMergeFieldName);
 		$this->webGuy->fillField(static::$descriptionField, $fieldDescription);
 	}
 
-	public function createIfMissing($fieldName, $parentId, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder, $fieldRepOnly = false) {
+	public function createIfMissing($fieldName, $parentId, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder, $fieldRepOnly = false, $fieldEncrypt = false) {
 		$fieldId = $this->getSectionId($fieldName, $parentId);
 		if (strlen($fieldId) == 0) {
 			// create it
 			$this->webGuy->seeCurrentUrlMatches(static::likeRoute('~^', '$~', '', ''));
 			$this->webGuy->click(static::$newButtonLabel);
 			//$this->checkForm();
-			$this->fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder, $fieldRepOnly);
+			$this->fillForm($fieldName, $fieldWidth, $fieldType, $fieldRequired, $fieldSource, $fieldDefaultValue, $fieldMergeFieldName, $fieldDescription, $fieldOrder, $fieldRepOnly, $fieldEncrypt);
 			$this->webGuy->click(static::$submitButtonLabel);
 			$this->webGuy->seeCurrentUrlMatches(static::likeRoute('~^', '$~', '', ''));
 			$fieldId = $this->getSectionId($fieldName, $parentId);

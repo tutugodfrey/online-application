@@ -98,7 +98,7 @@ $sectionId = $SP->createIfMissing('ADDITIONAL BUSINESS INFORMATION', $pageId, 12
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 2, '', 'TaxID', '', null);
+$fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 2, '', 'TaxID', '', null, null,true);
 $fieldId = $FP->createIfMissing('Website',$sectionId, 12, 17, true, 2, '', 'WebAddress', '', null);
 $fieldId = $FP->createIfMissing('Customer Service Phone',$sectionId, 12, 9, true, 2, '', 'Customer Service Phone', '', null);
 $fieldId = $FP->createIfMissing('Business Open Date', $sectionId, 12, 1, true, 2, '', 'OpenDate', '', null);
