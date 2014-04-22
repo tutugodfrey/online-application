@@ -52,7 +52,7 @@ my $sections = {
 my $templateMap = {
     'General Information' => {
         'OWNERSHIP TYPE' => [
-            "'Ownership Type', \$sectionId, 12, 4, true, 2, 'Corporation::Corp,Sole Prop::SoleProp,LLC::LLC,Partnership::Partnership,Non Profit/Tax Exempt (fed form 501C)::NonProfit,Other::Other', 'Owner Type - ', '', null",
+            "'Ownership Type', \$sectionId, 12, 4, true, 2, 'Corporation::Corp,Sole Prop::SoleProp,LLC::LLC,Partnership::Partnership,Non Profit/Tax Exempt (fed form 501C)::NonProfit,Other::Other', 'OwnerType-', '', null",
             "'Corporate Status', \$sectionId, 12, 0, false, 2, '', 'CorpStatus', '', null, true"
         ],
         'CORPORATE INFORMATION' => [
@@ -84,22 +84,22 @@ my $templateMap = {
             "'Customer Service Phone',\$sectionId, 12, 9, true, 2, '', 'Customer Service Phone', '', null",
             "'Business Open Date', \$sectionId, 12, 1, true, 2, '', 'OpenDate', '', null",
             "'Length of Current Ownership',\$sectionId, 12, 0, true, 2, '', 'Ownership Length', '', null",
-            "'Existing Axia Merchant?', \$sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'Existing Axia Merchant - ', '', null",
+            "'Existing Axia Merchant?', \$sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'ExistingAxiaMerchant-', '', null",
             "'Current MID #',\$sectionId, 12, 0, false, 2, '', 'Current MID', '', null",
             "'General Comments',\$sectionId, 12, 21, true, 2, '', 'General Comments', '', null"
         ],
         'LOCATION TYPE' => [
-            "'Location Type', \$sectionId, 12, 4, true, 2, 'Retail Store::RetailStore,Industrial::Industrial,Trade::Trade,Office::Office,Residence::Residence,Other::SiteInspectionOther', '', '', null"
+            "'Location Type', \$sectionId, 12, 4, true, 2, 'Retail Store::RetailStore,Industrial::Industrial,Trade::Trade,Office::Office,Residence::Residence,Other::SiteInspectionOther', 'LocationType-', '', null"
         ],
         'MERCHANT' => [
-            "'Merchant Ownes/Leases', \$sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', '', '', null",
+            "'Merchant Ownes/Leases', \$sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', 'MerchantOwnes/Leases-', '', null",
             "'Landlord Name', \$sectionId, 6, 0, false, 2, '', 'Landlord', '', null",
             "'Landlord Phone', \$sectionId, 6, 9, false, 2, '', 'Landlord Phone', '', null"
         ]
     },
     'Products and Services Information' => {
         'General Underwriting Profile' => [
-            "'Business Type', \$sectionId, 12, 4, true, 2, 'Retail::Retail,Restaurant::Restaurant,Lodging::Lodging,MOTO::MOTO,Internet::Internet,Grocery::Grocery', '', '', null",
+            "'Business Type', \$sectionId, 12, 4, true, 2, 'Retail::Retail,Restaurant::Restaurant,Lodging::Lodging,MOTO::MOTO,Internet::Internet,Grocery::Grocery', 'BusinessType-', '', null",
             "'Products/Services Sold', \$sectionId, 12, 0, true, 2, '', 'Products Services Sold', '', null",
             "'Return Policy', \$sectionId, 12, 0, true, 2, '', 'Return Policy', '', null",
             "'Days Until Product Delivery', \$sectionId, 12, 0, true, 2, '', 'Days Until Product Delivery', '', null",
@@ -107,8 +107,8 @@ my $templateMap = {
             "'Average Ticket', \$sectionId, 4, 10, true, 2, '', 'AvgTicket', '', null",
             "'Highest Ticket', \$sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null",
             "'Current Processor', \$sectionId, 12, 0, true, 2, '', 'Previous Processor', '', null",
-            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped,Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', '', '', null",
-            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer,Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '', '', null"
+            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped,Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null",
+            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer,Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null"
         ],
         'High Volume Months' => [
             "'Jan', \$sectionId, 1, 3, false, 2, '', 'Jan', '', null",
@@ -125,8 +125,8 @@ my $templateMap = {
             "'Dec', \$sectionId, 1, 3, false, 2, '', 'Dec', '', null"
         ],
         'MOTO/Internet Questionnaire' => [
-            "'Does your organization have a store front location?', \$sectionId, 12, 4, true, 2, 'Yes::8,No::9', 'Check Box ', '', null",
-            "'Are orders received and processed at business location?', \$sectionId, 12, 4, true, 2, 'Yes::14,No::13', 'Check Box ', '', null",
+            "'Does your organization have a store front location?', \$sectionId, 12, 4, true, 2, 'Yes::8,No::9', 'CheckBox-', '', null",
+            "'Are orders received and processed at business location?', \$sectionId, 12, 4, true, 2, 'Yes::14,No::13', 'CheckBox-', '', null",
             "'Where is inventory housed?', \$sectionId, 12, 0, true, 2, '', 'Where is inventory housed', '', null",
             "'Are any of the following aspects of your business outsourced to other companies? (please select all that apply)', \$sectionId, 12, 6, false, 2, '', 'label', '', null",
             "'Customer Service (Desc)', \$sectionId, 4, 0, true, 2, '', 'Customer Service', '', null",
@@ -189,18 +189,18 @@ my $templateMap = {
     },
     'Set Up Information' => {
         'American Express Information' => [
-            "'Do you currently accept American Express?', \$sectionId, 6, 4, true, 2,  'Yes::Exist,No::NotExisting', 'AE', '', null",
+            "'Do you currently accept American Express?', \$sectionId, 6, 4, true, 2,  'Yes::Exist,No::NotExisting', 'DoYouAcceptAE-', '', null",
             "'Please Provide Existing SE#', \$sectionId, 6, 0, false, 2, '', 'AmexNum', '', null",
-            "'Do you want to accept American Express?', \$sectionId, 12, 4, false, 2, 'Yes::New,No::NotNew', 'AE', '', null"
+            "'Do you want to accept American Express?', \$sectionId, 12, 4, false, 2, 'Yes::New,No::NotNew', 'DoYouWantToAcceptAE-', '', null"
         ],
         'Discover Information' => [
-            "'Do you want to accept Discover?', \$sectionId, 12, 4, true, 2,  'Yes::New,No::NotNew', 'Disc', '', null"
+            "'Do you want to accept Discover?', \$sectionId, 12, 4, true, 2,  'Yes::New,No::NotNew', 'DoYouWantToAcceptDisc-', '', null"
         ],
         'Terminal/Software Type(1)' => [
             "'Quantity', \$sectionId, 3, 19, true, 2, '', 'QTY1', '', null",
             "'Type', \$sectionId, 3, 0, true, 2, '', 'Terminal1', '', null",
-            "'Provider', \$sectionId, 6, 4, true, 2, 'Axia::Axia,Merchant::Merchant', '', '', null",
-            "'Do You Use Autoclose?', \$sectionId, 6, 4, true, 2, 'Yes::Autoclose,No::NoAutoclose', '', '', null",
+            "'Provider', \$sectionId, 6, 4, true, 2, 'Axia::Axia,Merchant::Merchant', 'Provider-', '', null",
+            "'Do You Use Autoclose?', \$sectionId, 6, 4, true, 2, 'Yes::Autoclose,No::NoAutoclose', 'DoYouUseAutoclose-', '', null",
             "'If Yes, What Time?', \$sectionId, 6, 2, false, 2, '', 'Autoclose Time 2', '', null",
             "'Terminal Programming Information (please select all that apply)', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'AVS', \$sectionId, 2, 3, false, 2, '', 'AVS', '', null",
@@ -208,15 +208,15 @@ my $templateMap = {
             "'Invoice #', \$sectionId, 2, 3, false, 2, '', 'Invoice', '', null",
             "'Tips', \$sectionId, 2, 3, false, 2, '', 'Tips', '', null",
             "'Purchasing Cards', \$sectionId, 2, 3, false, 2, '', 'Purchasing Cards', '', null",
-            "'Do you accept Debit on this terminal?', \$sectionId, 4, 4, true, 2, 'Yes::Yes,No::No', 'term_accept_debit', '', null",
+            "'Do you accept Debit on this terminal?', \$sectionId, 4, 4, true, 2, 'Yes::Yes,No::No', 'TermAcceptDebit-', '', null",
             "'If Yes, what type of PIN Pad?', \$sectionId, 4, 0, false, 2, '', 'PinPad1', '', null",
             "'PIN Pad Quantity', \$sectionId, 4, 19, false, 2, '', 'QTY - PP1', '', null"
         ],
         'Terminal/Software Type(2)' => [
             "'Quantity', \$sectionId, 3, 19, false, 2, '', 'QTY2', '', null",
             "'Type', \$sectionId, 3, 0, false, 2, '', 'Terminal2', '', null",
-            "'Provider', \$sectionId, 6, 4, false, 2, 'Axia::Axia_3,Merchant::Merchant_3', '', '', null",
-            "'Do You Use Autoclose?', \$sectionId, 6, 4, false, 2, 'Yes::AutoClose_2,No::NoAutoClose_2', '', '', null",
+            "'Provider', \$sectionId, 6, 4, false, 2, 'Axia::Axia_3,Merchant::Merchant_3', 'Provider2-', '', null",
+            "'Do You Use Autoclose?', \$sectionId, 6, 4, false, 2, 'Yes::AutoClose_2,No::NoAutoClose_2', 'DoYouUseAutoclose2-', '', null",
             "'If Yes, What Time?', \$sectionId, 6, 2, false, 2, '', 'Autoclose Time 2', '', null",
             "'Terminal Programming Information (please select all that apply)', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'AVS', \$sectionId, 2, 3, false, 2, '', 'AVS_2', '', null",
@@ -224,7 +224,7 @@ my $templateMap = {
             "'Invoice #', \$sectionId, 2, 3, false, 2, '', 'Invoice_2', '', null",
             "'Tips', \$sectionId, 2, 3, false, 2, '', 'Tips_2', '', null",
             "'Purchasing Cards', \$sectionId, 2, 3, false, 2, '', 'Purchasing Cards_2', '', null",
-            "'Do you accept Debit on this terminal?', \$sectionId, 4, 4, true, 2, 'Yes::Yes,No::No', 'term_accept_debit_2', '', null",
+            "'Do you accept Debit on this terminal?', \$sectionId, 4, 4, true, 2, 'Yes::Yes,No::No', 'TermAcceptDebit2-', '', null",
             "'If Yes, what type of PIN Pad?', \$sectionId, 4, 0, false, 2, '', 'PinPad2', '', null",
             "'PIN Pad Quantity', \$sectionId, 4, 19, false, 2, '', 'QTY - PP2', '', null"
         ]
