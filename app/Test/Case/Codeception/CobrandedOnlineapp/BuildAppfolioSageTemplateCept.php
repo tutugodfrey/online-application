@@ -103,7 +103,7 @@ $fieldId = $FP->createIfMissing('% of Product Sold Consumer Initiated', $section
 // create a new field
 $fieldId = $FP->createIfMissing('Ownership Type', $sectionId, 12, 0, true, 0, '', 'Ownership Type', 'Ownership Type', null);
 $fieldId = $FP->createIfMissing('Corporate Status', $sectionId, 12, 0, false, 1, '', 'CorpStatus', '', null, true);
-$fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 0, '', 'TaxID', 'Federal Tax ID #', null);
+$fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 0, '', 'TaxID', 'Federal Tax ID #', null, null, true);
 
 // go back to the sections page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -118,7 +118,7 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 $fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, true, 0, '', 'Principal', 'Owner 1/Partner/Officer Name', null);
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 0, 'Owner', 'Owner1Title', 'Business Title', null);
 $fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 11, true, 0, '', 'OwnerEquity', 'Equity %', null);
-$fieldId = $FP->createIfMissing('SSN', $sectionId, 12, 12, true, 0, '', 'OwnerSSN', 'Social Security #', null);
+$fieldId = $FP->createIfMissing('SSN', $sectionId, 12, 12, true, 0, '', 'OwnerSSN', 'Social Security #', null, null, true);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 0, '', 'Owner1Address', 'Home Address', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 0, '', 'Owner1City', 'City', null);
 $fieldId = $FP->createIfMissing('State', $sectionId, 4, 20, true, 0, $FP::STATES, 'Owner1State', 'State', null);
@@ -126,7 +126,7 @@ $fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, true, 0, '', 'Owner1Zi
 $fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, true, 0, '', 'Owner1Phone', 'Phone Number', null);
 //$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, true, 1, '', 'Owner1Fax', '', null);
 //$fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, true, 1, '', 'Owner1Email', '', null);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, true, 1, '', 'Owner1DOB', '', null);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, true, 1, '', 'Owner1DOB', '', null, null, true);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -142,7 +142,7 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 $fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, false, 0, '', 'Owner2Name', 'Owner 2/Partner/Officer Name', null);
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, false, 0, 'Owner', 'Owner2Title', 'Business Title', null);
 $fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 11, false, 0, '', 'Owner2Equity', 'Equity %', null);
-$fieldId = $FP->createIfMissing('SSN', $sectionId, 12, 12, false, 0, '', 'Owner2SSN', 'Social Security #', null);
+$fieldId = $FP->createIfMissing('SSN', $sectionId, 12, 12, false, 0, '', 'Owner2SSN', 'Social Security #', null, null, true);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, false, 0, '', 'Owner2Address', 'Home Address', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, false, 0, '', 'Owner2City', 'City', null);
 $fieldId = $FP->createIfMissing('State', $sectionId, 4, 20, false, 0, $FP::STATES, 'Owner2State', 'State', null);
@@ -150,7 +150,7 @@ $fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, false, 0, '', 'Owner2Z
 $fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, false, 0, '', 'Owner2Phone', 'Phone Number', null);
 //$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, false, 1, '', 'Owner2Fax', '', null);
 //$fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, false, 1, '', 'Owner2Email', '', null);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, false, 1, '', 'Owner2DOB', '', null);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, false, 1, '', 'Owner2DOB', '', null, null, true);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -208,8 +208,8 @@ $sectionId = $SP->createIfMissing('Disbursements Account', $pageId, 12);
 // next go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 0, '', 'RoutingNum', 'Routing #', null);
-$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 0, '', 'AccountNum', 'Account #', null);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 0, '', 'RoutingNum', 'Routing #', null, null, true);
+$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 0, '', 'AccountNum', 'Account #', null, null, true);
 $fieldId = $FP->createIfMissing('BankName', $sectionId, 12, 0, true, 0, '', 'DisbursementsBankName1', 'Bank Name', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 0, '', 'DisbursementsBankAddress1', 'Address', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 0, '', 'DisbursementsBankCity1', 'City', null);
@@ -225,8 +225,8 @@ $sectionId = $SP->createIfMissing('Fees Account', $pageId, 12);
 // next go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 1, 'AppFolio | xxxxx2882', 'FeesRoutingNum', 'Routing #', null);
-$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 1, 'AppFolio | xxxxx2882', 'FeesAccountNum', 'Account #', null);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 1, 'AppFolio | xxxxx2882', 'FeesRoutingNum', 'Routing #', null, null, true);
+$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 1, 'AppFolio | xxxxx2882', 'FeesAccountNum', 'Account #', null, null, true);
 $fieldId = $FP->createIfMissing('BankName', $sectionId, 12, 0, true, 1, 'Wells Fargo', 'FeesBankName1', 'Bank Name', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 1, '195 Fairview Avenue', 'FeesBankAddress1', 'Address', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 1, 'Geoleta', 'FeesBankCity1', 'City', null);
@@ -242,8 +242,8 @@ $sectionId = $SP->createIfMissing('Rejects Account', $pageId, 12);
 // next go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 0, '', 'RejectsRoutingNum', 'Routing #', null);
-$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 0, '', 'RejectsAccountNum', 'Account #', null);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 0, '', 'RejectsRoutingNum', 'Routing #', null, null, true);
+$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 0, '', 'RejectsAccountNum', 'Account #', null, null, true);
 $fieldId = $FP->createIfMissing('BankName', $sectionId, 12, 0, true, 0, '', 'RejectsBankName1', 'Bank Name', null);
 $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 0, '', 'RejectsBankAddress1', 'Address', null);
 $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 0, '', 'RejectsBankCity1', 'City', null);

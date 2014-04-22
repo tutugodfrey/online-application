@@ -98,7 +98,7 @@ $sectionId = $SP->createIfMissing('ADDITIONAL BUSINESS INFORMATION', $pageId, 12
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 2, '', 'TaxID', '', null, null,true);
+$fieldId = $FP->createIfMissing('Federal Tax ID',$sectionId, 12, 0, true, 2, '', 'TaxID', '', null, null, true);
 $fieldId = $FP->createIfMissing('Website',$sectionId, 12, 17, true, 2, '', 'WebAddress', '', null);
 $fieldId = $FP->createIfMissing('Customer Service Phone',$sectionId, 12, 9, true, 2, '', 'Customer Service Phone', '', null);
 $fieldId = $FP->createIfMissing('Business Open Date', $sectionId, 12, 1, true, 2, '', 'OpenDate', '', null);
@@ -263,8 +263,8 @@ $sectionId = $SP->createIfMissing('Depository Account', $pageId, 6);
 // next go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'RoutingNum', '', null);
-$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'AccountNum', '', null);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'RoutingNum', '', null, null, true);
+$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'AccountNum', '', null, null, true);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -275,8 +275,8 @@ $sectionId = $SP->createIfMissing('Fees Account', $pageId, 6);
 // next go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'FeesRoutingNum', '', null);
-$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'FeesAccountNum', '', null);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'FeesRoutingNum', '', null, null, true);
+$fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'FeesAccountNum', '', null, null, true);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -420,8 +420,8 @@ $fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, true, 2, '', 'Owner1Zi
 $fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, true, 2, '', 'Owner1Phone', '', null);
 $fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, true, 2, '', 'Owner1Fax', '', null);
 $fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, true, 2, '', 'Owner1Email', '', null);
-$fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, true, 2, '', 'OwnerSSN', '', null);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null);
+$fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, true, 2, '', 'OwnerSSN', '', null, null, true);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null, null, true);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -443,8 +443,8 @@ $fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, false, 2, '', 'Owner2Z
 $fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, false, 2, '', 'Owner2Phone', '', null);
 $fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, false, 2, '', 'Owner2Fax', '', null);
 $fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, false, 2, '', 'Owner2Email', '', null);
-$fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, false, 2, '', 'Owner2SSN', '', null);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null);
+$fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, false, 2, '', 'Owner2SSN', '', null, null, true);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null, null, true);
 
 // add another page for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
