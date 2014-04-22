@@ -52,7 +52,7 @@ my $sections = {
 my $templateMap = {
     'General Information' => {
         'OWNERSHIP TYPE' => [
-            "'Ownership Type', \$sectionId, 12, 4, true, 2, 'Corporation::Corp,Sole Prop::Sole Prop,LLC::LLC,Partnership::Partnership,Non Profit/Tax Exempt (fed form 501C)::Non Profit,Other::Other', 'Owner Type - ', '', null",
+            "'Ownership Type', \$sectionId, 12, 4, true, 2, 'Corporation::Corp,Sole Prop::SoleProp,LLC::LLC,Partnership::Partnership,Non Profit/Tax Exempt (fed form 501C)::NonProfit,Other::Other', 'Owner Type - ', '', null",
             "'Corporate Status', \$sectionId, 12, 0, false, 2, '', 'CorpStatus', '', null, true"
         ],
         'CORPORATE INFORMATION' => [
@@ -89,7 +89,7 @@ my $templateMap = {
             "'General Comments',\$sectionId, 12, 21, true, 2, '', 'General Comments', '', null"
         ],
         'LOCATION TYPE' => [
-            "'Location Type', \$sectionId, 12, 4, true, 2, 'Retail Store::Retail Store,Industrial::Industrial,Trade::Trade,Office::Office,Residence::Residence,Other::Site Inspection Other', '', '', null"
+            "'Location Type', \$sectionId, 12, 4, true, 2, 'Retail Store::RetailStore,Industrial::Industrial,Trade::Trade,Office::Office,Residence::Residence,Other::SiteInspectionOther', '', '', null"
         ],
         'MERCHANT' => [
             "'Merchant Ownes/Leases', \$sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', '', '', null",
@@ -107,8 +107,8 @@ my $templateMap = {
             "'Average Ticket', \$sectionId, 4, 10, true, 2, '', 'AvgTicket', '', null",
             "'Highest Ticket', \$sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null",
             "'Current Processor', \$sectionId, 12, 0, true, 2, '', 'Previous Processor', '', null",
-            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::Card Present Swiped,Card Present Imprint::Card Present Imprint,Card Not Present (Keyed)::Card Not Present - Keyed,Card Not Present (Internet)::Card Not Present - Internet', '', '', null",
-            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::Direct To Customer,Direct To Business::Direct To Business,Direct To Government::Direct To Government', '', '', null"
+            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped,Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', '', '', null",
+            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer,Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '', '', null"
         ],
         'High Volume Months' => [
             "'Jan', \$sectionId, 1, 3, false, 2, '', 'Jan', '', null",
@@ -300,22 +300,21 @@ $I->amOnPage(\'/admin/cobrands/\'.$cobrandId.\'/templates\');
 
 // create a new template for this cobrand
 $templateId = $TP->createIfMissing(\'Default\', $cobrandId);
-
-// next go to the pages for this template
-$I->amOnPage(\'/admin/templates/\'.$templateId.\'/templatepages\');
-
 ';
 
 foreach my $page (@$pages) {
-    print OUTFILE "// create a new page for the template
-\$pageId = \$PP->createIfMissing('$page', \$templateId);
+    print OUTFILE "\n// go to the pages for this template
+\$I->amOnPage('/admin/templates/'.\$templateId.'/templatepages');
 
-// go to the sections for this page
-\$I->amOnPage('/admin/templatepages/'.\$pageId.'/templatesections');\n\n";
+// create a new page for the template
+\$pageId = \$PP->createIfMissing('$page', \$templateId);\n";
 
     ## create the sections for each page
     foreach my $section (@{$sections->{$page}}) {
-        print OUTFILE "// create a new section for the page
+        print OUTFILE "\n// go to the sections for this page
+\$I->amOnPage('/admin/templatepages/'.\$pageId.'/templatesections');
+
+// create a new section for the page
 \$sectionId = \$SP->createIfMissing('$section', \$pageId);
 
 // next go to the fields for this section
@@ -327,8 +326,5 @@ foreach my $page (@$pages) {
         foreach my $field (@{$templateMap->{$page}->{$section}}) {
             print OUTFILE "\$fieldId = \$FP->createIfMissing($field);\n";
         }
-
-        print OUTFILE "\n// go back to the sections page
-\$I->amOnPage('/admin/templatepages/'.\$pageId.'/templatesections');\n\n";
     }
 }
