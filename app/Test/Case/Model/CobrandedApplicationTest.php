@@ -559,12 +559,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Referral1",'.
 			'"Referral2",'.
 			'"Referral3",'.
-			'"Owner Type - Corp",'.
-			'"Owner Type - Sole Prop",'.
-			'"Owner Type - LLC",'.
-			'"Owner Type - Partnership",'.
-			'"Owner Type - Non Profit",'.
-			'"Owner Type - Other",'.
+			'"OwnerType-Corp",'.
+			'"OwnerType-SoleProp",'.
+			'"OwnerType-LLC",'.
+			'"OwnerType-Partnership",'.
+			'"OwnerType-NonProfit",'.
+			'"OwnerType-Other",'.
 			'"Unknown Type for testing",'.
 			'"oaID",'.
 			'"api",'.

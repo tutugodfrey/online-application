@@ -546,7 +546,7 @@ class CobrandedApplication extends AppModel {
 					// dealing with a multiple option input/field
 					// need to special case the OwnerType because it expects "Yes"/"Off" instead of "On"/"Off"
 					if ($app['CobrandedApplicationValues'][$appKey]['value'] == 'true') {
-						if ($this->__startsWith($app['CobrandedApplicationValues'][$appKey]['name'], "Owner Type - ")) {
+						if ($this->__startsWith($app['CobrandedApplicationValues'][$appKey]['name'], "OwnerType-")) {
 							$values = $this->__addValue($values, 'Yes');
 						} else {
 							$values = $this->__addValue($values, 'On');
