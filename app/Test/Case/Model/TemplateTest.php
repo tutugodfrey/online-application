@@ -456,32 +456,32 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Corp' => array(
+				'OwnerType-Corp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Sole Prop' => array(
+				'OwnerType-SoleProp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - LLC' => array(
+				'OwnerType-LLC' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Partnership' => array(
+				'OwnerType-Partnership' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Non Profit' => array(
+				'OwnerType-NonProfit' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Other' => array(
+				'OwnerType-Other' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
@@ -727,32 +727,32 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Corp' => array(
+				'OwnerType-Corp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Sole Prop' => array(
+				'OwnerType-SoleProp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - LLC' => array(
+				'OwnerType-LLC' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Partnership' => array(
+				'OwnerType-Partnership' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Non Profit' => array(
+				'OwnerType-NonProfit' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
 				),
-				'Owner Type - Other' => array(
+				'OwnerType-Other' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
