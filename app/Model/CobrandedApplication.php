@@ -348,6 +348,8 @@ class CobrandedApplication extends AppModel {
 
 			$this->TemplateField = ClassRegistry::init('TemplateField');
 
+			$templateFieldIdMap = array();
+
 			// save the application values
 			foreach ($fieldsData as $key => $value) {
 				// multirecord data will be in an array, don't trim the array
@@ -406,6 +408,21 @@ class CobrandedApplication extends AppModel {
 							// multirecord data is validated and saved by it's associated Model
 							// we don't want to add this to $appValue['CobrandedApplicationValues']['value']
 							continue;
+						}
+					}
+
+					// only one choice for radio buttons allowed
+					// keep track and make sure we don't have more than
+					// one choice - track by templateFieldId
+					if ($templateField['type'] == 4) {
+						$templateFieldId = $templateField['id'];
+						if (key_exists($templateFieldId, $templateFieldIdMap)) {
+							// we have more than one choice for this radio button
+							// update our validationErrors array
+							$response['validationErrors'] = Hash::insert($response['validationErrors'],
+								$key, 'only one choice allowed for: '.$templateField['merge_field_name']);
+						} else {
+							$templateFieldIdMap[$templateFieldId] = 1;
 						}
 					}
 
