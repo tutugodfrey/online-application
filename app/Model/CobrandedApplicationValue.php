@@ -86,7 +86,7 @@ class CobrandedApplicationValue extends AppModel {
 
 	public function beforeSave($options = array()) {
 		$retVal = true;
-		// only validate in the update case, ignore durring create; null will not be valid in all cases
+		// only validate in the update case, ignore during create; null will not be valid in all cases
 		if (key_exists('id', $this->data[$this->alias])) {
 			// look up the value's template field
 			$field = $this->TemplateField->find(
@@ -97,6 +97,12 @@ class CobrandedApplicationValue extends AppModel {
 					)
 				)
 			);
+
+			// if field is set to encrypt, check for masking
+			// if it's masked, do not update value, otherwise value in db will be masked
+			if ($field['TemplateField']['encrypt'] && preg_match('/^X+/', $this->data[$this->alias]['value'])) {
+				return false;
+			}
 
 			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
 
@@ -230,6 +236,20 @@ class CobrandedApplicationValue extends AppModel {
 							$data = $resultValue['CobrandedApplicationValue']['value'];
 							$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 										base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
+
+							// mask all but last 4 values
+    						$dataArray = str_split($data);
+							$dataLength = count($dataArray);
+							$data = '';
+							for ($x = 0; $x < $dataLength; $x++) {
+								if ($x < ($dataLength - 4)) {                   
+									$data .= 'X';                                   
+								}                                               
+								else {                                          
+									$data .= $dataArray[$x];                        
+								}                                               
+							}
+
 							$results[$resultKey]['CobrandedApplicationValue']['value'] = $data;
 							$results[$resultKey]['CobrandedApplicationValues']['value'] = $data;
 						}

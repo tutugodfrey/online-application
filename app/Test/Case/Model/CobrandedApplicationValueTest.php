@@ -344,6 +344,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 
 		// retrieve application value
 		// value should get decrypted in afterFind()
+		// it should also get masked, displaying only last 4 chars
 		$applicationValue = $this->CobrandedApplicationValue->find(
 			'first',
 			array(
@@ -351,8 +352,56 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			)
 		);
 
-		$this->assertEquals('encryption testing', $applicationValue['CobrandedApplicationValue']['value'],
-			'verify value is decrypted as expected');
+		$this->assertEquals('XXXXXXXXXXXXXXting', $applicationValue['CobrandedApplicationValue']['value'],
+			'verify value is decrypted and masked as expected');
+	}
+
+	public function testBeforeSaveMaskCheck() {
+		$applicationValue = $this->CobrandedApplicationValue->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplicationValue.name' => 'Encrypt1')
+			)
+		);
+		$this->assertEquals(null, $applicationValue['CobrandedApplicationValue']['value'],
+			'verify Encrypt1 application value is initially null');
+
+		$testValue = 'encryption testing';
+
+		// application value should be encrypted in database after this
+		$applicationValue['CobrandedApplicationValue']['value'] = $testValue;
+		$this->CobrandedApplicationValue->save($applicationValue);
+
+		// retrieve application value
+		// value should get decrypted in afterFind()
+		// it should also get masked, displaying only last 4 chars
+		$applicationValue = $this->CobrandedApplicationValue->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplicationValue.name' => 'Encrypt1')
+			)
+		);
+
+		$this->assertEquals('XXXXXXXXXXXXXXting', $applicationValue['CobrandedApplicationValue']['value'],
+			'verify value is decrypted and masked as expected');
+
+		// try to modify and save the value - this should not work
+		// otherwise values will get stored with masking
+		$applicationValue['CobrandedApplicationValue']['value'] .= '123';
+		
+		// try to update
+		$result = $this->CobrandedApplicationValue->save($applicationValue);
+
+		// check that value did not change
+		$applicationValue = $this->CobrandedApplicationValue->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplicationValue.name' => 'Encrypt1')
+			)
+		);
+
+		$this->assertEquals('XXXXXXXXXXXXXXting', $applicationValue['CobrandedApplicationValue']['value'],
+			'verify value is decrypted and masked as expected');
 	}
 
 	private function __testInvalidAndValidAppValues($typeString, $appValue, $invalid, $valid) {
