@@ -758,6 +758,28 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertFalse($actualResponse['success'], 'saveFields with invalid value for required field should fail');
 		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
 
+		unset($fieldsData);
+		unset($expectedValidationErrors);
+
+		// test multi-option radio type - only one choice allowed
+		$fieldsData['OwnerType-SoleProp'] = 'true';
+		$fieldsData['OwnerType-NonProfit'] = 'true';
+
+		// set expected results
+		$expectedValidationErrors = array(
+			'OwnerType-NonProfit' => 'only one choice allowed for: OwnerType-'
+		);
+
+		// execute the method under test
+		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
+
+		// assertions
+		$this->assertFalse($actualResponse['success'], 'saveFields with multiple choices for multi-option radio type should fail');
+		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
+
+		unset($fieldsData);
+		unset($expectedValidationErrors);
+
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
