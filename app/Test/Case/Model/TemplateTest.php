@@ -243,6 +243,36 @@ class TemplateTest extends CakeTestCase {
 						),
 					),
 				),
+				'OwnerType-Corp' => array(
+					'type' => 'radio',
+					'required' => false,
+					'description' => '',
+				),
+				'OwnerType-SoleProp' => array(
+					'type' => 'radio',
+					'required' => false,
+					'description' => '',
+				),
+				'OwnerType-LLC' => array(
+					'type' => 'radio',
+					'required' => false,
+					'description' => '',
+				),
+				'OwnerType-Partnership' => array(
+					'type' => 'radio',
+					'required' => false,
+					'description' => '',
+				),
+				'OwnerType-NonProfit' => array(
+					'type' => 'radio',
+					'required' => false,
+					'description' => '',
+				),
+				'OwnerType-Other' => array(
+					'type' => 'radio',
+					'required' => false,
+					'description' => '',
+				),
 			), // one field from the user
 		);
 		$index = 0;
