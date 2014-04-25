@@ -729,9 +729,20 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// execute the method under test
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
 
+		$application = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array('CobrandedApplication.id' => $actualResponse['application_id']),
+			)
+		);
+
 		// assertions
 		$this->assertTrue($actualResponse['success'], 'saveFields with valid data should succeed');
 		$this->assertEquals(array(), $actualResponse['validationErrors'], 'Expected no validation errors for valid $fieldsData');
+
+		// make sure the response contains a link to the new application
+		$applicationUrl = Router::url('/cobranded_applications/edit/', true).$application['CobrandedApplication']['uuid'];
+		$this->assertEquals($actualResponse['application_url'], $applicationUrl, 'Expected application URL in response after creation');
 
 		// test with bad routing number
 		$fieldsData['multirecord_from_api_with_default'] = array(

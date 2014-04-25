@@ -331,10 +331,12 @@ class CobrandedApplication extends AppModel {
 			'success' => false,
 			'validationErrors' => array(),
 			'application_id' => null,
+			'application_url' => null
 		);
 
 		// create an application for $userId
 		$createAppResponse = $this->createOnlineappForUser($user);
+
 		if ($createAppResponse['success'] == true) {
 			// populate it with the passed $fieldsData
 			$newApp = $this->find(
@@ -461,6 +463,7 @@ class CobrandedApplication extends AppModel {
 			$this->delete($createAppResponse['cobrandedApplication']['id']);
 		} else {
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
+			$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
 		}
 		return $response;
 	}
