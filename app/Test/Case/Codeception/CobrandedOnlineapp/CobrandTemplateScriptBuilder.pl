@@ -125,8 +125,8 @@ my $templateMap = {
             "'Dec', \$sectionId, 1, 3, false, 2, '', 'Dec', '', null"
         ],
         'MOTO/Internet Questionnaire' => [
-            "'Does your organization have a store front location?', \$sectionId, 12, 4, true, 2, 'Yes::8,No::9', 'CheckBox-', '', null",
-            "'Are orders received and processed at business location?', \$sectionId, 12, 4, true, 2, 'Yes::14,No::13', 'CheckBox-', '', null",
+            "'Does your organization have a store front location?', \$sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'StoreFrontLoc-', '', null",
+            "'Are orders received and processed at business location?', \$sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'OrdersProcAtBusinessLoc-', '', null",
             "'Where is inventory housed?', \$sectionId, 12, 0, true, 2, '', 'Where is inventory housed', '', null",
             "'Are any of the following aspects of your business outsourced to other companies? (please select all that apply)', \$sectionId, 12, 6, false, 2, '', 'label', '', null",
             "'Customer Service (Desc)', \$sectionId, 4, 0, true, 2, '', 'Customer Service', '', null",
@@ -144,12 +144,12 @@ my $templateMap = {
             "'Annually', \$sectionId, 3, 3, false, 2, '', 'ANNUALLY', '', null",
             "'If product/service delivery requires recurring billing, please explain available billing options:', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'Total must equal 100%', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
-            "'% FULL PAYMENT UP FRONT WITH', \$sectionId, 6, 11, false, 2, '', 'Text83', '', null",
-            "'DAYS UNTIL PRODUCT/SERVICE DELIVERY', \$sectionId, 6, 19, false, 2, '', 'Text86', '', null",
-            "'% PARTIAL PAYMENT REQUIRED UP FRONT WITH', \$sectionId, 6, 11, false, 2, '', 'Text84', '', null",
-            "'% AND WITHIN', \$sectionId, 3, 11, false, 2, '', 'Text87', '', null",
-            "'DAYS UNTIL FINAL DELIVERY', \$sectionId, 3, 19, false, 2, '', 'Text88', '', null",
-            "'% PAYMENT RECEIVED AFTER PRODUCT/SERVICE IS PROVIDED', \$sectionId, 12, 11, false, 2, '', 'Text85', '', null"
+            "'% FULL PAYMENT UP FRONT WITH', \$sectionId, 6, 11, false, 2, '', 'PercentFullPayUpFront', '', null",
+            "'DAYS UNTIL PRODUCT/SERVICE DELIVERY', \$sectionId, 6, 19, false, 2, '', 'DaysUntilDelivery', '', null",
+            "'% PARTIAL PAYMENT REQUIRED UP FRONT WITH', \$sectionId, 6, 11, false, 2, '', 'PercentPartialPayUpFront', '', null",
+            "'% AND WITHIN', \$sectionId, 3, 11, false, 2, '', 'PercentAndWithin', '', null",
+            "'DAYS UNTIL FINAL DELIVERY', \$sectionId, 3, 19, false, 2, '', 'DaysUntilFinalDelivery', '', null",
+            "'% PAYMENT RECEIVED AFTER PRODUCT/SERVICE IS PROVIDED', \$sectionId, 12, 11, false, 2, '', 'PercentPayReceivedAfter', '', null"
         ], 
     },
     'ACH Bank and Trade Reference' => {

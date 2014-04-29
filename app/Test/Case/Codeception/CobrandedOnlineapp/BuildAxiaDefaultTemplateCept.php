@@ -191,8 +191,8 @@ $sectionId = $SP->createIfMissing('MOTO/Internet Questionnaire', $pageId);
 // go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
-$fieldId = $FP->createIfMissing('Does your organization have a store front location?', $sectionId, 12, 4, true, 1, 'Yes::8,No::9', 'Check Box ', '', null);
-$fieldId = $FP->createIfMissing('Are orders received and processed at business location?', $sectionId, 12, 4, true, 1, 'Yes::14,No::13', 'Check Box ', '', null);
+$fieldId = $FP->createIfMissing('Does your organization have a store front location?', $sectionId, 12, 4, true, 1, 'Yes::Yes,No::No', 'StoreFrontLoc-', '', null);
+$fieldId = $FP->createIfMissing('Are orders received and processed at business location?', $sectionId, 12, 4, true, 1, 'Yes::Yes,No::No', 'OrdersProcAtBusinessLoc-', '', null);
 $fieldId = $FP->createIfMissing('Where is inventory housed?', $sectionId, 12, 0, true, 1, '', 'Where is inventory housed', '', null);
 // not used in the export
 //$fieldId = $FP->createIfMissing('Do you own the product/inventory?', $sectionId, 12, 4, true, 1, 'Yes::yes,No::no', 'product_', '', null);
@@ -222,14 +222,14 @@ $fieldId = $FP->createIfMissing('Annually', $sectionId, 3, 3, false, 1, '', 'ANN
 $fieldId = $FP->createIfMissing('If product/service delivery requires recurring billing, please explain available billing options:', $sectionId, 12, 6, false, 2, '', 'label', '', null);
 $fieldId = $FP->createIfMissing('Total must equal 100%', $sectionId, 12, 6, false, 2, '', 'label', '', null);
 
-$fieldId = $FP->createIfMissing('% FULL PAYMENT UP FRONT WITH', $sectionId, 6, 11, false, 1, '', 'Text83', '', null);
-$fieldId = $FP->createIfMissing('DAYS UNTIL PRODUCT/SERVICE DELIVERY', $sectionId, 6, 19, false, 1, '', 'Text86', '', null);
+$fieldId = $FP->createIfMissing('% FULL PAYMENT UP FRONT WITH', $sectionId, 6, 11, false, 1, '', 'PercentFullPayUpFront', '', null);
+$fieldId = $FP->createIfMissing('DAYS UNTIL PRODUCT/SERVICE DELIVERY', $sectionId, 6, 19, false, 1, '', 'DaysUntilDelivery', '', null);
 
-$fieldId = $FP->createIfMissing('% PARTIAL PAYMENT REQUIRED UP FRONT WITH', $sectionId, 6, 11, false, 1, '', 'Text84', '', null);
-$fieldId = $FP->createIfMissing('% AND WITHIN', $sectionId, 3, 11, false, 1, '', 'Text87', '', null);
-$fieldId = $FP->createIfMissing('DAYS UNTIL FINAL DELIVERY', $sectionId, 3, 19, false, 1, '', 'Text88', '', null);
+$fieldId = $FP->createIfMissing('% PARTIAL PAYMENT REQUIRED UP FRONT WITH', $sectionId, 6, 11, false, 1, '', 'PercentPartialPayUpFront', '', null);
+$fieldId = $FP->createIfMissing('% AND WITHIN', $sectionId, 3, 11, false, 1, '', 'PercentAndWithin', '', null);
+$fieldId = $FP->createIfMissing('DAYS UNTIL FINAL DELIVERY', $sectionId, 3, 19, false, 1, '', 'DaysUntilFinalDelivery', '', null);
 
-$fieldId = $FP->createIfMissing('% PAYMENT RECEIVED AFTER PRODUCT/SERVICE IS PROVIDED', $sectionId, 12, 11, false, 1, '', 'Text85', '', null);
+$fieldId = $FP->createIfMissing('% PAYMENT RECEIVED AFTER PRODUCT/SERVICE IS PROVIDED', $sectionId, 12, 11, false, 1, '', 'PercentPayReceivedAfter', '', null);
 
 // add another page for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
