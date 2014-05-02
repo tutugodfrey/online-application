@@ -2,7 +2,7 @@
 
 class EmailTimelineSubject extends AppModel {
 
-       public $useTable = 'onlineapp_email_timeline_subjects';
+    public $useTable = 'onlineapp_email_timeline_subjects';
     public $validate = array(
         'subject' => array(
             'notempty' => array(
@@ -20,7 +20,7 @@ class EmailTimelineSubject extends AppModel {
     public $hasMany = array(
         'EmailTimeline' => array(
             'className' => 'EmailTimeline',
-            'foreignKey' => 'subject_id',
+            'foreignKey' => 'email_timeline_subject_id',
             'conditions' => '',
             'fields' => '',
             'order' => ''

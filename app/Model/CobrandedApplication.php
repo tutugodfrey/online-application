@@ -668,20 +668,180 @@ class CobrandedApplication extends AppModel {
 			// and send the email
 			$link = Router::url('/applications/index/', true).urlencode($email)."/{$hash}";
 
-			$Email = new CakeEmail('default');
-			$Email->emailFormat('text')
-				->from(array('newapps@axiapayments.com' => 'Axia Online Applications'))
-				->template('retrieve_applications')
-				->to($email)
-				->subject('Your Axia Applications')
-				->viewVars(array('email'=>$email, 'hash'=>$hash, 'link'=>$link))
-				->send();
+			$args = array(
+				'from' => array('newapps@axiapayments.com' => 'Axia Online Applications'),
+				'to' => $email,
+				'subject' => 'Your Axia Applications',
+				'format' => 'text',
+				'template' => 'retrieve_applications',
+				'viewVars' => array('email'=>$email, 'hash'=>$hash, 'link'=>$link)
+			);
+
+			$sendResponse = $this->__sendEmail($args);
 
 			// TODO: record that he email was sent
 
 			$response['success'] = true;
 			$response['msg'] = '';
 		}
+		return $response;
+	}
+
+/**
+ * sendNewApiApplicationEmail
+ * 
+ * @params
+ *     $args array
+ * @returns
+ *     $response array
+ */
+
+	public function sendNewApiApplicationEmail($args) {
+		$viewVars = array();
+
+		$viewVars['recipient'] = 'Axia Data Entry';
+
+		if (key_exists('cobrand', $args)) {
+			$viewVars['cobrand'] = $args['cobrand'];
+		} 
+
+		if (key_exists('link', $args)) {
+			$viewVars['link'] = $args['link'];
+		} 
+
+		$args = array(
+			'from' => array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications'),
+			'to' => EmailTimeline::DATA_ENTRY_EMAIL,
+			'subject' => 'New API Axia Application',
+			'format' => 'text',
+			'template' => 'new_api_application',
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->__sendEmail($args);
+
+		return $response;
+	}
+
+/**
+ * __sendEmail
+ * 
+ * @params
+ *     $args array
+ * @returns
+ *     $response array
+ */
+	private function __sendEmail($args) {
+		$response = array(
+			'success' => false,
+			'msg' => 'Failed to send email.',
+		);
+
+		$Email = new CakeEmail('default');
+
+		if (key_exists('from', $args)) {
+			$Email->from($args['from']);
+
+		} else {
+			$response['msg'] = 'from argument is missing.';
+			return $response;
+		}
+
+		if (key_exists('to', $args)) {
+			$Email->to($args['to']);
+		} else {
+			$response['msg'] = 'to argument is missing.';
+			return $response;
+		}
+
+		$subject = 'No subject';
+		if (key_exists('subject', $args)) {
+			$subject = $args['subject'];
+		}
+
+		$Email->subject($subject);
+
+		if (key_exists('format', $args)) {
+			$Email->emailFormat($args['format']);
+		}
+
+		if (key_exists('template', $args)) {
+			$Email->template($args['template']);
+		}
+
+		if (key_exists('viewVars', $args)) {
+			$Email->viewVars($args['viewVars']);
+		}
+		
+		if ($Email->send()) {
+			$response['success'] = true;
+			$response['msg'] = '';
+		}
+	
+		return $response;
+	}
+
+/**
+ * createNewApiApplicationEmailTimelineEntry
+ * 
+ * @params
+ *     $args array
+ * @returns
+ *     $response array
+ */
+	public function createNewApiApplicationEmailTimelineEntry($args) {
+		$args['email_timeline_subject_id'] = EmailTimeline::NEW_API_APPLICATION;
+		$args['recipient'] = EmailTimeline::DATA_ENTRY_EMAIL;
+		$response = $this->__createEmailTimelineEntry($args);
+		return $response;
+	}
+
+/**
+ * __createEmailTimelineEntry
+ * 
+ * @params
+ *     $args array
+ * @returns
+ *     $response array
+ */
+	private function __createEmailTimelineEntry($args) {
+		$response = array(
+			'success' => false,
+			'msg' => 'Failed to create email timeline entry.',
+		);
+
+		$EmailTimeline = ClassRegistry::init('EmailTimeline');
+		
+		if (!key_exists('cobranded_application_id', $args)) {
+			$response['msg'] = 'cobranded_application_id argument is missing.';
+			return $response;
+		}
+	
+		if (!key_exists('email_timeline_subject_id', $args)) {
+			$response['msg'] = 'email_timeline_subject_id argument is missing.';
+			return $response;
+		}
+
+		if (!key_exists('recipient', $args)) {
+			$response['msg'] = 'recipient argument is missing.';
+			return $response;
+		}
+
+		$EmailTimeline->create();
+		$success = $EmailTimeline->save(
+			array(
+				'cobranded_application_id' => $args['cobranded_application_id'],
+				'date' => DboSource::expression('NOW()'),
+				'email_timeline_subject_id' => $args['email_timeline_subject_id'],
+				'recipient' => $args['recipient']
+			)
+		);
+
+		if ($success) {
+			$response['success'] = true;
+			$response['msg'] = '';
+		}
+
 		return $response;
 	}
 

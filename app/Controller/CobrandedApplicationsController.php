@@ -145,6 +145,29 @@ class CobrandedApplicationsController extends AppController {
 				// also make sure a template is setup
 				if (!is_null($user['User']['template_id'])) {
 					$response = $this->CobrandedApplication->saveFields($user['User'], $this->request->data);
+
+					$this->Cobrand = ClassRegistry::init('Cobrand');
+					$cobrand = $this->Cobrand->find(
+						'first', 
+						array(
+							'conditions' => array('Cobrand.id' => $user['User']['cobrand_id']),
+						)
+					);
+
+					$args = array(
+						'cobrand' => $cobrand['Cobrand']['partner_name'],
+						'link' => $response['application_url']
+					);
+
+					// send email to data entry
+					$emailResponse = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
+
+					// add email timeline event
+					unset($args);
+					$args = array(
+						'cobranded_application_id' => $response['application_id']
+					);
+					$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
 				} else {
 					$response = Hash::insert(
 					$response,
