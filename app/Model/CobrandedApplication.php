@@ -405,11 +405,15 @@ class CobrandedApplication extends AppModel {
 								$Model->create($val);
 								$success = $Model->save();
 								if (!$success) {
+									$errors = array();
+									$errors['invalid record'] = $val;
 									foreach ($Model->validationErrors as $key => $value) {
-										$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $value);
+										$errors["$key"] = $value;					
 									}
+									array_push($response['validationErrors'], $errors);
 								}
 							}
+
 							// multirecord data is validated and saved by it's associated Model
 							// we don't want to add this to $appValue['CobrandedApplicationValues']['value']
 							continue;

@@ -757,8 +757,18 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// set expected results
 		$expectedValidationErrors = array(
-			'routing_number' => array(
-				'routing number is invalid'
+			array(
+				'invalid record' => array(
+					'description' => 'Lorem ipsum dolor sit amet',
+					'auth_type' => 'Lorem ipsum dolor sit amet',
+					'routing_number' => '3211',
+					'account_number' => '9900000003',
+					'bank_name' => 'Lorem ipsum dolor sit amet',
+					'cobranded_application_id' => 4
+				),
+				'routing_number' => array(
+					'routing number is invalid'
+				)
 			)
 		);
 
