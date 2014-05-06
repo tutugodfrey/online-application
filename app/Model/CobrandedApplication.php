@@ -91,6 +91,9 @@ class CobrandedApplication extends AppModel {
 		),
 	);
 
+	// tests will set this via dependency injection, using a mocked object
+	public $CakeEmail = null;
+
 /**
  * afterSave
  *
@@ -697,8 +700,17 @@ class CobrandedApplication extends AppModel {
  */
 
 	public function sendNewApiApplicationEmail($args) {
-		$viewVars = array();
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		if (key_exists('from', $args)) {
+			$from = $args['from'];
+		}
 
+		$to = EmailTimeline::DATA_ENTRY_EMAIL;
+		if (key_exists('to', $args)) {
+			$to = $args['to'];
+		}
+
+		$viewVars = array();
 		$viewVars['recipient'] = 'Axia Data Entry';
 
 		if (key_exists('cobrand', $args)) {
@@ -710,8 +722,8 @@ class CobrandedApplication extends AppModel {
 		} 
 
 		$args = array(
-			'from' => array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications'),
-			'to' => EmailTimeline::DATA_ENTRY_EMAIL,
+			'from' => $from,
+			'to' => $to,
 			'subject' => 'New API Axia Application',
 			'format' => 'text',
 			'template' => 'new_api_application',
@@ -737,10 +749,12 @@ class CobrandedApplication extends AppModel {
 			'msg' => 'Failed to send email.',
 		);
 
-		$Email = new CakeEmail('default');
+		if (!$this->CakeEmail) {
+			$this->CakeEmail = new CakeEmail('default');
+		}
 
 		if (key_exists('from', $args)) {
-			$Email->from($args['from']);
+			$this->CakeEmail->from($args['from']);
 
 		} else {
 			$response['msg'] = 'from argument is missing.';
@@ -748,7 +762,7 @@ class CobrandedApplication extends AppModel {
 		}
 
 		if (key_exists('to', $args)) {
-			$Email->to($args['to']);
+			$this->CakeEmail->to($args['to']);
 		} else {
 			$response['msg'] = 'to argument is missing.';
 			return $response;
@@ -759,21 +773,21 @@ class CobrandedApplication extends AppModel {
 			$subject = $args['subject'];
 		}
 
-		$Email->subject($subject);
+		$this->CakeEmail->subject($subject);
 
 		if (key_exists('format', $args)) {
-			$Email->emailFormat($args['format']);
+			$this->CakeEmail->emailFormat($args['format']);
 		}
 
 		if (key_exists('template', $args)) {
-			$Email->template($args['template']);
+			$this->CakeEmail->template($args['template']);
 		}
 
 		if (key_exists('viewVars', $args)) {
-			$Email->viewVars($args['viewVars']);
+			$this->CakeEmail->viewVars($args['viewVars']);
 		}
 		
-		if ($Email->send()) {
+		if ($this->CakeEmail->send()) {
 			$response['success'] = true;
 			$response['msg'] = '';
 		}

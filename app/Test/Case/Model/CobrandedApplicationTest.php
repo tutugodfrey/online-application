@@ -961,6 +961,73 @@ class CobrandedApplicationTest extends CakeTestCase {
 		}
 	}
 
+	public function testSendFieldCompletionEmail() {
+		// use mock object instead of creating a brand new one
+		$CakeEmail = $this->getMock('CakeEmail');         
+		$this->CobrandedApplication->CakeEmail = $CakeEmail;
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'Could not find any applications with the specified email address.'
+		);
+
+		$emailAddress = 'nogood@assertfail.com';
+		$response = $this->CobrandedApplication->sendFieldCompletionEmail($emailAddress);
+
+		// assertions
+		$this->assertFalse($response['success'], 'sendFieldCompletionEmail with bad email address should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
+	public function testSendNewApiApplicationEmail() {
+		// use mock object instead of creating a brand new one
+		$CakeEmail = $this->getMock('CakeEmail');         
+		$this->CobrandedApplication->CakeEmail = $CakeEmail;
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'Failed to send email.'
+		);
+
+		$args = array('to' => '');
+		$response = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
+
+		// assertions
+		$this->assertFalse($response['success'], 'sendNewApiApplicationEmail with empty value for required field should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
+	public function testCreateNewApiApplicationEmailTimelineEntry() {
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'Failed to create email timeline entry.'
+		);
+
+		// use bad data
+		$args = array('cobranded_application_id' => '');
+		$response = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
+
+		// assertions
+		$this->assertFalse($response['success'], 'createNewApiApplicationEmailTimelineEntry with empty value for required field should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// use good data now - set expected results
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => ''
+		);
+
+		$args = array('cobranded_application_id' => '1');
+		$response = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
+
+		// assertions
+		$this->assertTrue($response['success'], 'createNewApiApplicationEmailTimelineEntry with good value for required field should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
 	private function __setSomeValuesBasedOnType(&$app) {
 		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 			$templateField = $this->TemplateField->find(
