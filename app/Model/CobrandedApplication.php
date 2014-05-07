@@ -169,9 +169,15 @@ class CobrandedApplication extends AppModel {
  * @params
  *     $applicationId integer
  */
-	public function getTemplateAndAssociatedValues($applicationId) {
+	public function getTemplateAndAssociatedValues($applicationId, $userId = null) {
 		$this->id = $applicationId;
 		$application = $this->read();
+
+		// if user is not logged in, don't show rep-only fields
+		$conditions = '';
+		if (is_null($userId)) {
+			$conditions = 'rep_only != true';
+		}
 
 		return $this->find(
 			'first', array(
@@ -186,9 +192,18 @@ class CobrandedApplication extends AppModel {
 											'cobranded_application_id' => $applicationId,
 										),
 										'order' => array('id')
-									)
-								)
-							)
+									),
+									'conditions' => array(
+										$conditions
+									),
+								),
+								'conditions' => array(
+									$conditions
+								),
+							),
+							'conditions' => array(
+								$conditions
+							),
 						)
 					)
 				),

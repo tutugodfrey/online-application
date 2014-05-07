@@ -741,5 +741,21 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 			'created' => '2013-12-18 14:10:17',
 			'modified' => '2013-12-18 14:10:17'
 		),
+		array(
+			'name' => 'Text field 1',
+			'width' => 12,
+			'description' => '',
+			'type' => 1,
+			'required' => 1,
+			'source' => 1,
+			'default_value' => '',
+			'merge_field_name' => '',
+			'order' => 0,
+			'section_id' => 6,
+			'rep_only' => true,
+			'encrypt' => false,
+			'created' => '2013-12-18 14:10:17',
+			'modified' => '2013-12-18 14:10:17'
+		),
 	);
 }

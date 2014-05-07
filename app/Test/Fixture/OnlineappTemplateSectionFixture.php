@@ -78,5 +78,15 @@ class OnlineappTemplateSectionFixture extends CakeTestFixture {
 			'created' => '2013-12-18 13:36:11',
 			'modified' => '2013-12-18 13:36:11'
 		),
+		array(
+			'name' => 'Page Section 1',
+			'width' => 12,
+			'rep_only' => true,
+			'description' => '',
+			'page_id' => 6,
+			'order' => 0,
+			'created' => '2013-12-18 13:36:11',
+			'modified' => '2013-12-18 13:36:11'
+		),
 	);
 }
