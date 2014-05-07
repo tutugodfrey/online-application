@@ -22,6 +22,16 @@ class EmailTimeline extends AppModel {
     const DATA_ENTRY_EMAIL = 'dataentry@axiapayments.com';
     
     public $validate = array(
+        'onlineapp_applications_id' => array(
+            'notempty' => array(
+                'rule' => array('notempty'),
+            //'message' => 'Your custom message here',
+            //'allowEmpty' => false,
+            //'required' => false,
+            //'last' => false, // Stop validation after this rule
+            //'on' => 'create', // Limit validation to 'create' or 'update' operations
+            ),
+        ),
         'cobranded_application_id' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
@@ -36,6 +46,13 @@ class EmailTimeline extends AppModel {
     //The Associations below have been created with all possible keys, those that are not needed can be removed
 
     public $belongsTo = array(
+        'Application' => array(
+            'className' => 'Application',
+            'foreignKey' => 'app_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        ),
         'CobrandedApplication' => array(
             'className' => 'CobrandedApplication',
             'foreignKey' => 'cobranded_application_id',
@@ -51,7 +68,6 @@ class EmailTimeline extends AppModel {
             'order' => ''
         ),
     );
-
 }
 
 ?>
