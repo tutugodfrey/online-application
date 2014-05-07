@@ -17,18 +17,24 @@ class OnlineappEmailTimelineModifications extends CakeMigration {
 		'up' => array(
                         'rename_field' => array(
 				'onlineapp_email_timelines' => array(
-					'app_id' => 'cobranded_application_id',
 					'subject_id' => 'email_timeline_subject_id',
 				),
                         ),
+			'create_field' => array(
+				'onlineapp_email_timelines' => array(
+					'cobranded_application_id' => array('type' => 'integer', 'null' => true),
+				),
+			),
                 ),
                 'down' => array(
                         'rename_field' => array(
 				'onlineapp_email_timelines' => array(
-					'cobranded_application_id' => 'app_id',
 					'email_timeline_subject_id' => 'subject_id',
 				),
                         ),
+			'drop_field' => array(
+				'onlineapp_email_timelines' => array('cobranded_application_id'),
+			),
                 ),
 	);
 
@@ -39,6 +45,13 @@ class OnlineappEmailTimelineModifications extends CakeMigration {
  * @return boolean Should process continue
  */
 	public function before($direction) {
+		if ($direction == 'down') {
+                        $this->db->execute(
+                                "ALTER TABLE onlineapp_email_timelines
+                                DROP CONSTRAINT onlineapp_email_timelines_cobranded_application_id_fkey;"
+			);
+		}
+
 		return true;
 	}
 
@@ -53,9 +66,6 @@ class OnlineappEmailTimelineModifications extends CakeMigration {
                 if ($direction == 'up') {
                         $this->db->execute(
                                 "ALTER TABLE onlineapp_email_timelines
-				DROP CONSTRAINT onlineapp_email_timelines_app_id_fkey;
-
-                                ALTER TABLE onlineapp_email_timelines
 				ADD CONSTRAINT onlineapp_email_timelines_cobranded_application_id_fkey FOREIGN KEY (cobranded_application_id) REFERENCES onlineapp_cobranded_applications (id);
 
                                 ALTER TABLE onlineapp_email_timelines
@@ -71,12 +81,6 @@ class OnlineappEmailTimelineModifications extends CakeMigration {
                 if ($direction == 'down') {
                         $this->db->execute(
                                 "ALTER TABLE onlineapp_email_timelines
-				DROP CONSTRAINT onlineapp_email_timelines_cobranded_application_id_fkey;
-
-                                ALTER TABLE onlineapp_email_timelines
-				ADD CONSTRAINT onlineapp_email_timelines_app_id_fkey FOREIGN KEY (app_id) REFERENCES onlineapp_applications (id);
-
-                                ALTER TABLE onlineapp_email_timelines
 				DROP CONSTRAINT onlineapp_email_timelines_email_timeline_subject_id_fkey;
 
                                 ALTER TABLE onlineapp_email_timelines
