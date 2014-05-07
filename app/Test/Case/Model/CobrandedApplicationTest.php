@@ -384,6 +384,55 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// We need an application
 		$actual = $this->CobrandedApplication->getTemplateAndAssociatedValues(1);
 		$this->assertEquals($expected, $actual, 'getTemplateAndAssociatedValues test failed');
+
+		// we should get rep_only pages, sections, and fields, if we're logged in
+		$expected['Template']['TemplatePages'][3] = array(
+			'id' => (int) 6,
+			'name' => 'Page 4',
+			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+			'rep_only' => true,
+			'template_id' => (int) 1,
+			'order' => (int) 3,
+			'created' => '2013-12-18 09:26:45',
+			'modified' => '2013-12-18 09:26:45',
+			'TemplateSections' => array(
+				(int) 0 => array(
+					'id' => (int) 6,
+					'name' => 'Page Section 1',
+					'description' => '',
+					'rep_only' => true,
+					'width' => (int) 12,
+					'page_id' => (int) 6,
+					'order' => (int) 0,
+					'created' => '2013-12-18 13:36:11',
+					'modified' => '2013-12-18 13:36:11',
+					'TemplateFields' => array(
+						(int) 0 => array(
+							'id' => (int) 43,
+							'name' => 'Text field 1',
+							'description' => '',
+							'rep_only' => true,
+							'width' => (int) 12,
+							'type' => (int) 1,
+							'required' => true,
+							'source' => (int) 1,
+							'default_value' => '',
+							'merge_field_name' => '',
+							'order' => (int) 0,
+							'section_id' => (int) 6,
+							'encrypt' => false,
+							'created' => '2013-12-18 14:10:17',
+							'modified' => '2013-12-18 14:10:17',
+							'CobrandedApplicationValues' => array()
+						)
+					)
+				)
+			)
+		);
+
+		// We need an application... also pass in user id - mimicks logged in user
+		$actual = $this->CobrandedApplication->getTemplateAndAssociatedValues(1, 1);
+		$this->assertEquals($expected, $actual, 'getTemplateAndAssociatedValues test failed when using logged in user');
 	}
 
 	public function testSaveApplicationValue() {

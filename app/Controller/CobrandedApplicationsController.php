@@ -242,7 +242,7 @@ class CobrandedApplicationsController extends AppController {
 			$users = $this->CobrandedApplication->User->find('list');
 			$this->set(compact('users'));
 
-			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id']);
+			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
