@@ -699,12 +699,9 @@ class CobrandedApplication extends AppModel {
 				'viewVars' => array('email'=>$email, 'hash'=>$hash, 'link'=>$link)
 			);
 
-			$sendResponse = $this->__sendEmail($args);
+			$response = $this->__sendEmail($args);
 
-			// TODO: record that he email was sent
-
-			$response['success'] = true;
-			$response['msg'] = '';
+			// TODO: record that the email was sent
 		}
 		return $response;
 	}
