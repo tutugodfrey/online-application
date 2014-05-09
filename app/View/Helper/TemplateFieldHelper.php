@@ -28,6 +28,12 @@ class TemplateFieldHelper extends Helper {
 		if ($apiField) {
 			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');
 		}
+
+		// make fields with a source of 3 read only... 3 = n/a (not available)
+		if ($field['source'] == 3) {
+			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');
+		}
+
 		$retVal = $retVal . String::insert(
 			'<div class="col-md-:width:api_field":title>',
 			array(
@@ -96,6 +102,12 @@ class TemplateFieldHelper extends Helper {
 				$defaultValues = split(',', $field['default_value']);
 				$index = 0;
 				foreach ($field['CobrandedApplicationValues'] as $radioOption) {
+					$disabled = '';
+					// make fields with a source of 3 read only... 3 = n/a (not available)
+					if ($field['source'] == 3) {
+						$disabled = 'disabled';
+					}
+
 					$nameValuePair = split('::', $defaultValues[$index]);
 					$lis = $lis.$this->Html->tag('li',
 						$this->Html->tag('label',
@@ -107,6 +119,7 @@ class TemplateFieldHelper extends Helper {
 									'name' => $field['name'],
 									'data-value-id' => $radioOption['id'],
 									'checked' => ($radioOption['value'] == null ? '' : 'checked'),
+									'disabled' => $disabled,
 								)
 							)
 						)
