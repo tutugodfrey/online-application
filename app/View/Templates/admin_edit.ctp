@@ -16,6 +16,7 @@
 		);
 		echo $this->Form->input('include_axia_logo');
 		echo $this->Form->input('description');
+		echo $this->Form->input('rightsignature_template_guid');
 		echo $this->Form->hidden('cobrand_id');
 	?>
 	</fieldset>

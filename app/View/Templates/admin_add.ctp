@@ -16,6 +16,7 @@
 		);
 		echo $this->Form->input('include_axia_logo');
 		echo $this->Form->input('description');
+		echo $this->Form->input('rightsignature_template_guid');
 
 		// the cobrand_id is injected if we cannot tell what it(cobrand_id) is from the route
 		if ($this->request->params['parent_controller_id'] == null) {

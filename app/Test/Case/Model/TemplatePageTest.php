@@ -120,6 +120,7 @@ class TemplatePageTest extends CakeTestCase {
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
 			'include_axia_logo' => true,
+			'rightsignature_template_guid' => ''
 		);
 		$returned_template = $this->TemplatePage->getTemplate($template_id);
 		$this->assertEquals($expected_template, $returned_template);
@@ -134,6 +135,7 @@ class TemplatePageTest extends CakeTestCase {
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
 			'include_axia_logo' => true,
+			'rightsignature_template_guid' => ''
 		);
 		$returned_template = $this->TemplatePage->getTemplate($template_id);
 		$this->assertEquals($expected_template, $returned_template);
@@ -148,6 +150,7 @@ class TemplatePageTest extends CakeTestCase {
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
 			'include_axia_logo' => true,
+			'rightsignature_template_guid' => ''
 		);
 		$returned_template = $this->TemplatePage->getTemplate($template_id);
 		$this->assertEquals($expected_template, $returned_template);
