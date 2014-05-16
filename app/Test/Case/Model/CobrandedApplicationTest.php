@@ -813,7 +813,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'routing_number' => '3211',
 					'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
-					'cobranded_application_id' => 4
 				),
 				'routing_number' => array(
 					'routing number is invalid'
