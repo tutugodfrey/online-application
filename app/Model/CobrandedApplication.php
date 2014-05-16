@@ -422,6 +422,7 @@ class CobrandedApplication extends AppModel {
 								if (!$success) {
 									$errors = array();
 									$errors['invalid record'] = $val;
+									unset($errors['invalid record']['cobranded_application_id']);
 									foreach ($Model->validationErrors as $key => $value) {
 										$errors["$key"] = $value;					
 									}
