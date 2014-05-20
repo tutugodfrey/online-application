@@ -415,4 +415,64 @@ class CobrandedApplicationsController extends AppController {
 		$this->Session->setFlash(__($flashMsg));
 		$this->redirect(array('action' => 'index'));
 	}
+
+/**
+ * create_rightsignature_document
+ *
+ * @params
+ *     $applicationId int
+ *     $signNow boolean
+ */
+	public function create_rightsignature_document($applicationId = null, $signNow = null) {
+		$this->autoRender = false;
+		$this->CobrandedApplication->id = $applicationId;
+
+		if (!$this->CobrandedApplication->exists()) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$cobrandedApplication = $this->CobrandedApplication->read();
+
+		if (!empty($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) && $signNow == true) {
+			$this->redirect(array('action' => '/sign_rightsignature_document?guid='.$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']));
+		} else {
+			$client = $this->CobrandedApplication->createRightSignatureClient();
+			$templateGuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
+			$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
+			$response = json_decode($response, true);
+
+			if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
+				$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
+					$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
+
+				// send the document
+				//$this->set('document_guid', $response['template']['guid']);
+				//$this->set('data', $cobrandedApplication);
+
+				$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+				debug($response);
+
+			} else {
+				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+				$this->Session->setFlash(__('error! could not find template guid'));
+				$this->redirect(array('action' => $url));
+			}
+
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

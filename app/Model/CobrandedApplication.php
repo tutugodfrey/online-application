@@ -3,6 +3,7 @@ App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
 App::uses('CakeEmail', 'Network/Email');
+App::uses('HttpSocket', 'Network/Http');
 
 /**
  * CobrandedApplication Model
@@ -422,6 +423,7 @@ class CobrandedApplication extends AppModel {
 								if (!$success) {
 									$errors = array();
 									$errors['invalid record'] = $val;
+									unset($errors['invalid record']['cobranded_application_id']);
 									foreach ($Model->validationErrors as $key => $value) {
 										$errors["$key"] = $value;					
 									}
@@ -876,6 +878,188 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * getRightSignatureTemplate
+ * 
+ * @params
+ *     $client object
+ *     $templateGuid string
+ * @returns
+ *     $response array
+ */
+	public function getRightSignatureTemplate($client, $templateGuid) {
+		$response = $client->post('/api/templates/'.$templateGuid.'/prepackage.json',
+			"<?xml version='1.0' encoding='UTF-8'?><callback_location></callback_location>");
+		return $response;
+	}
+
+/**
+ * createRightSignatureDocument
+ * 
+ * @params
+ *     $client object
+ *     $applicationXml string
+ * @returns
+ *     $response array
+ */
+	public function createRightSignatureDocument($client, $applicationXml) {
+		$response = $client->post('/api/templates.json', $applicationXml);
+		return $response;
+	}
+
+/**
+ * extendRightSignatureDocumentLife
+ * 
+ * @params
+ *     $client object
+ *     $documentGuid string
+ * @returns
+ *     $response array
+ */
+	public function extendRightSignatureDocumentLife($client, $documentGuid) {
+		$response = $client->post('/api/documents/'.$documentGuid.'/extend_expiration.xml');
+		return $response;
+	}
+
+/**
+ * getRightSignatureTemplateDetails
+ * 
+ * @params
+ *     $client object
+ *     $templateGuid string
+ * @returns
+ *     $response array
+ */
+	public function getRightSignatureTemplateDetails($client, $templateGuid) {
+		$response = $client->signAndSendRequest("GET", '/api/templates/'.$templateGuid.'.json');
+		return $response;
+	}
+
+/**
+ * createRightSignatureClient
+ * 
+ * @params
+ *     none
+ * @returns
+ *     $client
+ */
+	public function createRightSignatureClient() {
+		App::import('Vendor', 'oauth', array('file' => 'OAuth' . DS . 'rightsignature.php'));
+		
+		$rightsignature = new RightSignature('J7PQlPSlm3jaa2DbfCP989mIFrKRHUH1NqcjJugT', 'ZAYx4jEy6BVYPuad4kPQAw6lTrOxAeqWU8DGT6A1');
+		$rightsignature->request_token = new OAuthConsumer('v1cfHXdnHbD8in6ruqsb3MDVbuhdtZMaHTKVw1XI', 'tTyOsXYMAgoPQY5NXlsB9sKAYRZXsuLIcBzTiOpB', 1);
+		$rightsignature->access_token = new OAuthConsumer('FvpRze1k6JbP7HHm64IxQiWLHL9p0Jl4pw3x7PBP', 'cHrzepxhF7t9QMyO8CGUJlbSg4Lon23JEVYnD70Z', 1);
+		$rightsignature->oauth_verifier = 'jmV0StucajLmdz2gc7hw';
+
+		return $rightsignature;
+	}
+
+/**
+ * createRightSignatureApplicationXml
+ * 
+ * @params
+ *     $applicationId int
+ *     $sender string
+ *     $rightSignatureTemplate array
+ * @returns
+ *     $xml string
+ */
+	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate) {
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		$owner1Fullname = '';
+		$owner2Fullname = '';
+		$dbaBusinessName = '';
+
+		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
+			if ($val['name'] == 'owner1_fullname') {
+				$owner1_fullname = $val['value'];	
+			}
+			if ($val['name'] == 'owner2_fullname') {
+				$owner2_fullname = $val['value'];
+			}
+			if ($val['name'] == 'dba_business_name') {
+				$dbaBusinessName = $val['dba_business_name'];
+			}
+		}
+
+		$xml  = "<?xml version='1.0' encoding='UTF-8'?>\n";
+		$xml .= "	<template>\n";
+		$xml .= "		<guid>".$rightSignatureTemplate['guid']."</guid>\n";
+		$xml .= "		<subject>".htmlspecialchars($dbaBusinessName)." Axia Merchant Application</subject>\n";
+		$xml .= "		<description>Sent for signature by ".$sender."</description>\n";
+		$xml .= "		<action>send</action>\n";
+		$xml .= "		<expires_in>10 days</expires_in>\n";
+		$xml .= "		<roles>\n";
+
+		if (!empty($owner1_fullname)) {
+			$xml .= "			<role role_name='Owner/Officer 1 PG'>\n";
+        	$xml .= "				<name>".htmlspecialchars($owner1_fullname)."</name>\n";
+        	$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+        	$xml .= "				<locked>true</locked>\n";
+        	$xml .= "			</role>\n";
+        	$xml .= "			<role role_name='Owner/Officer 1'>\n";
+			$xml .= "				<name>".htmlspecialchars($owner1_fullname)."</name>\n";
+			$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+			$xml .= "				<locked>true</locked>\n";
+			$xml .= "			</role>\n";
+		}
+
+        if (!empty($owner2_fullname)) {
+			$xml .= "			<role role_name='Owner/Officer 2 PG'>\n";
+			$xml .= "				<name>".htmlspecialchars($owner2_fullname)."</name>\n";
+			$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+			$xml .= "				<locked>true</locked>\n";
+			$xml .= "			</role>\n";
+			$xml .= "			<role role_name='Owner/Officer 2'>\n";
+			$xml .= "				<name>".htmlspecialchars($owner2_fullname)."</name>\n";
+			$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+			$xml .= "				<locked>true</locked>\n";
+			$xml .= "			</role>\n";
+        }
+
+		$xml .= "		</roles>\n";		
+		$xml .= "		<merge_fields>\n";
+
+		foreach ($rightSignatureTemplate['merge_fields'] as $mergeField) {
+			$appValue = $this->CobrandedApplicationValues->find(
+				'first',
+				array(
+					'conditions' => array(
+						'cobranded_application_id' => $applicationId,
+						'CobrandedApplicationValues.name' => $mergeField['name']
+					)
+				)
+			);
+
+			// we don't want to send null or empty values
+			if (!empty($appValue['CobrandedApplicationValues']['value'])) {
+				$fieldType = $appValue['TemplateField']['type'];
+
+				// type 3 is checkbox, 4 is radio
+				// we send different elements for multi option types
+				if ($fieldType == 3 || $fieldType == 4) {
+					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+					$xml .= "				<value>X</value>\n";
+					$xml .= "				<locked>true</locked>\n";
+					$xml .= "			</merge_field>\n";
+				} else {
+					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+					$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
+					$xml .= "				<locked>true</locked>\n";
+					$xml .= "			</merge_field>\n";
+				}
+			}
+		}
+
+		$xml .= "		</merge_fields>\n";
+		$xml .= "		<callback_location>http://".$_SERVER['SERVER_NAME']."/applications/document_callback</callback_location>\n";
+		$xml .= "	</template>\n";
+
+		return $xml;
+	}
+
+/**
  * __addKey
  * 
  * @params
@@ -919,5 +1103,4 @@ class CobrandedApplication extends AppModel {
 	private function __startsWith($haystack, $needle) {
 		return $needle === "" || strpos($haystack, $needle) === 0;
 	}
-
 }

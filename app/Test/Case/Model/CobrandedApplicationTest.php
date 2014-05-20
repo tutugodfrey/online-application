@@ -176,6 +176,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'cobrand_id' => (int) 1,
 				'created' => '2007-03-18 10:41:31',
 				'modified' => '2007-03-18 10:41:31',
+				'rightsignature_template_guid' => null,
 				'Cobrand' => array(
 					'id' => (int) 1,
 					'partner_name' => 'Partner Name 1',
@@ -377,7 +378,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'modified' => '2013-12-18 09:26:45',
 						'TemplateSections' => array()
 					)
-				)
+				),
 			)
 		);
 
@@ -813,7 +814,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'routing_number' => '3211',
 					'account_number' => '9900000003',
 					'bank_name' => 'Lorem ipsum dolor sit amet',
-					'cobranded_application_id' => 4
 				),
 				'routing_number' => array(
 					'routing number is invalid'
