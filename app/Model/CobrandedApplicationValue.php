@@ -237,17 +237,26 @@ class CobrandedApplicationValue extends AppModel {
 							$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 										base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
 
-							// mask all but last 4 values
-    						$dataArray = str_split($data);
-							$dataLength = count($dataArray);
-							$data = '';
-							for ($x = 0; $x < $dataLength; $x++) {
-								if ($x < ($dataLength - 4)) {                   
-									$data .= 'X';                                   
-								}                                               
-								else {                                          
-									$data .= $dataArray[$x];                        
-								}                                               
+							$maskValue = true;
+
+							$e = new Exception;
+							if (strpos($e->getTraceAsString(), 'createRightSignatureApplicationXml') !== false) {
+								$maskValue = false;
+							}
+
+							if ($maskValue) {
+								// mask all but last 4 values
+    							$dataArray = str_split($data);
+								$dataLength = count($dataArray);
+								$data = '';
+								for ($x = 0; $x < $dataLength; $x++) {
+									if ($x < ($dataLength - 4)) {                   
+										$data .= 'X';                                   
+									}                                               
+									else {                                          
+										$data .= $dataArray[$x];                        
+									}                                               
+								}
 							}
 
 							$results[$resultKey]['CobrandedApplicationValue']['value'] = $data;

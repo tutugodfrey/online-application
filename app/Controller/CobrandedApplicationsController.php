@@ -444,20 +444,42 @@ class CobrandedApplicationsController extends AppController {
 			if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
 				$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
 					$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
-
-				// send the document
-				//$this->set('document_guid', $response['template']['guid']);
-				//$this->set('data', $cobrandedApplication);
-
 				$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
-				debug($response);
-
 			} else {
 				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
 				$this->Session->setFlash(__('error! could not find template guid'));
 				$this->redirect(array('action' => $url));
 			}
 
+			$response = json_decode($response, true);
+	
+			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
+				// save the guid
+				$this->CobrandedApplication->save(
+					array(
+						'CobrandedApplication' => array(
+							'id' => $applicationId,
+							'rightsignature_document_guid' => $response['document']['guid'],
+							'status' => 'completed'
+						)
+					),
+					array('validate' => false)
+				);
+
+				// check whether they want to sign in person
+				if ($signNow) {
+					$this->redirect(array('action' => 'sign_rightsignature_document?guid='.$response['document']['guid']));
+				} else {
+					// if not simply send the documents
+					$emailResponse = $this->CobrandedApplication->sendApplicationForSigning($applicationId);
+				}
+			} else {
+				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+				$this->Session->setFlash(__('error! could not send the document'));
+				$this->redirect(array('action' => $url));
+			}
+
+			$this->autoRender = false;
 		}
 	}
 }
