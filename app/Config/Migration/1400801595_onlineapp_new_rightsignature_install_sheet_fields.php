@@ -1,5 +1,5 @@
 <?php
-class OnlineappNewRightsignatureFields extends CakeMigration {
+class OnlineappNewRightsignatureInstallSheetFields extends CakeMigration {
 
 /**
  * Migration description
@@ -17,17 +17,18 @@ class OnlineappNewRightsignatureFields extends CakeMigration {
 		'up' => array(
                         'create_field' => array(
                                 'onlineapp_cobranded_applications' => array(
-                                        'rightsignature_document_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
+                                        'rightsignature_install_document_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
+                                        'rightsignature_install_status' => array('type' => 'string', 'length' => 10, 'null' => true),
                                 ),
                                 'onlineapp_templates' => array(
-                                        'rightsignature_template_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
+                                        'rightsignature_install_template_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
                                 ),
                         ),
                 ),
                 'down' => array(
                         'drop_field' => array(
-                                'onlineapp_cobranded_applications' => array('rightsignature_document_guid',),
-                                'onlineapp_templates' => array('rightsignature_template_guid',),
+                                'onlineapp_cobranded_applications' => array('rightsignature_install_document_guid', 'rightsignature_install_status'),
+                                'onlineapp_templates' => array('rightsignature_install_template_guid',),
                         ),
                 ),
 	);

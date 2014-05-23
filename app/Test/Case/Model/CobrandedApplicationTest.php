@@ -165,7 +165,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'template_id' => (int) 1,
 				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
 				'created' => '2014-01-24 09:07:08',
-				'modified' => '2014-01-24 09:07:08'
+				'modified' => '2014-01-24 09:07:08',
+				'rightsignature_document_guid' => null,
+				'status' => null,
+				'rightsignature_install_document_guid' => null,
+				'rightsignature_install_status' => null,
 			),
 			'Template' => array(
 				'id' => (int) 1,
@@ -177,6 +181,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'created' => '2007-03-18 10:41:31',
 				'modified' => '2007-03-18 10:41:31',
 				'rightsignature_template_guid' => null,
+				'rightsignature_install_template_guid' => null,
 				'Cobrand' => array(
 					'id' => (int) 1,
 					'partner_name' => 'Partner Name 1',
@@ -463,6 +468,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
 				'created' => '2014-01-24 09:07:08',
 				'modified' => '2014-01-24 09:07:08',
+				'rightsignature_document_guid' => null,
+				'status' => null,
+				'rightsignature_install_document_guid' => null,
+				'rightsignature_install_status' => null,
 			),
 			'TemplateField' => array(
 				'id' => 1,
@@ -522,6 +531,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
 				'created' => '2014-01-24 09:07:08',
 				'modified' => '2014-01-24 09:07:08',
+				'rightsignature_document_guid' => null,
+				'status' => null,
+				'rightsignature_install_document_guid' => null,
+				'rightsignature_install_status' => null,
 			),
 			'TemplateField' => array(
 				'id' => 4,
