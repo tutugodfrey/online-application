@@ -17,10 +17,10 @@ class OnlineappNewRightsignatureFields extends CakeMigration {
 		'up' => array(
                         'create_field' => array(
                                 'onlineapp_cobranded_applications' => array(
-                                        'rightsignature_document_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
+                                        'rightsignature_document_guid' => array('type' => 'string', 'length' => 50, 'null' => true),
                                 ),
                                 'onlineapp_templates' => array(
-                                        'rightsignature_template_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
+                                        'rightsignature_template_guid' => array('type' => 'string', 'length' => 50, 'null' => true),
                                 ),
                         ),
                 ),

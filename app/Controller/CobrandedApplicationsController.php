@@ -248,6 +248,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('include_axia_logo', $template['Template']['include_axia_logo']);
 			$this->set('cobrand_logo_position', $template['Template']['logo_position']);
 			$this->set('rightsignature_template_guid', $template['Template']['rightsignature_template_guid']);
+			$this->set('rightsignature_install_template_guid', $template['Template']['rightsignature_install_template_guid']);
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 
@@ -471,7 +472,7 @@ class CobrandedApplicationsController extends AppController {
 					$this->redirect(array('action' => 'sign_rightsignature_document?guid='.$response['document']['guid']));
 				} else {
 					// if not simply send the documents
-					$emailResponse = $this->CobrandedApplication->sendApplicationForSigning($applicationId);
+					$emailResponse = $this->CobrandedApplication->sendApplicationForSigningEmail($applicationId);
 				}
 			} else {
 				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
@@ -482,14 +483,260 @@ class CobrandedApplicationsController extends AppController {
 			$this->autoRender = false;
 		}
 	}
+
+/**
+ * sign_rightsignature_document
+ *     
+ */
+	public function sign_rightsignature_document() {
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$this->set('rightsignature', $client);
+
+		$is_mobile_safari = preg_match("/\bMobile\b.*\bSafari\b/", $_SERVER['HTTP_USER_AGENT']);
+		$this->set('is_mobile_safari', $is_mobile_safari);
+
+		// Width of Widget, CANNOT BE CHANGED and it cannot be dynamic. 706 is optimal size
+		$widgetWidth = 706;
+		$this->set('widgetWidth', $widgetWidth);
+
+		// Height of widget is changeable (Optional)
+		$widgetHeight = 500;
+		$this->set('widgetHeight', $widgetHeight);
+
+		$guid = htmlspecialchars($_REQUEST["guid"]);
+		$this->set('guid', $guid);
+
+		if (empty($guid)) {
+			$this->Session->setFlash(__("Cannot find document with given GUID."));
+			$this->redirect(array('action' => 'index'));
+		}
+
+		// Gets signer link and reloads this page after each successful signature to refresh the signer-links list
+		$response = $this->CobrandedApplication->getRightSignatureSignerLinks($client, $guid);
+		$this->set('response', $response);
+
+		$xml = Xml::build($response);
+		$xml = Xml::toArray($xml);
+		$result = Set::normalize($xml);
+		$this->set('xml', $xml);
+
+		if ($this->CobrandedApplication->findByRightsignatureDocumentGuid($guid)) {
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
+			$this->layout = 'default';
+
+			if (key_exists('error', $xml) && 
+				$xml['error']['message'] == "Document is already signed." &&
+				$data['CobrandedApplication']['status'] != 'signed') {
+
+			/* NEED TO DEAL WITH THIS
+				if ($data['Coversheet']['status'] == 'validated') {
+					$this->Session->write('Application.coversheet', 'pdf');
+					App::import('Controller', 'Coversheets');
+					$Coversheets = new CoversheetsController;
+					$Coversheets->constructClasses();
+					$Coversheets->pdf($data['Coversheet']['id']);
+					$this->Application->Coversheet->saveField('status', 'sent');
+					$this->email_coversheet($data['Coversheet']['id']);
+					$this->Session->delete('Application.coversheet');
+				}
+			*/
+
+				$send_email = 'true';
+
+				foreach ($data['EmailTimeline'] as $emails) {
+					if ($emails['email_timeline_subject_id'] == 2) {
+						$send_email = 'false';
+					}
+				}
+
+				if ($send_email != 'false') {
+					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+				}
+				
+			}          
+		}
+            
+        /* NEED TO DEAL WITH THIS                              
+		if ($this->Application->findByInstallVarRsDocumentGuid($guid)) {
+			$data = $this->Application->findByInstallVarRsDocumentGuid($guid);
+			$this->set('data', $data);
+			$varSigner = true;
+			$this->set('varSigner', $varSigner);
+			if ($xml['error']['message'] == "Document is already signed." && $data['Application']['var_status'] != 'signed') {
+				$this->Application->id = $data['Application']['id'];
+				$this->Application->saveField('var_status', 'signed');
+				$this->set('data', $data);
+				$existing = $this->Application->Merchant->TimelineEntry->find('count', array('conditions' => array('TimelineEntry.merchant_id' => $data['Merchant']['merchant_id'], 'TimelineEntry.timeline_item' => 'SIS')));
+				if ($existing == 0) {
+					$this->Application->Merchant->TimelineEntry->query("INSERT INTO timeline_entries VALUES ('{$data['Merchant']['merchant_id']}', 'SIS', NOW(), 'f')");
+				}
+			}
+		}
+		*/
+
+		$alreadySigned = false;
+		$this->set('alreadySigned', $alreadySigned);
+		$error = false;
+		$this->set('error', $error);
+		if (isset($xml['error']['message'])) {
+			$error = true;
+			$this->set('error', $error);
+
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
+			$this->set('data', $data);
+
+			$send_email = true;
+
+			foreach ($data['EmailTimeline'] as $emails) {
+				if ($emails['email_timeline_subject_id'] == 2) {
+					$send_email = false;
+				}
+			}
+
+			if ($send_email != false) {
+				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+
+				/* NEED TO DEAL WITH THIS
+				if ($data['Coversheet']['status'] == 'validated') {
+					$this->Session->write('Application.coversheet', 'pdf');
+					App::import('Controller', 'Coversheets');
+					$Coversheets = new CoversheetsController;
+					$Coversheets->constructClasses();
+					$Coversheets->pdf($data['Coversheet']['id']);
+					$this->Application->Coversheet->saveField('status', 'sent');
+					$this->email_coversheet($data['Coversheet']['id']);
+					$this->Session->delete('Application.coversheet');
+				}
+				*/
+			}
+
+			/* NEED TO DEAL WITH THIS
+			if ($this->Application->findByInstallVarRsDocumentGuid($guid)) {
+				$data = $this->Application->findByInstallVarRsDocumentGuid($guid);
+				if ($data['Application']['var_status'] != 'signed') {
+					$this->Application->save(array('Application' => array('id' => $data['Application']['id'], 'var_status' => 'signed')), array('validate' => false));
+				}
+				$this->set('data', $data);
+				$existing = $this->Application->Merchant->TimelineEntry->find('count', array('conditions' => array('TimelineEntry.merchant_id' => $data['Merchant']['merchant_id'], 'TimelineEntry.timeline_item' => 'SIS')));
+				if ($existing == 0) {
+					$this->Application->Merchant->TimelineEntry->query("INSERT INTO timeline_entries VALUES ('{$data['Merchant']['merchant_id']}', 'SIS', NOW(), 'f')");
+				}
+			}
+			*/
+
+			$alreadySigned = true;
+			$this->set('alreadySigned', $alreadySigned);
+		}
+	}
+
+/**
+ * install_sheet_var
+ *
+ * @params
+ *     $applicationId int
+ */
+	public function install_sheet_var($applicationId) {
+		$this->CobrandedApplication->id = $applicationId;
+
+		if (!$this->CobrandedApplication->exists()) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$data = $this->CobrandedApplication->find(
+			'first', array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				),
+				'contain' => array(
+					'User',
+					'CobrandedApplicationValues',
+					'Merchant' => array('EquipmentProgramming'),
+				),
+				'recursive' => 2
+			)
+		);
+
+		$this->set('data', $data);
+
+		if ($this->request->data) {
+			$this->CobrandedApplication->set($this->request->data);
+
+			if (!empty($this->request->data['CobrandedApplication']['select_email_address'])) {
+				$this->CobrandedApplication->setValidation('install_var_select');
+			} else {
+				$this->CobrandedApplication->setValidation('install_var_enter');
+			}
+
+			if ($this->CobrandedApplication->validates()) {
+				$this->sent_var_install($applicationId);
+			} else {
+				$errors = $this->CobrandedApplication->invalidFields();
+				$this->set('errors', $errors);
+			}
+		}
+	}
+
+/**
+ * sent_var_install
+ *
+ * @params
+ *     $applicationId int
+ */
+	public function sent_var_install($applicationId) {
+
+		$this->CobrandedApplication->id = $applicationId;
+
+		if (!$this->CobrandedApplication->exists()) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$cobrandedApplication = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				),
+				'contain' => array(
+					'User',
+					'Template',
+					'Merchant' => array('EquipmentProgramming'),
+				),
+				'recursive' => 2
+			)
+		);
+
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$templateGuid = $cobrandedApplication['Template']['rightsignature_install_template_guid'];
+		$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
+		$response = json_decode($response, true);
+
+debug($response['template']);
+
+		if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
+			$subject = "Axia Install Sheet - VAR";
+			$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
+				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject);
+
+			$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+			$response = json_decode($response, true);
+
+			if ($this->Application->save(array('Application' => array('id' => $id, 'install_var_rs_document_guid' => $response['document']['guid'])), array('validate' => false))) {
+				if ($this->request->data['Application']['select_email_address'] != "") {
+					$this->Session->write('Application.email', $this->request->data['Application']['select_email_address']);
+				} else {
+					$this->Session->write('Application.email', $this->request->data['Application']['enter_email_address']);
+				}
+				$this->Session->write('Application.installer', $this->request->data['Application']['installer']);
+				if ($this->Application->save(array('Application' => array('id' => $id, 'var_status' => 'sent')), array('validate' => false))) {
+					$this->email_var_install($id);
+					$this->redirect(array('action' => 'var_success'));
+				} else {
+					echo 'Document Not Sent Please Try Again';
+				}
+			}
+		}
+	}
 }
-
-
-
-
-
-
-
 
 
 
