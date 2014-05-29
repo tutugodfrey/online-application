@@ -925,6 +925,64 @@ $to = 'sbrady@axiapayments.com';
 		return $response;
 	}
 
+/**
+ * sendRightsignatureInstallSheetEmail
+ *
+ * @params
+ *     $applicationId int
+ *     $email string
+ */
+	public function sendRightsignatureInstallSheetEmail($applicationId, $email) {
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		$dbaBusinessName = '';
+		$ownerName = '';
+
+		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
+			if ($val['name'] == 'DBA') {
+				$dbaBusinessName = $val['value'];
+			}
+			if ($val['name'] == 'CorpContact') {
+				$ownerName = $val['value'];
+			}
+		}
+			
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		$to = $email;
+		$subject = $dbaBusinessName.' - Install Sheet';
+		$format = 'both';
+		$template = 'email_install_var';
+		$viewVars = array();
+		$viewVars['ownerName'] = $ownerName;
+		$viewVars['merchant'] = $dbaBusinessName;
+		$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".
+			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
+
+//DEBUG
+$to = 'sbrady@axiapayments.com';
+
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->__sendEmail($args);
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::INSTALL_SHEET_VAR;
+			$args['recipient'] = $email;
+			$response = $this->__createEmailTimelineEntry($args);
+		}
+
+		return $response;
+	}
 
 /**
  * __sendEmail
@@ -1197,9 +1255,9 @@ $to = 'sbrady@axiapayments.com';
 		$xml .= "		<expires_in>10 days</expires_in>\n";
 		$xml .= "		<roles>\n";
 
-        if ($rightSignatureTemplate['subject'] == 'Install Sheet') {
+        if ($subject == 'Axia Install Sheet - VAR') {
         	if (!empty($owner1Fullname)) {
-        		$xml .= "			<role role_name='Signer'>\n";
+        		$xml .= "			<role role_name='Signor'>\n";
         		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
         		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
         		$xml .= "				<locked>true</locked>\n";
@@ -1259,27 +1317,10 @@ $to = 'sbrady@axiapayments.com';
 					$xml .= "				<locked>true</locked>\n";
 					$xml .= "			</merge_field>\n";
 				} else {
-					if ($mergeField['name'] == "Phone#") {
-						$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-						if ($cobrandedApplication['User']['extension'] != "") {
-							$xml .= "				<value>".htmlspecialchars('877.875.6114' . " x " . $cobrandedApplication['User']['extension'])."</value>\n";
-						}
-						else {
-							$xml .= "				<value>".htmlspecialchars('877.875.6114')."</value>\n";
-						}
-						$xml .= "				<locked>true</locked>\n";
-						$xml .= "			</merge_field>\n";
-					} elseif ($mergeField['name'] == "RepFax#") {
-						$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-						$xml .= "				<value>".htmlspecialchars('877.875.5135')."</value>\n";
-						$xml .= "				<locked>true</locked>\n";
-						$xml .= "			</merge_field>\n";
-					} else {
-						$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-						$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
-						$xml .= "				<locked>true</locked>\n";
-						$xml .= "			</merge_field>\n";
-					}
+					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+					$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
+					$xml .= "				<locked>true</locked>\n";
+					$xml .= "			</merge_field>\n";
 				}
 			}
 
@@ -1291,6 +1332,29 @@ $to = 'sbrady@axiapayments.com';
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
+
+			if ($mergeField['name'] == "MID") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+				$xml .= "				<value>".htmlspecialchars($cobrandedApplication['Merchant']['merchant_id'])."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+		}
+
+		if ($subject == 'Axia Install Sheet - VAR') {
+			$xml .= "			<merge_field merge_field_name='Phone#'>\n";
+			if ($cobrandedApplication['User']['extension'] != "") {
+				$xml .= "				<value>".htmlspecialchars('877.875.6114' . " x " . $cobrandedApplication['User']['extension'])."</value>\n";
+			} else {
+				$xml .= "				<value>".htmlspecialchars('877.875.6114')."</value>\n";
+			}
+			$xml .= "				<locked>true</locked>\n";
+			$xml .= "			</merge_field>\n";
+
+			$xml .= "			<merge_field merge_field_name='RepFax#'>\n";
+			$xml .= "				<value>".htmlspecialchars('877.875.5135')."</value>\n";
+			$xml .= "				<locked>true</locked>\n";
+			$xml .= "			</merge_field>\n";
 		}
 
 		$xml .= "		</merge_fields>\n";
