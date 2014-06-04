@@ -26,7 +26,7 @@
                 
                 <td ><?php echo 'Rep Name: '. $data['User']['firstname'] . $data['User']['lastname']; ?></td>
                 
-                <td ><?php echo 'Merchant: ' . $data['Application']['dba_business_name']; ?></td>
+                <td ><?php echo 'Merchant: ' . $data['CobrandedApplication']['DBA']; ?></td>
                 
                 </tr>
                 </table>
@@ -311,11 +311,11 @@
                             
                             </td>
                             <td ><div div class="textborder">
-                             <?php echo $data['Application']['term1_accept_debit']; ?>
+                                    <?php echo $data['CobrandedApplication']['TermAcceptDebit-Yes'] == 'true' ? 'Yes' : 'No'; ?>
                                 </div>
                             </td>
                             <td style="width: 21%;">Pin Pad Type? <div class="textborder">
-                             <?php echo $data['Application']['term1_pin_pad_type'];?></div>
+                             <?php echo $data['CobrandedApplication']['PinPad1'];?></div>
                      </td>
                      <td >
                          <?php echo $this->Form->input('cp_encrypted_sn', array('label' => 'JR\'s encrypted-S/N ', 'style' => 'width:100px','size' => '20', 'error' => false)); ?></td>
@@ -326,11 +326,11 @@
                          </td>
                          <td style="width: 12%;">
                              <div class="textborder">
-                         <?php echo $data['Application']['term1_use_autoclose'];?>
+                                <?php echo $data['CobrandedApplication']['DoYouUseAutoclose-Autoclose'] == 'true' ? 'Yes' : 'No'; ?>
                              </div>
                          </td>
                          <td>
-                             <?php echo 'Time: <div class="textborder">' . $data['Application']['term1_what_time'] . '</div>';?>
+                             <?php echo 'Time: <div class="textborder">' . $data['CobrandedApplication']['Autoclose Time 1'] . '</div>';?>
                          </td>
                          <td >
                              <?php echo $this->Form->input('cp_pinpad_ra_attached', array('label' => 'Pin Pad Encryption RA Attached?', 'error' => false));?>
@@ -369,15 +369,20 @@
                          <td>Does the merchant accept Amex?</td>
                          <td>
                              <div class="textborder">
-                         <?php
-                         
-                                echo $data['Application']['currently_accept_amex'] == 'yes' ? 'Yes' : 'No';
-                         ?>   
+                                <?php
+                                    if ($applications['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
+                                        $applications['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                        echo 'Yes';
+                                    }
+                                    else {
+                                        echo 'No';
+                                    }
+                                ?>  
                              </div>
                          </td>
                          <td >
                             
-                         <?php echo ($data['Application']['existing_se_num'] == '' && $data['Application']['want_to_accept_amex'] == 'yes')? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['Application']['existing_se_num'] . '</div>';?>    
+                         <?php echo ($data['CobrandedApplication']['existing_se_num'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['existing_se_num'] . '</div>';?>    
                          </td>
                          <td>
                          </td>
@@ -387,14 +392,12 @@
                          <td>Does the merchant accept Discover?</td>
                          <td>
                              <div class="textborder">
-                         <?php
-                                echo $data['Application']['want_to_accept_discover'] == 'yes' ? 'Yes' : 'No'; 
-                         ?>     
+                                <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Yes' : 'No'; ?> 
                              </div>
                          </td>
                          <td>
                              
-                         <?php echo $data['Application']['want_to_accept_discover'] == 'yes' ? 'Axia Request New' : ''; ?>   
+                            <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : ''; ?>   
                              
                          </td>
                          <td>
@@ -637,30 +640,32 @@
                          <td>Does the merchant accept Amex?</td>
                          <td>
                              <div class="textborder">
-                         <?php
-                                echo $data['Application']['currently_accept_amex'] == 'yes' ? 'Yes' : 'No'
-                         ?>
+                                <?php
+                                    if ($applications['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
+                                        $applications['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                        echo 'Yes';
+                                    }
+                                    else {
+                                        echo 'No';
+                                    }
+                                ?> 
                             </div>
                          </td>
                          <td>
-                             
-                         <?php echo ($data['Application']['existing_se_num'] == '' && $data['Application']['want_to_accept_amex'] == 'yes') ? 'Request New Amex' : 'Amex # <div class="textborder">' . $data['Application']['existing_se_num'] . '</div>';?>   
-                             
+                            <?php echo ($data['CobrandedApplication']['existing_se_num'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['existing_se_num'] . '</div>';?>
                          </td>
    
                      </tr>
                      <tr>
                          <td>Does the merchant accept Discover?</td>
                          <td>
-                             <div class="textborder">
-                         <?php
-                                echo $data['Application']['want_to_accept_discover'] == 'yes' ? 'Yes' : 'No' 
-                         ?>    
+                            <div class="textborder">
+                                <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : ''; ?>   
                             </div>
                          </td>
                          <td>
                              
-                         <?php echo $data['Application']['want_to_accept_discover'] == 'yes' ? 'Axia Request New' : '' ?>    
+                            <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : ''; ?>   
                                  
                          </td>
                      </tr>
@@ -739,7 +744,7 @@
 if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
         echo $this->Html->link(
             'Return to Applications Admin',
-            '/admin/applications/',
+            '/admin/cobranded_applications/',
             array('style' => 'display: block; float: right;')
         );
     }

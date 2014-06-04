@@ -5,9 +5,9 @@
 	<?php
                 echo 'Rep Name: '. $data['User']['fullname'];
                 
-                echo 'Merchant: ' . $data['Application']['dba_business_name'];
+                echo 'Merchant: ' . $data['CobrandedApplication']['DBA'];
 		echo $this->Form->hidden('id');
-		echo $this->Form->input('onlineapp_application_id', array('label' => 'Online App Application ID #','options' => array($Applications), 'default' => $data['Coversheet']['onlineapp_application_id']));
+		echo $this->Form->input('cobranded_application_id', array('label' => 'Online App Application ID #','options' => array($Applications), 'default' => $data['Coversheet']['cobranded_application_id']));
 		echo $this->Form->input('user_id', array('label' => 'User Name','options' => array($Users),'default' => $data['Coversheet']['user_id']));
 		echo $this->Form->input('status', array('label' => 'Coversheet Status','options' => array('saved' => 'Saved', 'validated' => 'Validated', 'sent' => 'Sent'), 'default' => $data['Coversheet']['status']));
                 /*
@@ -90,8 +90,8 @@
 
 		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('OnlineappCoversheet.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('OnlineappCoversheet.id'))); ?></li>
 		<li><?php echo $this->Html->link(__('List Onlineapp Coversheets'), array('action' => 'index'));?></li>
-		<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'onlineapp_applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'onlineapp_applications', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Onlineapp Users'), array('controller' => 'onlineapp_users', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Onlineapp User'), array('controller' => 'onlineapp_users', 'action' => 'add')); ?> </li>
 	</ul>

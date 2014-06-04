@@ -3,6 +3,7 @@ App::uses('AppController', 'Controller');
 App::uses('TemplateField', 'View/Helper');
 App::uses('Setting', 'Model');
 App::uses('Validation', 'Utility');
+App::uses('Coversheet', 'Model');
 
 /**
  * CobrandedApplications Controller
@@ -531,18 +532,14 @@ class CobrandedApplicationsController extends AppController {
 				$xml['error']['message'] == "Document is already signed." &&
 				$data['CobrandedApplication']['status'] != 'signed') {
 
-			/* NEED TO DEAL WITH THIS
 				if ($data['Coversheet']['status'] == 'validated') {
-					$this->Session->write('Application.coversheet', 'pdf');
-					App::import('Controller', 'Coversheets');
-					$Coversheets = new CoversheetsController;
-					$Coversheets->constructClasses();
-					$Coversheets->pdf($data['Coversheet']['id']);
-					$this->Application->Coversheet->saveField('status', 'sent');
-					$this->email_coversheet($data['Coversheet']['id']);
-					$this->Session->delete('Application.coversheet');
+					$this->Session->write('CobrandedApplication.coversheet', 'pdf');
+					$this->pdf($data['Coversheet']['id']);
+					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
+					$Coversheet = ClassRegistry::init('Coversheet');
+					$Coversheet->sendCoversheet($data['Coversheet']['id']);
+					$this->Session->delete('CobrandedApplication.coversheet');
 				}
-			*/
 
 				$send_email = 'true';
 
@@ -554,8 +551,7 @@ class CobrandedApplicationsController extends AppController {
 
 				if ($send_email != 'false') {
 					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
-				}
-				
+				}	
 			}          
 		}
 
@@ -602,18 +598,14 @@ class CobrandedApplicationsController extends AppController {
 			if ($send_email != false) {
 				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
 
-				/* NEED TO DEAL WITH THIS - WORKING HERE
 				if ($data['Coversheet']['status'] == 'validated') {
-					$this->Session->write('Application.coversheet', 'pdf');
-					App::import('Controller', 'Coversheets');
-					$Coversheets = new CoversheetsController;
-					$Coversheets->constructClasses();
-					$Coversheets->pdf($data['Coversheet']['id']);
-					$this->Application->Coversheet->saveField('status', 'sent');
-					$this->email_coversheet($data['Coversheet']['id']);
-					$this->Session->delete('Application.coversheet');
+					$this->Session->write('CobrandedApplication.coversheet', 'pdf');
+					$this->pdf($data['Coversheet']['id']);
+					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
+					$Coversheet = ClassRegistry::init('Coversheet');
+					$Coversheet->sendCoversheet($data['Coversheet']['id']);
+					$this->Session->delete('CobrandedApplication.coversheet');
 				}
-				*/
 			}
 
 			if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
@@ -781,5 +773,19 @@ class CobrandedApplicationsController extends AppController {
 	public function var_success() {
 		$email = $this->Session->read('CobrandedApplication.email');
 		$this->Session->setFlash('Install sheet Successfully sent to: '.$email);
+	}
+
+/**
+ * pdf
+ *
+ */
+	public function pdf($id) {
+		if ($id) {
+			$this->set('id', $id);
+			header('Content-type: application/pdf');
+			header('Content-Disposition: attachment; filename="axia_' . $id . '_final.pdf"');
+			readfile(WWW_ROOT . 'files/axia_' . $id . '_final.pdf');
+			unlink(WWW_ROOT . '/files/axia_' . $id . '_final.pdf');
+		}
 	}
 }

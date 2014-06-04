@@ -3,7 +3,7 @@
 	<fieldset>
 		<legend><?php echo __('Admin Add Onlineapp Coversheet'); ?></legend>
 	<?php
-		echo $this->Form->input('onlineapp_application_id');
+		echo $this->Form->input('cobranded_application_id');
 		echo $this->Form->input('user_id');
 		echo $this->Form->input('status');
 		echo $this->Form->input('hash');
@@ -82,8 +82,8 @@
 	<ul>
 
 		<li><?php echo $this->Html->link(__('List Onlineapp Coversheets'), array('action' => 'index'));?></li>
-		<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'onlineapp_applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'onlineapp_applications', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Onlineapp Users'), array('controller' => 'onlineapp_users', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Onlineapp User'), array('controller' => 'onlineapp_users', 'action' => 'add')); ?> </li>
 	</ul>

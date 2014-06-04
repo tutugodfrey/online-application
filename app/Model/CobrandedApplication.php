@@ -135,6 +135,10 @@ class CobrandedApplication extends AppModel {
 		'Merchant' => array(
 			'foreignKey' => 'cobranded_application_id'
 		),
+		'Coversheet' => array(
+			'className' => 'Coversheet',
+			'foreignKey' => 'cobranded_application_id'
+		),
 	);
 
 	// tests will set this via dependency injection, using a mocked object
@@ -746,7 +750,7 @@ class CobrandedApplication extends AppModel {
 				'viewVars' => array('email'=>$email, 'hash'=>$hash, 'link'=>$link)
 			);
 
-			$response = $this->__sendEmail($args);
+			$response = $this->sendEmail($args);
 
 			// TODO: record that the email was sent
 		}
@@ -793,7 +797,7 @@ class CobrandedApplication extends AppModel {
 			'viewVars' => $viewVars
 		);
 
-		$response = $this->__sendEmail($args);
+		$response = $this->sendEmail($args);
 
 		return $response;
 	}
@@ -813,23 +817,22 @@ class CobrandedApplication extends AppModel {
 		$dbaBusinessName = '';
 
 		$owners = array();
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
 
-		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
-			if ($val['name'] == 'Owner1Email') {
-				$owners['owner1']['email'] = $val['value'];	
-			}
-			if ($val['name'] == 'Owner1Name') {
-				$owners['owner1']['fullname'] = $val['value'];	
-			}
-			if ($val['name'] == 'Owner2Email') {
-				$owners['owner2']['email'] = $val['value'];	
-			}
-			if ($val['name'] == 'Owner2Name') {
-				$owners['owner2']['fullname']= $val['value'];
-			}
-			if ($val['name'] == 'DBA') {
-				$dbaBusinessName = $val['value'];
-			}
+		if (!empty($valuesMap['Owner1Email'])) {
+			$owners['owner1']['email'] = $valuesMap['Owner1Email'];	
+		}
+		if (!empty($valuesMap['Owner1Name'])) {
+			$owners['owner1']['fullname'] = $valuesMap['Owner1Name'];	
+		}
+		if (!empty($valuesMap['Owner2Email'])) {
+			$owners['owner2']['email'] = $valuesMap['Owner2Email'];	
+		}
+		if (!empty($valuesMap['Owner2Name'])) {
+			$owners['owner2']['fullname'] = $valuesMap['Owner2Name'];
+		}
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
 		}
 
 		foreach ($owners as $key => $val) {
@@ -855,14 +858,14 @@ class CobrandedApplication extends AppModel {
 				'viewVars' => $viewVars
 			);
 
-			$response = $this->__sendEmail($args);
+			$response = $this->sendEmail($args);
 			unset($args);
 
 			if ($response['success'] == true) {
 				$args['cobranded_application_id'] = $applicationId;
 				$args['email_timeline_subject_id'] = EmailTimeline::SENT_FOR_SIGNING;
 				$args['recipient'] = $ownerEmail;
-				$response = $this->__createEmailTimelineEntry($args);
+				$response = $this->createEmailTimelineEntry($args);
 				unset($args);
 			}
 		}
@@ -883,11 +886,10 @@ class CobrandedApplication extends AppModel {
 		$cobrandedApplication = $this->read();
 
 		$dbaBusinessName = '';
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
 
-		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
-			if ($val['name'] == 'DBA') {
-				$dbaBusinessName = $val['value'];
-			}
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
 		}
 			
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
@@ -912,14 +914,14 @@ $to = 'sbrady@axiapayments.com';
 			'viewVars' => $viewVars
 		);
 
-		$response = $this->__sendEmail($args);
+		$response = $this->sendEmail($args);
 		unset($args);
 
 		if ($response['success'] == true) {
 			$args['cobranded_application_id'] = $applicationId;
 			$args['email_timeline_subject_id'] = EmailTimeline::MERCHANT_SIGNED;
 			$args['recipient'] = $cobrandedApplication['User']['email'];
-			$response = $this->__createEmailTimelineEntry($args);
+			$response = $this->createEmailTimelineEntry($args);
 		}
 
 		return $response;
@@ -939,13 +941,13 @@ $to = 'sbrady@axiapayments.com';
 		$dbaBusinessName = '';
 		$ownerName = '';
 
-		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
-			if ($val['name'] == 'DBA') {
-				$dbaBusinessName = $val['value'];
-			}
-			if ($val['name'] == 'CorpContact') {
-				$ownerName = $val['value'];
-			}
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['CorpContact'])) {
+			$ownerName = $valuesMap['CorpContact'];
 		}
 			
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
@@ -971,28 +973,28 @@ $to = 'sbrady@axiapayments.com';
 			'viewVars' => $viewVars
 		);
 
-		$response = $this->__sendEmail($args);
+		$response = $this->sendEmail($args);
 		unset($args);
 
 		if ($response['success'] == true) {
 			$args['cobranded_application_id'] = $applicationId;
 			$args['email_timeline_subject_id'] = EmailTimeline::INSTALL_SHEET_VAR;
 			$args['recipient'] = $email;
-			$response = $this->__createEmailTimelineEntry($args);
+			$response = $this->createEmailTimelineEntry($args);
 		}
 
 		return $response;
 	}
 
 /**
- * __sendEmail
+ * sendEmail
  * 
  * @params
  *     $args array
  * @returns
  *     $response array
  */
-	private function __sendEmail($args) {
+	public function sendEmail($args) {
 		$response = array(
 			'success' => false,
 			'msg' => 'Failed to send email.',
@@ -1035,7 +1037,11 @@ $to = 'sbrady@axiapayments.com';
 		if (key_exists('viewVars', $args)) {
 			$this->CakeEmail->viewVars($args['viewVars']);
 		}
-		
+
+		if (key_exists('attachments', $args)) {
+			$this->CakeEmail->attachments($args['attachments']);
+		}
+
 		if ($this->CakeEmail->send()) {
 			$response['success'] = true;
 			$response['msg'] = '';
@@ -1055,19 +1061,19 @@ $to = 'sbrady@axiapayments.com';
 	public function createNewApiApplicationEmailTimelineEntry($args) {
 		$args['email_timeline_subject_id'] = EmailTimeline::NEW_API_APPLICATION;
 		$args['recipient'] = EmailTimeline::DATA_ENTRY_EMAIL;
-		$response = $this->__createEmailTimelineEntry($args);
+		$response = $this->createEmailTimelineEntry($args);
 		return $response;
 	}
 
 /**
- * __createEmailTimelineEntry
+ * createEmailTimelineEntry
  * 
  * @params
  *     $args array
  * @returns
  *     $response array
  */
-	private function __createEmailTimelineEntry($args) {
+	public function createEmailTimelineEntry($args) {
 		$response = array(
 			'success' => false,
 			'msg' => 'Failed to create email timeline entry.',
@@ -1230,16 +1236,16 @@ $to = 'sbrady@axiapayments.com';
 		$owner2Fullname = '';
 		$dbaBusinessName = '';
 
-		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
-			if ($val['name'] == 'Owner1Name') {
-				$owner1Fullname  = $val['value'];
-			}
-			if ($val['name'] == 'Owner2Name') {
-				$owner2Fullname = $val['value'];
-			}
-			if ($val['name'] == 'DBA') {
-				$dbaBusinessName = $val['value'];
-			}
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['Owner1Name'])) {
+			$owner1Fullname = $valuesMap['Owner1Name'];
+		}
+		if (!empty($valuesMap['Owner2Name'])) {
+			$owner2Fullname = $valuesMap['Owner2Name'];
 		}
 
 		$xml  = "<?xml version='1.0' encoding='UTF-8'?>\n";
@@ -1362,6 +1368,25 @@ $to = 'sbrady@axiapayments.com';
 		$xml .= "	</template>\n";
 
 		return $xml;
+	}
+
+/**
+ * buildCobrandedApplicationValuesMap
+ * 
+ * @params
+ *     $cobrandedApplicationValues array
+ *
+ * @returns
+ *     $valuesMap array
+ */
+	public function buildCobrandedApplicationValuesMap($cobrandedApplicationValues) {
+		$valuesMap = array();
+		if (!empty($cobrandedApplicationValues)) {
+			foreach ($cobrandedApplicationValues as $val) {
+				$valuesMap[$val['name']] = $val['value'];
+			}
+		}
+		return $valuesMap;
 	}
 
 /**
