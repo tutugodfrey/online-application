@@ -77,9 +77,15 @@ class CoversheetsController extends AppController {
         
 	public function edit($id = null) {
         $data = $this->Coversheet->findById($id);
+
+        $valuesMap = $this->getCobrandedApplicationValues($data['CobrandedApplication']['id']);
+        foreach ($valuesMap as $key => $val) {
+            $data['CobrandedApplication'][$key] = $val;
+        }
+
         $this->set(compact('id','data'));
         $moto = false;
-        $result = '';
+        $result = '';  
 
         if ($data['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $data['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') $moto = true;
         
@@ -192,6 +198,13 @@ class CoversheetsController extends AppController {
 
         if (empty($this->request->data)) {
             $this->request->data = $this->Coversheet->findById($id);
+
+            $valuesMap = $this->getCobrandedApplicationValues($this->request->data['CobrandedApplication']['id']);
+            foreach ($valuesMap as $key => $val) {
+                $this->request->data['CobrandedApplication'][$key] = $val;
+            }
+
+            $this->set('data', $this->request->data);
         }
 	}
         
@@ -207,13 +220,18 @@ class CoversheetsController extends AppController {
             $this->Coversheet->id = $id;
             $data = $this->Coversheet->findById($id);
 
+            $valuesMap = $this->getCobrandedApplicationValues($data['CobrandedApplication']['id']);
+            foreach ($valuesMap as $key => $val) {
+                $data['CobrandedApplication'][$key] = $val;
+            }
+
             if ($data['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $data['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
                 $this->set('cp',false);
             } else {
                 $this->set('cp',true);
             }
 
-            $this->set('data', $data);;
+            $this->set('data', $data);
             $path = WWW_ROOT . 'files/';
             $fp = (fopen($path . 'axia_coversheet.xfdf', 'w'));
             fwrite($fp, $this->render('/Elements/coversheets/pdf_export', false));
@@ -349,6 +367,12 @@ class CoversheetsController extends AppController {
             //debug($data);
             $moto = false;
             $result = '';
+
+            $valuesMap = $this->getCobrandedApplicationValues($data['CobrandedApplication']['id']);
+            foreach ($valuesMap as $key => $val) {
+                $data['CobrandedApplication'][$key] = $val;
+            }
+
             if ($data['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $data['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') $moto = true;
             switch ($moto) {
                 case true:
@@ -421,5 +445,32 @@ class CoversheetsController extends AppController {
 		$this->Session->setFlash(__('coversheet was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+
+/*
+ * getCobrandedApplicationValues
+ *
+ * @param $applicationId integer
+ * @return $valuesMap array
+ */
+    public function getCobrandedApplicationValues($applicationId) {
+        $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+        
+        $appValues = $CobrandedApplicationValue->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'cobranded_application_id' => $applicationId,
+                )
+            )
+        );
+
+        $appValueArray = array();
+        foreach ($appValues as $arr) {
+            $appValueArray[] = $arr['CobrandedApplicationValue'];
+        }
+
+        $valuesMap = $this->Coversheet->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
+        return $valuesMap;
+    }
 }
 ?>

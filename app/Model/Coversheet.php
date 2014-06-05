@@ -129,23 +129,7 @@ class Coversheet extends AppModel {
 			'order' => ''
 		)
 	);
-
-    public $hasMany = array(
-        'CobrandedApplicationValues' => array(
-            'className' => 'CobrandedApplicationValue',
-            'foreignKey' => 'cobranded_application_id',
-            'dependent' => true,
-            'conditions' => '',
-            'fields' => '',
-            'order' => 'id',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-    );
-        
+    
         function equipment() {
             if ($this->data['Coversheet']['setup_equipment_terminal'] != '1' && $this->data['Coversheet']['setup_equipment_gateway'] != '1') {
                 return false;

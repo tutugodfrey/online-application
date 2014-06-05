@@ -370,8 +370,8 @@
                          <td>
                              <div class="textborder">
                                 <?php
-                                    if ($applications['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
-                                        $applications['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                    if ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
+                                        $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
                                         echo 'Yes';
                                     }
                                     else {
@@ -382,7 +382,7 @@
                          </td>
                          <td >
                             
-                         <?php echo ($data['CobrandedApplication']['existing_se_num'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['existing_se_num'] . '</div>';?>    
+                         <?php echo ($data['CobrandedApplication']['AmexNum'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['AmexNum'] . '</div>';?>    
                          </td>
                          <td>
                          </td>
@@ -641,8 +641,8 @@
                          <td>
                              <div class="textborder">
                                 <?php
-                                    if ($applications['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
-                                        $applications['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                    if ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
+                                        $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
                                         echo 'Yes';
                                     }
                                     else {
@@ -652,7 +652,7 @@
                             </div>
                          </td>
                          <td>
-                            <?php echo ($data['CobrandedApplication']['existing_se_num'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['existing_se_num'] . '</div>';?>
+                            <?php echo ($data['CobrandedApplication']['AmexNum'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['AmexNum'] . '</div>';?>
                          </td>
    
                      </tr>
