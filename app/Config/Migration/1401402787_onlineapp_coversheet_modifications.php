@@ -48,7 +48,10 @@ class OnlineappCoversheetModifications extends CakeMigration {
 		if ($direction == 'down') {
                         $this->db->execute(
                                 "ALTER TABLE onlineapp_coversheets
-                                DROP CONSTRAINT onlineapp_coversheets_cobranded_application_id_fkey;"
+                                DROP CONSTRAINT onlineapp_coversheets_cobranded_application_id_fkey;
+
+                                ALTER TABLE onlineapp_coversheets
+                                DROP CONSTRAINT onlineapp_coversheets_cobranded_application_id_key;"
                         );
                 }
 		return true;
@@ -64,7 +67,10 @@ class OnlineappCoversheetModifications extends CakeMigration {
 		if ($direction == 'up') {
                         $this->db->execute(
                                 "ALTER TABLE onlineapp_coversheets
-                                ADD CONSTRAINT onlineapp_coversheets_cobranded_application_id_fkey FOREIGN KEY (cobranded_application_id) REFERENCES onlineapp_cobranded_applications (id);"
+                                ADD CONSTRAINT onlineapp_coversheets_cobranded_application_id_fkey FOREIGN KEY (cobranded_application_id) REFERENCES onlineapp_cobranded_applications (id);
+
+                                ALTER TABLE onlineapp_coversheets
+                                ADD CONSTRAINT onlineapp_coversheets_cobranded_application_id_key UNIQUE (cobranded_application_id);"
                         );
                 }
 		return true;

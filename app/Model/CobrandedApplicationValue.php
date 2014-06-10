@@ -240,7 +240,9 @@ class CobrandedApplicationValue extends AppModel {
 							$maskValue = true;
 
 							$e = new Exception;
-							if (strpos($e->getTraceAsString(), 'createRightSignatureApplicationXml') !== false) {
+
+							if (strpos($e->getTraceAsString(), 'createRightSignatureApplicationXml') !== false ||
+								strpos($e->getTraceAsString(), 'CoversheetsController->getCobrandedApplicationValues') !== false) {
 								$maskValue = false;
 							}
 

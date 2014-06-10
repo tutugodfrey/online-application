@@ -1390,6 +1390,66 @@ $to = 'sbrady@axiapayments.com';
 	}
 
 /**
+ * validateCobrandedApplication
+ * 
+ * @params
+ *     $cobrandedApplication array
+ *
+ * @returns
+ *     $response array
+ */
+	public function validateCobrandedApplication($cobrandedApplication) {
+		$TemplateField = ClassRegistry::init('TemplateField');
+
+		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
+			$templateField = $TemplateField->find(
+				'first',
+				array(
+					'conditions' => array('TemplateField.id' => $val['template_field_id']),
+					'contain' => array(
+						'TemplateSection' => array(
+							'TemplatePage'
+						)
+					)
+				)
+			);
+
+			$templateFieldName = $templateField['TemplateField']['name'];
+			$page = $templateField['TemplateSection']['TemplatePage']['order'];
+			$page++;
+
+			if ($templateField['TemplateField']['required'] == true && empty($val['value']) == true) {
+				// if field is a multi-option type, check the other options for a value
+				if ($templateField['TemplateField']['type'] == 4 || $templateField['TemplateField']['type'] == 5 || $templateField['TemplateField']['type'] == 7) {
+					$found = false;
+					foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+						if ($tmpVal['template_field_id'] == $templateField['TemplateField']['id'] && empty($tmpVal['value']) == false) {
+							$found = true;
+						}
+					}
+
+					if ($found == false) {
+						$response['success'] = false;
+						$response['msg'] = 'Required field is empty: '.$templateFieldName;
+						$response['page'] = $page;
+						return $response;
+					}
+
+				} else {
+					$response['success'] = false;
+					$response['msg'] = 'Required field is empty: '.$templateFieldName;
+					$response['page'] = $page;
+					return $response;
+				}
+			}
+		}
+
+		$response['success'] = true;
+		$response['msg'] = '';
+		return $response;
+	}
+
+/**
  * __addKey
  * 
  * @params

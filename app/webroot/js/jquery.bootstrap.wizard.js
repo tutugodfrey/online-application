@@ -13,6 +13,15 @@
 var bootstrapWizardCreate = function(element, options) {
 	var element = $(element);
 	var obj = this;
+
+	// parse and display tab from url 
+	var a = $('[href=' + location.hash + ']');
+	a && a.tab('show');
+
+	// change hash for page-reload
+	$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+		window.location.hash = e.target.hash;
+	});
 	
 	// selector skips any 'li' elements that do not contain a child with a tab data-toggle
 	var baseItemSelector = 'li:has([data-toggle="tab"])';

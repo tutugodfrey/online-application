@@ -435,6 +435,17 @@ class CobrandedApplicationsController extends AppController {
 
 		$cobrandedApplication = $this->CobrandedApplication->read();
 
+		// Perform validation
+		if (!in_array($cobrandedApplication['CobrandedApplication']['status'], array('completed', 'signed'))) {
+			$response = $this->CobrandedApplication->validateCobrandedApplication($cobrandedApplication);
+
+			if ($response['success'] !== true) {
+				$this->CobrandedApplication->save(array('CobrandedApplication' => array('status' => 'validate')), array('validate' => false));
+				$this->Session->setFlash('The application is incomplete. '.$response['msg']);
+				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['page']));
+			}
+		}
+
 		if (!empty($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) && $signNow == true) {
 			$this->redirect(array('action' => '/sign_rightsignature_document?guid='.$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']));
 		} else {
@@ -778,6 +789,8 @@ class CobrandedApplicationsController extends AppController {
 /**
  * pdf
  *
+ * @params
+ *     $id int
  */
 	public function pdf($id) {
 		if ($id) {
