@@ -101,8 +101,6 @@ $(document).ready(function() {
 			var rule = new Object();
 			rule[currentInput.attr('data-vtype')] = true;
 			validationRules[currentInput.attr('id')] = rule;
-		} else {
-			alert('Already added a rule for ['+input['id']+']');
 		}
 	});
 

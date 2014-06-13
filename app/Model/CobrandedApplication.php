@@ -874,6 +874,83 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * sendForCompletion
+ * 
+ * @params
+ *     $applicationId int
+ * @returns
+ *     $response array
+ */
+	public function sendForCompletion($applicationId) {
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		// update the hash
+		$hash = md5(String::uuid());
+		$this->saveField('uuid', $hash);
+
+		$dbaBusinessName = '';
+		$ownerName = '';
+		$ownerEmail = '';
+
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['CorpContact'])) {
+			$ownerName = $valuesMap['CorpContact'];
+		}
+		if (!empty($valuesMap['Owner1Email'])) {
+			$ownerEmail = $valuesMap['Owner1Email'];
+		}
+			
+//debug
+$ownerEmail = 'sbrady@axiapayments.com';
+
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		$to = $ownerEmail;
+		$subject = 'Your Axia Applications';
+		$format = 'text';
+		$template = 'retrieve_applications';
+		$viewVars = array();
+		$viewVars['email'] = $ownerEmail;
+		$viewVars['dba'] = $dbaBusinessName;
+		$viewVars['fullname'] = $ownerName;
+		$viewVars['hash'] = $hash;
+		$viewVars['link'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/edit/".$hash;
+		$viewVars['ownerName'] = $ownerName;
+
+
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::COMPLETE_FIELDS;
+			$args['recipient'] = $ownerEmail;
+			$response = $this->createEmailTimelineEntry($args);
+			unset($args);
+		}
+
+		$response['dba'] = $dbaBusinessName;
+		$response['email'] = $ownerEmail;
+		$response['fullname'] = $ownerName;
+
+		return $response;
+	}
+
+/**
  * repNotifySignedEmail
  * 
  * @params

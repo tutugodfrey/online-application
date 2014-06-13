@@ -145,7 +145,13 @@ class CobrandedApplicationsController extends AppController {
 			if ($user['User']['api_enabled']) {
 				// also make sure a template is setup
 				if (!is_null($user['User']['template_id'])) {
-					$response = $this->CobrandedApplication->saveFields($user['User'], $this->request->data);
+					$data = $this->request->input('json_decode', true);
+
+					if ($data == NULL) {
+						$data = $this->request->data;
+					}
+
+					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
 
 					if ($response['success'] == true) {
 						$this->Cobrand = ClassRegistry::init('Cobrand');
@@ -238,6 +244,8 @@ class CobrandedApplicationsController extends AppController {
 			} else {
 				$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
 				$this->request->data = $this->CobrandedApplication->find('first', $options);
+				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
+				$this->set('values_map', $valuesMap);
 			}
 
 			$users = $this->CobrandedApplication->User->find('list');
@@ -416,6 +424,64 @@ class CobrandedApplicationsController extends AppController {
 		}
 		$this->Session->setFlash(__($flashMsg));
 		$this->redirect(array('action' => 'index'));
+	}
+
+/**
+ * admin_email_timeline method
+ *
+ * @param $id int
+ * @return void
+ */
+	public function admin_email_timeline($id) {
+		$data = $this->paginate = array(
+			'conditions' => array(
+				'CobrandedApplication.id' => $id
+			),
+			'contain' => array(
+				'CobrandedApplicationValues',
+				'User.email',
+				'EmailTimeline' => array(
+					'EmailTimelineSubject.subject'
+				)
+			),
+			'limit' => 50,
+			'recursive' => 2
+		);
+
+		$data = $this->paginate('CobrandedApplication');
+
+		$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($data[0]['CobrandedApplicationValues']);
+
+		$dba = '';
+
+		if (!empty($valuesMap['DBA'])) {
+			$dba = $valuesMap['DBA'];
+		}
+	
+		$data[0]['CobrandedApplication']['DBA'] = $dba;
+		$this->set('applications', $data);
+	}
+
+/**
+ * complete_fields method
+ *
+ * @param $id int
+ * @return void
+ */
+	public function complete_fields($id) {
+		if ($id) {
+			$response = $this->CobrandedApplication->sendForCompletion($id);
+			if ($response['success'] == true) {
+				$this->set('dba', $response['dba']);
+				$this->set('email', $response['email']);
+				$this->set('fullname', $response['fullname']);
+				$this->render('retrieve_thankyou');
+			} else {
+				$this->set('error', $response['msg']);
+			}
+		} else {
+			$this->set('error', 'Could not find any applications with the specified email address.');
+		}
 	}
 
 /**

@@ -22,7 +22,7 @@ var bootstrapWizardCreate = function(element, options) {
 	$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 		window.location.hash = e.target.hash;
 	});
-	
+
 	// selector skips any 'li' elements that do not contain a child with a tab data-toggle
 	var baseItemSelector = 'li:has([data-toggle="tab"])';
 
@@ -47,6 +47,13 @@ var bootstrapWizardCreate = function(element, options) {
 		// See if we're currently in the first/last then disable the previous and last buttons
 		$($settings.previousSelector, element).toggleClass('disabled', (obj.firstIndex() >= obj.currentIndex()));
 		$($settings.nextSelector, element).toggleClass('disabled', (obj.currentIndex() >= obj.navigationLength()));
+
+		if (obj.currentIndex() == obj.navigationLength()) {
+			$("#actionButtons").show();
+		}
+		else {
+			$("#actionButtons").hide();
+		}
 
 		// We are unbinding and rebinding to ensure single firing and no double-click errors
 		obj.rebindClick($($settings.nextSelector, element), obj.next);
