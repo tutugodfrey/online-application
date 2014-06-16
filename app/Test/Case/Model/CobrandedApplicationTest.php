@@ -743,7 +743,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
-				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
+				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
 		$this->assertEquals(0, count($applications), 'Did not expect to find any applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
@@ -772,7 +772,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
-				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
+				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
 		$this->assertEquals(0, count($applications), 'Expect to find no applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
@@ -866,7 +866,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
-				'conditions' => array('user_id' => $this->__user['OnlineappUser']['id']),
+				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
 		$this->assertEquals(1, count($applications), 'Expect to find one application for user with id ['.$this->__user['OnlineappUser']['id'].']');
@@ -965,7 +965,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
 				),
 			)
 		);
@@ -984,7 +984,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
 				),
 			)
 		);
