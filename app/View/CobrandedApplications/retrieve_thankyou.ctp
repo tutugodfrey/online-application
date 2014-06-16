@@ -13,7 +13,7 @@ Thank you. Please check your email for a link to your applications.
 <?php
         echo $this->Html->link(
             'Return to Applications Admin',
-            '/admin/applications/',
+            '/admin/cobranded_applications/',
             array('style' => 'display: block; float: right;')
         );
     }

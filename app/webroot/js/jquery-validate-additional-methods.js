@@ -63,7 +63,7 @@ jQuery.validator.addMethod("integer", function(value, element) {
 
 jQuery.validator.addMethod("ssn", function(value, element) {
 	return this.optional(element) || /^\d{3}-\d{2}-\d{4}$/.test(value);
-}, "The specified social securty number is invalid");
+}, "The specified social security number is invalid");
 
 jQuery.validator.addMethod("money", function(value, element) {
 	return this.optional(element) || /(?=.)^\$?(([1-9][0-9]{0,2}(,[0-9]{3})*)|[0-9]+)?(\.[0-9]{1,2})?$/.test(value);

@@ -36,6 +36,81 @@
 					</div>
 					<div>Fields marked with * are required.</div>
 					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
+					<div id="actionButtons">
+						<?php
+							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+								echo "<br/>Please Save Application before submitting this application for Signature <br/><br/>";
+								echo "<input type='button' onclick='fieldCompletion();' value='Email For Field Completion'>"."<br/>";
+								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'>"."<br/>";
+
+								$completeFieldsUrl = Router::url(array(
+									'controller' => 'cobranded_applications',
+									'action' => 'complete_fields',
+									$this->request->data['CobrandedApplication']['id'],
+									False
+								));
+
+								echo $this->Html->scriptBlock(
+									"function fieldCompletion() {
+										if (confirm('Send for completion to: ".$values_map['Owner1Email']."')) {
+											window.location = '".$completeFieldsUrl."';
+										}
+									}"
+								);
+
+								$submitForSigUrl = Router::url(array(
+									'controller' => 'cobranded_applications',
+									'action' => 'create_rightsignature_document',
+									$this->request->data['CobrandedApplication']['id'],
+									False
+								));
+
+								echo $this->Html->scriptBlock("
+									function submit_for_signature() {
+				
+										if (". (isset($errors) && is_array($errors) ? '1' : '0') .") {
+											alert('The application must be saved with all required fields completed before submitting for signature.');
+											return null;
+										}
+										else if (" . ($this->request->data['CobrandedApplication']['status'] == 'signed' ? '1' : '0') . ") {
+											answer = confirm('This application has aleady been signed. Do you really want to resend?');
+											if (!answer) return null
+										}
+										else if (" . ($this->request->data['CobrandedApplication']['rightsignature_document_guid'] ? '1' : '0') . ") {
+											answer = confirm('This application has aleady been sent for signature. Do you really want to send it again?');
+											if (!answer) return null
+										}
+										window.location = '".$submitForSigUrl."';
+									}
+								");
+							}
+
+							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) || $values_map['AllowMerchantToSignApplication'] == 'true') {
+								echo "<input type='button' onclick='signDocNow();' value='View and Sign Now'>";
+
+								$signNowUrl = Router::url(array(
+									'controller' => 'cobranded_applications',
+									'action' => 'create_rightsignature_document',
+									$this->request->data['CobrandedApplication']['id'],
+									True
+								));
+		
+								echo $this->Html->scriptBlock("
+									function signDocNow() {
+			   							if (". (isset($errors) && is_array($errors) ? '1' : '0') .") {
+											alert('The application must be saved with all required fields completed before submitting for signature.');
+											return null;
+										}
+										else if (" . ($this->request->data['CobrandedApplication']['status'] == 'signed' ? '1' : '0') . ") {
+											answer = confirm('This application has aleady been signed.');
+											return null;
+										}
+										window.location = '".$signNowUrl."';
+									}
+			 					");
+							}
+						?>
+					</div>
 				</div>
 			</form>
 		</section>

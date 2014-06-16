@@ -3,6 +3,7 @@ App::uses('AppController', 'Controller');
 App::uses('TemplateField', 'View/Helper');
 App::uses('Setting', 'Model');
 App::uses('Validation', 'Utility');
+App::uses('Coversheet', 'Model');
 
 /**
  * CobrandedApplications Controller
@@ -25,6 +26,7 @@ class CobrandedApplicationsController extends AppController {
 	public $permissions = array(
 		'add' => array('admin', 'rep', 'manager'),
 		'api_add' => array('api'),
+		'edit' => array('*')
 	);
 
 	public $helper = array('TemplateField');
@@ -144,7 +146,13 @@ class CobrandedApplicationsController extends AppController {
 			if ($user['User']['api_enabled']) {
 				// also make sure a template is setup
 				if (!is_null($user['User']['template_id'])) {
-					$response = $this->CobrandedApplication->saveFields($user['User'], $this->request->data);
+					$data = $this->request->input('json_decode', true);
+
+					if ($data == NULL) {
+						$data = $this->request->data;
+					}
+
+					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
 
 					if ($response['success'] == true) {
 						$this->Cobrand = ClassRegistry::init('Cobrand');
@@ -237,6 +245,8 @@ class CobrandedApplicationsController extends AppController {
 			} else {
 				$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
 				$this->request->data = $this->CobrandedApplication->find('first', $options);
+				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
+				$this->set('values_map', $valuesMap);
 			}
 
 			$users = $this->CobrandedApplication->User->find('list');
@@ -247,6 +257,8 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['logo_url']);
 			$this->set('include_axia_logo', $template['Template']['include_axia_logo']);
 			$this->set('cobrand_logo_position', $template['Template']['logo_position']);
+			$this->set('rightsignature_template_guid', $template['Template']['rightsignature_template_guid']);
+			$this->set('rightsignature_install_template_guid', $template['Template']['rightsignature_install_template_guid']);
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 
@@ -413,5 +425,447 @@ class CobrandedApplicationsController extends AppController {
 		}
 		$this->Session->setFlash(__($flashMsg));
 		$this->redirect(array('action' => 'index'));
+	}
+
+/**
+ * admin_email_timeline method
+ *
+ * @param $id int
+ * @return void
+ */
+	public function admin_email_timeline($id) {
+		$data = $this->paginate = array(
+			'conditions' => array(
+				'CobrandedApplication.id' => $id
+			),
+			'contain' => array(
+				'CobrandedApplicationValues',
+				'User.email',
+				'EmailTimeline' => array(
+					'EmailTimelineSubject.subject'
+				)
+			),
+			'limit' => 50,
+			'recursive' => 2
+		);
+
+		$data = $this->paginate('CobrandedApplication');
+
+		$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($data[0]['CobrandedApplicationValues']);
+
+		$dba = '';
+
+		if (!empty($valuesMap['DBA'])) {
+			$dba = $valuesMap['DBA'];
+		}
+	
+		$data[0]['CobrandedApplication']['DBA'] = $dba;
+		$this->set('applications', $data);
+	}
+
+/**
+ * complete_fields method
+ *
+ * @param $id int
+ * @return void
+ */
+	public function complete_fields($id) {
+		if ($id) {
+			$response = $this->CobrandedApplication->sendForCompletion($id);
+			if ($response['success'] == true) {
+				$this->set('dba', $response['dba']);
+				$this->set('email', $response['email']);
+				$this->set('fullname', $response['fullname']);
+				$this->render('retrieve_thankyou');
+			} else {
+				$this->set('error', $response['msg']);
+			}
+		} else {
+			$this->set('error', 'Could not find any applications with the specified email address.');
+		}
+	}
+
+/**
+ * create_rightsignature_document
+ *
+ * @params
+ *     $applicationId int
+ *     $signNow boolean
+ */
+	public function create_rightsignature_document($applicationId = null, $signNow = null) {
+		$this->autoRender = false;
+		$this->CobrandedApplication->id = $applicationId;
+
+		if (!$this->CobrandedApplication->exists()) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$cobrandedApplication = $this->CobrandedApplication->read();
+
+		// Perform validation
+		if (!in_array($cobrandedApplication['CobrandedApplication']['status'], array('completed', 'signed'))) {
+			$response = $this->CobrandedApplication->validateCobrandedApplication($cobrandedApplication);
+
+			if ($response['success'] !== true) {
+				$this->CobrandedApplication->save(array('CobrandedApplication' => array('status' => 'validate')), array('validate' => false));
+				$this->Session->setFlash('The application is incomplete. '.$response['msg']);
+				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['page']));
+			}
+		}
+
+		if (!empty($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) && $signNow == true) {
+			$this->redirect(array('action' => '/sign_rightsignature_document?guid='.$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']));
+		} else {
+			$client = $this->CobrandedApplication->createRightSignatureClient();
+			$templateGuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
+			$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
+			$response = json_decode($response, true);
+
+			if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
+				$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
+					$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
+				$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+			} else {
+				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+				$this->Session->setFlash(__('error! could not find template guid'));
+				$this->redirect(array('action' => $url));
+			}
+
+			$response = json_decode($response, true);
+	
+			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
+				// save the guid
+				$this->CobrandedApplication->save(
+					array(
+						'CobrandedApplication' => array(
+							'id' => $applicationId,
+							'rightsignature_document_guid' => $response['document']['guid'],
+							'status' => 'completed'
+						)
+					),
+					array('validate' => false)
+				);
+
+				// check whether they want to sign in person
+				if ($signNow) {
+					$this->redirect(array('action' => 'sign_rightsignature_document?guid='.$response['document']['guid']));
+				} else {
+					// if not simply send the documents
+					$emailResponse = $this->CobrandedApplication->sendApplicationForSigningEmail($applicationId);
+				}
+			} else {
+				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+				$this->Session->setFlash(__('error! could not send the document'));
+				$this->redirect(array('action' => $url));
+			}
+
+			$this->autoRender = false;
+		}
+	}
+
+/**
+ * sign_rightsignature_document
+ *     
+ */
+	public function sign_rightsignature_document() {
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$this->set('rightsignature', $client);
+
+		$is_mobile_safari = preg_match("/\bMobile\b.*\bSafari\b/", $_SERVER['HTTP_USER_AGENT']);
+		$this->set('is_mobile_safari', $is_mobile_safari);
+
+		// Width of Widget, CANNOT BE CHANGED and it cannot be dynamic. 706 is optimal size
+		$widgetWidth = 706;
+		$this->set('widgetWidth', $widgetWidth);
+
+		// Height of widget is changeable (Optional)
+		$widgetHeight = 500;
+		$this->set('widgetHeight', $widgetHeight);
+
+		$guid = htmlspecialchars($_REQUEST["guid"]);
+
+		$this->set('guid', $guid);
+
+		if (empty($guid)) {
+			$this->Session->setFlash(__("Cannot find document with given GUID."));
+			$this->redirect(array('action' => 'index'));
+		}
+
+		// Gets signer link and reloads this page after each successful signature to refresh the signer-links list
+		$response = $this->CobrandedApplication->getRightSignatureSignerLinks($client, $guid);
+		$this->set('response', $response);
+
+		$xml = Xml::build($response);
+		$xml = Xml::toArray($xml);
+		$result = Set::normalize($xml);
+		$this->set('xml', $xml);
+
+		$data = array();
+
+		if ($this->CobrandedApplication->findByRightsignatureDocumentGuid($guid)) {
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
+			$this->layout = 'default';
+
+			if (key_exists('error', $xml) && 
+				$xml['error']['message'] == "Document is already signed." &&
+				$data['CobrandedApplication']['status'] != 'signed') {
+
+				if ($data['Coversheet']['status'] == 'validated') {
+					$this->Session->write('CobrandedApplication.coversheet', 'pdf');
+					$this->pdf($data['Coversheet']['id']);
+					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
+					$Coversheet = ClassRegistry::init('Coversheet');
+					$Coversheet->sendCoversheet($data['Coversheet']['id']);
+					$this->Session->delete('CobrandedApplication.coversheet');
+				}
+
+				$send_email = 'true';
+
+				foreach ($data['EmailTimeline'] as $emails) {
+					if ($emails['email_timeline_subject_id'] == 2) {
+						$send_email = 'false';
+					}
+				}
+
+				if ($send_email != 'false') {
+					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+				}	
+			}          
+		}
+
+        if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
+			$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
+			$this->set('data', $data);
+			$varSigner = true;
+			$this->set('varSigner', $varSigner);
+			if ($xml['error']['message'] == "Document is already signed." && $data['CobrandedApplication']['rightsignature_install_status'] != 'signed') {
+				$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
+				$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
+				$existing = $this->CobrandedApplication->Merchant->TimelineEntry->find(
+					'count',
+					array(
+						'conditions' => array(
+							'TimelineEntry.merchant_id' => $data['Merchant']['merchant_id'],
+							'TimelineEntry.timeline_item' => 'SIS'
+						)
+					)
+				);
+				if ($existing == 0) {
+					$this->CobrandedApplication->Merchant->TimelineEntry->query("INSERT INTO timeline_entries VALUES ('{$data['Merchant']['merchant_id']}', 'SIS', NOW(), 'f')");
+				}
+			}
+		}
+
+		$alreadySigned = false;
+		$this->set('alreadySigned', $alreadySigned);
+		$error = false;
+		$this->set('error', $error);
+		if (isset($xml['error']['message'])) {
+			$error = true;
+			$this->set('error', $error);
+			$this->set('data', $data);
+
+			$send_email = true;
+
+			foreach ($data['EmailTimeline'] as $emails) {
+				if ($emails['email_timeline_subject_id'] == 2) {
+					$send_email = false;
+				}
+			}
+
+			if ($send_email != false) {
+				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+
+				if ($data['Coversheet']['status'] == 'validated') {
+					$this->Session->write('CobrandedApplication.coversheet', 'pdf');
+					$this->pdf($data['Coversheet']['id']);
+					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
+					$Coversheet = ClassRegistry::init('Coversheet');
+					$Coversheet->sendCoversheet($data['Coversheet']['id']);
+					$this->Session->delete('CobrandedApplication.coversheet');
+				}
+			}
+
+			if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
+				$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
+				if ($data['CobrandedApplication']['rightsignature_install_status'] != 'signed') {
+					$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
+					$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
+				}
+				$this->set('data', $data);
+
+				$existing = $this->CobrandedApplication->Merchant->TimelineEntry->find(
+					'count',
+					array(
+						'conditions' => array(
+							'TimelineEntry.merchant_id' => $data['Merchant']['merchant_id'],
+							'TimelineEntry.timeline_item' => 'SIS'
+						)
+					)
+				);
+				if ($existing == 0) {
+					$this->CobrandedApplication->Merchant->TimelineEntry->query("INSERT INTO timeline_entries VALUES ('{$data['Merchant']['merchant_id']}', 'SIS', NOW(), 'f')");
+				}
+			}
+
+			$alreadySigned = true;
+			$this->set('alreadySigned', $alreadySigned);
+		}
+	}
+
+/**
+ * install_sheet_var
+ *
+ * @params
+ *     $applicationId int
+ */
+	public function install_sheet_var($applicationId) {
+		$this->CobrandedApplication->id = $applicationId;
+
+		if (!$this->CobrandedApplication->exists()) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$data = $this->CobrandedApplication->find(
+			'first', array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				),
+				'contain' => array(
+					'User',
+					'CobrandedApplicationValues',
+					'Merchant' => array('EquipmentProgramming'),
+				),
+				'recursive' => 2
+			)
+		);
+
+		$this->set('data', $data);
+
+		if ($this->request->data) {
+			$this->CobrandedApplication->set($this->request->data);
+
+			if (!empty($this->request->data['CobrandedApplication']['select_email_address'])) {
+				$this->CobrandedApplication->setValidation('install_var_select');
+			} else {
+				$this->CobrandedApplication->setValidation('install_var_enter');
+			}
+
+			if ($this->CobrandedApplication->validates()) {
+				$this->sent_var_install($applicationId);
+			} else {
+				$errors = $this->CobrandedApplication->invalidFields();
+				$this->set('errors', $errors);
+			}
+		}
+	}
+
+/**
+ * sent_var_install
+ *
+ * @params
+ *     $applicationId int
+ */
+	public function sent_var_install($applicationId) {
+
+		$this->CobrandedApplication->id = $applicationId;
+
+		if (!$this->CobrandedApplication->exists()) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$cobrandedApplication = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				),
+				'contain' => array(
+					'User',
+					'Template',
+					'Merchant' => array('EquipmentProgramming'),
+				),
+				'recursive' => 2
+			)
+		);
+
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$templateGuid = $cobrandedApplication['Template']['rightsignature_install_template_guid'];
+		$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
+		$response = json_decode($response, true);
+
+		if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
+			$subject = "Axia Install Sheet - VAR";
+			$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
+				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject);
+
+			$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+			$response = json_decode($response, true);
+
+			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
+				if ($this->CobrandedApplication->save(
+						array(
+							'CobrandedApplication' => array(
+								'id' => $applicationId,
+								'rightsignature_install_document_guid' => $response['document']['guid']
+							)
+						),
+						array('validate' => false)
+					)
+				) {
+					if ($this->request->data['CobrandedApplication']['select_email_address'] != "") {
+					$this->Session->write('CobrandedApplication.email', $this->request->data['CobrandedApplication']['select_email_address']);
+					} else {
+						$this->Session->write('CobrandedApplication.email', $this->request->data['CobrandedApplication']['enter_email_address']);
+					}
+				
+					if ($this->CobrandedApplication->save(
+							array(
+								'CobrandedApplication' => array(
+									'id' => $applicationId,
+									'rightsignature_install_status' => 'sent'
+								)
+							),
+							array('validate' => false)
+						)
+					) {
+						$email = $this->Session->read('CobrandedApplication.email');
+						$this->CobrandedApplication->sendRightsignatureInstallSheetEmail($applicationId, $email);
+						$this->redirect(array('action' => 'var_success'));
+					} else {
+						$this->Session->setFlash(__('Document Not Sent Please Try Again'));
+					}
+				}
+			} else {
+				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+				$this->Session->setFlash(__('error! could not send the document'));
+				$this->redirect(array('action' => $url));
+			}
+		}
+	}
+
+/**
+ * var_success
+ *
+ */
+	public function var_success() {
+		$email = $this->Session->read('CobrandedApplication.email');
+		$this->Session->setFlash('Install sheet Successfully sent to: '.$email);
+	}
+
+/**
+ * pdf
+ *
+ * @params
+ *     $id int
+ */
+	public function pdf($id) {
+		if ($id) {
+			$this->set('id', $id);
+			header('Content-type: application/pdf');
+			header('Content-Disposition: attachment; filename="axia_' . $id . '_final.pdf"');
+			readfile(WWW_ROOT . 'files/axia_' . $id . '_final.pdf');
+			unlink(WWW_ROOT . '/files/axia_' . $id . '_final.pdf');
+		}
 	}
 }

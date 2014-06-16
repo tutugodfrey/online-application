@@ -540,6 +540,12 @@ $.extend($.validator, {
 			var rules = $(element).rules();
 			var dependencyMismatch = false;
 			var val = this.elementValue(element);
+
+			// don't validate masked values
+			if (val.search(/XXX+/) != -1) {
+				return true;
+			} 
+
 			var result;
 
 			for (var method in rules ) {

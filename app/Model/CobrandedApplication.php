@@ -3,6 +3,7 @@ App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
 App::uses('CakeEmail', 'Network/Email');
+App::uses('HttpSocket', 'Network/Http');
 
 /**
  * CobrandedApplication Model
@@ -26,6 +27,7 @@ class CobrandedApplication extends AppModel {
 	public $actsAs = array(
 		'Search.Searchable',
 		'Containable',
+		'Multivalidatable',
 	);
 
 /**
@@ -51,6 +53,26 @@ class CobrandedApplication extends AppModel {
 			'rule' => array('numeric'),
 			'allowEmpty' => false,
 			'required' => true,
+		),
+	);
+
+/**
+ * Multivalidatable rules
+ *
+ * @var array
+ */
+	public $validationSets = array(
+		'install_var_select' => array(
+			//'select_email_address' => array(
+			'rule' => 'email',
+			'required' => true
+		//)
+		),
+		'install_var_enter' => array(
+			//   'enter_email_address' => array(
+			'rule' => 'email',
+			'required' => true
+		//)
 		),
 	);
 
@@ -88,6 +110,35 @@ class CobrandedApplication extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
+		),
+		'EmailTimeline' => array(
+			'className' => 'EmailTimeline',
+			'foreignKey' => 'cobranded_application_id',
+			'dependent' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => 'EmailTimeline.date DESC',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+	);
+
+/**
+ * hasOne associations
+ *
+ * @var array
+ */
+	public $hasOne = array(
+		'Merchant' => array(
+			'className' => 'Merchant',
+			'foreignKey' => 'cobranded_application_id'
+		),
+		'Coversheet' => array(
+			'className' => 'Coversheet',
+			'foreignKey' => 'cobranded_application_id'
 		),
 	);
 
@@ -700,7 +751,7 @@ class CobrandedApplication extends AppModel {
 				'viewVars' => array('email'=>$email, 'hash'=>$hash, 'link'=>$link)
 			);
 
-			$response = $this->__sendEmail($args);
+			$response = $this->sendEmail($args);
 
 			// TODO: record that the email was sent
 		}
@@ -747,20 +798,281 @@ class CobrandedApplication extends AppModel {
 			'viewVars' => $viewVars
 		);
 
-		$response = $this->__sendEmail($args);
+		$response = $this->sendEmail($args);
 
 		return $response;
 	}
 
 /**
- * __sendEmail
+ * sendApplicationForSigningEmail
+ * 
+ * @params
+ *     $applicationId int
+ * @returns
+ *     $response array
+ */
+	public function sendApplicationForSigningEmail($applicationId) {
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		$dbaBusinessName = '';
+
+		$owners = array();
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['Owner1Email'])) {
+			$owners['owner1']['email'] = $valuesMap['Owner1Email'];	
+		}
+		if (!empty($valuesMap['Owner1Name'])) {
+			$owners['owner1']['fullname'] = $valuesMap['Owner1Name'];	
+		}
+		if (!empty($valuesMap['Owner2Email'])) {
+			$owners['owner2']['email'] = $valuesMap['Owner2Email'];	
+		}
+		if (!empty($valuesMap['Owner2Name'])) {
+			$owners['owner2']['fullname'] = $valuesMap['Owner2Name'];
+		}
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+
+		foreach ($owners as $key => $val) {
+			$ownerEmail = $owners[$key]['email'];
+			$ownerFullname = $owners[$key]['fullname'];
+
+			$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+			$to = $ownerEmail;
+			$subject = $dbaBusinessName.' - Merchant Application';
+			$format = 'both';
+			$template = 'email_app';
+			$viewVars = array();
+			$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+			$viewVars['ownerName'] = $ownerFullname;
+			$viewVars['merchant'] = $dbaBusinessName;
+
+			$args = array(
+				'from' => $from,
+				'to' => $to,
+				'subject' => $subject,
+				'format' => $format,
+				'template' => $template,
+				'viewVars' => $viewVars
+			);
+
+			$response = $this->sendEmail($args);
+			unset($args);
+
+			if ($response['success'] == true) {
+				$args['cobranded_application_id'] = $applicationId;
+				$args['email_timeline_subject_id'] = EmailTimeline::SENT_FOR_SIGNING;
+				$args['recipient'] = $ownerEmail;
+				$response = $this->createEmailTimelineEntry($args);
+				unset($args);
+			}
+		}
+
+		return $response;
+	}
+
+/**
+ * sendForCompletion
+ * 
+ * @params
+ *     $applicationId int
+ * @returns
+ *     $response array
+ */
+	public function sendForCompletion($applicationId) {
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		// update the hash
+		$hash = md5(String::uuid());
+		$this->saveField('uuid', $hash);
+
+		$dbaBusinessName = '';
+		$ownerName = '';
+		$ownerEmail = '';
+
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['CorpContact'])) {
+			$ownerName = $valuesMap['CorpContact'];
+		}
+		if (!empty($valuesMap['Owner1Email'])) {
+			$ownerEmail = $valuesMap['Owner1Email'];
+		}
+			
+//debug
+$ownerEmail = 'sbrady@axiapayments.com';
+
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		$to = $ownerEmail;
+		$subject = 'Your Axia Applications';
+		$format = 'text';
+		$template = 'retrieve_applications';
+		$viewVars = array();
+		$viewVars['email'] = $ownerEmail;
+		$viewVars['dba'] = $dbaBusinessName;
+		$viewVars['fullname'] = $ownerName;
+		$viewVars['hash'] = $hash;
+		$viewVars['link'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/edit/".$hash;
+		$viewVars['ownerName'] = $ownerName;
+
+
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::COMPLETE_FIELDS;
+			$args['recipient'] = $ownerEmail;
+			$response = $this->createEmailTimelineEntry($args);
+			unset($args);
+		}
+
+		$response['dba'] = $dbaBusinessName;
+		$response['email'] = $ownerEmail;
+		$response['fullname'] = $ownerName;
+
+		return $response;
+	}
+
+/**
+ * repNotifySignedEmail
+ * 
+ * @params
+ *     $applicationId int
+ * @returns
+ *     $response array
+ */
+	public function repNotifySignedEmail($applicationId) {
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		$dbaBusinessName = '';
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+			
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		$to = $cobrandedApplication['User']['email'];
+		$subject = $dbaBusinessName.' - Online Application Signed';
+		$format = 'text';
+		$template = 'rep_notify_signed';
+		$viewVars = array();
+		$viewVars['rep'] = $cobrandedApplication['User']['email'];
+		$viewVars['merchant'] = $dbaBusinessName;
+		$viewVars['link'] = Router::url('/users/login', true);
+
+//DEBUG
+$to = 'sbrady@axiapayments.com';
+
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::MERCHANT_SIGNED;
+			$args['recipient'] = $cobrandedApplication['User']['email'];
+			$response = $this->createEmailTimelineEntry($args);
+		}
+
+		return $response;
+	}
+
+/**
+ * sendRightsignatureInstallSheetEmail
+ *
+ * @params
+ *     $applicationId int
+ *     $email string
+ */
+	public function sendRightsignatureInstallSheetEmail($applicationId, $email) {
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		$dbaBusinessName = '';
+		$ownerName = '';
+
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['CorpContact'])) {
+			$ownerName = $valuesMap['CorpContact'];
+		}
+			
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		$to = $email;
+		$subject = $dbaBusinessName.' - Install Sheet';
+		$format = 'both';
+		$template = 'email_install_var';
+		$viewVars = array();
+		$viewVars['ownerName'] = $ownerName;
+		$viewVars['merchant'] = $dbaBusinessName;
+		$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".
+			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
+
+//DEBUG
+$to = 'sbrady@axiapayments.com';
+
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::INSTALL_SHEET_VAR;
+			$args['recipient'] = $email;
+			$response = $this->createEmailTimelineEntry($args);
+		}
+
+		return $response;
+	}
+
+/**
+ * sendEmail
  * 
  * @params
  *     $args array
  * @returns
  *     $response array
  */
-	private function __sendEmail($args) {
+	public function sendEmail($args) {
 		$response = array(
 			'success' => false,
 			'msg' => 'Failed to send email.',
@@ -803,7 +1115,11 @@ class CobrandedApplication extends AppModel {
 		if (key_exists('viewVars', $args)) {
 			$this->CakeEmail->viewVars($args['viewVars']);
 		}
-		
+
+		if (key_exists('attachments', $args)) {
+			$this->CakeEmail->attachments($args['attachments']);
+		}
+
 		if ($this->CakeEmail->send()) {
 			$response['success'] = true;
 			$response['msg'] = '';
@@ -823,19 +1139,19 @@ class CobrandedApplication extends AppModel {
 	public function createNewApiApplicationEmailTimelineEntry($args) {
 		$args['email_timeline_subject_id'] = EmailTimeline::NEW_API_APPLICATION;
 		$args['recipient'] = EmailTimeline::DATA_ENTRY_EMAIL;
-		$response = $this->__createEmailTimelineEntry($args);
+		$response = $this->createEmailTimelineEntry($args);
 		return $response;
 	}
 
 /**
- * __createEmailTimelineEntry
+ * createEmailTimelineEntry
  * 
  * @params
  *     $args array
  * @returns
  *     $response array
  */
-	private function __createEmailTimelineEntry($args) {
+	public function createEmailTimelineEntry($args) {
 		$response = array(
 			'success' => false,
 			'msg' => 'Failed to create email timeline entry.',
@@ -873,6 +1189,341 @@ class CobrandedApplication extends AppModel {
 			$response['msg'] = '';
 		}
 
+		return $response;
+	}
+
+/**
+ * getRightSignatureTemplate
+ * 
+ * @params
+ *     $client object
+ *     $templateGuid string
+ * @returns
+ *     $response array
+ */
+	public function getRightSignatureTemplate($client, $templateGuid) {
+		$response = $client->post('/api/templates/'.$templateGuid.'/prepackage.json',
+			"<?xml version='1.0' encoding='UTF-8'?><callback_location></callback_location>");
+		return $response;
+	}
+
+/**
+ * createRightSignatureDocument
+ * 
+ * @params
+ *     $client object
+ *     $applicationXml string
+ * @returns
+ *     $response array
+ */
+	public function createRightSignatureDocument($client, $applicationXml) {
+		$response = $client->post('/api/templates.json', $applicationXml);
+		return $response;
+	}
+
+/**
+ * extendRightSignatureDocumentLife
+ * 
+ * @params
+ *     $client object
+ *     $documentGuid string
+ * @returns
+ *     $response array
+ */
+	public function extendRightSignatureDocumentLife($client, $documentGuid) {
+		$response = $client->post('/api/documents/'.$documentGuid.'/extend_expiration.xml');
+		return $response;
+	}
+
+/**
+ * getRightSignatureTemplateDetails
+ * 
+ * @params
+ *     $client object
+ *     $templateGuid string
+ * @returns
+ *     $response array
+ */
+	public function getRightSignatureTemplateDetails($client, $templateGuid) {
+		$response = $client->signAndSendRequest("GET", '/api/templates/'.$templateGuid.'.json');
+		return $response;
+	}
+
+/**
+ * getRightSignatureSignerLinks
+ *
+ * @params
+ *     $client object
+ *     $documentGuid string
+ * @returns
+ *     $response array
+ */
+	public function getRightSignatureSignerLinks($client, $documentGuid) {
+		$response = $client->getSignerLinks($documentGuid, "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".$documentGuid);
+		return $response;
+	}
+
+/**
+ * createRightSignatureClient
+ * 
+ * @params
+ *     none
+ * @returns
+ *     $client
+ */
+	public function createRightSignatureClient() {
+		App::import('Vendor', 'oauth', array('file' => 'OAuth' . DS . 'rightsignature.php'));
+		
+		$rightsignature = new RightSignature('J7PQlPSlm3jaa2DbfCP989mIFrKRHUH1NqcjJugT', 'ZAYx4jEy6BVYPuad4kPQAw6lTrOxAeqWU8DGT6A1');
+		$rightsignature->request_token = new OAuthConsumer('v1cfHXdnHbD8in6ruqsb3MDVbuhdtZMaHTKVw1XI', 'tTyOsXYMAgoPQY5NXlsB9sKAYRZXsuLIcBzTiOpB', 1);
+		$rightsignature->access_token = new OAuthConsumer('FvpRze1k6JbP7HHm64IxQiWLHL9p0Jl4pw3x7PBP', 'cHrzepxhF7t9QMyO8CGUJlbSg4Lon23JEVYnD70Z', 1);
+		$rightsignature->oauth_verifier = 'jmV0StucajLmdz2gc7hw';
+
+		return $rightsignature;
+	}
+
+/**
+ * createRightSignatureApplicationXml
+ * 
+ * @params
+ *     $applicationId int
+ *     $sender string
+ *     $rightSignatureTemplate array
+ *     $subject string
+ * @returns
+ *     $xml string
+ */
+	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate, $subject = null) {
+		$cobrandedApplication = $this->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				),
+				'contain' => array(
+					'User',
+					'Template',
+					'Merchant' => array('EquipmentProgramming'),
+					'CobrandedApplicationValues'
+				),
+				'recursive' => 2
+			)
+		);
+
+		$owner1Fullname = '';
+		$owner2Fullname = '';
+		$dbaBusinessName = '';
+
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['Owner1Name'])) {
+			$owner1Fullname = $valuesMap['Owner1Name'];
+		}
+		if (!empty($valuesMap['Owner2Name'])) {
+			$owner2Fullname = $valuesMap['Owner2Name'];
+		}
+
+		$xml  = "<?xml version='1.0' encoding='UTF-8'?>\n";
+		$xml .= "	<template>\n";
+		$xml .= "		<guid>".$rightSignatureTemplate['guid']."</guid>\n";
+		if ($subject == null) {
+			$xml .= "		<subject>".htmlspecialchars($dbaBusinessName)." Axia Merchant Application</subject>\n";
+		} else {
+			$xml .= "		<subject>".htmlspecialchars($dbaBusinessName)." ".$subject."</subject>\n";
+		}
+		$xml .= "		<description>Sent for signature by ".$sender."</description>\n";
+		$xml .= "		<action>send</action>\n";
+		$xml .= "		<expires_in>10 days</expires_in>\n";
+		$xml .= "		<roles>\n";
+
+        if ($subject == 'Axia Install Sheet - VAR') {
+        	if (!empty($owner1Fullname)) {
+        		$xml .= "			<role role_name='Signor'>\n";
+        		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
+        		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+        		$xml .= "				<locked>true</locked>\n";
+        		$xml .= "			</role>\n";
+        	}
+        } else {
+			if (!empty($owner1Fullname)) {
+				$xml .= "			<role role_name='Owner/Officer 1 PG'>\n";
+        		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
+        		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+        		$xml .= "				<locked>true</locked>\n";
+	        	$xml .= "			</role>\n";
+    	    	$xml .= "			<role role_name='Owner/Officer 1'>\n";
+				$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
+				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</role>\n";
+			}
+
+	        if (!empty($owner2Fullname)) {
+				$xml .= "			<role role_name='Owner/Officer 2 PG'>\n";
+				$xml .= "				<name>".htmlspecialchars($owner2Fullname)."</name>\n";
+				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</role>\n";
+				$xml .= "			<role role_name='Owner/Officer 2'>\n";
+				$xml .= "				<name>".htmlspecialchars($owner2Fullname)."</name>\n";
+				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</role>\n";
+    	    }
+    	}
+
+		$xml .= "		</roles>\n";		
+		$xml .= "		<merge_fields>\n";
+
+		foreach ($rightSignatureTemplate['merge_fields'] as $mergeField) {
+			$appValue = $this->CobrandedApplicationValues->find(
+				'first',
+				array(
+					'conditions' => array(
+						'cobranded_application_id' => $applicationId,
+						'CobrandedApplicationValues.name' => $mergeField['name']
+					),
+				)
+			);
+
+			// we don't want to send null or empty values
+			if (!empty($appValue['CobrandedApplicationValues']['value'])) {
+				$fieldType = $appValue['TemplateField']['type'];
+
+				// type 3 is checkbox, 4 is radio
+				// we send different elements for multi option types
+				if ($fieldType == 3 || $fieldType == 4) {
+					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+					$xml .= "				<value>X</value>\n";
+					$xml .= "				<locked>true</locked>\n";
+					$xml .= "			</merge_field>\n";
+				} else {
+					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+					$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
+					$xml .= "				<locked>true</locked>\n";
+					$xml .= "			</merge_field>\n";
+				}
+			}
+
+			if ($mergeField['name'] == "SystemType") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+				foreach ($cobrandedApplication['Merchant']['EquipmentProgramming'] as $programming) {
+					$xml .= "				<value>".htmlspecialchars($programming['terminal_type'])."</value>\n";
+				}
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+
+			if ($mergeField['name'] == "MID") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+				$xml .= "				<value>".htmlspecialchars($cobrandedApplication['Merchant']['merchant_id'])."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+		}
+
+		if ($subject == 'Axia Install Sheet - VAR') {
+			$xml .= "			<merge_field merge_field_name='Phone#'>\n";
+			if ($cobrandedApplication['User']['extension'] != "") {
+				$xml .= "				<value>".htmlspecialchars('877.875.6114' . " x " . $cobrandedApplication['User']['extension'])."</value>\n";
+			} else {
+				$xml .= "				<value>".htmlspecialchars('877.875.6114')."</value>\n";
+			}
+			$xml .= "				<locked>true</locked>\n";
+			$xml .= "			</merge_field>\n";
+
+			$xml .= "			<merge_field merge_field_name='RepFax#'>\n";
+			$xml .= "				<value>".htmlspecialchars('877.875.5135')."</value>\n";
+			$xml .= "				<locked>true</locked>\n";
+			$xml .= "			</merge_field>\n";
+		}
+
+		$xml .= "		</merge_fields>\n";
+		$xml .= "		<callback_location>http://".$_SERVER['SERVER_NAME']."/cobranded_applications/document_callback</callback_location>\n";
+		$xml .= "	</template>\n";
+
+		return $xml;
+	}
+
+/**
+ * buildCobrandedApplicationValuesMap
+ * 
+ * @params
+ *     $cobrandedApplicationValues array
+ *
+ * @returns
+ *     $valuesMap array
+ */
+	public function buildCobrandedApplicationValuesMap($cobrandedApplicationValues) {
+		$valuesMap = array();
+		if (!empty($cobrandedApplicationValues)) {
+			foreach ($cobrandedApplicationValues as $val) {
+				$valuesMap[$val['name']] = $val['value'];
+			}
+		}
+		return $valuesMap;
+	}
+
+/**
+ * validateCobrandedApplication
+ * 
+ * @params
+ *     $cobrandedApplication array
+ *
+ * @returns
+ *     $response array
+ */
+	public function validateCobrandedApplication($cobrandedApplication) {
+		$TemplateField = ClassRegistry::init('TemplateField');
+
+		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
+			$templateField = $TemplateField->find(
+				'first',
+				array(
+					'conditions' => array('TemplateField.id' => $val['template_field_id']),
+					'contain' => array(
+						'TemplateSection' => array(
+							'TemplatePage'
+						)
+					)
+				)
+			);
+
+			$templateFieldName = $templateField['TemplateField']['name'];
+			$page = $templateField['TemplateSection']['TemplatePage']['order'];
+			$page++;
+
+			if ($templateField['TemplateField']['required'] == true && empty($val['value']) == true) {
+				// if field is a multi-option type, check the other options for a value
+				if ($templateField['TemplateField']['type'] == 4 || $templateField['TemplateField']['type'] == 5 || $templateField['TemplateField']['type'] == 7) {
+					$found = false;
+					foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+						if ($tmpVal['template_field_id'] == $templateField['TemplateField']['id'] && empty($tmpVal['value']) == false) {
+							$found = true;
+						}
+					}
+
+					if ($found == false) {
+						$response['success'] = false;
+						$response['msg'] = 'Required field is empty: '.$templateFieldName;
+						$response['page'] = $page;
+						return $response;
+					}
+
+				} else {
+					$response['success'] = false;
+					$response['msg'] = 'Required field is empty: '.$templateFieldName;
+					$response['page'] = $page;
+					return $response;
+				}
+			}
+		}
+
+		$response['success'] = true;
+		$response['msg'] = '';
 		return $response;
 	}
 
@@ -920,5 +1571,4 @@ class CobrandedApplication extends AppModel {
 	private function __startsWith($haystack, $needle) {
 		return $needle === "" || strpos($haystack, $needle) === 0;
 	}
-
 }
