@@ -1003,7 +1003,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
 				),
 			)
 		);
