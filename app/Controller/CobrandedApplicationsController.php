@@ -26,6 +26,7 @@ class CobrandedApplicationsController extends AppController {
 	public $permissions = array(
 		'add' => array('admin', 'rep', 'manager'),
 		'api_add' => array('api'),
+		'edit' => array('*')
 	);
 
 	public $helper = array('TemplateField');

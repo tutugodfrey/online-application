@@ -133,6 +133,7 @@ class CobrandedApplication extends AppModel {
  */
 	public $hasOne = array(
 		'Merchant' => array(
+			'className' => 'Merchant',
 			'foreignKey' => 'cobranded_application_id'
 		),
 		'Coversheet' => array(

@@ -40,10 +40,8 @@
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
 								echo "<br/>Please Save Application before submitting this application for Signature <br/><br/>";
-
 								echo "<input type='button' onclick='fieldCompletion();' value='Email For Field Completion'>"."<br/>";
 								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'>"."<br/>";
-								echo "<input type='button' onclick='signDocNow();' value='View and Sign Now'>";
 
 								$completeFieldsUrl = Router::url(array(
 									'controller' => 'cobranded_applications',
@@ -85,6 +83,10 @@
 										window.location = '".$submitForSigUrl."';
 									}
 								");
+							}
+
+							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) || $values_map['AllowMerchantToSignApplication'] == 'true') {
+								echo "<input type='button' onclick='signDocNow();' value='View and Sign Now'>";
 
 								$signNowUrl = Router::url(array(
 									'controller' => 'cobranded_applications',

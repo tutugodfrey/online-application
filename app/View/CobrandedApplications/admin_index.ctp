@@ -28,6 +28,7 @@
 				<?php echo $this->Html->link(__('Copy'), array('action' => 'copy', $cobrandedApplication['CobrandedApplication']['id'])); ?>
 				<?php echo $this->Html->link(__('Timeline For Emails'), array('action' => 'email_timeline', $cobrandedApplication['CobrandedApplication']['id'])); ?>
 				<?php echo $this->Html->link(__('Email App For Field Completion'), '/cobranded_applications/complete_fields/'.$cobrandedApplication['CobrandedApplication']['id']); ?>
+				<?php echo $this->Html->link(__('Install Sheet'), array('action' => 'install_sheet_var', 'admin' => false, $cobrandedApplication['CobrandedApplication']['id'])); ?>
 				<?php echo $this->Html->link(__('Cover Sheet'), '/coversheets/edit/'.$cobrandedApplication['Coversheet']['id']); ?>
 				<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $cobrandedApplication['CobrandedApplication']['id']), null, __('Are you sure you want to delete # %s?', $cobrandedApplication['CobrandedApplication']['id'])); ?>
 			</td>
