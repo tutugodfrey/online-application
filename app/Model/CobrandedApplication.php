@@ -1532,7 +1532,7 @@ $to = 'sbrady@axiapayments.com';
  *
  * @return array
  */
-	public function getIndexInfo() {
+	public function getIndexInfo($data = array()) {
 		$options = array(
 			'fields' => array(
 				'DISTINCT CobrandedApplication.id',
@@ -1577,7 +1577,9 @@ $to = 'sbrady@axiapayments.com';
  * Array of Arguments to be used by the search plugin
  */
 	public $filterArgs = array(
-		'search' => array('type' => 'query', 'method' => 'orConditions')
+		'search' => array('type' => 'query', 'method' => 'orConditions'),
+		'user_id' => array('type' => 'value'),
+		'status' => array('type' => 'value')
 	);
 
 /**
@@ -1626,6 +1628,30 @@ $to = 'sbrady@axiapayments.com';
 		return $conditions;
 	}
 
+/**
+ * paginateCount
+ * 
+ * @params
+ *		$conditions string
+ *		$recursive integer
+ *		$extras array
+ * 
+ * @return array results
+ */
+	public function getLastQuery() {
+		$dbo = $this->getDatasource();
+		$logs = $dbo->getLog();
+		$lastLog = end($logs['log']);
+		return $lastLog['query'];
+	}
+	public function paginateCount($conditions = null, $recursive = -1,
+		$extra = array()) {
+		$sql = $this->getLastQuery();
+		$results = $this->query($sql);
+		return count($results);
+		
+		
+	}
 /**
  * Return list of user_id and username for use in ajax searches
  *

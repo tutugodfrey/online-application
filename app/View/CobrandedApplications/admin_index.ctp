@@ -6,6 +6,7 @@
 			<th><?php echo $this->Paginator->sort('User.firstname'); ?></th>
 			<th><?php echo $this->Paginator->sort('template_id'); ?></th>
 			<th><?php echo $this->Paginator->sort('uuid'); ?></th>
+			<th><?php echo $this->Paginator->sort('status'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -20,6 +21,14 @@
 				<?php echo $this->Html->link($cobrandedApplication['Template']['name'], String::insert('/admin/templates/:id/templatepages', array('id' => $cobrandedApplication['Template']['id']))); ?>
 			</td>
 			<td><?php echo $this->Html->link($cobrandedApplication['CobrandedApplication']['uuid'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
+			<td>
+				<?php if($cobrandedApplication['CobrandedApplication']['status'] == 'completed' || $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
+                    echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], array('controller' => 'cobrandedApplications', 'action' => 'admin_app_status', $cobrandedApplication['CobrandedApplication']['id'], 'admin' => false)) . "\n\t\t</td>\n";
+                         } else {
+							echo $cobrandedApplication['CobrandedApplication']['status'];
+                                }
+				?>&nbsp;
+			</td>
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['created']); ?>&nbsp;</td>
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td class="actions">

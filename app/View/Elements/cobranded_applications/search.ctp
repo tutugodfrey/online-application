@@ -6,7 +6,11 @@
 									array('action' => 'index'),
 									$this->params['pass']
 									),
-                                'class' => 'form-search form-inline'));
+                                'class' => 'form-search form-inline',
+							'novalidate' => true,
+							)
+							
+							);
                 ?>
                         <?php
 						echo $this->Form->input('search', array('div' => false, 'label' => false));
@@ -17,9 +21,9 @@
 //                                        'value' => $criteria,
 //                                        'placeholder' => 'Search'));
                         ?>
-                    <?php echo $this->Form->input('Select User',array('options' => array($users), 'default' => $this->Session->read('application.user_id'), 'empty' => 'Show All', 'style' => 'width: 75%;')); ?>
+                    <?php echo $this->Form->input('user_id',array('options' => array($users), 'default' => $this->Session->read('application.user_id'), 'empty' => 'Show All', 'style' => 'width: 75%;')); ?>
 
-                    <?php echo $this->Form->input('Status', array('options' => array(
+                    <?php echo $this->Form->input('status', array('options' => array(
                         'saved'=>'saved',
                         'validate'=>'validate',
                         'completed'=>'completed',
@@ -27,10 +31,10 @@
                         'signed'=>'signed'
                     ), 'default' => $this->Session->read('application.status'),'empty' => 'Show All', 'style' => 'width: 75%;')); ?>
                         <?php
-                                echo $this->Form->submit(__('Search'), array('div' => false));
-								echo $this->Form->end();
+							echo $this->Form->submit(__('Search'), array('div' => false, 'name' => 'search'));
+							echo $this->Form->submit(__('Reset'), array('div' => false, 'name' => 'reset'));
+							echo $this->Form->end();
                         ?>
-
 
         </li>
 </ul>
