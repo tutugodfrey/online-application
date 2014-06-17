@@ -274,8 +274,17 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function admin_index() {
-		$this->CobrandedApplication->recursive = 0;
-		$this->set('cobrandedApplications', $this->paginate());
+
+		if(isset($this->request->data['reset'])) {
+			foreach($this->request->data['CobrandedApplication'] as $i => $value){
+				$this->request->data['CobrandedApplication'][$i]= '';
+			}
+		}
+		$this->Prg->commonProcess();
+		$this->Paginator->settings = $this->CobrandedApplication->getIndexInfo();
+		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
+		$this->set('cobrandedApplications',  $this->paginate());
+		$this->set('users', $this->User->getActiveUserList());
 	}
 
 /**
@@ -484,7 +493,50 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('error', 'Could not find any applications with the specified email address.');
 		}
 	}
-
+	
+/**
+ * Grab document status via the RightSignature API
+ * https://rightsignature.com/apidocs/api_calls?api_method=documentDetails
+ * @param integer $id
+ * @param varchar $renew
+ * RightSignature Document Guid Allows for extending life of application
+ */
+	function admin_app_status($applicationId, $renew = null) {
+		$this->CobrandedApplication->id = $applicationId;
+		$cobrandedApplication = $this->CobrandedApplication->read();
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$results = $rightsignature->getDocumentDetails($application['Application']['rs_document_guid']);
+		$data = json_decode($results, true);
+		$pg = 'Personal Guarantee';
+		$app = 'Application';
+		$recipients = array_reverse($data['document']['recipients']);
+		$state = $data['document']['state'];
+		$guid = $application['Application']['rs_document_guid'];
+		if ($renew != '') {
+			$renewed = $rightsignature->extendDocument($guid);
+			$extension = json_decode($renewed, true);
+			if (isset($extension['document'])) {
+				$this->Session->setFlash($extension['document']['status']);
+			} else {
+				$this->Session->setFlash($extension['error']['message']);
+			}
+			$this->redirect('app_status/' . $id);
+		}
+		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
+	}
+	
+/**
+ * Extend the life of a RightSignature document via Right Signature API
+ * https://rightsignature.com/apidocs/api_calls?api_method=extendExpiration
+ * @param varchar $guid
+ * Right Signature Unique Identifier
+ */
+	function admin_app_extend($guid) {
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$results = $HttpSocket->post('https://rightsignature.com/api/documents/' . $guid . '/extend_expiration.xml');
+		$this->render('admin_app_status');
+	}
+	
 /**
  * create_rightsignature_document
  *

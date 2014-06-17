@@ -72,7 +72,7 @@ class DATABASE_CONFIG {
 			'host' => 'localhost',
 			'login' => 'axia',
 			'password' => 'ax!a',
-			'database' => 'axia_legacy',
+			'database' => 'axia',
 			'schema' => 'public',
 			'prefix' => '',
 			//'encoding' => 'utf8',

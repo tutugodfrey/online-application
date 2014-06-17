@@ -3,9 +3,10 @@
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
-			<th><?php echo $this->Paginator->sort('user_id'); ?></th>
+			<th><?php echo $this->Paginator->sort('User.firstname'); ?></th>
 			<th><?php echo $this->Paginator->sort('template_id'); ?></th>
 			<th><?php echo $this->Paginator->sort('uuid'); ?></th>
+			<th><?php echo $this->Paginator->sort('status'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -14,12 +15,20 @@
 		<tr>
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['id']); ?>&nbsp;</td>
 			<td>
-				<?php echo $this->Html->link($cobrandedApplication['User']['fullname'], array('controller' => 'users', 'action' => 'view', $cobrandedApplication['User']['id'])); ?>
+				<?php echo $this->Html->link($cobrandedApplication['User']['firstname'] . ' ' . $cobrandedApplication['User']['lastname'], array('controller' => 'users', 'action' => 'view', $cobrandedApplication['User']['id'])); ?>
 			</td>
 			<td>
 				<?php echo $this->Html->link($cobrandedApplication['Template']['name'], String::insert('/admin/templates/:id/templatepages', array('id' => $cobrandedApplication['Template']['id']))); ?>
 			</td>
 			<td><?php echo $this->Html->link($cobrandedApplication['CobrandedApplication']['uuid'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
+			<td>
+				<?php if($cobrandedApplication['CobrandedApplication']['status'] == 'completed' || $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
+                    echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], array('controller' => 'cobrandedApplications', 'action' => 'admin_app_status', $cobrandedApplication['CobrandedApplication']['id'], 'admin' => false)) . "\n\t\t</td>\n";
+                         } else {
+							echo $cobrandedApplication['CobrandedApplication']['status'];
+                                }
+				?>&nbsp;
+			</td>
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['created']); ?>&nbsp;</td>
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td class="actions">
@@ -42,5 +51,11 @@
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(__('New Application'), array('action' => 'add')); ?></li>
+		</li>
+               <? echo $this->Element('cobranded_applications/search'); ?>
+                
+                <?php
+                        echo $this->Form->end();
+                ?>
 	</ul>
 </div>
