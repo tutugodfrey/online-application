@@ -9,14 +9,18 @@ class AppController extends Controller {
                     'fields' => array('username' => 'email'),
                     'scope' => array('User.active' => 1))),
             'loginAction' => array('controller' => 'users', 'action' => 'login'),
-            'loginRedirect' => array('controller' => 'applications', 'action' => 'index', 'admin' => true),
+            'loginRedirect' => array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true),
             'logoutRedirect' => array('controller' => 'users', 'action' => 'login')
         ),
+		'Paginator',
+		'Search.Prg',
         'Session',
         'DebugKit.Toolbar',
         'RequestHandler'
     );
 
+	public $actsAs = array('Containable');
+	
     public $helpers = array(
         'Html' => array('className' => 'BoostCake.BoostCakeHtml'),
         'Form' => array('className' => 'BoostCake.BoostCakeForm'),

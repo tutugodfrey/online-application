@@ -32,3 +32,4 @@ cache.properties
 /.project
 *.sublime-project
 *.sublime-workspace
+/nbproject/private/

@@ -27,7 +27,7 @@ class AdminController extends AppController {
     }
 
     // everyone gets to see these links
-    $links[count($links)] = array('Applications', '/admin/applications/');
+    $links[count($links)] = array('Applications', '/admin/cobranded_applications/');
     $links[count($links)] = array('Coversheets', '/admin/coversheets/');
 
     $this->set('links', $links);

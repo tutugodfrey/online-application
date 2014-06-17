@@ -274,8 +274,14 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function admin_index() {
-		$this->CobrandedApplication->recursive = 0;
-		$this->set('cobrandedApplications', $this->paginate());
+
+//		$this->CobrandedApplication->recursive = 0;
+//		$this->set('cobrandedApplications', $this->paginate());
+		$this->Prg->commonProcess();
+		$this->Paginator->settings = $this->CobrandedApplication->getIndexInfo();
+		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
+		$this->set('cobrandedApplications',  $this->paginate());
+		$this->set('users', $this->User->getActiveUserList());
 	}
 
 /**

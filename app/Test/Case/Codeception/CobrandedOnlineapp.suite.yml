@@ -17,9 +17,9 @@ modules:
         - Db
     config:
         PhpBrowser:
-            url: 'https://app-sean-dev.axiapayments.com'
+            url: 'https://vanilla.axiapayments.com'
         Db:
-            dsn: 'pgsql:host=localhost;dbname=axia_legacy'
+            dsn: 'pgsql:host=localhost;dbname=axia'
             user: 'axia'
             password: 'ax!a'
             dump: ''

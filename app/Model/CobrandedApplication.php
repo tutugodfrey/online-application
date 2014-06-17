@@ -1526,6 +1526,125 @@ $to = 'sbrady@axiapayments.com';
 		$response['msg'] = '';
 		return $response;
 	}
+	
+/**
+ * Return options array to be used for custom pagination and filtering
+ *
+ * @return array
+ */
+	public function getIndexInfo() {
+		$options = array(
+			'fields' => array(
+				'DISTINCT CobrandedApplication.id',
+				'CobrandedApplication.user_id',
+				'CobrandedApplication.template_id',
+				'CobrandedApplication.uuid',
+				'CobrandedApplication.created',
+				'CobrandedApplication.modified',
+				'CobrandedApplication.rightsignature_document_guid',
+				'CobrandedApplication.status',
+				'CobrandedApplication.rightsignature_install_document_guid',
+				'CobrandedApplication.rightsignature_install_status',
+			),
+			'contain' => array(
+				'Template' => array(
+					'fields' => array(
+						'id','name'
+					)
+				),
+				'User' => array(
+					'fields' => array(
+						'id', 'firstname', 'lastname', 'email'
+					)
+				),
+				'Coversheet.id'
+				
+			),
+			'joins' => array(
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CobrandedApplicationValue',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CobrandedApplicationValue.cobranded_application_id',
+					),
+				),
+			)
+		);
+		return $options;
+	}
+
+/**
+ * Array of Arguments to be used by the search plugin
+ */
+	public $filterArgs = array(
+		'search' => array('type' => 'query', 'method' => 'orConditions')
+	);
+
+/**
+ * Return conditions to be used when searching for users
+ *
+ * @return array
+ */
+	public function orConditions($data = array()) {
+		$filter = $data['search'];
+			$conditions = array(
+				'OR' => array(
+					'CobrandedApplicationValue.name' => 'name',
+					array('AND' => array(
+						'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
+						)
+					),
+					'CobrandedApplicationValue.name' => 'name',
+					array('AND' => array(
+					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
+						)
+					),
+					'CobrandedApplicationValue.name' => 'name',
+					array('AND' => array(
+					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
+						)
+					),
+					'CobrandedApplicationValue.name' => 'name',
+					array('AND' => array(
+					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
+						)
+					),						
+					'CobrandedApplicationValue.name' => 'name',
+					array('AND' => array(
+					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
+						)
+					),						
+					'CobrandedApplicationValue.name' => 'name',
+					array('AND' => array(
+					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
+						)
+					),						
+					'User.email ILIKE' => '%' . $filter . '%',
+					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '% '. $filter .'%',	
+				)
+			);
+		return $conditions;
+	}
+
+/**
+ * Return list of user_id and username for use in ajax searches
+ *
+ * @return array
+ */
+	public function findUserByUsername($searchStr, $active) {
+		$dbCol = 'username';
+			$searchStr = '%' . $searchStr;
+
+		return $this->find('list', array('recursive' => -1,
+			'conditions' => array(
+				$dbCol . ' ILIKE' => $searchStr,
+				'active' => $active
+			),
+			'fields' => array($this->alias . '.' . $dbCol),
+			'limit' => 10
+			)
+		);
+	}
 
 /**
  * __addKey
