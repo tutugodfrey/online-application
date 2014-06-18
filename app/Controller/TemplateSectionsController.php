@@ -11,6 +11,13 @@ class TemplateSectionsController extends NestedResourceController {
 
 	protected $_controllerName = 'TemplateSections';
 
+	public $permissions = array(		
+		'admin_index' => array('admin', 'rep', 'manager'),
+		'admin_add' => array('admin', 'rep', 'manager'),
+		'admin_edit' => array('admin', 'rep', 'manager'),
+		'admin_delete' => array('admin', 'rep', 'manager'),
+	);
+
 	public function admin_add() {
 		if ($this->request->is('post')) {
 			$data = Sanitize::clean($this->request->data);

@@ -191,6 +191,10 @@ class CobrandedApplicationValue extends AppModel {
 				$retVal = (preg_match("/\d+/", $trimmedDataValue) > 0);
 				break;
 
+			case 23: // luhn - luhn validation
+				$retVal = $this->checkRoutingNumber($trimmedDataValue);
+				break;
+
 			default:
 				throw new Exception("Unknown field type, cannot validate it.", 1);
 				break;
@@ -270,5 +274,33 @@ class CobrandedApplicationValue extends AppModel {
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Custom Validation Rule
+	 * Checks to see if the routing number entered passes Mod 10 (LUHN)
+	 * @param numeric $routingNumber
+	 * @return boolean
+	 */
+	public function checkRoutingNumber($routingNumber = 0) {
+
+		$routingNumber = preg_replace('[\D]', '', $routingNumber['routing_number']); //only digits
+		if (strlen($routingNumber) != 9) {
+			return false;
+		}
+
+		$checkSum = 0;
+		for ($i = 0, $j = strlen($routingNumber); $i < $j; $i+= 3) {
+			//loop through routingNumber character by character
+			$checkSum += ($routingNumber[$i] * 3);
+			$checkSum += ($routingNumber[$i + 1] * 7);
+			$checkSum += ($routingNumber[$i + 2]);
+		}
+
+		if ($checkSum != 0 and ($checkSum % 10) == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

@@ -293,6 +293,16 @@ class CoversheetsController extends AppController {
         }
 
         $data = $this->paginate('Coversheet', $conditions);
+
+        $counter = 0;
+        foreach ($data as $array) {
+            $valuesMap = $this->getCobrandedApplicationValues($array['CobrandedApplication']['id']);
+            foreach ($valuesMap as $key => $val) {
+                $array['CobrandedApplication'][$key] = $val;
+            }
+            $data[$counter] = $array;
+            $counter++;
+        }
     
         $this->set('users', $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id')));
         $this->set('Coversheets', $data);

@@ -337,9 +337,6 @@ class Coversheet extends AppModel {
         $viewVars['dba'] = $dbaBusinessName;
         $attachments = array($dbaBusinessName . ' coversheet.pdf' => WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
 
-//DEBUG
-$to = 'sbrady@axiapayments.com';
-
         $args = array(
             'from' => $from,
             'to' => $to,

@@ -7,35 +7,31 @@ App::uses('AppModel', 'Model');
 class TemplateField extends AppModel {
 
 	public $fieldTypes = array(
-		'text',             //  0 - free form
-		'date',             //  1 - yyyy/mm/dd
-		'time',             //  2 - hh:mm:ss
-		'checkbox',         //  3 - 
-		'radio',            //  4 - 
-		'percents',         //  5 - (group of percent)
-		'label',            //  6 - no validation
-		'fees',             //  7 - (group of money?)
-		'hr',               //  8 - no validation
+		'text',             	//  0 - free form
+		'date',             	//  1 - yyyy/mm/dd
+		'time',             	//  2 - hh:mm:ss
+		'checkbox',         	//  3 - 
+		'radio',            	//  4 - 
+		'percents',         	//  5 - (group of percent)
+		'label',            	//  6 - no validation
+		'fees',             	//  7 - (group of money?)
+		'hr',               	//  8 - no validation
 /* newer types */
-		'phoneUS',          //  9 - (###) ###-####
-		'money',            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
-		'percent',          // 11 - (0-100)%
-		'ssn',              // 12 - ###-##-####
-		'zipcodeUS',        // 13 - #####[-####]
-		'email',            // 14 - 
-		'lengthoftime',     // 15 - [#+] [year|month|day]s
-		'creditcard',       // 16 - 
-		'url',              // 17 - 
-		'number',           // 18 - (#)+.(#)+
-		'digits',           // 19 - (#)+
-		'select',           // 20 - 
-		'textArea',         // 21 -
-		'multirecord',		// 22 - multiple records
-		//'taxId',          // 23 - ?
-		//'bankRoutingNumber',// 24 - #########
-		//'bankAccountNumber',// 25 - ?
-		//'amexSENumber',     // 26 - ?
-		
+		'phoneUS',          	//  9 - (###) ###-####
+		'money',            	// 10 - $(#(1-3),)?(#(1-3)).## << needs work
+		'percent',          	// 11 - (0-100)%
+		'ssn',              	// 12 - ###-##-####
+		'zipcodeUS',        	// 13 - #####[-####]
+		'email',            	// 14 - 
+		'lengthoftime',     	// 15 - [#+] [year|month|day]s
+		'creditcard',       	// 16 - 
+		'url',              	// 17 - 
+		'number',           	// 18 - (#)+.(#)+
+		'digits',           	// 19 - (#)+
+		'select',           	// 20 - 
+		'textArea',         	// 21 -
+		'multirecord',			// 22 - multiple records
+		'luhn',          		// 23 - luhn validation
 	);
 
 	public $sourceTypes = array('api', 'user', 'api/user', 'n/a');

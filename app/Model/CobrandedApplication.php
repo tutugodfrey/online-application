@@ -362,6 +362,7 @@ class CobrandedApplication extends AppModel {
 				'user_id' => $user['id'],
 				'uuid' => $uuid,
 				'template_id' => $user['template_id'],
+				'status' => 'saved'
 			)
 		);
 
@@ -672,6 +673,7 @@ class CobrandedApplication extends AppModel {
 				'user_id' => $userId,
 				'uuid' => String::uuid(),
 				'template_id' => $app['CobrandedApplication']['template_id'],
+				'status' => 'saved'
 			)
 		);
 		if ($this->save()) {
@@ -906,9 +908,6 @@ class CobrandedApplication extends AppModel {
 			$ownerEmail = $valuesMap['Owner1Email'];
 		}
 			
-//debug
-$ownerEmail = 'sbrady@axiapayments.com';
-
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = $ownerEmail;
 		$subject = 'Your Axia Applications';
@@ -980,9 +979,6 @@ $ownerEmail = 'sbrady@axiapayments.com';
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['link'] = Router::url('/users/login', true);
 
-//DEBUG
-$to = 'sbrady@axiapayments.com';
-
 		$args = array(
 			'from' => $from,
 			'to' => $to,
@@ -1038,9 +1034,6 @@ $to = 'sbrady@axiapayments.com';
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".
 			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
-
-//DEBUG
-$to = 'sbrady@axiapayments.com';
 
 		$args = array(
 			'from' => $from,
