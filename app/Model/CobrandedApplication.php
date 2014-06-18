@@ -1535,7 +1535,7 @@ $to = 'sbrady@axiapayments.com';
 	public function getIndexInfo($data = array()) {
 		$options = array(
 			'fields' => array(
-				'DISTINCT CobrandedApplication.id',
+				'CobrandedApplication.id',
 				'CobrandedApplication.user_id',
 				'CobrandedApplication.template_id',
 				'CobrandedApplication.uuid',
@@ -1545,27 +1545,72 @@ $to = 'sbrady@axiapayments.com';
 				'CobrandedApplication.status',
 				'CobrandedApplication.rightsignature_install_document_guid',
 				'CobrandedApplication.rightsignature_install_status',
+				'Template.id',
+				'Template.name',
+				'User.id',
+				'User.firstname',
+				'User.lastname',
+				'User.email',
+				'Coversheet.id',
+				'Dba.id',
+//				'DBA.name',
+				'Dba.value',
+				'CorpName.id',
+//				'CorpName.name',
+				'CorpName.value',
+				'CorpContact.id',
+//				'CorpContact.name',
+				'CorpContact.value',
 			),
-			'contain' => array(
-				'Template' => array(
-					'fields' => array(
-						'id','name'
-					)
-				),
-				'User' => array(
-					'fields' => array(
-						'id', 'firstname', 'lastname', 'email'
-					)
-				),
-				'Coversheet.id'
-				
-			),
+			'recursive' => -1,
 			'joins' => array(
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Dba',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Dba.cobranded_application_id and Dba.name =' . "'DBA'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpName',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpName.cobranded_application_id and CorpName.name =' . "'CorpName'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpContact',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
+					),
+				),
 				array('table' => 'onlineapp_cobranded_application_values',
 					'alias' => 'CobrandedApplicationValue',
 					'type' => 'LEFT',
 					'conditions' => array(
 						'CobrandedApplication.id = CobrandedApplicationValue.cobranded_application_id',
+					),
+				),
+				array('table' => 'onlineapp_templates',
+					'alias' => 'Template',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.template_id = Template.id',
+					),
+				),				
+				array('table' => 'onlineapp_users',
+					'alias' => 'User',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.user_id = User.id',
+					),
+				),
+				array('table' => 'onlineapp_coversheets',
+					'alias' => 'Coversheet',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Coversheet.cobranded_application_id',
 					),
 				),
 			)
@@ -1588,37 +1633,13 @@ $to = 'sbrady@axiapayments.com';
  * @return array
  */
 	public function orConditions($data = array()) {
+		$this->unbindModel(array('belongsTo' => array('Template')));
 		$filter = $data['search'];
 			$conditions = array(
 				'OR' => array(
 					'CobrandedApplicationValue.name' => 'name',
 					array('AND' => array(
 						'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),						
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),						
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
 						)
 					),						
 					'User.email ILIKE' => '%' . $filter . '%',
@@ -1638,20 +1659,20 @@ $to = 'sbrady@axiapayments.com';
  * 
  * @return array results
  */
-	public function getLastQuery() {
-		$dbo = $this->getDatasource();
-		$logs = $dbo->getLog();
-		$lastLog = end($logs['log']);
-		return $lastLog['query'];
-	}
-	public function paginateCount($conditions = null, $recursive = -1,
-		$extra = array()) {
-		$sql = $this->getLastQuery();
-		$results = $this->query($sql);
-		return count($results);
-		
-		
-	}
+//	public function getLastQuery() {
+//		$dbo = $this->getDatasource();
+//		$logs = $dbo->getLog();
+//		$lastLog = end($logs['log']);
+//		return $lastLog['query'];
+//	}
+//	public function paginateCount($conditions = null, $recursive = -1,
+//		$extra = array()) {
+//		$sql = $this->getLastQuery();
+//		$results = $this->query($sql);
+//		return count($results);
+//		
+//		
+//	}
 /**
  * Return list of user_id and username for use in ajax searches
  *
