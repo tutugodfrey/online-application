@@ -92,7 +92,6 @@ class UsersLoginPage
 					'lastname' => 'cept',
 					'active' => 't',
 					'api_password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
-					'api' => 'f',
 					'created' => $date->format('Y-m-d H:i:s'),
 					'modified' => $date->format('Y-m-d H:i:s'),
 				)

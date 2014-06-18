@@ -82,6 +82,7 @@ class TemplateFieldHelper extends Helper {
 				} else if ($field['type'] == 19) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
 				}
+				
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
@@ -247,6 +248,13 @@ class TemplateFieldHelper extends Helper {
 				$retVal = $retVal.
 					$this->Html->tag('label', $field['name'], array('for', $fieldId)).
 					$this->Form->textarea($field['name'], $fieldOptions);
+				break;
+
+			case 23: // number
+				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
+				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+				$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
 				break;
 
 			default:
