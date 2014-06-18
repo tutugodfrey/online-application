@@ -104,7 +104,7 @@ class CobrandedApplicationAch extends AppModel {
 	 * @param numeric $routingNumber
 	 * @return boolean
 	 */
-	function checkRoutingNumber($routingNumber = 0) {
+	public function checkRoutingNumber($routingNumber = 0) {
 
 		$routingNumber = preg_replace('[\D]', '', $routingNumber['routing_number']); //only digits
 		if (strlen($routingNumber) != 9) {
