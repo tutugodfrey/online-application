@@ -1535,11 +1535,10 @@ $to = 'sbrady@axiapayments.com';
 	public function getIndexInfo($data = array()) {
 		$options = array(
 			'fields' => array(
-				'CobrandedApplication.id',
+				'DISTINCT CobrandedApplication.id',
 				'CobrandedApplication.user_id',
 				'CobrandedApplication.template_id',
 				'CobrandedApplication.uuid',
-				'CobrandedApplication.created',
 				'CobrandedApplication.modified',
 				'CobrandedApplication.rightsignature_document_guid',
 				'CobrandedApplication.status',
@@ -1552,14 +1551,8 @@ $to = 'sbrady@axiapayments.com';
 				'User.lastname',
 				'User.email',
 				'Coversheet.id',
-				'Dba.id',
-//				'DBA.name',
 				'Dba.value',
-				'CorpName.id',
-//				'CorpName.name',
 				'CorpName.value',
-				'CorpContact.id',
-//				'CorpContact.name',
 				'CorpContact.value',
 			),
 			'recursive' => -1,
@@ -1659,20 +1652,27 @@ $to = 'sbrady@axiapayments.com';
  * 
  * @return array results
  */
-//	public function getLastQuery() {
-//		$dbo = $this->getDatasource();
-//		$logs = $dbo->getLog();
-//		$lastLog = end($logs['log']);
-//		return $lastLog['query'];
-//	}
-//	public function paginateCount($conditions = null, $recursive = -1,
-//		$extra = array()) {
-//		$sql = $this->getLastQuery();
-//		$results = $this->query($sql);
-//		return count($results);
-//		
-//		
-//	}
+	public function getLastQuery() {
+		$dbo = $this->getDatasource();
+		$logs = $dbo->getLog();
+		$lastLog = end($logs['log']);
+		return $lastLog['query'];
+	}
+	public function paginateCount($conditions = null, $recursive = -1,
+		$extra = array()) {
+		$sql = $this->getLastQuery();
+		$results = $this->query($sql);
+		return count($results);
+		
+		
+	}
+	
+	function beforeFind($query) {
+		parent::beforeFind($query);
+		if(empty($query['order']['0']) && isset($query['sort'])){
+			$query['order']['0'] = array($query['sort'] => $query['direction']);
+		} return $query;
+	}
 /**
  * Return list of user_id and username for use in ajax searches
  *

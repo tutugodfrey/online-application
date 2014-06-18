@@ -213,7 +213,6 @@ class CobrandedApplicationsController extends AppController {
 
 				// yes, update the application uuid and send the email via the model
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email);
-				debug($response);
 
 				$this->render('retrieve_thankyou');
 			} else {
@@ -274,15 +273,15 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function admin_index() {
-
 		if(isset($this->request->data['reset'])) {
 			foreach($this->request->data['CobrandedApplication'] as $i => $value){
 				$this->request->data['CobrandedApplication'][$i]= '';
 			}
 		}
+		
 		$this->Prg->commonProcess();
 		$this->Paginator->settings = $this->CobrandedApplication->getIndexInfo();
-		debug($this->CobrandedApplication->parseCriteria($this->passedArgs));
+		
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
 		$this->set('users', $this->User->getActiveUserList());
@@ -332,7 +331,7 @@ class CobrandedApplicationsController extends AppController {
 			$response = $this->CobrandedApplication->createOnlineappForUser($user['User']);
 			if ($response['success'] == true) {
 				$this->Session->setFlash(__('Application created'));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('controller' => 'cobrandedApplications', 'action' => 'edit', $response['cobrandedApplication']['uuid'], 'admin' => false));
 			} else {
 				$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
 			}

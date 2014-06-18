@@ -9,9 +9,7 @@
 			<th><?php echo $this->Paginator->sort('CorpName.value', 'Corp Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('CorpContact.value', 'Corp Contact'); ?></th>
 			<th><?php echo $this->Paginator->sort('status'); ?></th>
-			<!--<th><?php echo $this->Paginator->sort('created'); ?></th>-->
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
-			<!--<th class="actions"><?php echo __('Actions'); ?></th>-->
 		</tr>
 		<?php foreach ($cobrandedApplications as $cobrandedApplication): ?>
 		<tr>
@@ -27,13 +25,12 @@
 			<td><?php echo $this->Html->link($cobrandedApplication['CorpContact']['value'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
 			<td>
 				<?php if($cobrandedApplication['CobrandedApplication']['status'] == 'completed' || $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
-                    echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], array('controller' => 'cobrandedApplications', 'action' => 'admin_app_status', $cobrandedApplication['CobrandedApplication']['id'], 'admin' => false)) . "\n\t\t</td>\n";
+                    echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], array('controller' => 'cobrandedApplications', 'action' => 'app_status', $cobrandedApplication['CobrandedApplication']['id'], 'admin' => true)) . "\n\t\t</td>\n";
                          } else {
 							echo $cobrandedApplication['CobrandedApplication']['status'];
                                 }
 				?>&nbsp;
 			</td>
-			<!--<td><?php echo h($cobrandedApplication['CobrandedApplication']['created']); ?>&nbsp;</td>-->
 			<td><?php echo h($cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 		</tr>
 		<tr>
