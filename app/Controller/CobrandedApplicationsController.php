@@ -26,7 +26,22 @@ class CobrandedApplicationsController extends AppController {
 	public $permissions = array(
 		'add' => array('admin', 'rep', 'manager'),
 		'api_add' => array('api'),
-		'edit' => array('*')
+		'retrieve' => array('*'),
+		'edit' => array('*'),
+		'admin_index' => array('admin', 'rep', 'manager'),
+		'admin_add' => array('admin', 'rep', 'manager'),
+		'admin_edit' => array('admin', 'rep', 'manager'),
+		'admin_export' => array('admin', 'rep', 'manager'),
+		'admin_copy' => array('admin', 'rep', 'manager'),
+		'admin_delete' => array('admin', 'rep', 'manager'),
+		'admin_email_timeline' => array('admin', 'rep', 'manager'),
+		'complete_fields' => array('admin', 'rep', 'manager'),
+		'admin_app_status' => array('admin', 'rep', 'manager'),
+		'admin_app_extend' => array('admin', 'rep', 'manager'),
+		'create_rightsignature_document' => array('*'),
+		'sign_rightsignature_document' => array('*'),
+		'install_sheet_var' => array('admin', 'rep', 'manager'),
+		'sent_var_install' => array('admin', 'rep', 'manager'),
 	);
 
 	public $helper = array('TemplateField');
