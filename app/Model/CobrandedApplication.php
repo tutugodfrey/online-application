@@ -1619,7 +1619,7 @@ class CobrandedApplication extends AppModel {
  * @return array
  */
 	public function orConditions($data = array()) {
-		$this->unbindModel(array('belongsTo' => array('Template')));
+//		$this->unbindModel(array('belongsTo' => array('Template')));
 		$filter = $data['search'];
 			$conditions = array(
 				'OR' => array(
@@ -1636,30 +1636,40 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
- * paginateCount
+ * Work-a-round for paginating results based on a DISTINCT COUNT
  * 
- * @params
- *		$conditions string
- *		$recursive integer
- *		$extras array
- * 
- * @return array results
+ * @param array $conditions
+ * @param integer $recursive
+ * @return array
  */
-	public function getLastQuery() {
-		$dbo = $this->getDatasource();
-		$logs = $dbo->getLog();
-		$lastLog = end($logs['log']);
-		return $lastLog['query'];
-	}
-	public function paginateCount($conditions = null, $recursive = -1,
-		$extra = array()) {
-		$sql = $this->getLastQuery();
-		$results = $this->query($sql);
-		return count($results);
+	function paginateCount($conditions, $recursive = -1) {
+		//grab the conditions used for pagination
+		$joins = $this->getIndexInfo();
 		
+		$params = Configure::read('paginate.params');
+		//specify DISTINCT for this model
+		$params['fields'] = "DISTINCT ($this->alias.id)";
+		$params['conditions'] = $conditions;
+		//parse out the joins from the pagination options
+		$params['joins'] = $joins['joins'];
+		$params['recursive'] = $recursive;
 		
-	}
-	
+//		unset($params['group']);
+//		unset($params['contain']);
+		unset($params['order']);
+		
+		return $this->find('count', $params); 
+    }
+/**
+ * Work-a-round for sorting on aliased columns that have been custom joined
+ * without this code we are unable to properly sort all columns in the 
+ * cobrandedApplications/admin/index
+ * namely DBA, CorpName, CorpContact
+ * 
+ * @param array $query
+ * @return array
+ * @see Model::find()
+ */	
 	function beforeFind($query) {
 		parent::beforeFind($query);
 		if(empty($query['order']['0']) && isset($query['sort'])){

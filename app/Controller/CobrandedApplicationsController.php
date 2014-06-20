@@ -27,10 +27,10 @@ class CobrandedApplicationsController extends AppController {
 		'add' => array('admin', 'rep', 'manager'),
 		'api_add' => array('api'),
 		'retrieve' => array('*'),
-		'edit' => array('*'),
+		'edit' => array('admin', 'rep', 'manager'),
 		'admin_index' => array('admin', 'rep', 'manager'),
 		'admin_add' => array('admin', 'rep', 'manager'),
-		'admin_edit' => array('admin', 'rep', 'manager'),
+		'admin_edit' => array('admin'),
 		'admin_export' => array('admin', 'rep', 'manager'),
 		'admin_copy' => array('admin', 'rep', 'manager'),
 		'admin_delete' => array('admin', 'rep', 'manager'),
@@ -288,15 +288,15 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function admin_index() {
+		//reset all of the search parameters
 		if(isset($this->request->data['reset'])) {
 			foreach($this->request->data['CobrandedApplication'] as $i => $value){
 				$this->request->data['CobrandedApplication'][$i]= '';
 			}
 		}
-		
+		//paginate the applications
 		$this->Prg->commonProcess();
 		$this->Paginator->settings = $this->CobrandedApplication->getIndexInfo();
-		
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
 		$this->set('users', $this->User->getActiveUserList());
@@ -520,15 +520,15 @@ class CobrandedApplicationsController extends AppController {
 		$this->CobrandedApplication->id = $applicationId;
 		$cobrandedApplication = $this->CobrandedApplication->read();
 		$client = $this->CobrandedApplication->createRightSignatureClient();
-		$results = $rightsignature->getDocumentDetails($application['Application']['rs_document_guid']);
+		$results = $client->getDocumentDetails($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']);
 		$data = json_decode($results, true);
 		$pg = 'Personal Guarantee';
 		$app = 'Application';
 		$recipients = array_reverse($data['document']['recipients']);
 		$state = $data['document']['state'];
-		$guid = $application['Application']['rs_document_guid'];
+		$guid = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 		if ($renew != '') {
-			$renewed = $rightsignature->extendDocument($guid);
+			$renewed = $client->extendDocument($guid);
 			$extension = json_decode($renewed, true);
 			if (isset($extension['document'])) {
 				$this->Session->setFlash($extension['document']['status']);

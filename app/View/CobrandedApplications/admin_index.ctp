@@ -2,14 +2,14 @@
 	<h2><?php echo __('Applications'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
-			<th><?php echo $this->Paginator->sort('id'); ?></th>
+			<th><?php echo $this->Paginator->sort('CobrandedApplication.id', 'ID'); ?></th>
 			<th><?php echo $this->Paginator->sort('User.firstname'); ?></th>
-			<th><?php echo $this->Paginator->sort('template_id'); ?></th>
+			<th><?php echo $this->Paginator->sort('CobrandedApplication.template_id', 'Template'); ?></th>
 			<th><?php echo $this->Paginator->sort('Dba.value', 'DBA'); ?></th>
 			<th><?php echo $this->Paginator->sort('CorpName.value', 'Corp Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('CorpContact.value', 'Corp Contact'); ?></th>
-			<th><?php echo $this->Paginator->sort('status'); ?></th>
-			<th><?php echo $this->Paginator->sort('modified'); ?></th>
+			<th><?php echo $this->Paginator->sort('CobrandedApplication.status', 'Status'); ?></th>
+			<th><?php echo $this->Paginator->sort('CobrandedApplication.modified', 'Modified'); ?></th>
 		</tr>
 		<?php foreach ($cobrandedApplications as $cobrandedApplication): ?>
 		<tr>
