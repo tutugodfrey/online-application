@@ -15,7 +15,7 @@
                 
                 <td ><?php echo 'Rep Name: '. $users['User']['firstname'] . $users['User']['lastname']; ?></td>
                 
-                <td ><?php echo 'Merchant: ' . $applications['Application']['dba_business_name']; ?></td>
+                <td ><?php echo 'Merchant: ' . $applications['CobrandedApplication']['DBA']; ?></td>
                 
                 </tr>
                 </table>
@@ -139,7 +139,7 @@
                 </table>
                 <table width="100%" style="border: 1px solid black;">
                     <tr>
-                        <td>Existing Amex #: <?php echo $this->Form->input('OnlineApplication.existing_se_num', array('div' => false, 'label' => false, 'style' => 'width:100px', 'disabled' => true));?> </td>
+                        <td>Existing Amex #: <?php echo $this->Form->input('OnlineCobrandedApplication.existing_se_num', array('div' => false, 'label' => false, 'style' => 'width:100px', 'disabled' => true));?> </td>
                         <td>Debit Volume: <?php echo $this->Form->input('setup_debit_volume',array('div' => false, 'label' => false,'style' => 'width:100px'));?></td>
                         <td>Monthly Item Count: <?php echo $this->Form->input('setup_item_count',array('div' => false, 'label' => false,'style' => 'width:100px'));?></td>
                     </tr>
@@ -183,10 +183,10 @@
                              <?php 
                                 $options=array('yes' => 'Yes','no' => 'No');
                                 $attributes=array('legend' => false, 'disabled' => true);
-                                echo $this->Form->radio('Application.term1_accept_debit',$options,$attributes); ?>
+                                echo $this->Form->radio('CobrandedApplication.term1_accept_debit',$options,$attributes); ?>
                             </td>
                             <td width ="21%"align="right">Pin Pad Type?
-                             <?php echo $this->Form->input('Application.term1_pin_pad_type', array('div' => false, 'label' => false, 'style' => 'width:50px', 'disabled' => true));?>
+                             <?php echo $this->Form->input('CobrandedApplication.term1_pin_pad_type', array('div' => false, 'label' => false, 'style' => 'width:50px', 'disabled' => true));?>
                      </td>
                      <td >
                          <?php echo $this->Form->input('cp_encrypted_sn', array('label' => 'JR\'s encrypted-S/N ', 'style' => 'width:100px')); ?></td>
@@ -199,10 +199,10 @@
                          <?php 
                                 $options=array('yes' => 'Yes','no' => 'No');
                                 $attributes=array('legend' => false, 'disabled' => true);
-                                echo $this->Form->radio('Application.term1_use_autoclose',$options,$attributes); ?>
+                                echo $this->Form->radio('CobrandedApplication.term1_use_autoclose',$options,$attributes); ?>
                          </td>
                          <td align="right">
-                             <?php echo $this->Form->input('Application.term1_what_time', array('label' => 'Time', 'style' => 'width:50px', 'disabled' => true));?>
+                             <?php echo $this->Form->input('CobrandedApplication.term1_what_time', array('label' => 'Time', 'style' => 'width:50px', 'disabled' => true));?>
                          </td>
                          <td >
                              <?php echo $this->Form->input('cp_pinpad_ra_attached', array('label' => 'Pin Pad Encryption RA Attached?'));?>
@@ -236,23 +236,29 @@
                      <tr>
                          <td>Does the merchant accept Amex?</td>
                          <td>
-                         <?php
-                                echo $applications['Application']['want_to_accept_amex'] == 'yes' ? 'Yes' : 'No'
-                         ?>   
+                            <?php
+                                if ($applications['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
+                                    $applications['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                    echo 'Yes';
+                                }
+                                else {
+                                    echo 'No';
+                                }
+                            ?>   
                          </td>
                          <td>
-                         <?php echo $applications['Application']['existing_se_num'] == '' ? 'Request New Amex' : 'Amex # ' . $applications['Application']['existing_se_num'];?>    
+                         <?php echo $applications['CobrandedApplication']['AmexNum'] == '' ? 'Request New Amex' : 'Amex # ' . $applications['CobrandedApplication']['AmexNum'];?>    
                          </td>
                      </tr>
                      <tr>
                          <td>Does the merchant accept Discover?</td>
                          <td>
                          <?php
-                                echo $applications['Application']['want_to_accept_discover'] == 'yes' ? 'Yes' : 'No' 
+                                echo $applications['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Yes' : 'No' 
                          ?>     
                          </td>
                          <td>
-                         <?php echo $applications['Application']['want_to_accept_discover'] == 'yes' ? 'Axia Request New' : '' ?>    
+                         <?php echo $applications['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : '' ?>    
                          </td>
                      </tr>
                      <tr>
@@ -360,12 +366,18 @@
                     <tr>
                          <td>Does the merchant accept Amex?</td>
                          <td>
-                         <?php
-                                echo $applications['Application']['want_to_accept_amex'] == 'yes' ? 'Yes' : 'No'
-                         ?>
+                            <?php
+                                if ($applications['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
+                                    $applications['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                    echo 'Yes';
+                                }
+                                else {
+                                    echo 'No';
+                                }
+                            ?> 
                          </td>
                          <td>
-                         <?php echo $applications['Application']['existing_se_num'] == '' ? 'Request New Amex' : 'Amex # ' . $applications['Application']['existing_se_num'];?>    
+                         <?php echo $applications['CobrandedApplication']['AmexNum'] == '' ? 'Request New Amex' : 'Amex # ' . $applications['CobrandedApplication']['AmexNum'];?>    
                          </td>
    
                      </tr>
@@ -373,11 +385,11 @@
                          <td>Does the merchant accept Discover?</td>
                          <td>
                          <?php
-                                echo $applications['Application']['want_to_accept_discover'] == 'yes' ? 'Yes' : 'No' 
+                                echo $applications['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Yes' : 'No' 
                          ?>    
                          </td>
                          <td>
-                         <?php echo $applications['Application']['want_to_accept_discover'] == 'yes' ? 'Axia Request New' : '' ?>    
+                         <?php echo $applications['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : '' ?>    
                          </td>
                      </tr>
                      <tr>
@@ -435,8 +447,8 @@
 	<ul>
 
 		<li><?php echo $this->Html->link(__('List %s', __('Coversheets')), array('action' => 'index'));?></li>
-		<li><?php echo $this->Html->link(__('List %s', __('Applications')), array('controller' => 'applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Application'), array('controller' => 'applications', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List %s', __('Applications')), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List %s', __('Users')), array('controller' => 'users', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
 	</ul>

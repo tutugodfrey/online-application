@@ -3,7 +3,7 @@
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id');?></th>
-			<th><?php echo $this->Paginator->sort('onlineapp_application_id');?></th>
+			<th><?php echo $this->Paginator->sort('cobranded_application_id');?></th>
 			<th><?php echo $this->Paginator->sort('user_id');?></th>
 			<th><?php echo $this->Paginator->sort('status');?></th>
 			<!--<th><?php echo $this->Paginator->sort('hash');?></th>
@@ -86,7 +86,7 @@
 	<tr<?php echo $class;?>>
 		<td><?php echo $this->Html->link($Coversheet['Coversheet']['id'], array('controller' => 'onlineapp_coversheets', 'action' => 'view', $Coversheet['Coversheet']['id'])); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($Coversheet['Application']['dba_business_name'], array('controller' => 'applications', 'action' => 'add', 1, $Coversheet['Application']['id'], $Coversheet['Application']['hash'])); ?>
+			<?php echo $this->Html->link($Coversheet['CobrandedApplication']['DBA'], array('controller' => 'cobranded_applications', 'action' => 'add', 1, $Coversheet['CobrandedApplication']['id'], $Coversheet['CobrandedApplication']['hash'])); ?>
 		</td>
 		<td>
 			<?php echo $this->Html->link($Coversheet['User']['firstname'] . ' ' . $Coversheet['User']['lastname'], array('controller' => 'users', 'action' => 'view', 'admin' => true, $Coversheet['User']['id'])); ?>
@@ -162,7 +162,7 @@
 		<td class="actions">
 			<?php echo $this->Html->link(__('View'), array('action' => 'view', $Coversheet['Coversheet']['id'])); ?><br />
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $Coversheet['Coversheet']['id'])); ?><br />
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['Application']['dba_business_name']/*['Coversheet']['id']*/)); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['CobrandedApplication']['DBA']/*['Coversheet']['id']*/)); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -185,8 +185,8 @@
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(__('New  Coversheet'), array('action' => 'add')); ?></li>
-		<li><?php echo $this->Html->link(__('List  Applications'), array('controller' => 'onlineapp_applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New  Application'), array('controller' => 'onlineapp_applications', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List  Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New  Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List  Users'), array('controller' => 'onlineapp_users', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New  User'), array('controller' => 'onlineapp_users', 'action' => 'add')); ?> </li>
 	</ul>

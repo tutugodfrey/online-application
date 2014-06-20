@@ -241,7 +241,7 @@
  *       Please check the comments in boostrap.php for more info on the cache engines available
  *       and their setttings.
  */
-$engine = 'File';
+$engine = 'Apc';
 if (extension_loaded('apc') && function_exists('apc_dec') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
 	$engine = 'Apc';
 }

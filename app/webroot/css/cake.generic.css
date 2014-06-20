@@ -26,7 +26,7 @@ body {
 	background: #003d4c;
 	color: #fff;
 	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
-	font-size:90%;
+	/*font-size:90%;*/
 	margin: 0;
 }
 a {
@@ -48,18 +48,18 @@ h1, h2, h3, h4 {
 h1 {
 	background:#fff;
 	color: #003d4c;
-	font-size: 100%;
+	/*font-size: 100%;*/
 }
 h2 {
 	background:#fff;
 	color: #e32;
 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
-	font-size: 190%;
+	/*font-size: 190%;*/
 }
 h3 {
 	color: #993;
 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
-	font-size: 165%;
+	/*font-size: 165%;*/
 }
 h4 {
 	color: #993;
@@ -69,11 +69,17 @@ ul, li {
 	margin: 0 12px;
 }
 
+.help {
+	cursor: help;
+}
+
 /** Layout **/
 #container {
 	text-align: left;
 }
-
+#container #content {
+	padding-top: 25px;
+}
 #header{
 	padding: 10px 20px;
 }
@@ -83,6 +89,21 @@ ul, li {
 	color: #fff;
 	padding: 0px 30px;
 }
+#header nav {
+	color: #fff;
+	background: #003d4c url('../img/cake.icon.png') no-repeat left;
+	font-weight: normal;
+	text-decoration: none;
+	padding: 0 10px;
+}
+#header nav a {
+	color: #fff;
+}
+
+form fieldset {
+	margin-top: 20px;
+}
+
 #header h1 a {
 	color: #fff;
 	background: #003d4c;
@@ -98,7 +119,7 @@ ul, li {
 	background: #fff;
 	clear: both;
 	color: #333;
-	padding: 10px 20px 40px 20px;
+	padding: 35px 20px 40px 20px;
 	overflow: auto;
 }
 #footer {
@@ -112,13 +133,13 @@ div.form,
 div.index,
 div.view {
 	float:right;
-	width:76%;
+	width:80%;
 	border-left:1px solid #666;
 	padding:10px 2%;
 }
 div.actions {
 	float:left;
-	width:16%;
+	width:19%;
 	padding:10px 1.5%;
 }
 div.actions h3 {
@@ -193,9 +214,12 @@ div.paging {
 	margin-top: 1em;
 	clear:both;
 }
-div.paging span.disabled {
+div.paging span.disabled,
+div.paging span.disabled a {
 	color: #ddd;
 	display: inline;
+	cursor: default;
+	text-decoration: none;
 }
 div.paging span.current {
 	color: #c73e14;
@@ -255,11 +279,44 @@ fieldset fieldset div {
 	margin: 0 20px;
 }
 form div {
-	clear: both;
-	margin-bottom: 1em;
-	padding: .5em;
+	/*clear: both;*/
+	margin-bottom: 0;
+	padding: 0;
 	vertical-align: text-top;
 }
+form.onlineapp_preview_page div.panel-default {
+	margin-bottom: 0;
+	padding: 0;
+}
+form.onlineapp_preview_page div.panel-body {
+	padding: 0 15px;
+	margin-bottom: 5px;
+}
+form.onlineapp_preview_page div.panel-heading {
+	margin-bottom: 0;
+}
+div.panel-body > div,
+div.panel-body > div > div.input.select,
+div.panel-body > div > div.input.checkbox {
+	margin-bottom: 0;
+	padding: 10;
+}
+#HighVolumeMonths div.checkbox {
+	margin-top: inherit;
+	padding: 5px 20px;
+	float: left;
+	clear: none;
+}
+div.panel-body form {
+	clear: both;
+	margin-right: 0;
+	padding: 0;
+	width: 100%;
+}
+form fieldset.percent div {
+	padding: 0;
+}
+
 form .input {
 	color: #444;
 }
@@ -540,4 +597,7 @@ div.multicolumn {
 	-webkit-column-gap: 20px;
 	column-count: 4;
 	column-gap: 20px;
+}
+.radio, .checkbox {
+	padding-left: 10px;
 }

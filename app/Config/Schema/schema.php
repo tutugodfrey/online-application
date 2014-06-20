@@ -98,17 +98,18 @@ class AppSchema extends CakeSchema {
 	);
 
 	public $onlineapp_api_logs = array(
-		'id' => array('type' => 'string', 'null' => true, 'length' => 36, 'key' => 'primary'),
+		'id' => array('type' => 'string', 'null' => false, 'length' => 36, 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => true),
-		'user_token' => array('type' => 'string', 'null' => true, 'length' => 40),
+		'user_token' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 40),
 		'ip_address' => array('type' => 'inet', 'null' => true),
 		'request_string' => array('type' => 'text', 'null' => true, 'length' => 1073741824),
 		'request_url' => array('type' => 'text', 'null' => true, 'length' => 1073741824),
-		'request_type' => array('type' => 'string', 'null' => true, 'length' => 10),
+		'request_type' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 10),
 		'created' => array('type' => 'datetime', 'null' => true),
-		'auth_status' => array('type' => 'string', 'null' => true, 'length' => 7),
+		'auth_status' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 7),
 		'indexes' => array(
-			
+			'PRIMARY' => array('unique' => true, 'column' => 'id'),
+			'onlineapp_api_logs_user_id_key' => array('unique' => false, 'column' => 'user_id')
 		),
 		'tableParameters' => array()
 	);
@@ -348,9 +349,9 @@ class AppSchema extends CakeSchema {
 		'var_status' => array('type' => 'string', 'null' => true, 'length' => 10),
 		'install_var_rs_document_guid' => array('type' => 'string', 'null' => true, 'length' => 32),
 		'tickler_id' => array('type' => 'string', 'null' => true, 'length' => 36),
-		'callback_url' => array('type' => 'string', 'null' => true),
-		'guid' => array('type' => 'string', 'null' => true, 'length' => 40),
-		'redirect_url' => array('type' => 'string', 'null' => true),
+		'callback_url' => array('type' => 'string', 'null' => true, 'default' => null),
+		'guid' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 40),
+		'redirect_url' => array('type' => 'string', 'null' => true, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'api_idx' => array('unique' => false, 'column' => 'api'),
@@ -428,7 +429,8 @@ class AppSchema extends CakeSchema {
 		'created' => array('type' => 'datetime', 'null' => true),
 		'modified' => array('type' => 'datetime', 'null' => true),
 		'indexes' => array(
-			'PRIMARY' => array('unique' => true, 'column' => 'id')
+			'PRIMARY' => array('unique' => true, 'column' => 'id'),
+			'onlineapp_application_id_key' => array('unique' => true, 'column' => 'onlineapp_application_id')
 		),
 		'tableParameters' => array()
 	);
@@ -484,11 +486,11 @@ class AppSchema extends CakeSchema {
 
 	public $onlineapp_multipasses = array(
 		'id' => array('type' => 'string', 'null' => false, 'length' => 36, 'key' => 'primary'),
-		'merchant_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 16),
-		'device_number' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 14),
-		'username' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20),
-		'pass' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20),
-		'in_use' => array('type' => 'boolean', 'null' => true),
+		'merchant_id' => array('type' => 'string', 'null' => true, 'length' => 16),
+		'device_number' => array('type' => 'string', 'null' => true, 'length' => 14),
+		'username' => array('type' => 'string', 'null' => true, 'length' => 20),
+		'pass' => array('type' => 'string', 'null' => true, 'length' => 20),
+		'in_use' => array('type' => 'boolean', 'null' => false),
 		'application_id' => array('type' => 'integer', 'null' => true),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'modified' => array('type' => 'datetime', 'null' => true),
@@ -526,7 +528,7 @@ class AppSchema extends CakeSchema {
 		'lastname' => array('type' => 'string', 'null' => true, 'length' => 40),
 		'extension' => array('type' => 'integer', 'null' => true),
 		'active' => array('type' => 'boolean', 'null' => true, 'default' => true),
-		'api_password' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 50),
+		'api_password' => array('type' => 'string', 'null' => true, 'length' => 50),
 		'api_enabled' => array('type' => 'boolean', 'null' => true),
 		'api' => array('type' => 'boolean', 'null' => true),
 		'indexes' => array(

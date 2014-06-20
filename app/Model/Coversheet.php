@@ -1,118 +1,122 @@
 <?php
+
 App::uses('User', 'Model');
 App::uses('EmailTimeline', 'Model');
-class Coversheet extends AppModel {
-        public $useTable = 'onlineapp_coversheets';
-	public $displayField = 'onlineapp_application_id';
-        public $actsAs = array('Containable','Search.Searchable');
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
+App::uses('CobrandedApplication', 'Model');
 
-        public $validate = array(
-            'setup_banking' => array(
-                'rule' => array('comparison', '==', '1'),
-                'message' => 'Required'
-            ),
-            'setup_drivers_license' => array(
-                'rule' => array('comparison', '==', '1'),
-                'message' => 'Required'
-            ),
-            'setup_tier_select' => array(
-                'rule' => 'notEmpty',
-                'message' => 'Please select a Tier'
-            ),
-            'setup_equipment_terminal' => array(
-                'rule' => array('equipment'),
-                'message' => 'Equipment Type: Select One'
-            ),
-            'setup_equipment_gateway' => array(
-                'rule' => array('equipment'),
-                'message' => 'Equipment Type: Select One'
-            ),
-            'setup_install' => array(
-                'rule' => 'notEmpty',
-                'message' => 'Someone has got to perform the install'
-            ),
-            'setup_tier3' => array(
-                'rule' => array('tier3'),
-                'message' => 'Required'
-            ),
-            'setup_tier4' => array(
-                'rule' => array('tier4'),
-                'message' => 'Required'
-            ),
-            'setup_tier5_financials' => array(
-                'rule' => array('setup_tier5_financials'),
-                'message' => 'Required'
-            ),
-            'setup_tier5_processing_statements' => array(
-                'rule' => array('setup_tier5_processing_statements'),
-                'message' => 'Required'
-            ),
-            'setup_tier5_bank_statements' => array(
-                'rule' => array('setup_tier5_bank_statements'),
-                'message' => 'Required'
-            ),
-            'setup_starterkit' => array(
-                'rule' => array('setup_starterkit'),
-                'message' => 'It will not send itself'
-            ),
-            'setup_equipment_payment' => array(
-                'rule' => array('equipment_payment'),
-                'message' => 'Please Enter Lease Terms'
-            ),
-            'setup_referrer' => array(
-                'rule' => array('referrer'),
-                'message' => 'Type and Percentage Required'
-            ),
-            'setup_reseller' => array(
-                'rule' => array('reseller'),
-                'message' => 'Type and Percentage Required'
-            ),
-            'cp_encrypted_sn' => array(
-                'rule' => array('debit'),
-                'message' => 'Please select Encryption Method'
-            ),
-            'cp_pinpad_ra_attached' => array(
-                'rule' => array('debit'),
-                'message' => 'Please select Encryption Method'
-            ),
-            'cp_check_guarantee_info' => array(
-                'rule' => array('check_guarantee'),
-                'message' => 'Please fill in the Info'
-            ),
-            'cp_pos_contact' => array(
-                'rule' => array('pos'),
-                'message' => 'Please fill in Contact Information'
-            ),
-            'micros' => array(
-                'rule' => array('micros'),
-                'message' => 'How will the additional per item fee be handled?'
-            ),
-            'gateway_package' => array(
-                'rule' => array('gateway_package'),
-                'message' => 'What Package?'
-            ),
-            'gateway_gold_subpackage' => array(
-                'rule' => array('gateway_gold_subpackage'),
-                'message' => 'What Gold Package?'
-            ),
-            'gateway_epay' => array(
-                'rule' => array('gateway_epay'),
-                'message' => 'ePay Charge Software'
-            ),
-            'gateway_billing' => array(
-                'rule' => array('gateway_billing'),
-                'message' => 'How will the billing of gateway fees be handled?'
-            ),
-            'moto_online_chd' => array(
-                'rule' => array('moto'),
-                'message' => 'Internet Merchants: Does the merchant store credit card numbers online?'
-            )
-        );
+class Coversheet extends AppModel {
+    public $useTable = 'onlineapp_coversheets';
+	public $displayField = 'cobranded_application_id';
+    public $actsAs = array('Containable','Search.Searchable');
+
+	//The Associations below have been created with all possible keys, those that are not needed can be removed
+    public $validate = array(
+        'setup_banking' => array(
+            'rule' => array('comparison', '==', '1'),
+            'message' => 'Required'
+        ),
+        'setup_drivers_license' => array(
+            'rule' => array('comparison', '==', '1'),
+            'message' => 'Required'
+        ),
+        'setup_tier_select' => array(
+            'rule' => 'notEmpty',
+            'message' => 'Please select a Tier'
+        ),
+        'setup_equipment_terminal' => array(
+            'rule' => array('equipment'),
+            'message' => 'Equipment Type: Select One'
+        ),
+        'setup_equipment_gateway' => array(
+            'rule' => array('equipment'),
+            'message' => 'Equipment Type: Select One'
+        ),
+        'setup_install' => array(
+            'rule' => 'notEmpty',
+            'message' => 'Someone has got to perform the install'
+         ),
+        'setup_tier3' => array(
+            'rule' => array('tier3'),
+            'message' => 'Required'
+        ),
+        'setup_tier4' => array(
+            'rule' => array('tier4'),
+            'message' => 'Required'
+        ),
+        'setup_tier5_financials' => array(
+            'rule' => array('setup_tier5_financials'),
+            'message' => 'Required'
+        ),
+        'setup_tier5_processing_statements' => array(
+            'rule' => array('setup_tier5_processing_statements'),
+            'message' => 'Required'
+        ),
+        'setup_tier5_bank_statements' => array(
+            'rule' => array('setup_tier5_bank_statements'),
+            'message' => 'Required'
+        ),
+        'setup_starterkit' => array(
+            'rule' => array('setup_starterkit'),
+            'message' => 'It will not send itself'
+        ),
+        'setup_equipment_payment' => array(
+            'rule' => array('equipment_payment'),
+            'message' => 'Please Enter Lease Terms'
+        ),
+        'setup_referrer' => array(
+            'rule' => array('referrer'),
+            'message' => 'Type and Percentage Required'
+        ),
+        'setup_reseller' => array(
+            'rule' => array('reseller'),
+            'message' => 'Type and Percentage Required'
+        ),
+        'cp_encrypted_sn' => array(
+            'rule' => array('debit'),
+            'message' => 'Please select Encryption Method'
+        ),
+        'cp_pinpad_ra_attached' => array(
+            'rule' => array('debit'),
+            'message' => 'Please select Encryption Method'
+        ),
+        'cp_check_guarantee_info' => array(
+            'rule' => array('check_guarantee'),
+            'message' => 'Please fill in the Info'
+        ),
+        'cp_pos_contact' => array(
+            'rule' => array('pos'),
+            'message' => 'Please fill in Contact Information'
+        ),
+        'micros' => array(
+            'rule' => array('micros'),
+            'message' => 'How will the additional per item fee be handled?'
+        ),
+        'gateway_package' => array(
+            'rule' => array('gateway_package'),
+            'message' => 'What Package?'
+        ),
+        'gateway_gold_subpackage' => array(
+            'rule' => array('gateway_gold_subpackage'),
+            'message' => 'What Gold Package?'
+        ),
+        'gateway_epay' => array(
+            'rule' => array('gateway_epay'),
+            'message' => 'ePay Charge Software'
+        ),
+        'gateway_billing' => array(
+            'rule' => array('gateway_billing'),
+            'message' => 'How will the billing of gateway fees be handled?'
+        ),
+        'moto_online_chd' => array(
+            'rule' => array('moto'),
+            'message' => 'Internet Merchants: Does the merchant store credit card numbers online?'
+        )
+    );
+
 	public $belongsTo = array(
-		'Application' => array(
-			'className' => 'Application',
-			'foreignKey' => 'onlineapp_application_id',
+		'CobrandedApplication' => array(
+			'className' => 'CobrandedApplication',
+			'foreignKey' => 'cobranded_application_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
@@ -125,7 +129,7 @@ class Coversheet extends AppModel {
 			'order' => ''
 		)
 	);
-        
+    
         function equipment() {
             if ($this->data['Coversheet']['setup_equipment_terminal'] != '1' && $this->data['Coversheet']['setup_equipment_gateway'] != '1') {
                 return false;
@@ -307,25 +311,58 @@ class Coversheet extends AppModel {
             return true;
         }
 
-        function sendCoversheet($id) {
-                $this->id = $id;
-                $data = $this->findById($id);
-                $Email = new CakeEmail();
-                $Email->viewVars(array('business_name' => $data['Application']['legal_business_name']));
-                $Email->viewVars(array('dba'=> $data['Application']['dba_business_name']));
-                $Email->from(array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications'));
-                $Email->to(EmailTimeline::UNDERWRITING_EMAIL);
-                $Email->subject($data['Application']['dba_business_name'] . ' - Coversheet');
-                $Email->emailFormat('html');
-                $Email->template('email_coversheet');
-                $Email->attachments(array($data['Application']['dba_business_name'] . ' coversheet.pdf' => WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf'));
-                $this->Application->EmailTimeline->create();
-                $this->Application->EmailTimeline->save(array('app_id' => $data['Application']['id'], 'date' => DboSource::expression('NOW()'),'subject_id' => EmailTimeline::COVERSHEET_TO_UW, 'recipient' => EmailTimeline::UNDERWRITING_EMAIL));               
-                if ($Email->send()) {
-                    return true;
-                }
-                return false;
-                
+    function sendCoversheet($id) {
+        $this->id = $id;
+        $data = $this->findById($id);
+
+        $dbaBusinessName = '';
+        $corpName = '';
+
+        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($data['CobrandedApplicationValues']);
+
+        if (!empty($valuesMap['DBA'])) {
+            $dbaBusinessName = $valuesMap['DBA'];
         }
+        if (!empty($valuesMap['CorpName'])) {
+            $corpName = $valuesMap['CorpName'];
+        }
+
+        $from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+        $to = EmailTimeline::UNDERWRITING_EMAIL;
+        $subject = $dbaBusinessName.' - Coversheet';
+        $format = 'html';
+        $template = 'email_coversheet';
+        $viewVars = array();
+        $viewVars['business_name'] = $corpName;
+        $viewVars['dba'] = $dbaBusinessName;
+        $attachments = array($dbaBusinessName . ' coversheet.pdf' => WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
+
+        $args = array(
+            'from' => $from,
+            'to' => $to,
+            'subject' => $subject,
+            'format' => $format,
+            'template' => $template,
+            'viewVars' => $viewVars,
+            'attachments' => $attachments
+        );
+
+        $response = $this->CobrandedApplication->sendEmail($args);
+
+        unset($args);
+
+        if ($response['success'] == true) {
+            $args['cobranded_application_id'] = $data['CobrandedApplication']['id'];
+            $args['email_timeline_subject_id'] = EmailTimeline::COVERSHEET_TO_UW;
+            $args['recipient'] = EmailTimeline::UNDERWRITING_EMAIL;
+            $response = $this->CobrandedApplication->createEmailTimelineEntry($args);
+
+            if ($response['success'] == true) {
+                return true;
+            }
+        }
+        
+        return false;
+    }  
 }
 ?>

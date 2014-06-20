@@ -13,15 +13,26 @@ class EmailTimeline extends AppModel {
     const INSTALL_SHEET_VAR = 7;
     const COVERSHEET_TO_UW = 8;
     const MULTIPASS_COMPLETE = 9;
+    const NEW_API_APPLICATION = 10;
     
     //Senders and Recipients
-    const UNDERWRITING_EMAIL = 'stanner@axiapayments.com';
+    const UNDERWRITING_EMAIL = 'underwriting@axiapayments.com';
     const NEWAPPS_EMAIL = 'newapps@axiapayments.com';
     const HOOZA_EMAIL = 'hooza@axiapayments.com';
-    const DATA_ENTRY_EMAIL = 'stanner@axiapayments.com';
+    const DATA_ENTRY_EMAIL = 'dataentry@axiapayments.com';
     
     public $validate = array(
         'onlineapp_applications_id' => array(
+            'notempty' => array(
+                'rule' => array('notempty'),
+            //'message' => 'Your custom message here',
+            //'allowEmpty' => false,
+            //'required' => false,
+            //'last' => false, // Stop validation after this rule
+            //'on' => 'create', // Limit validation to 'create' or 'update' operations
+            ),
+        ),
+        'cobranded_application_id' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
             //'message' => 'Your custom message here',
@@ -42,15 +53,21 @@ class EmailTimeline extends AppModel {
             'fields' => '',
             'order' => ''
         ),
+        'CobrandedApplication' => array(
+            'className' => 'CobrandedApplication',
+            'foreignKey' => 'cobranded_application_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        ),
         'EmailTimelineSubject' => array(
             'className' => 'EmailTimelineSubject',
-            'foreignKey' => 'subject_id',
+            'foreignKey' => 'email_timeline_subject_id',
             'conditions' => '',
             'fields' => '',
             'order' => ''
         ),
     );
-
 }
 
 ?>

@@ -1,0 +1,75 @@
+#wizard input {
+	padding: 0;
+	height: 30px;
+}
+#wizard .nav.nav-pills {
+	padding: 13px;
+}
+#wizard .nav>li>a {
+	padding: inherit;
+}
+#wizard .nav-pills>.active>a,
+.nav-pills>.active>a:hover {
+	background: none;
+}
+#wizard .nav-pills>li>a,
+.nav-pills>li>a:hover {
+	background: transparent;
+}
+#wizard .nav-pills>li>a>span.badge {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+}
+#wizard .nav-pills>.active>a>span.badge {
+	color: white;
+	background-color: #417092;
+	-moz-box-shadow: 5px 5px 8px #888;
+	-webkit-box-shadow: 5px 5px 8px #888;
+	box-shadow: 5px 5px 8px #888;
+}
+#wizard .nav-pills>li>a>div.connecting-line {
+	position: relative;
+	top: -11px;
+	left: 25px;
+	border-bottom: 1px solid gray;
+	z-index: -100;
+	width: 8em;
+}
+#wizard .nav-pills>li:last-child>a>div.connecting-line {
+	border-bottom: 0;
+	width: 0;
+}
+#wizard .nav-pills>li:last-child>a {
+	width: 26px;
+}
+#wizard input[type="checkbox"],  #wizard input[type="radio"] {
+	height: 18px;
+}
+#wizard input[type="radio"] {
+	float: left;
+	margin-top: 0;
+	margin-right: 5px;
+}
+#wizard .input-group-addon {
+	padding: 8px 22px 6px 10px;
+}
+#wizard select {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+#wizard textarea {
+	width: 100%;
+}
+#wizard fieldset {
+	margin-top: 10px;
+}
+#wizard legend {
+	font-size: 15px;
+	margin-bottom: 10px;
+}
+div.api-field {
+	display: none;
+}

@@ -8,7 +8,7 @@
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Onlineapp Application'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $this->Html->link($onlineappCoversheet['OnlineappApplication']['id'], array('controller' => 'onlineapp_applications', 'action' => 'view', $onlineappCoversheet['OnlineappApplication']['id'])); ?>
+			<?php echo $this->Html->link($onlineappCoversheet['CobrandedApplication']['id'], array('controller' => 'cobranded_applications', 'action' => 'view', $onlineappCoversheet['CobrandedApplication']['id'])); ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Onlineapp User'); ?></dt>
@@ -365,8 +365,8 @@
 		<li><?php echo $this->Form->postLink(__('Delete Onlineapp Coversheet'), array('action' => 'delete', $onlineappCoversheet['OnlineappCoversheet']['id']), null, __('Are you sure you want to delete # %s?', $onlineappCoversheet['OnlineappCoversheet']['id'])); ?> </li>
 		<li><?php echo $this->Html->link(__('List Onlineapp Coversheets'), array('action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Onlineapp Coversheet'), array('action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'onlineapp_applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'onlineapp_applications', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Onlineapp Users'), array('controller' => 'onlineapp_users', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Onlineapp User'), array('controller' => 'onlineapp_users', 'action' => 'add')); ?> </li>
 	</ul>

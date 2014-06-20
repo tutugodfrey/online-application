@@ -10,3 +10,12 @@
 [submodule "app/Plugin/search"]
 	path = app/Plugin/search
 	url = https://github.com/CakeDC/search.git
+[submodule "app/Plugin/BoostCake"]
+	path = app/Plugin/BoostCake
+	url = https://github.com/slywalker/cakephp-plugin-boost_cake.git
+[submodule "cakephp"]
+	path = cakephp
+	url = https://github.com/cakephp/cakephp.git
+[submodule "app/Plugin/Phpunit"]
+	path = app/Plugin/Phpunit
+	url = https://github.com/dereuromark/cakephp-phpunit.git

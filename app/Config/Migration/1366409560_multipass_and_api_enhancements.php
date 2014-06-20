@@ -24,7 +24,6 @@ class MultipassAndApiEnhancements extends CakeMigration {
 				'onlineapp_users' => array(
 					'api_password' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'after' => 'active'),
 					'api_enabled' => array('type' => 'boolean', 'null' => true, 'after' => 'api_password'),
-					'api' => array('type' => 'boolean', 'null' => true, 'after' => 'api_enabled'),
 				),
 			),
 			'alter_field' => array(
@@ -59,7 +58,7 @@ class MultipassAndApiEnhancements extends CakeMigration {
 		'down' => array(
 			'drop_field' => array(
 				'onlineapp_applications' => array('callback_url',),
-				'onlineapp_users' => array('api_password', 'api_enabled', 'api',),
+				'onlineapp_users' => array('api_password', 'api_enabled'),
 			),
 			'alter_field' => array(
 				'onlineapp_applications' => array(

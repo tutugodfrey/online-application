@@ -1,6 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<!DOCTYPE html>
+<html>
+  <head>
     
     <?php echo $this->Html->charset(); ?>
     
@@ -8,10 +8,25 @@
         <?php echo __('Axia - '); ?>
         <?php echo $title_for_layout; ?>
     </title>
-    <link href="/favicon.ico" type="image/x-icon" rel="icon" ><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" >
+    <link href="/favicon.ico" type="image/x-icon" rel="icon" >
+    <link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" >
+
+    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/uiContols.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
     <?php
         echo $this->Html->css('sessionMsg');
-        if ($this->request->params['admin'] === true) {
+        if (array_key_exists('admin', $this->request->params) &&
+            $this->request->params['admin'] === true) {
            echo $this->Html->css('cake.generic');
             ?>
             <style type="text/css">
@@ -23,23 +38,17 @@
         }
         else echo $this->Html->css('master.css');
     ?>
-    <link rel="stylesheet" type="text/css" href="http<?php echo (env('HTTPS') ? 's' : ''); ?>://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
-    <script type="text/javascript" src="http<?php echo (env('HTTPS') ? 's' : ''); ?>://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script> 
-    <script type="text/javascript" src="http<?php echo (env('HTTPS') ? 's' : ''); ?>://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js"></script> 
-    <script type="text/javascript" src="/js/uiContols.js"></script>
-        
+
     <?php
-        
-        echo $scripts_for_layout;       
+
+        echo $scripts_for_layout;
         
          if ($this->Session->read('Auth.User.id')!=''){
              //echo Security::inactiveMins() * Configure::read('Session.timeout');
-            echo "<script type='text/javascript'>                
+            echo "<script type='text/javascript'>
                 var c=0;
                 var t;
                 var timer_is_on=0;
-                
-               
 
                 function sessionCount(){
                 var remainingMins = Math.round((" . Security::inactiveMins() * Configure::read('Session.timeout') . " - c) / 60 );
@@ -67,19 +76,18 @@
                   }
                 }
                 //window.onload = doTimer;
-                window.onload=function() {                
+                window.onload=function() {
                     doTimer();
                     var cancel = document.getElementById('cancelBtn');
                     //Hide Login Box
                     cancel.onclick = function() {
                             document.getElementById('refreshIMG').style.display='block';
                             var fader = document.getElementById('msg_fader');
-                            var session_box = document.getElementById('session_box');                            
+                            var session_box = document.getElementById('session_box');
                             var isAppStep = 0;
                             var pElements = document.getElementsByTagName('p');
                             var regExPattrn=/steps/gi;
-                            
-                            
+
                             for(x=0; x < pElements.length;x++){
                                 if(pElements[x].className.match(regExPattrn)){
                                     isAppStep = 1;
@@ -95,47 +103,89 @@
                             session_box.removeChild(document.getElementById('cancelBtn'));
                          }
                      }
-        </script>";             
+        </script>";
          }
-             
     ?>
 </head>
-<body>       
+<body>
    <!-- Session notification Dialog Box --> 
    <div id="msg_fader">&nbsp;</div>
    <div id="session_box" >
        <h2>Session Expiring Soon</h2>
       <p style="color:black ">Session will expire in <span id="sessCountDn">$nbsp;</span>
            <br />If session expires you must to log back in and re-enter any unsaved work that was lost upon session expiration.
-        
            </p> 
         <img src="/img/refreshing.gif" id="refreshIMG" style="display:none;float:right; margin-right: 25px" />   
        <span id="cancelBtn" class="btn">Continue</span>
-           
    </div>
     <!-- End Session notification Dialog Box --> 
-<!--  span id="loginBtn" class="btn">Need to login?</span -->
-
+    <!--  span id="loginBtn" class="btn">Need to login?</span -->
     <div id="container">
         <div id="header">
-            <?php if ($this->request->params['admin'] === true): ?>
-                <h1><?php echo $this->Html->link(__('Axia Admin'), '/admin/'); ?></h1>
-                <div style="float: right; margin-top: -25px;"><?php echo $this->Html->link(__('Logout'), '/users/logout', array('style' => 'color: #fff;')); ?></div>
+            <?php if (array_key_exists('admin', $this->request->params) && 
+                      $this->request->params['admin'] === true): ?>
+              <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+                <p class="navbar-text">
+                <?php echo $this->Html->getCrumbs(' > ', array('text' => _('Axia Admin Home'), 'url' => '/admin/')); ?>
+                </p>
+                <p class="navbar-text navbar-right">
+                  <?php echo $this->Html->link(__('Logout'), '/users/logout'); ?>
+                </p>
+              </nav>
             <?php else: ?>
-                <?php //echo $this->Html->image('axia_header.png', array('alt'=> __('Axia'), 'border' => '0', 'usemap' => '#m_axia_header')); ?>
-                <center><div style="margin-top: 25px;">
-                <?php echo $this->Html->image('logo.png', array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com')); ?>
-                    </div>
-                </center>
+                <div style="margin-top: 25px;">
+                <?php
+                  if (!empty($cobrand_logo_url)) {
+                    $partner_logo = $this->Html->image($cobrand_logo_url);
+                    if (strlen($cobrand_logo_url) == 0) {
+                      // no logo specified... use axia logo on the left
+                      echo String::insert(
+                        '<div class="row">' .
+                        '<div class="col-md-12">:axia_logo</div>' .
+                        '</div>',
+                        array(
+                          'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                        )
+                      );
+                    } elseif ($include_axia_logo == true) {
+                      // only one way to display this combination
+                      echo String::insert(
+                        '<div class="row">' .
+                        '<div class="col-md-6">:partner_logo</div>' .
+                        '<div class="col-md-6">:axia_logo</div>' .
+                        '</div>',
+                        array(
+                          'partner_logo' => $partner_logo,
+                          'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                        )
+                      );
+                    } else {
+                      // position the logo left,center or right
+                      $logo_position = $cobrand_logo_position;
+                      if ($logo_position < 3) {
+                        echo String::insert(
+                          '<div class="row">' .
+                          '<div class="col-md-12 text-:position">:partner_logo</div>' .
+                          '</div>',
+                          array(
+                            'partner_logo' => $partner_logo,
+                            'position' => $logoPositionTypes[$logo_position]
+                          )
+                        );
+                      }
+                    }
+                  }
+                  else {
+                    echo $this->Html->image('logo.png', array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com'));
+                  }
+                ?>
+              </div>
             <?php endif; ?>
         </div>
         <div id="content">
-
             <?php echo $this->Session->flash(); ?>
             <?php echo $this->Session->flash('auth'); ?>
-
             <?php echo $this->fetch('content'); ?>
-
         </div>
         <div id="footer">
             <?php /* echo $this->Html->link(

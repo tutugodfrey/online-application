@@ -3,10 +3,10 @@
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id');?></th>
-			<th><?php echo $this->Paginator->sort('onlineapp_application_id');?></th>
+			<th><?php echo $this->Paginator->sort('cobranded_application_id');?></th>
 			<th><?php echo $this->Paginator->sort('user_id');?></th>
 			<th><?php echo $this->Paginator->sort('Coversheet.status', 'CS Status');?></th>
-                        <th><?php echo $this->Paginator->sort('Application.status', 'App Status');?></th>
+                        <th><?php echo $this->Paginator->sort('CobrandedApplication.status', 'App Status');?></th>
 
 			<th class="actions"><?php echo __('Actions');?></th>
 	</tr>
@@ -21,20 +21,20 @@
 	<tr<?php echo $class;?>>
 		<td><?php echo $this->Html->link($Coversheet['Coversheet']['id'], array('controller' => 'coversheets', 'action' => 'edit', $Coversheet['Coversheet']['id'], 'admin' => false)); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($Coversheet['Application']['dba_business_name'], array('controller' => 'applications', 'action' => 'add', 1, $Coversheet['Application']['id'], $Coversheet['Application']['hash'], 'admin' => false)); ?>
+			<?php echo $this->Html->link($Coversheet['CobrandedApplication']['DBA'], array('controller' => 'cobranded_applications', 'action' => 'add', 1, $Coversheet['CobrandedApplication']['id'], $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
 		</td>
 		<td>
 			<?php echo $this->Html->link($Coversheet['User']['firstname'] . ' ' . $Coversheet['User']['lastname'], array('controller' => 'users', 'action' => 'view', 'admin' => true, $Coversheet['User']['id'])); ?>
 		</td>
 		<td><?php echo $Coversheet['Coversheet']['status']; ?>&nbsp;</td>
-                <td><?php echo $Coversheet['Application']['status']; ?>&nbsp;</td>
+                <td><?php echo $Coversheet['CobrandedApplication']['status']; ?>&nbsp;</td>
 
 		<td class="actions">
                     <?php if ($this->Session->read('Auth.User.group') == 'admin'): ?>
 			<?php echo $this->Html->link(__('Override'), array('action' => 'override', $Coversheet['Coversheet']['id'])); ?>
                     <?php endif; ?>
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $Coversheet['Coversheet']['id'], 'admin' => false)); ?>
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['Application']['dba_business_name']/*['Coversheet']['id']*/)); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['CobrandedApplication']['DBA']/*['Coversheet']['id']*/)); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -56,8 +56,8 @@
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('List  Applications'), array('controller' => 'applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New  Application'), array('controller' => 'applications', 'action' => 'add', 'admin' => false)); ?> </li>
+		<li><?php echo $this->Html->link(__('List  Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New  Application'), array('controller' => 'cobranded_applications', 'action' => 'add', 'admin' => false)); ?> </li>
                 <li><?php echo $this->Html->link(__('List  Coversheets'), array('controller' => 'coversheets', 'action' => 'index')); ?> </li>
 <!--                <li><?php echo $this->Form->create(); ?>
                 <?php if (in_array($this->Session->read('Auth.User.group'), array('admin'))) { ?>

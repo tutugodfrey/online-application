@@ -21,5 +21,5 @@ $htmlcontent = <<<EOF
 EOF;
 // output the HTML content
 $this->Tcpdf->writeHTML($htmlcontent, true, false, true, false, '');
-$this->Tcpdf->Output('/tmp/coversheet_' . $data['Application']['id'] . '.pdf', 'F');
+$this->Tcpdf->Output('/tmp/coversheet_' . $data['CobrandedApplication']['id'] . '.pdf', 'F');
 ?>

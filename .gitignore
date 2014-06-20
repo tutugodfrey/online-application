@@ -1,13 +1,21 @@
 # User specific & automatically generated files #
 #################################################
-/app/Config/database.php
+#/app/Config/database.php
 /app/tmp
+/app/Plugins
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
 /build
 /dist
 /tags
+/node_modules
+/app/webroot/api
+/app/webroot/coverage
+/app/webroot/code-browser
+*~
+/app/Test/Case/Codeception/_data/
+/app/Test/Case/Codeception/_log/
 
 # OS generated files #
 ######################
@@ -20,3 +28,8 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+cache.properties
+/.project
+*.sublime-project
+*.sublime-workspace
+/nbproject/private/

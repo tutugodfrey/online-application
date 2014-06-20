@@ -90,9 +90,9 @@ echo "\n";
                 echo "\t\t </td>\n";
                 echo "\t\t\t</tr >\n";
                 echo "\t<tr>\n";
-                echo "<td class=\"actions\" style=\"vertical-align: baseline\" colspan=\"5\">\n";
+                echo "<td class=\"actions\" style=\"vertical-align: baseline; text-align: left;\" colspan=\"9\">\n";
                 
-                echo  "\t\t" . "<div id=\"actionsMenuSlider". $application['Application']['id'] . "\" style=\"DISPLAY: none; vertical-align: baseline; OVERFLOW: hidden; BORDER-RIGHT: #6699cc 1px solid; BORDER-BOTTOM: #6699cc 1px solid; BORDER-LEFT: #6699cc 1px solid; HEIGHT: 18px\">" . $this->Html->link(__('Copy'), array('action' => 'copy_document', $application['Application']['id'], $application['Application']['hash'])) . "\n";
+                echo  "\t\t" . "<div id=\"actionsMenuSlider". $application['Application']['id'] . "\" style=\"DISPLAY: none; vertical-align: baseline; OVERFLOW: hidden; HEIGHT: 18px; padding: 2px 0;\">" . $this->Html->link(__('Copy'), array('action' => 'copy_document', $application['Application']['id'], $application['Application']['hash'])) . "\n";
 		//Display the export button only for admins                
                 if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
                   echo "\t\t\t" . $this->Html->link(__('Export'), array('action' => 'export_document', $application['Application']['id'], $application['Application']['hash'])) . "\n";
