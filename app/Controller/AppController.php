@@ -136,11 +136,17 @@ class AppController extends Controller {
     function apiLog() {
         if ($this->params['ext'] == 'json' || $this->request->accepts('application/json')){
             $this->loadModel('ApiLog');
-            if($this->request->is('post') || $this->request->is('put')){
+            if ($this->request->is('post') || $this->request->is('put')) {
+                $data = $this->request->input('json_decode', true);
+                if ($data == NULL) {
+                    $data = $this->request->data;
+                }
+                $this->request->data = $data;
                 $request = serialize($this->request->data);
             } elseif($this->request->is('get')) {
                 $request = serialize($this->request->query);
             }
+            
             $apiUser = $this->ApiLog->User->find('first', array(
                 'conditions' => array('User.token' => env('PHP_AUTH_USER'),
                     array("NOT" => array('User.token' => null))),

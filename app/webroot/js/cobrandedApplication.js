@@ -3,15 +3,15 @@ var quickAdd = function(e) {
 	var target = $(e.target);
 	var data = {};
 
-	// hide MOTO/Internet Questionnaire if the following 2 values
+	// show MOTO/Internet Questionnaire if the following 2 values
 	// combined are greater than or equal to 30
 	var methodOfSalesCardNotPresentKeyed = parseInt(document.getElementById('MethodofSales-CardNotPresent-Keyed').value);
 	var methodOfSalesCardNotPresentInternet = parseInt(document.getElementById('MethodofSales-CardNotPresent-Internet').value);
 
 	if (methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet >= 30) {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
-	} else {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
+	} else {
+		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
 	}
 
 	// handle radio buttons and checkboxes don't need to be validated
@@ -103,15 +103,15 @@ $(document).ready(function() {
 
 	setTimeout(function() {$(window).trigger('resize')}, 10);
 
-	// hide MOTO/Internet Questionnaire if the following 2 values
+	// show MOTO/Internet Questionnaire if the following 2 values
 	// combined are greater than or equal to 30
 	var methodOfSalesCardNotPresentKeyed = parseInt(document.getElementById('MethodofSales-CardNotPresent-Keyed').value);
 	var methodOfSalesCardNotPresentInternet = parseInt(document.getElementById('MethodofSales-CardNotPresent-Internet').value);
 
 	if (methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet >= 30) {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
-	} else {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
+	} else {
+		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
 	}
 
 	$(document).on("percentOptionBlur", handlePercentOptionBlur);

@@ -283,8 +283,8 @@ class CobrandedApplicationValue extends AppModel {
 	 * @return boolean
 	 */
 	public function checkRoutingNumber($routingNumber = 0) {
+		$routingNumber = preg_replace('[\D]', '', $routingNumber); //only digits
 
-		$routingNumber = preg_replace('[\D]', '', $routingNumber['routing_number']); //only digits
 		if (strlen($routingNumber) != 9) {
 			return false;
 		}
