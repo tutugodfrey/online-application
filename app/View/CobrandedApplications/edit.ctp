@@ -111,6 +111,36 @@
 							}
 						?>
 					</div>
+					<?php
+						echo $this->Html->scriptBlock("
+							function copyCorpToLocFields() {
+								if ($('#loc_same_as_corp').prop('checked')) {
+									$('#DBA').val($('#CorpName').val());
+									$('#Address').val($('#CorpAddress').val());
+									$('#City').val($('#CorpCity').val());
+									$('#State').val($('#CorpState').val());
+									$('#Zip').val($('#CorpZip').val());
+									$('#PhoneNum').val($('#CorpPhone').val());
+									$('#FaxNum').val($('#CorpFax').val());
+									$('#Contact').val($('#CorpContact').val());
+									$('#LocTitle').val($('#Title').val());
+									$('#LocEmail').val($('#Email').val());
+								}
+								else {
+									$('#DBA').val('');
+									$('#Address').val('');
+									$('#City').val('');
+									$('#State').val('');
+									$('#Zip').val('');
+									$('#PhoneNum').val('');
+									$('#FaxNum').val('');
+									$('#Contact').val('');
+									$('#LocTitle').val('');
+									$('#LocEmail').val('');
+								}
+							}
+						");
+					?>
 				</div>
 			</form>
 		</section>

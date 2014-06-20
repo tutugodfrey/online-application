@@ -23,7 +23,11 @@ var quickAdd = function(e) {
 	} else if(target.is(":checkbox")) {
 		data['id'] = target.attr('data-value-id');
 		data['value'] = target.is(":checked"); // not really needed...
-		persist(data);
+		// don't persist value for this checkbox
+		// it's used to toggle copied info from one section to another
+		if (target.attr('name') != 'loc_same_as_corp') {
+			persist(data);
+		}
 	} else {
 		// need to validate the
 		if ($validator.element(target) === true) {
