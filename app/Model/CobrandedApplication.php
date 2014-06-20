@@ -1532,33 +1532,71 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.user_id',
 				'CobrandedApplication.template_id',
 				'CobrandedApplication.uuid',
-				'CobrandedApplication.created',
 				'CobrandedApplication.modified',
 				'CobrandedApplication.rightsignature_document_guid',
 				'CobrandedApplication.status',
 				'CobrandedApplication.rightsignature_install_document_guid',
 				'CobrandedApplication.rightsignature_install_status',
+				'Template.id',
+				'Template.name',
+				'User.id',
+				'User.firstname',
+				'User.lastname',
+				'User.email',
+				'Coversheet.id',
+				'Dba.value',
+				'CorpName.value',
+				'CorpContact.value',
 			),
-			'contain' => array(
-				'Template' => array(
-					'fields' => array(
-						'id','name'
-					)
-				),
-				'User' => array(
-					'fields' => array(
-						'id', 'firstname', 'lastname', 'email'
-					)
-				),
-				'Coversheet.id'
-				
-			),
+			'recursive' => -1,
 			'joins' => array(
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Dba',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Dba.cobranded_application_id and Dba.name =' . "'DBA'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpName',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpName.cobranded_application_id and CorpName.name =' . "'CorpName'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpContact',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
+					),
+				),
 				array('table' => 'onlineapp_cobranded_application_values',
 					'alias' => 'CobrandedApplicationValue',
 					'type' => 'LEFT',
 					'conditions' => array(
 						'CobrandedApplication.id = CobrandedApplicationValue.cobranded_application_id',
+					),
+				),
+				array('table' => 'onlineapp_templates',
+					'alias' => 'Template',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.template_id = Template.id',
+					),
+				),				
+				array('table' => 'onlineapp_users',
+					'alias' => 'User',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.user_id = User.id',
+					),
+				),
+				array('table' => 'onlineapp_coversheets',
+					'alias' => 'Coversheet',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Coversheet.cobranded_application_id',
 					),
 				),
 			)
@@ -1581,37 +1619,13 @@ class CobrandedApplication extends AppModel {
  * @return array
  */
 	public function orConditions($data = array()) {
+//		$this->unbindModel(array('belongsTo' => array('Template')));
 		$filter = $data['search'];
 			$conditions = array(
 				'OR' => array(
 					'CobrandedApplicationValue.name' => 'name',
 					array('AND' => array(
 						'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),						
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),						
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-					'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
 						)
 					),						
 					'User.email ILIKE' => '%' . $filter . '%',
@@ -1622,28 +1636,45 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
- * paginateCount
+ * Work-a-round for paginating results based on a DISTINCT COUNT
  * 
- * @params
- *		$conditions string
- *		$recursive integer
- *		$extras array
- * 
- * @return array results
+ * @param array $conditions
+ * @param integer $recursive
+ * @return array
  */
-	public function getLastQuery() {
-		$dbo = $this->getDatasource();
-		$logs = $dbo->getLog();
-		$lastLog = end($logs['log']);
-		return $lastLog['query'];
-	}
-	public function paginateCount($conditions = null, $recursive = -1,
-		$extra = array()) {
-		$sql = $this->getLastQuery();
-		$results = $this->query($sql);
-		return count($results);
+	function paginateCount($conditions, $recursive = -1) {
+		//grab the conditions used for pagination
+		$joins = $this->getIndexInfo();
 		
+		$params = Configure::read('paginate.params');
+		//specify DISTINCT for this model
+		$params['fields'] = "DISTINCT ($this->alias.id)";
+		$params['conditions'] = $conditions;
+		//parse out the joins from the pagination options
+		$params['joins'] = $joins['joins'];
+		$params['recursive'] = $recursive;
 		
+//		unset($params['group']);
+//		unset($params['contain']);
+		unset($params['order']);
+		
+		return $this->find('count', $params); 
+    }
+/**
+ * Work-a-round for sorting on aliased columns that have been custom joined
+ * without this code we are unable to properly sort all columns in the 
+ * cobrandedApplications/admin/index
+ * namely DBA, CorpName, CorpContact
+ * 
+ * @param array $query
+ * @return array
+ * @see Model::find()
+ */	
+	function beforeFind($query) {
+		parent::beforeFind($query);
+		if(empty($query['order']['0']) && isset($query['sort'])){
+			$query['order']['0'] = array($query['sort'] => $query['direction']);
+		} return $query;
 	}
 /**
  * Return list of user_id and username for use in ajax searches
