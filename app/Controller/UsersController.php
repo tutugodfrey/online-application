@@ -44,10 +44,8 @@ class UsersController extends AppController {
 	}
 
 	function login() {
-		//debug($this->request->data['User']);
 
 		if($this->request->is('post')){
-			debug($this->Auth->user('id'));
 			if($this->Auth->login()) {
 				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
 				$this->redirect($this->Auth->redirect());   

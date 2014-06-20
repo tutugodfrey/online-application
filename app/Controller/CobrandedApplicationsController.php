@@ -300,6 +300,7 @@ class CobrandedApplicationsController extends AppController {
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
 		$this->set('users', $this->User->getActiveUserList());
+		$this->set('user_id', $this->Auth->user('id'));
 	}
 
 /**
