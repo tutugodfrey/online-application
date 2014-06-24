@@ -24,6 +24,7 @@ class CobrandedApplicationsController extends AppController {
 	public $components = array('Email', 'RequestHandler', 'Security', 'Search.Prg');
 
 	public $permissions = array(
+		'index' => array('*'),
 		'add' => array('admin', 'rep', 'manager'),
 		'api_add' => array('api'),
 		'retrieve' => array('*'),
@@ -80,6 +81,41 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->request->accepts('application/json')) {
 			Configure::write('debug', 0);
 			$this->disableCache();
+		}
+	}
+
+/**
+ * index method
+ *
+ * @param $email string
+ * @param $timestamp int
+ * @return void
+ */
+	public function index($email, $timestamp) {
+		if (!$email || !$timestamp) {
+			header("HTTP/1.0 403 Forbidden");
+			exit;
+		}
+
+		// index URL is only good for 2 days (172800 seconds)
+		$currentTimestamp = time();
+		if ($timestamp < ($currentTimestamp - 172800)) {
+			header("HTTP/1.0 403 Forbidden");
+			exit;
+		}
+
+		$applications = $this->CobrandedApplication->findAppsByEmail($email);
+
+		if ($applications) {
+			foreach ($applications as $key => $val) {
+				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($val['CobrandedApplicationValues']);
+				$applications[$key]['ValuesMap'] = $valuesMap; 
+			}
+			$this->set('email', $email);
+			$this->set('applications', $applications);
+		} else {
+			header("HTTP/1.0 404 Not Found");
+			exit;
 		}
 	}
 
@@ -223,12 +259,12 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->request->is('post')) {
 			// did we get a valid email?
 			$email = $this->request->data['CobrandedApplication']['email'];
+
 			if (Validation::email($email)) {
-				// yes, does this email have any applications associated with it?
-
-				// yes, update the application uuid and send the email via the model
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email);
-
+				$this->set('dba', $response['dba']);
+				$this->set('email', $response['email']);
+				$this->set('fullname', $response['fullname']);
 				$this->render('retrieve_thankyou');
 			} else {
 				$error = 'Invalid email address submitted.';

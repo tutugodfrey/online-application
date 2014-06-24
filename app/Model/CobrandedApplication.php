@@ -702,13 +702,14 @@ class CobrandedApplication extends AppModel {
 						'alias' => 'CobrandedApplicationValue',
 						'table' => 'onlineapp_cobranded_application_values',
 						'type' => 'LEFT',
-						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"'
+						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
 					)
 				),
 				'conditions' => array(
 					'CobrandedApplicationValue.value' => $email,
 					// should probably check the state too
 				),
+				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'),
 				'order' => 'CobrandedApplication.created desc'
 			)
 		);
@@ -730,19 +731,14 @@ class CobrandedApplication extends AppModel {
 			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
 		);
 
-		$hash = String::uuid();
 		$apps = $this->findAppsByEmail($email);
+
 		if (count($apps) == 0) {
 			$response['msg'] = 'Could not find any applications with the specified email address.';
 		} else {
-			// update the hash
-			foreach ($apps as $key => $app) {
-				$app['CobrandedApplication']['uuid'] = $hash;
-				$this->save($app);
-			}
-
-			// and send the email
-			$link = Router::url('/applications/index/', true).urlencode($email)."/{$hash}";
+			// send the email
+			$timestamp = time();
+			$link = Router::url('/cobranded_applications/index/', true).urlencode($email)."/{$timestamp}";
 
 			$args = array(
 				'from' => array('newapps@axiapayments.com' => 'Axia Online Applications'),
@@ -750,12 +746,40 @@ class CobrandedApplication extends AppModel {
 				'subject' => 'Your Axia Applications',
 				'format' => 'text',
 				'template' => 'retrieve_applications',
-				'viewVars' => array('email'=>$email, 'hash'=>$hash, 'link'=>$link)
+				'viewVars' => array('email'=>$email, 'link'=>$link)
 			);
 
 			$response = $this->sendEmail($args);
 
-			// TODO: record that the email was sent
+			unset($args);
+
+			if ($response['success'] == true) {
+				$args['cobranded_application_id'] = $apps[0]['CobrandedApplication']['id'];
+				$args['email_timeline_subject_id'] = EmailTimeline::COMPLETE_FIELDS;
+				$args['recipient'] = $email;
+				$response = $this->createEmailTimelineEntry($args);
+				unset($args);
+			}
+
+			$dbaBusinessName = '';
+			$ownerName = '';
+			$ownerEmail = '';
+
+			$valuesMap = $this->buildCobrandedApplicationValuesMap($apps[0]['CobrandedApplicationValues']);
+
+			if (!empty($valuesMap['DBA'])) {
+				$dbaBusinessName = $valuesMap['DBA'];
+			}
+			if (!empty($valuesMap['CorpContact'])) {
+				$ownerName = $valuesMap['CorpContact'];
+			}
+			if (!empty($valuesMap['Owner1Email'])) {
+				$ownerEmail = $valuesMap['Owner1Email'];
+			}
+
+			$response['dba'] = $dbaBusinessName;
+			$response['email'] = $ownerEmail;
+			$response['fullname'] = $ownerName;
 		}
 		return $response;
 	}
@@ -888,9 +912,7 @@ class CobrandedApplication extends AppModel {
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
-		// update the hash
-		$hash = md5(String::uuid());
-		$this->saveField('uuid', $hash);
+		$hash = $cobrandedApplication['CobrandedApplication']['uuid'];
 
 		$dbaBusinessName = '';
 		$ownerName = '';

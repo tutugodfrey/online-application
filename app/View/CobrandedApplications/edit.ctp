@@ -124,7 +124,16 @@
 									$('#FaxNum').val($('#CorpFax').val());
 									$('#Contact').val($('#CorpContact').val());
 									$('#LocTitle').val($('#Title').val());
-									$('#LocEmail').val($('#Email').val());
+
+									$('#DBA').trigger('change');
+									$('#Address').trigger('change');
+									$('#City').trigger('change');
+									$('#State').trigger('change');
+									$('#Zip').trigger('change');
+									$('#PhoneNum').trigger('change');
+									$('#FaxNum').trigger('change');
+									$('#Contact').trigger('change');
+									$('#LocTitle').trigger('change');
 								}
 								else {
 									$('#DBA').val('');
@@ -136,7 +145,16 @@
 									$('#FaxNum').val('');
 									$('#Contact').val('');
 									$('#LocTitle').val('');
-									$('#LocEmail').val('');
+
+									$('#DBA').trigger('change');
+									$('#Address').trigger('change');
+									$('#City').trigger('change');
+									$('#State').trigger('change');
+									$('#Zip').trigger('change');
+									$('#PhoneNum').trigger('change');
+									$('#FaxNum').trigger('change');
+									$('#Contact').trigger('change');
+									$('#LocTitle').trigger('change');
 								}
 							}
 						");
