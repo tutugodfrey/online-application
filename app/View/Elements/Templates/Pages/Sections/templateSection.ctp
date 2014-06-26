@@ -10,9 +10,7 @@ foreach ($templatePage['TemplateSections'] as $section) {
 				$fieldOptions = Hash::insert($fieldOptions, 'name', 'loc_same_as_corp');
 				$fieldOptions = Hash::insert($fieldOptions, 'hiddenField', 'false');
 				$fieldOptions = Hash::insert($fieldOptions, 'onchange', 'copyCorpToLocFields()');
-			
-				echo $this->Form->checkbox('loc_same_as_corp', $fieldOptions);
-				echo $this->Form->label('ApplicationLocSameAsCorp', 'Same As Corporate Information');
+				echo "<tr><th>".$this->Form->checkbox('loc_same_as_corp', $fieldOptions)."Same As Corporate Information</th></tr>";
 			}
 		?>
 

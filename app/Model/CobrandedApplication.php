@@ -124,6 +124,19 @@ class CobrandedApplication extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'CobrandedApplicationAches' => array(
+			'className' => 'CobrandedApplicationAch',
+			'foreignKey' => 'cobranded_application_id',
+			'dependent' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
 	);
 
 /**
@@ -642,8 +655,20 @@ class CobrandedApplication extends AppModel {
 		// add "oaID", "api", "aggregated" to the end of the keys and values
 		$keys = $keys.',"oaID","api","aggregated"';
 		$values = $values.',"'.$app['CobrandedApplication']['id'].'","",""';
-	}
 
+		if (!empty($app['CobrandedApplicationAches'])) {
+			foreach ($app['CobrandedApplicationAches'] as $index => $array) {
+				foreach ($array as $key => $val) {
+					if ($key == 'auth_type' || $key == 'routing_number' || $key == 'account_number') {
+						$val = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+									base64_decode($val), 'cbc', Configure::read('Cryptable.iv')));
+					}
+					$keys = $this->__addKey($keys, 'AddlACH-'.$key.'-'.$index);
+					$values = $this->__addValue($values, $val);
+				}
+			}
+		}
+	}
 
 /**
  * copyApplication
@@ -735,6 +760,7 @@ class CobrandedApplication extends AppModel {
 
 		if (count($apps) == 0) {
 			$response['msg'] = 'Could not find any applications with the specified email address.';
+			return $response;
 		} else {
 			// send the email
 			$timestamp = time();
@@ -1106,7 +1132,13 @@ class CobrandedApplication extends AppModel {
 		}
 
 		if (key_exists('to', $args)) {
-			$this->CakeEmail->to($args['to']);
+			if (Validation::email($args['to'])) {
+				$this->CakeEmail->to($args['to']);
+			}
+			else {
+				$response['msg'] = 'invalid email address submitted.';
+				return $response;
+			}
 		} else {
 			$response['msg'] = 'to argument is missing.';
 			return $response;

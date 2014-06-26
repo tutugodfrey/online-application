@@ -262,10 +262,14 @@ class CobrandedApplicationsController extends AppController {
 
 			if (Validation::email($email)) {
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email);
-				$this->set('dba', $response['dba']);
-				$this->set('email', $response['email']);
-				$this->set('fullname', $response['fullname']);
-				$this->render('retrieve_thankyou');
+				if ($response['success'] == true) {
+					$this->set('dba', $response['dba']);
+					$this->set('email', $response['email']);
+					$this->set('fullname', $response['fullname']);
+					$this->render('retrieve_thankyou');
+				} else {
+					$error = $response['msg'];
+				}
 			} else {
 				$error = 'Invalid email address submitted.';
 			}
@@ -530,18 +534,15 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function complete_fields($id) {
-		if ($id) {
-			$response = $this->CobrandedApplication->sendForCompletion($id);
-			if ($response['success'] == true) {
-				$this->set('dba', $response['dba']);
-				$this->set('email', $response['email']);
-				$this->set('fullname', $response['fullname']);
-				$this->render('retrieve_thankyou');
-			} else {
-				$this->set('error', $response['msg']);
-			}
+		$response = $this->CobrandedApplication->sendForCompletion($id);
+
+		if ($response['success'] == true) {
+			$this->set('dba', $response['dba']);
+			$this->set('email', $response['email']);
+			$this->set('fullname', $response['fullname']);
+			$this->render('retrieve_thankyou');
 		} else {
-			$this->set('error', 'Could not find any applications with the specified email address.');
+			$this->set('error', $response['msg']);
 		}
 	}
 	

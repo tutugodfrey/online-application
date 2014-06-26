@@ -1060,7 +1060,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// set expected results
 		$expectedResponse = array(
 			'success' => false,
-			'msg' => 'Failed to send email.'
+			'msg' => 'invalid email address submitted.'
 		);
 
 		$args = array('to' => '');
