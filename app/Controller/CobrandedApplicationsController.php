@@ -206,6 +206,19 @@ class CobrandedApplicationsController extends AppController {
 					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
 
 					if ($response['success'] == true) {
+
+						$keys = '';
+						$values = '';
+						$this->CobrandedApplication->buildExportData($response['application_id'], $keys, $values);
+
+						$this->set('keys', $keys);
+						$this->set('values', $values);
+
+						$csv = $this->render('/Elements/cobranded_applications/export', false);
+
+						$filepath = '/tmp/new_api_application_'.$response['application_id'].'.csv';
+						file_put_contents("$filepath", $csv);
+
 						$this->Cobrand = ClassRegistry::init('Cobrand');
 						$cobrand = $this->Cobrand->find(
 							'first', 
@@ -216,18 +229,24 @@ class CobrandedApplicationsController extends AppController {
 
 						$args = array(
 							'cobrand' => $cobrand['Cobrand']['partner_name'],
-							'link' => $response['application_url']
+							'link' => $response['application_url'],
+							'attachments' => array($filepath)
 						);
 
 						// send email to data entry
 						$emailResponse = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
 
-						// add email timeline event
-						unset($args);
-						$args = array(
-							'cobranded_application_id' => $response['application_id']
-						);
-						$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
+						if ($emailResponse['success'] == true) {
+							// add email timeline event
+							unset($args);
+							$args = array(
+								'cobranded_application_id' => $response['application_id']
+							);
+							$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
+
+							$this->CobrandedApplication->id = $response['application_id'];
+							$this->CobrandedApplication->saveField('status', 'signed');
+						}
 					}
 				} else {
 					$response = Hash::insert(

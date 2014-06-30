@@ -839,7 +839,12 @@ class CobrandedApplication extends AppModel {
 
 		if (key_exists('link', $args)) {
 			$viewVars['link'] = $args['link'];
-		} 
+		}
+
+		$attachments = null;
+		if (key_exists('attachments', $args)) {
+			$attachments = $args['attachments'];
+		}
 
 		$args = array(
 			'from' => $from,
@@ -847,7 +852,8 @@ class CobrandedApplication extends AppModel {
 			'subject' => 'New API Axia Application',
 			'format' => 'text',
 			'template' => 'new_api_application',
-			'viewVars' => $viewVars
+			'viewVars' => $viewVars,
+			'attachments' => $attachments
 		);
 
 		$response = $this->sendEmail($args);
@@ -1163,7 +1169,7 @@ class CobrandedApplication extends AppModel {
 			$this->CakeEmail->viewVars($args['viewVars']);
 		}
 
-		if (key_exists('attachments', $args)) {
+		if (key_exists('attachments', $args) && !empty($args['attachments'])) {
 			$this->CakeEmail->attachments($args['attachments']);
 		}
 
