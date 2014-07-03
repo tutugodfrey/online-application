@@ -139,7 +139,6 @@ class TemplateFieldHelper extends Helper {
 				$fieldOptions = Hash::insert($fieldOptions, 'onblur', '$.event.trigger({type: "percentOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});');
 				$fieldOptions = Hash::insert($fieldOptions, 'min', 0);
 				$fieldOptions = Hash::insert($fieldOptions, 'max', 100);
-				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 
 				$retVal = $retVal . '<fieldset id="'.$cleanFieldId.'" class="percent">';
 				$retVal = $retVal . '<legend>'.$field['name'].' <span class="small">(total must equal 100%)</span></legend>';
@@ -150,7 +149,15 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
 					$fieldOptions = Hash::insert($fieldOptions, 'label', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'value', $percentOption['value']);
-					$retVal = $retVal . $this->Form->input($percentOption['name'], $fieldOptions);
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-10');
+
+					$retVal = $retVal . $this->Html->tag('label', $percentOption['name']);
+					$retVal = $retVal . $this->Html->tag(
+						'div',
+						$this->Html->tag('input', '', $fieldOptions).
+						$this->Html->tag('span', '%', array('class' => 'input-group-addon col-md-1')),
+						array('class' => 'input-group col-md-12')
+					);
 				}
 
 				// lastly add the total
