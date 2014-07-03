@@ -152,17 +152,19 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<fieldset id="name" class="percent">'.
 					'<legend>name <span class="small">(total must equal 100%)</span></legend>'.
-					'<div class="input number">'.
-						'<label for="name1">name1</label>'.
-						'<input name="name1" id="name1" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.which) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" class="col-md-12" data-value-id="id1" value="" type="number"/>'.
-					'</div>'.
-					'<div class="input number">'.
-						'<label for="name2">name2</label>'.
-						'<input name="name2" id="name2" required="required" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.which) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" class="col-md-12" data-value-id="id2" value="" type="number"/>'.
-					'</div>'.
+					'<label>name1</label>'.
+						'<div class="input-group col-md-12">'.
+							'<input label="name1" name="name1" id="name1" required="required" type="number" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.which) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" data-value-id="id1" value="" class="col-md-10"></input>'.
+							'<span class="input-group-addon col-md-1">%</span>'.
+						'</div>'.
+					'<label>name2</label>'.
+						'<div class="input-group col-md-12">'.
+							'<input label="name2" name="name2" id="name2" required="required" type="number" onkeypress="if ( isNaN(this.value + String.fromCharCode(event.which) )) return false;" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" data-value-id="id2" value="" class="col-md-10"></input>'.
+							'<span class="input-group-addon col-md-1">%</span>'.
+						'</div>'.
 					'<div class="input text">'.
 						'<label for="name_Total">Total</label>'.
-						'<input name="name_Total" id="name_Total" disabled="disabled" onclick="return false;" class="col-md-1" required="required" type="text"/>'.
+							'<input name="name_Total" id="name_Total" disabled="disabled" onclick="return false;" class="col-md-1" required="required" type="text"/>'.
 					'</div>'.
 				'</fieldset>'.
 			'</div>',
