@@ -833,10 +833,14 @@ class CobrandedApplication extends AppModel {
 		$viewVars = array();
 		$viewVars['recipient'] = 'Axia Data Entry';
 
+		$viewVars['cobrand'] = '';
+
 		if (key_exists('cobrand', $args)) {
 			$viewVars['cobrand'] = $args['cobrand'];
 		} 
 
+		$viewVars['link'] = '';
+		
 		if (key_exists('link', $args)) {
 			$viewVars['link'] = $args['link'];
 		}
@@ -870,6 +874,16 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function sendApplicationForSigningEmail($applicationId) {
+		$response = array(
+			'success' => false,
+			'msg' => 'Missing owner information.',
+		);
+
+		if (!$this->exists($applicationId)) {
+			$response['msg'] = 'Invalid application.';
+			return $response;
+		}
+
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -895,6 +909,8 @@ class CobrandedApplication extends AppModel {
 		}
 
 		foreach ($owners as $key => $val) {
+			$response['msg'] = '';
+			
 			$ownerEmail = $owners[$key]['email'];
 			$ownerFullname = $owners[$key]['fullname'];
 
@@ -941,6 +957,14 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function sendForCompletion($applicationId) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -1013,6 +1037,14 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function repNotifySignedEmail($applicationId) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+		
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 

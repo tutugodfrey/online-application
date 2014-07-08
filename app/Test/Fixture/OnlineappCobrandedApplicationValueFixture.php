@@ -78,6 +78,22 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
 		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 19,
+			'name' => 'Owner1Email',
+			'value' => 'testing@axiapayments.com',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 4,
+			'name' => 'Owner1Name',
+			'value' => 'Owner1NameTest',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
 	);
 
 }
