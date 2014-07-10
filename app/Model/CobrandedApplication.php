@@ -1095,6 +1095,14 @@ class CobrandedApplication extends AppModel {
  *     $email string
  */
 	public function sendRightsignatureInstallSheetEmail($applicationId, $email) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+		
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 

@@ -1223,6 +1223,54 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
+	public function testSendRightsignatureInstallSheetEmail() {
+		$CakeEmail = new CakeEmail('default');
+		$CakeEmail->transport('Debug');
+		$this->CobrandedApplication->CakeEmail = $CakeEmail;
+
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.user_id' => '1'
+				),
+			)
+		);
+
+		$response = $this->CobrandedApplication->sendRightsignatureInstallSheetEmail($app['CobrandedApplication']['id'], 'testing@axiapayments.com');
+
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => '',
+		);
+
+		// assertions
+		$this->assertTrue($response['success'], 'sendRightsignatureInstallSheetEmail with valid application should not fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$response = $this->CobrandedApplication->sendRightsignatureInstallSheetEmail($app['CobrandedApplication']['id'], 'testing@nogood');
+
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'invalid email address submitted.',
+		);
+
+		// assertions
+		$this->assertFalse($response['success'], 'sendRightsignatureInstallSheetEmail with invalid email address should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$response = $this->CobrandedApplication->sendRightsignatureInstallSheetEmail('0', 'testing@axiapayments.com');
+
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'Invalid application.'
+		);
+		
+		// assertions
+		$this->assertFalse($response['success'], 'sendRightsignatureInstallSheetEmail with invalid application should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
 	public function testCreateNewApiApplicationEmailTimelineEntry() {
 		// set expected results
 		$expectedResponse = array(
@@ -1249,6 +1297,57 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// assertions
 		$this->assertTrue($response['success'], 'createNewApiApplicationEmailTimelineEntry with good value for required field should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
+	public function testBuildCobrandedApplicationValuesMap() {
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.user_id' => '1'
+				),
+			)
+		);
+
+		$response = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($app['CobrandedApplicationValues']);
+
+		$expectedResponse = array(
+			'Field 1' => null,
+			'name1' => null,
+			'name2' => null,
+			'name3' => null,
+			'Encrypt1' => null,
+			'email' => 'testing@axiapayments.com',
+			'Owner1Email' => 'testing@axiapayments.com',
+			'Owner1Name' => 'Owner1NameTest'
+
+		);
+
+		// assertions
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
+	public function testValidateCobrandedApplication() {
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.user_id' => '1'
+				),
+			)
+		);
+
+		$response = $this->CobrandedApplication->validateCobrandedApplication($app);
+
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'Required field is empty: field 1',
+			'page' => 1
+		);
+
+		// assertions
+		$this->assertFalse($response['success'], 'validateCobrandedApplication with empty required field should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
