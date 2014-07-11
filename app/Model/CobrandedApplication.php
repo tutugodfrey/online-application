@@ -919,8 +919,9 @@ class CobrandedApplication extends AppModel {
 			$subject = $dbaBusinessName.' - Merchant Application';
 			$format = 'both';
 			$template = 'email_app';
+			$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 			$viewVars = array();
-			$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+			$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 			$viewVars['ownerName'] = $ownerFullname;
 			$viewVars['merchant'] = $dbaBusinessName;
 
@@ -991,12 +992,13 @@ class CobrandedApplication extends AppModel {
 		$subject = 'Your Axia Applications';
 		$format = 'text';
 		$template = 'retrieve_applications';
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 		$viewVars = array();
 		$viewVars['email'] = $ownerEmail;
 		$viewVars['dba'] = $dbaBusinessName;
 		$viewVars['fullname'] = $ownerName;
 		$viewVars['hash'] = $hash;
-		$viewVars['link'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/edit/".$hash;
+		$viewVars['link'] = "https://".$hostname."/cobranded_applications/edit/".$hash;
 		$viewVars['ownerName'] = $ownerName;
 
 
@@ -1123,10 +1125,11 @@ class CobrandedApplication extends AppModel {
 		$subject = $dbaBusinessName.' - Install Sheet';
 		$format = 'both';
 		$template = 'email_install_var';
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 		$viewVars = array();
 		$viewVars['ownerName'] = $ownerName;
 		$viewVars['merchant'] = $dbaBusinessName;
-		$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".
+		$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".
 			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
 
 		$args = array(
@@ -1352,7 +1355,8 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function getRightSignatureSignerLinks($client, $documentGuid) {
-		$response = $client->getSignerLinks($documentGuid, "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".$documentGuid);
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+		$response = $client->getSignerLinks($documentGuid, "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$documentGuid);
 		return $response;
 	}
 
@@ -1418,6 +1422,8 @@ class CobrandedApplication extends AppModel {
 		if (!empty($valuesMap['Owner2Name'])) {
 			$owner2Fullname = $valuesMap['Owner2Name'];
 		}
+
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 
 		$xml  = "<?xml version='1.0' encoding='UTF-8'?>\n";
 		$xml .= "	<template>\n";
@@ -1535,7 +1541,7 @@ class CobrandedApplication extends AppModel {
 		}
 
 		$xml .= "		</merge_fields>\n";
-		$xml .= "		<callback_location>http://".$_SERVER['SERVER_NAME']."/cobranded_applications/document_callback</callback_location>\n";
+		$xml .= "		<callback_location>http://".$hostname."/cobranded_applications/document_callback</callback_location>\n";
 		$xml .= "	</template>\n";
 
 		return $xml;
