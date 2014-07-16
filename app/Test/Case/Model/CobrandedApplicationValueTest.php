@@ -414,8 +414,11 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$response = $this->CobrandedApplicationValue->checkRoutingNumber('321174851');
 		$this->assertTrue($response, 'check routing number with good number should succeed.');
 
-		$response = $this->CobrandedApplicationValue->checkRoutingNumber('3212174851');
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('000000001');
 		$this->assertFalse($response, 'check routing number with bad number should fail.');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('001');
+		$this->assertFalse($response, 'check routing number with number that is not 9 digits long should fail.');
 	}
 
 	private function __testInvalidAndValidAppValues($typeString, $appValue, $invalid, $valid) {
