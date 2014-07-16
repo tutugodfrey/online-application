@@ -1359,6 +1359,94 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
+	public function testGetIndexInfo() {
+		$expectedResponse = array(
+			'fields' => array(
+				'DISTINCT CobrandedApplication.id',
+				'CobrandedApplication.user_id',
+				'CobrandedApplication.template_id',
+				'CobrandedApplication.uuid',
+				'CobrandedApplication.modified',
+				'CobrandedApplication.rightsignature_document_guid',
+				'CobrandedApplication.status',
+				'CobrandedApplication.rightsignature_install_document_guid',
+				'CobrandedApplication.rightsignature_install_status',
+				'Template.id',
+				'Template.name',
+				'User.id',
+				'User.firstname',
+				'User.lastname',
+				'User.email',
+				'Coversheet.id',
+				'Dba.value',
+				'CorpName.value',
+				'CorpContact.value'
+			),
+			'recursive' => -1,
+			'joins' => array(
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Dba',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Dba.cobranded_application_id and Dba.name =\'DBA\''
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpName',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpName.cobranded_application_id and CorpName.name =\'CorpName\''
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpContact',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =\'CorpContact\''
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CobrandedApplicationValue',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CobrandedApplicationValue.cobranded_application_id'
+					)
+				),
+				array(
+					'table' => 'onlineapp_templates',
+					'alias' => 'Template',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.template_id = Template.id'
+					)
+				),
+				array(
+					'table' => 'onlineapp_users',
+					'alias' => 'User',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.user_id = User.id'
+					)
+				),
+				array(
+					'table' => 'onlineapp_coversheets',
+					'alias' => 'Coversheet',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Coversheet.cobranded_application_id'
+					)
+				)
+			)
+		);
+
+		$response = $this->CobrandedApplication->getIndexInfo();
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
 	private function __setSomeValuesBasedOnType(&$app) {
 		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 			$templateField = $this->TemplateField->find(
