@@ -550,8 +550,16 @@ class CobrandedApplication extends AppModel {
 			// delete the app
 			$this->delete($createAppResponse['cobrandedApplication']['id']);
 		} else {
-			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
-			$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			$this->id = $createAppResponse['cobrandedApplication']['id'];
+			$cobrandedApplication = $this->read();
+			$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
+			if ($tmpResponse['success'] == false) {
+				// delete the app
+				$this->delete($createAppResponse['cobrandedApplication']['id']);
+			} else {
+				$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
+				$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			}
 		}
 		return $response;
 	}
@@ -1576,47 +1584,41 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function validateCobrandedApplication($cobrandedApplication) {
-		$TemplateField = ClassRegistry::init('TemplateField');
-
-		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
-			$templateField = $TemplateField->find(
-				'first',
-				array(
-					'conditions' => array('TemplateField.id' => $val['template_field_id']),
-					'contain' => array(
-						'TemplateSection' => array(
-							'TemplatePage'
+		$template = $this->Template->find('first', array(
+			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
+			'contain' => array(
+				'TemplatePages' => array(
+					'TemplateSections' => array(
+						'TemplateFields' => array(
+							'fields' => array('id', 'type', 'name', 'default_value', 'merge_field_name', 'order', 'width', 'required')
 						)
-					)
-				)
-			);
+					),
+				),
+			),
+		));
 
-			$templateFieldName = $templateField['TemplateField']['name'];
-			$page = $templateField['TemplateSection']['TemplatePage']['order'];
-			$page++;
+		foreach ($template['TemplatePages'] as $page) {
+			foreach ($page['TemplateSections'] as $section) {
+				foreach ($section['TemplateFields'] as $templateField) {
+					$templateFieldName = $templateField['name'];
+					$page = $page['order'];
+					$page++;
 
-			if ($templateField['TemplateField']['required'] == true && empty($val['value']) == true) {
-				// if field is a multi-option type, check the other options for a value
-				if ($templateField['TemplateField']['type'] == 4 || $templateField['TemplateField']['type'] == 5 || $templateField['TemplateField']['type'] == 7) {
-					$found = false;
-					foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
-						if ($tmpVal['template_field_id'] == $templateField['TemplateField']['id'] && empty($tmpVal['value']) == false) {
-							$found = true;
+					if ($templateField['required'] == true) {
+						$found = false;
+						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
+								$found = true;
+							}
 						}
-					}
 
-					if ($found == false) {
-						$response['success'] = false;
-						$response['msg'] = 'Required field is empty: '.$templateFieldName;
-						$response['page'] = $page;
-						return $response;
-					}
-
-				} else {
-					$response['success'] = false;
-					$response['msg'] = 'Required field is empty: '.$templateFieldName;
-					$response['page'] = $page;
-					return $response;
+						if ($found == false) {
+							$response['success'] = false;
+							$response['msg'] = 'Required field is empty: '.$templateFieldName;
+							$response['page'] = $page;
+							return $response;
+						}
+					} 
 				}
 			}
 		}

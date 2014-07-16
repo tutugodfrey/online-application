@@ -648,6 +648,13 @@ class CobrandedApplicationsController extends AppController {
 				$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
 					$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
 				$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+				$tmpResponse = json_decode($response, true);
+
+				if ($tmpResponse && key_exists('error', $tmpResponse)) {
+					$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+					$this->Session->setFlash(__('error! '.$tmpResponse['error']['message']));
+					$this->redirect(array('action' => $url));
+				}
 			} else {
 				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
 				$this->Session->setFlash(__('error! could not find template guid'));

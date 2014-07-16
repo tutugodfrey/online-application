@@ -788,6 +788,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
+		$fieldsData['required_text_from_api_without_default_source_2'] = 'any text will do';
+		$fieldsData['required_text_from_user_without_default_repOnly'] = 'any text will do';
+		$fieldsData['required_text_from_user_without_default_textfield'] = 'any text will do';
+		$fieldsData['required_text_from_user_without_default_textfield1'] = 'any text will do';
+
 		$fieldsData['multirecord_from_api_with_default'] = array(
 			array(
 				'description' => 'Lorem ipsum dolor sit amet',
@@ -1320,8 +1325,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'Encrypt1' => null,
 			'email' => 'testing@axiapayments.com',
 			'Owner1Email' => 'testing@axiapayments.com',
-			'Owner1Name' => 'Owner1NameTest'
-
+			'Owner1Name' => 'Owner1NameTest',
+			'TextField1' => 'text field 1',
+			'TextField2' => 'text field 2',
+			'TextField3' => 'text field 3',
+			'TextField4' => 'text field 4'
 		);
 
 		// assertions

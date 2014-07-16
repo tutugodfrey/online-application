@@ -94,6 +94,38 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
 		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 36,
+			'name' => 'TextField1',
+			'value' => 'text field 1',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 37,
+			'name' => 'TextField2',
+			'value' => 'text field 2',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 38,
+			'name' => 'TextField3',
+			'value' => 'text field 3',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 39,
+			'name' => 'TextField4',
+			'value' => 'text field 4',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
 	);
 
 }
