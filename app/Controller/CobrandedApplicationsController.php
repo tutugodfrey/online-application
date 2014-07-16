@@ -24,6 +24,7 @@ class CobrandedApplicationsController extends AppController {
 	public $components = array('Email', 'RequestHandler', 'Security', 'Search.Prg');
 
 	public $permissions = array(
+		'index' => array('*'),
 		'add' => array('admin', 'rep', 'manager'),
 		'api_add' => array('api'),
 		'retrieve' => array('*'),
@@ -80,6 +81,41 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->request->accepts('application/json')) {
 			Configure::write('debug', 0);
 			$this->disableCache();
+		}
+	}
+
+/**
+ * index method
+ *
+ * @param $email string
+ * @param $timestamp int
+ * @return void
+ */
+	public function index($email, $timestamp) {
+		if (!$email || !$timestamp) {
+			header("HTTP/1.0 403 Forbidden");
+			exit;
+		}
+
+		// index URL is only good for 2 days (172800 seconds)
+		$currentTimestamp = time();
+		if ($timestamp < ($currentTimestamp - 172800)) {
+			header("HTTP/1.0 403 Forbidden");
+			exit;
+		}
+
+		$applications = $this->CobrandedApplication->findAppsByEmail($email);
+
+		if ($applications) {
+			foreach ($applications as $key => $val) {
+				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($val['CobrandedApplicationValues']);
+				$applications[$key]['ValuesMap'] = $valuesMap; 
+			}
+			$this->set('email', $email);
+			$this->set('applications', $applications);
+		} else {
+			header("HTTP/1.0 404 Not Found");
+			exit;
 		}
 	}
 
@@ -170,6 +206,19 @@ class CobrandedApplicationsController extends AppController {
 					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
 
 					if ($response['success'] == true) {
+
+						$keys = '';
+						$values = '';
+						$this->CobrandedApplication->buildExportData($response['application_id'], $keys, $values);
+
+						$this->set('keys', $keys);
+						$this->set('values', $values);
+
+						$csv = $this->render('/Elements/cobranded_applications/export', false);
+
+						$filepath = '/tmp/new_api_application_'.$response['application_id'].'.csv';
+						file_put_contents("$filepath", $csv);
+
 						$this->Cobrand = ClassRegistry::init('Cobrand');
 						$cobrand = $this->Cobrand->find(
 							'first', 
@@ -180,18 +229,24 @@ class CobrandedApplicationsController extends AppController {
 
 						$args = array(
 							'cobrand' => $cobrand['Cobrand']['partner_name'],
-							'link' => $response['application_url']
+							'link' => $response['application_url'],
+							'attachments' => array($filepath)
 						);
 
 						// send email to data entry
 						$emailResponse = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
 
-						// add email timeline event
-						unset($args);
-						$args = array(
-							'cobranded_application_id' => $response['application_id']
-						);
-						$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
+						if ($emailResponse['success'] == true) {
+							// add email timeline event
+							unset($args);
+							$args = array(
+								'cobranded_application_id' => $response['application_id']
+							);
+							$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
+
+							$this->CobrandedApplication->id = $response['application_id'];
+							$this->CobrandedApplication->saveField('status', 'signed');
+						}
 					}
 				} else {
 					$response = Hash::insert(
@@ -223,13 +278,17 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->request->is('post')) {
 			// did we get a valid email?
 			$email = $this->request->data['CobrandedApplication']['email'];
+
 			if (Validation::email($email)) {
-				// yes, does this email have any applications associated with it?
-
-				// yes, update the application uuid and send the email via the model
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email);
-
-				$this->render('retrieve_thankyou');
+				if ($response['success'] == true) {
+					$this->set('dba', $response['dba']);
+					$this->set('email', $response['email']);
+					$this->set('fullname', $response['fullname']);
+					$this->render('retrieve_thankyou');
+				} else {
+					$error = $response['msg'];
+				}
 			} else {
 				$error = 'Invalid email address submitted.';
 			}
@@ -495,18 +554,15 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function complete_fields($id) {
-		if ($id) {
-			$response = $this->CobrandedApplication->sendForCompletion($id);
-			if ($response['success'] == true) {
-				$this->set('dba', $response['dba']);
-				$this->set('email', $response['email']);
-				$this->set('fullname', $response['fullname']);
-				$this->render('retrieve_thankyou');
-			} else {
-				$this->set('error', $response['msg']);
-			}
+		$response = $this->CobrandedApplication->sendForCompletion($id);
+
+		if ($response['success'] == true) {
+			$this->set('dba', $response['dba']);
+			$this->set('email', $response['email']);
+			$this->set('fullname', $response['fullname']);
+			$this->render('retrieve_thankyou');
 		} else {
-			$this->set('error', 'Could not find any applications with the specified email address.');
+			$this->set('error', $response['msg']);
 		}
 	}
 	
@@ -593,6 +649,13 @@ class CobrandedApplicationsController extends AppController {
 				$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
 					$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
 				$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+				$tmpResponse = json_decode($response, true);
+
+				if ($tmpResponse && key_exists('error', $tmpResponse)) {
+					$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+					$this->Session->setFlash(__('error! '.$tmpResponse['error']['message']));
+					$this->redirect(array('action' => $url));
+				}
 			} else {
 				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
 				$this->Session->setFlash(__('error! could not find template guid'));

@@ -23,7 +23,6 @@ var quickAdd = function(e) {
 	} else if(target.is(":checkbox")) {
 		data['id'] = target.attr('data-value-id');
 		data['value'] = target.is(":checked"); // not really needed...
-		persist(data);
 	} else {
 		// need to validate the
 		if ($validator.element(target) === true) {
@@ -112,6 +111,27 @@ $(document).ready(function() {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
 	} else {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
+	}
+
+	if ($('#CorpName').val() != '' &&
+		$('#CorpAddress').val() != '' &&
+		$('#CorpCity').val() != '' &&
+		$('#CorpState').val() != '' &&
+		$('#CorpZip').val() != '' &&
+		$('#CorpPhone').val() != '' &&
+		$('#CorpFax').val() != '' &&
+		$('#CorpContact').val() != '' &&
+		$('#Title').val() != '' &&
+		$('#DBA').val() != '' &&
+		$('#Address').val() != '' &&
+		$('#City').val() != '' &&
+		$('#State').val() != '' &&
+		$('#Zip').val() != '' &&
+		$('#PhoneNum').val() != '' &&
+		$('#FaxNum').val() != '' &&
+		$('#Contact').val() != '' &&
+		$('#LocTitle').val() != '') {
+			$('#loc_same_as_corp').attr('checked','checked');
 	}
 
 	$(document).on("percentOptionBlur", handlePercentOptionBlur);

@@ -40,6 +40,7 @@
 	</filter>
 
 	<php>
-                <server name='HTTP_HOST' value='http://localhost' />
-        </php>
+		<server name='HTTP_HOST' value='http://localhost' />
+	</php>
+
 </phpunit>

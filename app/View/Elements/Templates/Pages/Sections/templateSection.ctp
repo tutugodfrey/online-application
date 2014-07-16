@@ -1,7 +1,19 @@
 <?php
 foreach ($templatePage['TemplateSections'] as $section) {
 	?>
+	
 	<div class="col-md-<?php echo $section['width']; ?>" id="<?php echo $section['name']; ?>">
+
+		<?php
+			if ($section['name'] == 'LOCATION INFORMATION') {
+				$fieldOptions = array();
+				$fieldOptions = Hash::insert($fieldOptions, 'name', 'loc_same_as_corp');
+				$fieldOptions = Hash::insert($fieldOptions, 'hiddenField', 'false');
+				$fieldOptions = Hash::insert($fieldOptions, 'onchange', 'copyCorpToLocFields()');
+				echo "<tr><th>".$this->Form->checkbox('loc_same_as_corp', $fieldOptions)."Same As Corporate Information</th></tr>";
+			}
+		?>
+
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h4 class="panel-title"><?php echo $section['name']; ?></h4>

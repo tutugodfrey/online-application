@@ -124,6 +124,19 @@ class CobrandedApplication extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'CobrandedApplicationAches' => array(
+			'className' => 'CobrandedApplicationAch',
+			'foreignKey' => 'cobranded_application_id',
+			'dependent' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
 	);
 
 /**
@@ -537,8 +550,16 @@ class CobrandedApplication extends AppModel {
 			// delete the app
 			$this->delete($createAppResponse['cobrandedApplication']['id']);
 		} else {
-			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
-			$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			$this->id = $createAppResponse['cobrandedApplication']['id'];
+			$cobrandedApplication = $this->read();
+			$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
+			if ($tmpResponse['success'] == false) {
+				// delete the app
+				$this->delete($createAppResponse['cobrandedApplication']['id']);
+			} else {
+				$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
+				$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			}
 		}
 		return $response;
 	}
@@ -642,8 +663,20 @@ class CobrandedApplication extends AppModel {
 		// add "oaID", "api", "aggregated" to the end of the keys and values
 		$keys = $keys.',"oaID","api","aggregated"';
 		$values = $values.',"'.$app['CobrandedApplication']['id'].'","",""';
-	}
 
+		if (!empty($app['CobrandedApplicationAches'])) {
+			foreach ($app['CobrandedApplicationAches'] as $index => $array) {
+				foreach ($array as $key => $val) {
+					if ($key == 'auth_type' || $key == 'routing_number' || $key == 'account_number') {
+						$val = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
+									base64_decode($val), 'cbc', Configure::read('Cryptable.iv')));
+					}
+					$keys = $this->__addKey($keys, 'AddlACH-'.$key.'-'.$index);
+					$values = $this->__addValue($values, $val);
+				}
+			}
+		}
+	}
 
 /**
  * copyApplication
@@ -702,13 +735,14 @@ class CobrandedApplication extends AppModel {
 						'alias' => 'CobrandedApplicationValue',
 						'table' => 'onlineapp_cobranded_application_values',
 						'type' => 'LEFT',
-						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"'
+						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
 					)
 				),
 				'conditions' => array(
 					'CobrandedApplicationValue.value' => $email,
 					// should probably check the state too
 				),
+				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'),
 				'order' => 'CobrandedApplication.created desc'
 			)
 		);
@@ -730,19 +764,15 @@ class CobrandedApplication extends AppModel {
 			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
 		);
 
-		$hash = String::uuid();
 		$apps = $this->findAppsByEmail($email);
+
 		if (count($apps) == 0) {
 			$response['msg'] = 'Could not find any applications with the specified email address.';
+			return $response;
 		} else {
-			// update the hash
-			foreach ($apps as $key => $app) {
-				$app['CobrandedApplication']['uuid'] = $hash;
-				$this->save($app);
-			}
-
-			// and send the email
-			$link = Router::url('/applications/index/', true).urlencode($email)."/{$hash}";
+			// send the email
+			$timestamp = time();
+			$link = Router::url('/cobranded_applications/index/', true).urlencode($email)."/{$timestamp}";
 
 			$args = array(
 				'from' => array('newapps@axiapayments.com' => 'Axia Online Applications'),
@@ -750,12 +780,40 @@ class CobrandedApplication extends AppModel {
 				'subject' => 'Your Axia Applications',
 				'format' => 'text',
 				'template' => 'retrieve_applications',
-				'viewVars' => array('email'=>$email, 'hash'=>$hash, 'link'=>$link)
+				'viewVars' => array('email'=>$email, 'link'=>$link)
 			);
 
 			$response = $this->sendEmail($args);
 
-			// TODO: record that the email was sent
+			unset($args);
+
+			if ($response['success'] == true) {
+				$args['cobranded_application_id'] = $apps[0]['CobrandedApplication']['id'];
+				$args['email_timeline_subject_id'] = EmailTimeline::COMPLETE_FIELDS;
+				$args['recipient'] = $email;
+				$response = $this->createEmailTimelineEntry($args);
+				unset($args);
+			}
+
+			$dbaBusinessName = '';
+			$ownerName = '';
+			$ownerEmail = '';
+
+			$valuesMap = $this->buildCobrandedApplicationValuesMap($apps[0]['CobrandedApplicationValues']);
+
+			if (!empty($valuesMap['DBA'])) {
+				$dbaBusinessName = $valuesMap['DBA'];
+			}
+			if (!empty($valuesMap['CorpContact'])) {
+				$ownerName = $valuesMap['CorpContact'];
+			}
+			if (!empty($valuesMap['Owner1Email'])) {
+				$ownerEmail = $valuesMap['Owner1Email'];
+			}
+
+			$response['dba'] = $dbaBusinessName;
+			$response['email'] = $ownerEmail;
+			$response['fullname'] = $ownerName;
 		}
 		return $response;
 	}
@@ -783,13 +841,22 @@ class CobrandedApplication extends AppModel {
 		$viewVars = array();
 		$viewVars['recipient'] = 'Axia Data Entry';
 
+		$viewVars['cobrand'] = '';
+
 		if (key_exists('cobrand', $args)) {
 			$viewVars['cobrand'] = $args['cobrand'];
 		} 
 
+		$viewVars['link'] = '';
+		
 		if (key_exists('link', $args)) {
 			$viewVars['link'] = $args['link'];
-		} 
+		}
+
+		$attachments = null;
+		if (key_exists('attachments', $args)) {
+			$attachments = $args['attachments'];
+		}
 
 		$args = array(
 			'from' => $from,
@@ -797,7 +864,8 @@ class CobrandedApplication extends AppModel {
 			'subject' => 'New API Axia Application',
 			'format' => 'text',
 			'template' => 'new_api_application',
-			'viewVars' => $viewVars
+			'viewVars' => $viewVars,
+			'attachments' => $attachments
 		);
 
 		$response = $this->sendEmail($args);
@@ -814,6 +882,16 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function sendApplicationForSigningEmail($applicationId) {
+		$response = array(
+			'success' => false,
+			'msg' => 'Missing owner information.',
+		);
+
+		if (!$this->exists($applicationId)) {
+			$response['msg'] = 'Invalid application.';
+			return $response;
+		}
+
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -839,6 +917,8 @@ class CobrandedApplication extends AppModel {
 		}
 
 		foreach ($owners as $key => $val) {
+			$response['msg'] = '';
+			
 			$ownerEmail = $owners[$key]['email'];
 			$ownerFullname = $owners[$key]['fullname'];
 
@@ -847,8 +927,9 @@ class CobrandedApplication extends AppModel {
 			$subject = $dbaBusinessName.' - Merchant Application';
 			$format = 'both';
 			$template = 'email_app';
+			$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 			$viewVars = array();
-			$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+			$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 			$viewVars['ownerName'] = $ownerFullname;
 			$viewVars['merchant'] = $dbaBusinessName;
 
@@ -885,12 +966,18 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function sendForCompletion($applicationId) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
-		// update the hash
-		$hash = md5(String::uuid());
-		$this->saveField('uuid', $hash);
+		$hash = $cobrandedApplication['CobrandedApplication']['uuid'];
 
 		$dbaBusinessName = '';
 		$ownerName = '';
@@ -913,12 +1000,13 @@ class CobrandedApplication extends AppModel {
 		$subject = 'Your Axia Applications';
 		$format = 'text';
 		$template = 'retrieve_applications';
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 		$viewVars = array();
 		$viewVars['email'] = $ownerEmail;
 		$viewVars['dba'] = $dbaBusinessName;
 		$viewVars['fullname'] = $ownerName;
 		$viewVars['hash'] = $hash;
-		$viewVars['link'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/edit/".$hash;
+		$viewVars['link'] = "https://".$hostname."/cobranded_applications/edit/".$hash;
 		$viewVars['ownerName'] = $ownerName;
 
 
@@ -959,6 +1047,14 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function repNotifySignedEmail($applicationId) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+		
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -1009,6 +1105,14 @@ class CobrandedApplication extends AppModel {
  *     $email string
  */
 	public function sendRightsignatureInstallSheetEmail($applicationId, $email) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+		
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -1029,10 +1133,11 @@ class CobrandedApplication extends AppModel {
 		$subject = $dbaBusinessName.' - Install Sheet';
 		$format = 'both';
 		$template = 'email_install_var';
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 		$viewVars = array();
 		$viewVars['ownerName'] = $ownerName;
 		$viewVars['merchant'] = $dbaBusinessName;
-		$viewVars['url'] = "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".
+		$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".
 			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
 
 		$args = array(
@@ -1084,7 +1189,13 @@ class CobrandedApplication extends AppModel {
 		}
 
 		if (key_exists('to', $args)) {
-			$this->CakeEmail->to($args['to']);
+			if (Validation::email($args['to'])) {
+				$this->CakeEmail->to($args['to']);
+			}
+			else {
+				$response['msg'] = 'invalid email address submitted.';
+				return $response;
+			}
 		} else {
 			$response['msg'] = 'to argument is missing.';
 			return $response;
@@ -1109,7 +1220,7 @@ class CobrandedApplication extends AppModel {
 			$this->CakeEmail->viewVars($args['viewVars']);
 		}
 
-		if (key_exists('attachments', $args)) {
+		if (key_exists('attachments', $args) && !empty($args['attachments'])) {
 			$this->CakeEmail->attachments($args['attachments']);
 		}
 
@@ -1252,7 +1363,8 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function getRightSignatureSignerLinks($client, $documentGuid) {
-		$response = $client->getSignerLinks($documentGuid, "https://".$_SERVER['SERVER_NAME']."/cobranded_applications/sign_rightsignature_document?guid=".$documentGuid);
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+		$response = $client->getSignerLinks($documentGuid, "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$documentGuid);
 		return $response;
 	}
 
@@ -1318,6 +1430,8 @@ class CobrandedApplication extends AppModel {
 		if (!empty($valuesMap['Owner2Name'])) {
 			$owner2Fullname = $valuesMap['Owner2Name'];
 		}
+
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 
 		$xml  = "<?xml version='1.0' encoding='UTF-8'?>\n";
 		$xml .= "	<template>\n";
@@ -1435,7 +1549,7 @@ class CobrandedApplication extends AppModel {
 		}
 
 		$xml .= "		</merge_fields>\n";
-		$xml .= "		<callback_location>http://".$_SERVER['SERVER_NAME']."/cobranded_applications/document_callback</callback_location>\n";
+		$xml .= "		<callback_location>http://".$hostname."/cobranded_applications/document_callback</callback_location>\n";
 		$xml .= "	</template>\n";
 
 		return $xml;
@@ -1470,47 +1584,41 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function validateCobrandedApplication($cobrandedApplication) {
-		$TemplateField = ClassRegistry::init('TemplateField');
-
-		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $val) {
-			$templateField = $TemplateField->find(
-				'first',
-				array(
-					'conditions' => array('TemplateField.id' => $val['template_field_id']),
-					'contain' => array(
-						'TemplateSection' => array(
-							'TemplatePage'
+		$template = $this->Template->find('first', array(
+			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
+			'contain' => array(
+				'TemplatePages' => array(
+					'TemplateSections' => array(
+						'TemplateFields' => array(
+							'fields' => array('id', 'type', 'name', 'default_value', 'merge_field_name', 'order', 'width', 'required')
 						)
-					)
-				)
-			);
+					),
+				),
+			),
+		));
 
-			$templateFieldName = $templateField['TemplateField']['name'];
-			$page = $templateField['TemplateSection']['TemplatePage']['order'];
-			$page++;
+		foreach ($template['TemplatePages'] as $page) {
+			foreach ($page['TemplateSections'] as $section) {
+				foreach ($section['TemplateFields'] as $templateField) {
+					$templateFieldName = $templateField['name'];
+					$page = $page['order'];
+					$page++;
 
-			if ($templateField['TemplateField']['required'] == true && empty($val['value']) == true) {
-				// if field is a multi-option type, check the other options for a value
-				if ($templateField['TemplateField']['type'] == 4 || $templateField['TemplateField']['type'] == 5 || $templateField['TemplateField']['type'] == 7) {
-					$found = false;
-					foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
-						if ($tmpVal['template_field_id'] == $templateField['TemplateField']['id'] && empty($tmpVal['value']) == false) {
-							$found = true;
+					if ($templateField['required'] == true) {
+						$found = false;
+						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
+								$found = true;
+							}
 						}
-					}
 
-					if ($found == false) {
-						$response['success'] = false;
-						$response['msg'] = 'Required field is empty: '.$templateFieldName;
-						$response['page'] = $page;
-						return $response;
-					}
-
-				} else {
-					$response['success'] = false;
-					$response['msg'] = 'Required field is empty: '.$templateFieldName;
-					$response['page'] = $page;
-					return $response;
+						if ($found == false) {
+							$response['success'] = false;
+							$response['msg'] = 'Required field is empty: '.$templateFieldName;
+							$response['page'] = $page;
+							return $response;
+						}
+					} 
 				}
 			}
 		}

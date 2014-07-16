@@ -13,7 +13,10 @@ Axia Merchant Services<br />
 
 877.875.6114<br />
 
-<?php echo $this->Html->image("https://" . $_SERVER['SERVER_NAME'] . '/img/axia_logo.png', array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com')); ?>
+<?php
+	$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+	echo $this->Html->image("https://".$hostname.'/img/axia_logo.png', array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com'));
+?>
 
 
 

@@ -543,8 +543,13 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'' => array(
-					'type' => 'date',
+				'required_text_from_user_without_default_textfield' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'required_text_from_user_without_default_textfield1' => array(
+					'type' => 'text',
 					'required' => true,
 					'description' => '',
 				),
@@ -809,8 +814,13 @@ class TemplateTest extends CakeTestCase {
 					'required' => true,
 					'description' => '',
 				),
-				'' => array(
-					'type' => 'date',
+				'required_text_from_user_without_default_textfield' => array(
+					'type' => 'text',
+					'required' => true,
+					'description' => '',
+				),
+				'required_text_from_user_without_default_textfield1' => array(
+					'type' => 'text',
 					'required' => true,
 					'description' => '',
 				),
