@@ -404,6 +404,20 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			'verify value is decrypted and masked as expected');
 	}
 
+	public function testCheckRoutingNumber() {
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber();
+		$this->assertFalse($response, 'check routing number without passing a number should fail.');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('321-174-851');
+		$this->assertTrue($response, 'check routing number containing non-numerical characters should still succeed');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('321174851');
+		$this->assertTrue($response, 'check routing number with good number should succeed.');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('3212174851');
+		$this->assertFalse($response, 'check routing number with bad number should fail.');
+	}
+
 	private function __testInvalidAndValidAppValues($typeString, $appValue, $invalid, $valid) {
 		// try to update to an invalid value
 		$appValue['CobrandedApplicationValue']['value'] = $invalid;
