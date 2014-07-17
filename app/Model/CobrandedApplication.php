@@ -1585,6 +1585,9 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function validateCobrandedApplication($cobrandedApplication) {
+		$response['success'] = false;
+		$response['validationErrors'] = array();
+
 		$template = $this->Template->find('first', array(
 			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
 			'contain' => array(
