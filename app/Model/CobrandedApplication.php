@@ -556,6 +556,7 @@ class CobrandedApplication extends AppModel {
 			if ($tmpResponse['success'] == false) {
 				// delete the app
 				$this->delete($createAppResponse['cobrandedApplication']['id']);
+				return $tmpResponse;
 			} else {
 				$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
 				$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
