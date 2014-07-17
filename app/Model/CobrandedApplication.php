@@ -546,22 +546,22 @@ class CobrandedApplication extends AppModel {
 			$response['success'] = (count($response['validationErrors']) == 0);
 		}
 
-		if ($response['success'] == false) {
+		$this->id = $createAppResponse['cobrandedApplication']['id'];
+		$cobrandedApplication = $this->read();
+		$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
+
+		if ($response['success'] == false || $tmpResponse['success'] == false) {
 			// delete the app
 			$this->delete($createAppResponse['cobrandedApplication']['id']);
-		} else {
-			$this->id = $createAppResponse['cobrandedApplication']['id'];
-			$cobrandedApplication = $this->read();
-			$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
-			if ($tmpResponse['success'] == false) {
-				// delete the app
-				$this->delete($createAppResponse['cobrandedApplication']['id']);
-				return $tmpResponse;
-			} else {
-				$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
-				$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			$response['success'] = false;
+			foreach ($tmpResponse['validationErrors'] as $key => $val) {
+				$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $val);
 			}
+		} else {
+			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
+			$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
 		}
+		
 		return $response;
 	}
 
@@ -1602,6 +1602,7 @@ class CobrandedApplication extends AppModel {
 			foreach ($page['TemplateSections'] as $section) {
 				foreach ($section['TemplateFields'] as $templateField) {
 					$templateFieldName = $templateField['name'];
+					$templateMergeFieldName = $templateField['merge_field_name'];
 					$page = $page['order'];
 					$page++;
 
@@ -1614,18 +1615,21 @@ class CobrandedApplication extends AppModel {
 						}
 
 						if ($found == false) {
-							$response['success'] = false;
-							$response['msg'] = 'Required field is empty: '.$templateFieldName;
+							// update our validationErrors array
+							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateMergeFieldName, 'required');
+							$response['msg'] = 'Required field is empty: '.$templateMergeFieldName;
 							$response['page'] = $page;
-							return $response;
 						}
 					} 
 				}
 			}
 		}
 
-		$response['success'] = true;
-		$response['msg'] = '';
+		if (count($response['validationErrors']) == 0) {
+			$response['success'] = true;
+			$response['msg'] = '';
+		}
+		
 		return $response;
 	}
 	
