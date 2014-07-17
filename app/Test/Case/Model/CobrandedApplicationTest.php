@@ -760,6 +760,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// set expected results
 		$expectedValidationErrors = array(
 			'required_text_from_api_without_default' => 'required',
+			'required_text_from_api_without_default_source_2' => 'required',
+			'required_text_from_user_without_default_repOnly' => 'required',
+			'required_text_from_user_without_default_textfield' => 'required',
+			'required_text_from_user_without_default_textfield1' => 'required'
 		);
 
 		// set knowns
@@ -864,7 +868,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// set expected results
 		$expectedValidationErrors = array(
-			'OwnerType-NonProfit' => 'only one choice allowed for: OwnerType-'
+			'OwnerType-NonProfit' => 'only one choice allowed for: OwnerType-',
+			'required_text_from_api_without_default' => 'required',
+			'required_text_from_api_without_default_source_2' => 'required',
+			'required_text_from_user_without_default_repOnly' => 'required',
+			'required_text_from_user_without_default_textfield' => 'required',
+			'required_text_from_user_without_default_textfield1' => 'required'
 		);
 
 		// execute the method under test
@@ -906,7 +915,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 					// no validation
 				} else {
 					// set the $expectedValidationErrors
-					$expectedValidationErrors['required_text_from_api_without_default'] = $this->TemplateField->fieldTypes[$index];
+					$expectedValidationErrors['required_text_from_api_without_default'] = 'required';
+					$expectedValidationErrors['required_text_from_api_without_default_source_2'] = 'required';
+					$expectedValidationErrors['required_text_from_user_without_default_repOnly'] = 'required';
+					$expectedValidationErrors['required_text_from_user_without_default_textfield'] = 'required';
+					$expectedValidationErrors['required_text_from_user_without_default_textfield1'] = 'required';
 
 					// update templateField's type
 					$templateField['type'] = $index;
@@ -1350,8 +1363,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		$expectedResponse = array(
 			'success' => false,
-			'msg' => 'Required field is empty: field 1',
-			'page' => 1
+			'msg' => 'Required field is empty: rep_only_true_field_for_testing_rep_only_view_logic',
+			'page' => 4,
+			'validationErrors' => array(
+				'required_text_from_user_without_default' => 'required',
+				'rep_only_true_field_for_testing_rep_only_view_logic' => 'required'
+     		)
 		);
 
 		// assertions
