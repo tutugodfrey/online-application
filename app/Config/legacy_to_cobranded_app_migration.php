@@ -59,11 +59,11 @@ $applicationMap = array(
 	'card_present_imprint'                          =>		'MethodofSales-CardPresentImprint',
 	'card_not_present_keyed'                        =>		'MethodofSales-CardNotPresent-Keyed',
 	'card_not_present_internet'                     =>		'MethodofSales-CardNotPresent-Internet',
-	'method_total'                                  =>		'',
+	'method_total'                                  =>		'MethodTotal',
 	'direct_to_customer'                            =>		'%OfProductSold-DirectToCustomer',
 	'direct_to_business'                            =>		'%OfProductSold-DirectToBusiness',
 	'direct_to_govt'                                =>		'%OfProductSold-DirectToGovernment',
-	'products_total'                                =>		'',
+	'products_total'                                =>		'ProductsTotal',
 	'high_volume_january'                    	=>		'Jan',
 	'high_volume_february'                   	=>		'Feb',
 	'high_volume_march'                      	=>		'Mar',
@@ -103,7 +103,6 @@ $applicationMap = array(
 	'bank_zip'                                      =>		'BankZip',
 	'depository_routing_number'                     =>		'RoutingNum',
 	'depository_account_number'                     =>		'AccountNum',
-	'same_as_depository'                            =>		'',
 	'fees_routing_number'                           =>		'FeesRoutingNum',
 	'fees_account_number'                           =>		'FeesAccountNum',
 	'trade1_business_name'                          =>		'TradeRefName',
@@ -374,6 +373,10 @@ $applicationMap = array(
 	        if ($row = pg_fetch_row($getFieldIdResult)) {
                     $templateFieldId = $row[0];
 		    $value = $data[$key];
+
+                    if ($key == 'method_total' || $key == 'products_total') {
+			$value = '100';
+		    }
 
 		    if (!empty($optionList)) {
 		        $array = preg_split('/,/', $optionList);
