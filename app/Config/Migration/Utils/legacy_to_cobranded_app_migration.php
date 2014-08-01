@@ -2,12 +2,12 @@
 
 <?php
 
-// get legacy application record
-// determine appropriate template
-// create cobranded application - use same id from legacy app so that foreign keys in other tables work
-// create cobranded application values associated to previously created application
+    // get legacy application records
+    // determine appropriate template
+    // create cobranded application - use same id from legacy app so that foreign keys in other tables work
+    // create cobranded application values associated to previously created application
 
-$applicationMap = array(
+    $applicationMap = array(
 	'id'                             		=>		'id',
 	'user_id'                        		=>		'user_id', 
 	'status'                         		=>		'status', 
@@ -229,24 +229,30 @@ $applicationMap = array(
 	'var_status'                     		=>    		'rightsignature_install_status',
 	'install_var_rs_document_guid'  		=>      	'rightsignature_install_document_guid',
 	'tickler_id'                    		=>      	'tickler_id',
-);
+    );
 
-
+    $file = "/tmp/legacy_to_cobranded_app_migration.txt"; 
+    $filehandle = fopen($file, 'w');
 
     $conn_string = "host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a";
     $conn = pg_connect($conn_string);
 
-//DEBUG//////
-    $appResult = pg_query($conn, "SELECT * FROM onlineapp_applications LIMIT 1");
-////////////
+    if ($conn) {
+        fwrite($filehandle, "successfully connected to db: $conn_string\n");
+    }
+
+    $appResult = pg_query($conn, "SELECT * FROM onlineapp_applications");
 
     while ($row = pg_fetch_assoc($appResult)) {
         createNewApp($row);
     }
 
+    fclose($filehandle);
+
     function createNewApp($data) {
         global $conn;
         global $applicationMap;
+        global $filehandle;
 
 	$templateQuery = "
 	    SELECT template_id
@@ -263,7 +269,7 @@ $applicationMap = array(
 	}
 
 	if (empty($template_id)) {
-	    print "skipping appId: $data[id] - no template_id\n";
+	    fwrite($filehandle, "skipping appId: $data[id] - no template_id found\n");
 	    return;
 	}
 
@@ -284,22 +290,23 @@ $applicationMap = array(
 		rightsignature_install_status
             )
             VALUES (
-		'$data[id]',
-		'$data[user_id]',
-		'$template_id',
+		$data[id],
+		$data[user_id],
+		$template_id,
 		'$uuid',
-		'now()',
-		'now()',
+		now(),
+		now(),
 		'$data[rs_document_guid]',
 		'$data[var_status]',
 		'$data[install_var_rs_document_guid]',
 		''
             )
         ";
-            
+    
         $newAppResult = pg_query($conn, $newAppQuery);
 
         if ($newAppResult != false) {
+	    fwrite($filehandle, "adding application values to appId: $data[id]\n");
 	    // this foreach block creates the application value records
             foreach ($applicationMap as $key => $val) {
 
@@ -393,6 +400,7 @@ $applicationMap = array(
 			    }
 
 		            $concatName = "$mergeFieldName"."$element";
+			    $booleanVal = pg_escape_string($booleanVal);
 
 	                    $newAppValQuery = "
                                 INSERT INTO onlineapp_cobranded_application_values (
@@ -404,12 +412,12 @@ $applicationMap = array(
                                     modified
                                 )
                                 VALUES (
-                                    '$data[id]',
-                                    '$templateFieldId',
+                                    $data[id],
+                                    $templateFieldId,
                                     '$concatName',
                                     '$booleanVal',
-                                    'now()',
-                                    'now()'
+                                    now(),
+                                    now()
                                 )
                             ";
 
@@ -417,6 +425,7 @@ $applicationMap = array(
 		        }
 		    }
 		    else {
+			$value = pg_escape_string($value);
 	                $newAppValQuery = "
                             INSERT INTO onlineapp_cobranded_application_values (
                                 cobranded_application_id,
@@ -427,19 +436,26 @@ $applicationMap = array(
                                 modified
                             )
                             VALUES (
-                                '$data[id]',
-                                '$templateFieldId',
+                                $data[id],
+                                $templateFieldId,
                                 '$mergeFieldName',
                                 '$value',
-                                'now()',
-                                'now()'
+                                now(),
+                                now()
                             )
                         ";
 
                         $newAppValResult = pg_query($conn, $newAppValQuery);
 		    }
 	        }
+                else {
+	            fwrite($filehandle, "skipping app value for: $key - can't determine template field id\n");
+	        }
             }
+        }
+        else {
+	    fwrite($filehandle, "skipping appId: $data[id] - problem creating new cobranded application\n");
+	    return;
         }
     }
 
