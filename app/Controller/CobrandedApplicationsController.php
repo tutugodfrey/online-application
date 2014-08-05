@@ -247,6 +247,10 @@ class CobrandedApplicationsController extends AppController {
 							$this->CobrandedApplication->id = $response['application_id'];
 							$this->CobrandedApplication->saveField('status', 'signed');
 						}
+
+						$this->set('keys', '');
+						$this->set('values', '');
+						$csv = $this->render('/Elements/cobranded_applications/export', false);
 					}
 				} else {
 					$response = Hash::insert(
