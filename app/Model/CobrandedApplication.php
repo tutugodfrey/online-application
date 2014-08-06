@@ -531,6 +531,7 @@ class CobrandedApplication extends AppModel {
 								$tmpValue = $appValue['CobrandedApplicationValues']['value'];
 								if (preg_match('/([0-9]{4})-?([0-9]{2})-?([0-9]{2})/', $tmpValue, $matches)) {
 									$tmpValue = $matches[1]."-".$matches[2]."-".$matches[3];
+									$appValue['CobrandedApplicationValues']['value'] = $tmpValue;
 								}
 							}
 	
