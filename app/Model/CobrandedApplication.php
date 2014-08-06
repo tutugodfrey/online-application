@@ -187,19 +187,57 @@ class CobrandedApplication extends AppModel {
 						// types with multiple values/options are handled differently
 						switch ($field['type']) {
 							case 4: // 'radio':
+								// split default_value on ',' and append split[1] to the merge_field_name
+								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
+									$multiTypeHasDefault = false;
+			
+									if (preg_match('/\{default\}/i', $keyValuePairStr)) {
+										$keyValuePairStr = preg_replace('/\{default\}/i', '', $keyValuePairStr);
+										$multiTypeHasDefault = true;
+									}
+
+									$keyValuePair = split('::', $keyValuePairStr);
+									$name = $field['merge_field_name'].$keyValuePair[1];
+
+									$newApplicationValue = array(
+										'cobranded_application_id' => $applicationId,
+										'template_field_id' => $field['id'],
+										'name' => $name,
+									);
+
+									if ($multiTypeHasDefault) {
+										$newApplicationValue = Hash::insert($newApplicationValue, 'value', 'true');
+									}
+
+									$this->__addApplicationValue($newApplicationValue);
+								}
+								break;
+
 							case 5: // 'percents':
 							case 7: // 'fees':
 								// split default_value on ',' and append split[1] to the merge_field_name
 								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
+									$multiTypeDefaultVal = null;
+			
+									if (preg_match('/\{(.+)\}/', $keyValuePairStr, $matches)) {
+										$keyValuePairStr = preg_replace('/\{.+\}/', '', $keyValuePairStr);
+										$multiTypeDefaultVal = $matches[1];
+									}
+
 									$keyValuePair = split('::', $keyValuePairStr);
 									$name = $field['merge_field_name'].$keyValuePair[1];
-									$this->__addApplicationValue(
-										array(
-											'cobranded_application_id' => $applicationId,
-											'template_field_id' => $field['id'],
-											'name' => $name,
-										)
+
+									$newApplicationValue = array(
+										'cobranded_application_id' => $applicationId,
+										'template_field_id' => $field['id'],
+										'name' => $name,
 									);
+
+									if ($multiTypeDefaultVal != null) {
+										$newApplicationValue = Hash::insert($newApplicationValue, 'value', $multiTypeDefaultVal);
+									}
+
+									$this->__addApplicationValue($newApplicationValue);
 								}
 								break;
 
@@ -293,7 +331,7 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
- * gsaveApplicationValue
+ * saveApplicationValue
  *
  * @params
  *     $date array
@@ -432,6 +470,7 @@ class CobrandedApplication extends AppModel {
 			);
 
 			$this->TemplateField = ClassRegistry::init('TemplateField');
+			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 			$templateFieldIdMap = array();
 
@@ -501,18 +540,27 @@ class CobrandedApplication extends AppModel {
 						}
 					}
 
-					// only one choice for radio buttons allowed
-					// keep track and make sure we don't have more than
-					// one choice - track by templateFieldId
+					// if the template field has a type of 4, all other options must be set to null
 					if ($templateField['type'] == 4) {
-						$templateFieldId = $templateField['id'];
-						if (key_exists($templateFieldId, $templateFieldIdMap)) {
-							// we have more than one choice for this radio button
-							// update our validationErrors array
-							$response['validationErrors'] = Hash::insert($response['validationErrors'],
-								$key, 'only one choice allowed for: '.$templateField['merge_field_name']);
-						} else {
-							$templateFieldIdMap[$templateFieldId] = 1;
+						$radioOptions = $this->CobrandedApplicationValue->find(
+							'all',
+							array(
+								'conditions' => array(
+									'template_field_id' => $templateField['id'],
+									'cobranded_application_id' => $newApp['CobrandedApplication']['id'],
+								)
+							)
+						);
+						
+						foreach ($radioOptions as $radioOption) {
+							if ($radioOption['CobrandedApplicationValue']['id'] != $appValue['CobrandedApplicationValue']['id']) {
+								// udpate the value to null
+								$radioOption['CobrandedApplicationValue']['value'] = null;
+								if (!$this->CobrandedApplicationValue->save($radioOption)) {
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, 'failed to update application value with id ['.
+										$radioOption['CobrandedApplicationValue']['id'].'], to a value of null.');
+								}
+							}
 						}
 					}
 
