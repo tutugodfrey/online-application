@@ -553,7 +553,7 @@ class CobrandedApplication extends AppModel {
 						);
 						
 						foreach ($radioOptions as $radioOption) {
-							if ($radioOption['CobrandedApplicationValue']['id'] != $appValue['CobrandedApplicationValue']['id']) {
+							if ($radioOption['CobrandedApplicationValue']['id'] != $appValue['CobrandedApplicationValues']['id']) {
 								// udpate the value to null
 								$radioOption['CobrandedApplicationValue']['value'] = null;
 								if (!$this->CobrandedApplicationValue->save($radioOption)) {
