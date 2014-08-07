@@ -3,17 +3,6 @@ var quickAdd = function(e) {
 	var target = $(e.target);
 	var data = {};
 
-	// show MOTO/Internet Questionnaire if the following 2 values
-	// combined are greater than or equal to 30
-	var methodOfSalesCardNotPresentKeyed = parseInt(document.getElementById('MethodofSales-CardNotPresent-Keyed').value);
-	var methodOfSalesCardNotPresentInternet = parseInt(document.getElementById('MethodofSales-CardNotPresent-Internet').value);
-
-	if (methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet >= 30) {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
-	} else {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
-	}
-
 	// handle radio buttons and checkboxes don't need to be validated
 	if (target.is(":radio")) {
 		data['id'] = target.attr('data-value-id');
@@ -48,14 +37,18 @@ var persist = function(data) {
 };
 
 var onWindowResize = function() {
-	var totalWidth = $("#wizard .nav-pills").css("width").replace('px', '');
-	var numberOfChildren = $("#wizard .nav-pills>li").length;
-	var padding = $("#wizard .nav-pills").css('padding-left').replace('px','');
-	var newWidth = Math.floor(totalWidth/(numberOfChildren-1))-padding;
-	if (newWidth >= 917) {
-		newWidth = 915;
+	if ($("#wizard .nav-pills").length == 0) {
+		setTimeout(onWindowResize, 500);
+	} else {
+		var totalWidth = $("#wizard .nav-pills").css("width").replace('px', '');
+		var numberOfChildren = $("#wizard .nav-pills>li").length;
+		var padding = $("#wizard .nav-pills").css('padding-left').replace('px','');
+		var newWidth = Math.floor(totalWidth/(numberOfChildren-1))-padding;
+		if (newWidth >= 917) {
+			newWidth = 915;
+		}	
+		$("#wizard .nav-pills>li>a>div.connecting-line").css("width", newWidth);
 	}
-	$("#wizard .nav-pills>li>a>div.connecting-line").css("width", newWidth);
 };
 
 var handlePercentOptionBlur = function(event) {
@@ -97,21 +90,24 @@ var onTabChange = function(tab, navigation, index) {
 
 var $validator;
 
-$(document).ready(function() {
-	$(window).resize(onWindowResize);
-
-	setTimeout(function() {$(window).trigger('resize')}, 10);
-
+var motoQuestionnaireCheck = function(){
 	// show MOTO/Internet Questionnaire if the following 2 values
 	// combined are greater than or equal to 30
-	var methodOfSalesCardNotPresentKeyed = parseInt(document.getElementById('MethodofSales-CardNotPresent-Keyed').value);
-	var methodOfSalesCardNotPresentInternet = parseInt(document.getElementById('MethodofSales-CardNotPresent-Internet').value);
+	var methodOfSalesCardNotPresentKeyed = parseInt($('#MethodofSales-CardNotPresent-Keyed').val());
+	var methodOfSalesCardNotPresentInternet = parseInt($('#MethodofSales-CardNotPresent-Internet').val());
 
 	if (methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet >= 30) {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
 	} else {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
 	}
+
+
+};
+$(document).ready(function() {
+	$(window).resize(onWindowResize);
+
+	setTimeout(function() {$(window).trigger('resize')}, 10);
 
 	if ($('#CorpName').val() != '' &&
 		$('#CorpAddress').val() != '' &&
@@ -170,4 +166,6 @@ $(document).ready(function() {
 			$('.api-field').toggle();
 		}
 	});
+	$('#MethodofSales-CardNotPresent-Keyed').on('change', motoQuestionnaireCheck);
+	$('#MethodofSales-CardNotPresent-Internet').on('change', motoQuestionnaireCheck);
 });
