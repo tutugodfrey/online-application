@@ -2,7 +2,7 @@
 
 <?php
 
-    $cobrandId = null;
+    $cobrandName = null;
     $fromDbDsn = null;
     $toDbDsn = null;
 
@@ -18,8 +18,8 @@
         $key = $array[0];
         $val = $array[1];
 
-        if ($key == 'cobrand_id') {
-            $cobrandId = $val;
+        if ($key == 'cobrand_name') {
+            $cobrandName = $val;
         }
 
         if ($key == 'from_db_dsn') {
@@ -31,10 +31,10 @@
         }
     }
 
-    if ($cobrandId == null || $fromDbDsn == null || $toDbDsn == null) {
+    if ($cobrandName == null || $fromDbDsn == null || $toDbDsn == null) {
         print "\n";
         print "missing required argument(s):\n";
-        print "\tcopy_template.php cobrand_id-7 from_db_dsn-'host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a' to_db_dsn-'host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a'\n\n";
+        print "\tcopy_template.php cobrand_name-TheCobrand from_db_dsn-'host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a' to_db_dsn-'host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a'\n\n";
         exit;
     }
 
@@ -61,10 +61,25 @@
         fwrite($filehandle, "could not connect to db: $to_conn_string\n");
     }
 
-    $templateQuery = pg_query($from_conn, "SELECT * FROM onlineapp_templates WHERE cobrand_id = ".$cobrandId);
+    $fromCobrandId = null;
+    $toCobrandId = null;
+
+    $fromCobrandIdQuery = pg_query($from_conn, "SELECT id FROM onlineapp_cobrands WHERE partner_name = '$cobrandName'");
+
+    if ($fromRow = pg_fetch_assoc($fromCobrandIdQuery)) {
+        $fromCobrandId = $fromRow['id'];
+    }
+
+    $toCobrandIdQuery = pg_query($to_conn, "SELECT id FROM onlineapp_cobrands WHERE partner_name = '$cobrandName'");
+
+    if ($toRow = pg_fetch_assoc($toCobrandIdQuery)) {
+        $toCobrandId = $toRow['id'];
+    }
+
+    $templateQuery = pg_query($from_conn, "SELECT * FROM onlineapp_templates WHERE cobrand_id = ".$fromCobrandId);
 
     while ($templateRow = pg_fetch_assoc($templateQuery)) {
-        $newTemplateId = createTemplate($templateRow);
+        $newTemplateId = createTemplate($toCobrandId, $templateRow);
 
         $pageQuery = pg_query($from_conn, "SELECT * FROM onlineapp_template_pages WHERE template_id = ".$templateRow['id']);
 
@@ -87,7 +102,7 @@
 
     fclose($filehandle);
 
-    function createTemplate($data) {
+    function createTemplate($id, $data) {
         global $to_conn;
 
         $newTemplateQuery = "
@@ -107,7 +122,7 @@
                 '$data[logo_position]',
                 '$data[include_axia_logo]',
                 '$data[description]',
-                $data[cobrand_id],
+                $id,
                 now(),
                 now(),
                 '$data[rightsignature_template_guid]',
