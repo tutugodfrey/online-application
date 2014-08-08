@@ -2,27 +2,63 @@
 
 <?php
 
-    $file = "/tmp/template_copier.txt"; 
+    $cobrandId = null;
+    $fromDbDsn = null;
+    $toDbDsn = null;
+
+    $skip = 0;
+
+    foreach ($argv as $arg) {
+        if ($skip == 0) {
+            $skip++;
+            continue;
+        }
+
+        $array = preg_split('/-/', $arg);
+        $key = $array[0];
+        $val = $array[1];
+
+        if ($key == 'cobrand_id') {
+            $cobrandId = $val;
+        }
+
+        if ($key == 'from_db_dsn') {
+            $fromDbDsn = $val;
+        }
+
+        if ($key == 'to_db_dsn') {
+            $toDbDsn = $val;
+        }
+    }
+
+    if ($cobrandId == null || $fromDbDsn == null || $toDbDsn == null) {
+        print "\n";
+        print "missing required argument(s):\n";
+        print "\tcopy_template.php cobrand_id-7 from_db_dsn-'host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a' to_db_dsn-'host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a'\n\n";
+        exit;
+    }
+
+    $file = "/tmp/copy_template.txt"; 
     $filehandle = fopen($file, 'w');
 
-  //  $cobrandId = $argv[1];
-//DEBUG
-$cobrandId = 4;
- //   $fromDb = $argv[2];
- //   $toDb = $argv[3];
-
-    $from_conn_string = "host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a";
+    $from_conn_string = $fromDbDsn;
     $from_conn = pg_connect($from_conn_string);
 
     if ($from_conn) {
         fwrite($filehandle, "successfully connected to db: $from_conn_string\n");
     }
+    else {
+        fwrite($filehandle, "could not connect to db: $from_conn_string\n");
+    }
 
-    $to_conn_string = "host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a";
+    $to_conn_string = $toDbDsn;
     $to_conn = pg_connect($to_conn_string);
 
     if ($to_conn) {
         fwrite($filehandle, "successfully connected to db: $to_conn_string\n");
+    }
+    else {
+        fwrite($filehandle, "could not connect to db: $to_conn_string\n");
     }
 
     $templateQuery = pg_query($from_conn, "SELECT * FROM onlineapp_templates WHERE cobrand_id = ".$cobrandId);
