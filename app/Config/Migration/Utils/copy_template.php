@@ -64,16 +64,11 @@
     $fromCobrandId = null;
     $toCobrandId = null;
 
-    $fromCobrandIdQuery = pg_query($from_conn, "SELECT id FROM onlineapp_cobrands WHERE partner_name = '$cobrandName'");
+    $fromCobrandIdQuery = pg_query($from_conn, "SELECT * FROM onlineapp_cobrands WHERE partner_name = '$cobrandName'");
 
     if ($fromRow = pg_fetch_assoc($fromCobrandIdQuery)) {
         $fromCobrandId = $fromRow['id'];
-    }
-
-    $toCobrandIdQuery = pg_query($to_conn, "SELECT id FROM onlineapp_cobrands WHERE partner_name = '$cobrandName'");
-
-    if ($toRow = pg_fetch_assoc($toCobrandIdQuery)) {
-        $toCobrandId = $toRow['id'];
+        $toCobrandId = createCobrand($fromRow);
     }
 
     $templateQuery = pg_query($from_conn, "SELECT * FROM onlineapp_templates WHERE cobrand_id = ".$fromCobrandId);
@@ -101,6 +96,34 @@
     }
 
     fclose($filehandle);
+
+    function createCobrand($data) {
+        global $to_conn;
+
+        $newCobrandQuery = "
+            INSERT INTO onlineapp_cobrands (
+                partner_name,
+                partner_name_short,
+                logo_url,
+                description,
+                created,
+                modified
+            )
+            VALUES (
+                '$data[partner_name]',
+                '$data[partner_name_short]',
+                '$data[logo_url]',
+                '$data[description]',
+                now(),
+                now()
+            )
+            RETURNING Currval('onlineapp_cobrands_id_seq')
+        ";
+
+        $newCobrandResult = pg_query($to_conn, $newCobrandQuery);
+        $row = pg_fetch_row($newCobrandResult);
+        return $row[0];
+    }
 
     function createTemplate($id, $data) {
         global $to_conn;
