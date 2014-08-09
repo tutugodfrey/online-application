@@ -361,8 +361,11 @@ class CobrandedApplicationsController extends AppController {
 		$this->Prg->commonProcess();
 		$this->Paginator->settings = $this->CobrandedApplication->getIndexInfo();
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
+		if($this->passedArgs['user_id'] === '' || empty($this->passedArgs)) {
+			$this->Paginator->settings['conditions'] = array('CobrandedApplication.user_id' => $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')));
+		}
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
-		$this->set('users', $this->User->getActiveUserList());
+		$this->set('users', $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id')));
 		$this->set('user_id', $this->Auth->user('id'));
 	}
 
