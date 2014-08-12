@@ -243,6 +243,9 @@ class TemplateFieldHelper extends Helper {
 				$radioOptionsString = $field['default_value'];
 				$radioOptions = array();
 				foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
+					if (preg_match('/\{default\}/i', $keyValuePairStr)) {
+						$keyValuePairStr = preg_replace('/\{default\}/i', '', $keyValuePairStr);
+					}
 					$keyValuePair = split('::', $keyValuePairStr);
 					$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
 				}

@@ -246,6 +246,39 @@ class CobrandedApplication extends AppModel {
 								// noop for label or hr items
 								break;
 
+							case 20: // 'select':
+							    $multiTypeHasDefault = false;
+
+							    // split default_value on ','
+								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
+									if (preg_match('/\{default\}/i', $keyValuePairStr)) {
+										$keyValuePairStr = preg_replace('/\{default\}/i', '', $keyValuePairStr);
+										$keyValuePair = split('::', $keyValuePairStr);
+
+										$multiTypeHasDefault = true;
+
+										$newApplicationValue = array(
+											'cobranded_application_id' => $applicationId,
+											'template_field_id' => $field['id'],
+											'name' => $field['merge_field_name'],
+											'value' => $keyValuePair[1]
+										);
+
+										$this->__addApplicationValue($newApplicationValue);
+									}
+								}
+
+								if ($multiTypeHasDefault == false) {
+									$newApplicationValue = array(
+										'cobranded_application_id' => $applicationId,
+										'template_field_id' => $field['id'],
+										'name' => $field['merge_field_name'],
+									);
+									$this->__addApplicationValue($newApplicationValue);
+								}
+
+								break;
+
 							default:
 								// call $this->__addApplicationValue();
 								$newApplicationValue = array(
