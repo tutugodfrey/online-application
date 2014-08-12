@@ -607,13 +607,16 @@ class CobrandedApplication extends AppModel {
 					} else {
 						// only validate if we are not empty
 						if (empty($value) == false) {
-							// Appfolio special case - if OpenDate is missing dashes, add them in
-							if ($appValue['CobrandedApplicationValues']['name'] == 'OpenDate') {
-								$tmpValue = $appValue['CobrandedApplicationValues']['value'];
-								if (preg_match('/([0-9]{4})-?([0-9]{2})-?([0-9]{2})/', $tmpValue, $matches)) {
-									$tmpValue = $matches[1]."-".$matches[2]."-".$matches[3];
-									$appValue['CobrandedApplicationValues']['value'] = $tmpValue;
-								}
+							// if social security number is missing dashes, add them in
+							if ($appValue['CobrandedApplicationValues']['name'] == 'OwnerSSN' ||
+								$appValue['CobrandedApplicationValues']['name'] == 'Owner2SSN') {
+
+									$tmpValue = $appValue['CobrandedApplicationValues']['value'];
+
+									if (preg_match('/([0-9]{3})-?([0-9]{2})-?([0-9]{4})/', $tmpValue, $matches)) {
+										$tmpValue = $matches[1]."-".$matches[2]."-".$matches[3];
+										$appValue['CobrandedApplicationValues']['value'] = $tmpValue;
+									}
 							}
 	
 							// is the value valid?
