@@ -24,7 +24,7 @@ $this->Html->addCrumb(
 ?>
 
 <div class="templateFields form container">
-<?php echo $this->Form->create('TemplateField'); ?>
+<?php echo $this->Form->create('TemplateField', array('novalidate' => true)); ?>
 	<fieldset>
 		<legend><?php echo String::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?></legend>
 	<?php
