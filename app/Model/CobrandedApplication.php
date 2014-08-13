@@ -490,6 +490,7 @@ class CobrandedApplication extends AppModel {
 
 		// create an application for $userId
 		$createAppResponse = $this->createOnlineappForUser($user);
+		$newApp = null;
 
 		if ($createAppResponse['success'] == true) {
 			// populate it with the passed $fieldsData
@@ -502,6 +503,8 @@ class CobrandedApplication extends AppModel {
 				)
 			);
 
+			$this->Session = ClassRegistry::init('Session');
+			$this->Cobrand = ClassRegistry::init('Cobrand');
 			$this->TemplateField = ClassRegistry::init('TemplateField');
 			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
@@ -651,8 +654,66 @@ class CobrandedApplication extends AppModel {
 				$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $val);
 			}
 		} else {
+			$this->Cobrand->id = $newApp['Template']['cobrand_id'];
+			$this->Cobrand->recursive = -1;
+			$this->Cobrand->find('first');
+			$cobrand = $this->Cobrand->read();
+
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
-			$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+
+			switch ($cobrand['Cobrand']['response_url_type']) {
+				case 1: // return nothing
+					break;
+
+				case 2: // return RS signing url
+					// Perform validation
+					$validationResponse = $this->validateCobrandedApplication($newApp);
+
+					if ($validationResponse['success'] !== true) {
+						$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $validationResponse);
+					}
+
+					$client = $this->createRightSignatureClient();
+					$templateGuid = $newApp['Template']['rightsignature_template_guid'];
+					$getTemplateResponse = $this->getRightSignatureTemplate($client, $templateGuid);
+					$getTemplateResponse = json_decode($getTemplateResponse, true);
+
+					if ($getTemplateResponse && $getTemplateResponse['template']['type'] == 'Document' && $getTemplateResponse['template']['guid']) {
+						$applicationXml = $this->createRightSignatureApplicationXml(
+							$createAppResponse['cobrandedApplication']['id'], $this->Session->read('Auth.User.email'), $getTemplateResponse['template']);
+							$createResponse = $this->createRightSignatureDocument($client, $applicationXml);
+							$createResponse = json_decode($createResponse, true);
+
+						if ($createResponse['document']['status'] == 'sent' && $createResponse['document']['guid']) {
+							// save the guid
+							$this->save(
+								array(
+									'CobrandedApplication' => array(
+										'id' => $createAppResponse['cobrandedApplication']['id'],
+										'rightsignature_document_guid' => $createResponse['document']['guid'],
+										'status' => 'completed'
+									)
+								),
+								array('validate' => false)
+							);
+
+							$response['application_url'] = Router::url('/cobranded_applications/sign_rightsignature_document', true).'?guid='.$createResponse['document']['guid'];
+						} else {
+							$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $createResponse);
+						}
+					} else {
+						$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $getTemplateResponse);
+					}
+	
+					break;
+
+				case 3: // return online app url
+					$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+					break;
+
+				default: // return nothing
+					break;
+			}
 		}
 		
 		return $response;

@@ -12,6 +12,12 @@ class Cobrand extends AppModel {
 
 	public $useTable = 'onlineapp_cobrands';
 
+	public $responseUrlTypes = array(
+		1 => 'return nothing',
+		2 => 'return RS signing url',
+		3 =>'return online app url'
+	);
+
 	public $validate = array(
 		'partner_name' => array(
 			'notempty' => array(
