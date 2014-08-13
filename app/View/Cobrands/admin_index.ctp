@@ -7,6 +7,7 @@
 			<th><?php echo $this->Paginator->sort('partner_name_short'); ?></th>
 			<th><?php echo $this->Paginator->sort('logo_url'); ?></th>
 			<th><?php echo $this->Paginator->sort('description'); ?></th>
+			<th><?php echo $this->Paginator->sort('response_url_type'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -27,6 +28,7 @@
 				}
 			?></td>
 			<td><?php echo h($cobrand['Cobrand']['description']); ?></td>
+			<td><?php echo h($responseUrlTypes[$cobrand['Cobrand']['response_url_type']]); ?></td>
 			<td><?php echo h($cobrand['Cobrand']['created']); ?></td>
 			<td><?php echo h($cobrand['Cobrand']['modified']); ?></td>
 			<td class="actions">

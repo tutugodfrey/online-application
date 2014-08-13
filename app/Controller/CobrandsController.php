@@ -13,6 +13,7 @@ class CobrandsController extends AppController {
 
 	public function admin_add() {
 		$this->set('title_for_layout', 'Add Cobrand');
+		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
 
 		if ($this->request->is('post')) {
 			$data = Sanitize::clean($this->request->data);
@@ -27,6 +28,8 @@ class CobrandsController extends AppController {
 
 	public function admin_edit($idToEdit) {
 		$this->Cobrand->id = $idToEdit;
+		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
+
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Cobrand->read();
 		} else {
@@ -40,6 +43,8 @@ class CobrandsController extends AppController {
 	}
 
 	public function admin_index() {
+		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
+		
 		$this->paginate = array(
 			'limit' => 25,
 			'order' => array('Cobrand.partner_name' => 'asc'),
