@@ -82,6 +82,7 @@ class TemplateFieldTest extends CakeTestCase {
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
 			'logo_url' => 'PN1 logo_url',
+			'response_url_type' => null
 		);
 		$returned_cobrand = $this->TemplateField->getCobrand($section_id);
 		$this->assertEquals($expected_cobrand, $returned_cobrand);
