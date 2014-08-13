@@ -152,6 +152,7 @@ class TemplateTest extends CakeTestCase {
 				'created' => '2007-03-18 10:41:31',
 				'modified' => '2007-03-18 10:41:31',
 				'logo_url' => 'PN3 logo_url',
+				'response_url_type' => null
 			),
 		);
 		$returned_cobrand = $this->Template->getCobrand(3);
