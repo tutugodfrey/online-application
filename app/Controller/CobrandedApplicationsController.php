@@ -4,6 +4,7 @@ App::uses('TemplateField', 'View/Helper');
 App::uses('Setting', 'Model');
 App::uses('Validation', 'Utility');
 App::uses('Coversheet', 'Model');
+App::uses('User', 'Model');
 
 /**
  * CobrandedApplications Controller
@@ -25,24 +26,24 @@ class CobrandedApplicationsController extends AppController {
 
 	public $permissions = array(
 		'index' => array('*'),
-		'add' => array('admin', 'rep', 'manager'),
-		'api_add' => array('api'),
+		'add' => array(User::ADMIN, User::REP, User::MANAGER),
+		'api_add' => array(User::API),
 		'retrieve' => array('*'),
-		'edit' => array('admin', 'rep', 'manager'),
-		'admin_index' => array('admin', 'rep', 'manager'),
-		'admin_add' => array('admin', 'rep', 'manager'),
-		'admin_edit' => array('admin'),
-		'admin_export' => array('admin', 'rep', 'manager'),
-		'admin_copy' => array('admin', 'rep', 'manager'),
-		'admin_delete' => array('admin', 'rep', 'manager'),
-		'admin_email_timeline' => array('admin', 'rep', 'manager'),
-		'complete_fields' => array('admin', 'rep', 'manager'),
-		'admin_app_status' => array('admin', 'rep', 'manager'),
-		'admin_app_extend' => array('admin', 'rep', 'manager'),
+		'edit' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_index' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_add' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_edit' => array(User::ADMIN),
+		'admin_export' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_copy' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_delete' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_email_timeline' => array(User::ADMIN, User::REP, User::MANAGER),
+		'complete_fields' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_app_status' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_app_extend' => array(User::ADMIN, User::REP, User::MANAGER),
 		'create_rightsignature_document' => array('*'),
 		'sign_rightsignature_document' => array('*'),
-		'install_sheet_var' => array('admin', 'rep', 'manager'),
-		'sent_var_install' => array('admin', 'rep', 'manager'),
+		'install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
+		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
 	);
 
 	public $helper = array('TemplateField');
@@ -365,9 +366,9 @@ class CobrandedApplicationsController extends AppController {
 		if(!in_array($this->passedArgs['user_id'], $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')))) {
 			unset($this->passedArgs['user_id']);
 		}
-		if (!empty($this->passedArgs)) {
-			$this->Paginator->settings['conditions'] = array('CobrandedApplication.user_id' => $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')));
-		} else {
+		if (empty($this->passedArgs['user_id']) && $this->Auth->user('group') !== User::ADMIN) {
+			$this->Paginator->settings['conditions'][] = array('CobrandedApplication.user_id' => $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')));
+		} else if (!is_array($this->passedArgs)) {
 			$this->Paginator->settings['conditions'] = array('CobrandedApplication.user_id' => $this->Auth->user('id'));
 		}
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
