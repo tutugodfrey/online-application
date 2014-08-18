@@ -189,7 +189,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'logo_url' => 'PN1 logo_url',
 					'description' => 'Cobrand "Partner Name 1" description goes here.',
 					'created' => '2007-03-18 10:41:31',
-					'modified' => '2007-03-18 10:41:31'
+					'modified' => '2007-03-18 10:41:31',
+					'response_url_type' => null
 				),
 				'TemplatePages' => array(
 					(int) 0 => array(
@@ -820,10 +821,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// assertions
 		$this->assertTrue($actualResponse['success'], 'saveFields with valid data should succeed');
 		$this->assertEquals(array(), $actualResponse['validationErrors'], 'Expected no validation errors for valid $fieldsData');
-
-		// make sure the response contains a link to the new application
-		$applicationUrl = Router::url('/cobranded_applications/edit/', true).$application['CobrandedApplication']['uuid'];
-		$this->assertEquals($actualResponse['application_url'], $applicationUrl, 'Expected application URL in response after creation');
 
 		// test with bad routing number
 		$fieldsData['multirecord_from_api_with_default'] = array(
