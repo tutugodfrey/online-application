@@ -129,7 +129,7 @@ class Coversheet extends AppModel {
 			'order' => ''
 		)
 	);
-    
+
         function equipment() {
             if ($this->data['Coversheet']['setup_equipment_terminal'] != '1' && $this->data['Coversheet']['setup_equipment_gateway'] != '1') {
                 return false;

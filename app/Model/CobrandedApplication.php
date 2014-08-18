@@ -8,7 +8,7 @@ App::uses('HttpSocket', 'Network/Http');
 /**
  * CobrandedApplication Model
  *
- * @property CobrandedApplicationValues $CobrandedApplicationValues
+ * @property CobrandedApplications $CobrandedApplications
  */
 class CobrandedApplication extends AppModel {
 
