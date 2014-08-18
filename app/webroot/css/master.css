@@ -64,7 +64,7 @@ div.radio2 label, td.radio label {
 .radio-inline input[type="radio"],
 .checkbox input[type="checkbox"],
 .checkbox-inline input[type="checkbox"] {
-    float: inherit; */
+    float: inherit;
 }
 
 input[type="radio"],
