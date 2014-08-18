@@ -609,7 +609,7 @@ class CobrandedApplication extends AppModel {
 						$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, 'required');
 					} else {
 						// only validate if we are not empty
-						if (empty($value) == false) {
+						if (isset($value)) {
 							// if social security number is missing dashes, add them in
 							if ($appValue['CobrandedApplicationValues']['name'] == 'OwnerSSN' ||
 								$appValue['CobrandedApplicationValues']['name'] == 'Owner2SSN') {
@@ -1652,7 +1652,7 @@ class CobrandedApplication extends AppModel {
 			);
 
 			// we don't want to send null or empty values
-			if (!empty($appValue['CobrandedApplicationValues']['value'])) {
+			if (isset($appValue['CobrandedApplicationValues']['value'])) {
 				$fieldType = $appValue['TemplateField']['type'];
 
 				// type 3 is checkbox, 4 is radio
