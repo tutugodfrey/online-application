@@ -8,7 +8,7 @@ App::uses('HttpSocket', 'Network/Http');
 /**
  * CobrandedApplication Model
  *
- * @property CobrandedApplicationValues $CobrandedApplicationValues
+ * @property CobrandedApplications $CobrandedApplications
  */
 class CobrandedApplication extends AppModel {
 
@@ -1702,6 +1702,13 @@ class CobrandedApplication extends AppModel {
 			$xml .= "				<locked>true</locked>\n";
 			$xml .= "			</merge_field>\n";
 		}
+
+		$now = date('m/d/Y');
+
+		$xml .= "			<merge_field merge_field_name='Application Date'>\n";
+		$xml .= "				<value>".htmlspecialchars($now)."</value>\n";
+		$xml .= "				<locked>true</locked>\n";
+		$xml .= "			</merge_field>\n";
 
 		$xml .= "		</merge_fields>\n";
 		$xml .= "		<callback_location>http://".$hostname."/cobranded_applications/document_callback</callback_location>\n";

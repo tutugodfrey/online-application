@@ -282,8 +282,17 @@ class CoversheetsController extends AppController {
         
 	public function admin_index() {
         $this->paginate = array(
-            'limit' => 50,            
-            'order' => array('Coversheet.id' => 'desc')
+		'fields' => array('Coversheet.id', 'Coversheet.status'),
+		'limit' => 25,
+		'contain' => array(
+			'User' => array(
+				'fields' => array('id', 'firstname', 'lastname')
+			),
+			'CobrandedApplication' => array(
+				'fields' => array('id', 'uuid', 'status')
+			)
+		),
+		'order' => array('Coversheet.id' => 'desc')
         );  
 
         if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
@@ -296,7 +305,7 @@ class CoversheetsController extends AppController {
 
         $counter = 0;
         foreach ($data as $array) {
-            $valuesMap = $this->getCobrandedApplicationValues($array['CobrandedApplication']['id']);
+            $valuesMap = $this->getCobrandedApplicationValues($array['CobrandedApplication']['id'], array('CobrandedApplicationValue.name' => 'DBA'), -1);
             foreach ($valuesMap as $key => $val) {
                 $array['CobrandedApplication'][$key] = $val;
             }
@@ -460,20 +469,33 @@ class CoversheetsController extends AppController {
  * getCobrandedApplicationValues
  *
  * @param $applicationId integer
+ * @param $valueConditions array
+ * @param $recursive integer
  * @return $valuesMap array
  */
-    public function getCobrandedApplicationValues($applicationId) {
+    public function getCobrandedApplicationValues($applicationId, $valueConditions = array(), $recursive = null) {
         $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-        
-        $appValues = $CobrandedApplicationValue->find(
-            'all',
-            array(
+	
+	if (!isset($recursive)) {
+		$recursive = 1;
+	}
+	
+	$conditions = array(
                 'conditions' => array(
                     'cobranded_application_id' => $applicationId,
-                )
-            )
-        );
-
+                ),
+		'recursive' => $recursive
+	);
+	
+	if (!empty($valueConditions)) {
+		$conditions['conditions'][] = $valueConditions;
+	}
+        
+        $appValues = $CobrandedApplicationValue->find(
+		'all',
+		$conditions  	
+	);
+	
         $appValueArray = array();
         foreach ($appValues as $arr) {
             $appValueArray[] = $arr['CobrandedApplicationValue'];
