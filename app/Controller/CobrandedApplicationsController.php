@@ -50,7 +50,7 @@ class CobrandedApplicationsController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('quickAdd');
+		$this->Auth->allow('quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
 
