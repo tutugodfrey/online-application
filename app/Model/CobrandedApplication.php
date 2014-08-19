@@ -1764,12 +1764,11 @@ class CobrandedApplication extends AppModel {
 		));
 
 		foreach ($template['TemplatePages'] as $page) {
+			$pageOrder = $page['order'];
+			$pageOrder++;
 			foreach ($page['TemplateSections'] as $section) {
 				foreach ($section['TemplateFields'] as $templateField) {
-					$templateFieldName = $templateField['name'];
-					$templateMergeFieldName = $templateField['merge_field_name'];
-					$page = $page['order'];
-					$page++;
+					$fieldName = $templateField['name'];
 
 					if ($templateField['required'] == true) {
 						$found = false;
@@ -1781,9 +1780,9 @@ class CobrandedApplication extends AppModel {
 
 						if ($found == false) {
 							// update our validationErrors array
-							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateMergeFieldName, 'required');
-							$response['msg'] = 'Required field is empty: '.$templateMergeFieldName;
-							$response['page'] = $page;
+							$response['validationErrors'] = Hash::insert($response['validationErrors'], $fieldName, 'required');
+							$response['msg'] = 'Required field is empty: '.$fieldName;
+							$response['page'] = $pageOrder;
 						}
 					} 
 				}
@@ -1794,7 +1793,7 @@ class CobrandedApplication extends AppModel {
 			$response['success'] = true;
 			$response['msg'] = '';
 		}
-		
+
 		return $response;
 	}
 	
