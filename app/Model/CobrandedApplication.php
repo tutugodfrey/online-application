@@ -716,6 +716,7 @@ class CobrandedApplication extends AppModel {
 			}
 		}
 		
+		$response['success'] = (count($response['validationErrors']) == 0);
 		return $response;
 	}
 
