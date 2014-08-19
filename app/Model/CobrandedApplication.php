@@ -8,7 +8,7 @@ App::uses('HttpSocket', 'Network/Http');
 /**
  * CobrandedApplication Model
  *
- * @property CobrandedApplicationValues $CobrandedApplicationValues
+ * @property CobrandedApplications $CobrandedApplications
  */
 class CobrandedApplication extends AppModel {
 
@@ -609,7 +609,7 @@ class CobrandedApplication extends AppModel {
 						$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, 'required');
 					} else {
 						// only validate if we are not empty
-						if (empty($value) == false) {
+						if (isset($value)) {
 							// if social security number is missing dashes, add them in
 							if ($appValue['CobrandedApplicationValues']['name'] == 'OwnerSSN' ||
 								$appValue['CobrandedApplicationValues']['name'] == 'Owner2SSN') {
@@ -1652,7 +1652,7 @@ class CobrandedApplication extends AppModel {
 			);
 
 			// we don't want to send null or empty values
-			if (!empty($appValue['CobrandedApplicationValues']['value'])) {
+			if (isset($appValue['CobrandedApplicationValues']['value'])) {
 				$fieldType = $appValue['TemplateField']['type'];
 
 				// type 3 is checkbox, 4 is radio
@@ -1702,6 +1702,13 @@ class CobrandedApplication extends AppModel {
 			$xml .= "				<locked>true</locked>\n";
 			$xml .= "			</merge_field>\n";
 		}
+
+		$now = date('m/d/Y');
+
+		$xml .= "			<merge_field merge_field_name='Application Date'>\n";
+		$xml .= "				<value>".htmlspecialchars($now)."</value>\n";
+		$xml .= "				<locked>true</locked>\n";
+		$xml .= "			</merge_field>\n";
 
 		$xml .= "		</merge_fields>\n";
 		$xml .= "		<callback_location>http://".$hostname."/cobranded_applications/document_callback</callback_location>\n";
