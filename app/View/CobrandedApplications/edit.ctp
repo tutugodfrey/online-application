@@ -52,7 +52,7 @@
 
 								echo $this->Html->scriptBlock(
 									"function fieldCompletion() {
-										if (confirm('Send for completion to: ".$values_map['Owner1Email']."')) {
+										if (confirm('Send for completion to: ' + document.getElementById('Owner1Email').value)) {
 											window.location = '".$completeFieldsUrl."';
 										}
 									}"
