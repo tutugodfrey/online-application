@@ -12,7 +12,7 @@ class User extends AppModel {
 	const ADMIN = 'admin';
 	const REP = 'rep';
 	const API = 'api';
-	const MANAGER = 'maanger';
+	const MANAGER = 'manager';
 
 	//User Constants
 	const HOOZA = 59;
