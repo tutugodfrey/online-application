@@ -1,4 +1,5 @@
 <?php
+App::uses('AppModel', 'Model');
 class User extends AppModel {
 	public $actsAs = array('Search.Searchable', 'Containable');
 
@@ -7,6 +8,11 @@ class User extends AppModel {
 	const REPRESENTATIVE_GROUP_ID = 2;
 	const API_GROUP_ID = 3;    
 	const MANAGER_GROUP_ID = 4;
+	
+	const ADMIN = 'admin';
+	const REP = 'rep';
+	const API = 'api';
+	const MANAGER = 'manager';
 
 	//User Constants
 	const HOOZA = 59;

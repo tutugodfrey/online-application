@@ -8,6 +8,7 @@
 		echo $this->Form->input('partner_name_short');
 		echo $this->Form->input('logo_url');
 		echo $this->Form->input('description');
+		echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));
 	?>
 	</fieldset>
 	<?php echo $this->Form->end(__('Submit')); ?>	
