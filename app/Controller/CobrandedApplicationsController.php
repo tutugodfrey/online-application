@@ -230,12 +230,14 @@ class CobrandedApplicationsController extends AppController {
 
 						$args = array(
 							'cobrand' => $cobrand['Cobrand']['partner_name'],
-							'link' => $response['application_url'],
+							'link' => $response['application_url_for_email'],
 							'attachments' => array($filepath)
 						);
 
 						// send email to data entry
 						$emailResponse = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
+
+						unset($response['application_url_for_email']);
 
 						if ($emailResponse['success'] == true) {
 							// add email timeline event

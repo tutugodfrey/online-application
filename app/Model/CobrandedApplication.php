@@ -660,6 +660,7 @@ class CobrandedApplication extends AppModel {
 			$cobrand = $this->Cobrand->read();
 
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
+			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
 
 			switch ($cobrand['Cobrand']['response_url_type']) {
 				case 1: // return nothing
