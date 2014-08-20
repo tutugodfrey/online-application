@@ -667,13 +667,6 @@ class CobrandedApplication extends AppModel {
 					break;
 
 				case 2: // return RS signing url
-					// Perform validation
-					$validationResponse = $this->validateCobrandedApplication($newApp);
-
-					if ($validationResponse['success'] !== true) {
-						$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $validationResponse);
-					}
-
 					$client = $this->createRightSignatureClient();
 					$templateGuid = $newApp['Template']['rightsignature_template_guid'];
 					$getTemplateResponse = $this->getRightSignatureTemplate($client, $templateGuid);
@@ -718,6 +711,13 @@ class CobrandedApplication extends AppModel {
 		}
 		
 		$response['success'] = (count($response['validationErrors']) == 0);
+
+		if ($response['success'] == false) {
+			// delete the app
+			$this->delete($createAppResponse['cobrandedApplication']['id']);
+			$response['success'] = false;
+		}
+
 		return $response;
 	}
 
