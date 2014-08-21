@@ -342,6 +342,9 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 
+			$this->set('methodName', $this->Session->read('methodName'));
+			$this->Session->delete('methodName');
+
 			// if it is a rep viewing/editing the application don't require fields to be filled in
 			// but if they do have data, validate it
 			$this->set('requireRequiredFields', false);
@@ -648,8 +651,9 @@ class CobrandedApplicationsController extends AppController {
 
 			if ($response['success'] !== true) {
 				$this->CobrandedApplication->save(array('CobrandedApplication' => array('status' => 'validate')), array('validate' => false));
-				$this->Session->setFlash('The application is incomplete. '.$response['msg']);
-				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['page']));
+				$this->Session->write('validationErrorsArray', $response['validationErrorsArray']);
+				$this->Session->write('methodName', 'create_rightsignature_document');
+				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['validationErrorsArray'][0]['page']));
 			}
 		}
 
