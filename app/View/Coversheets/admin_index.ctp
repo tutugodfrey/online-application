@@ -21,7 +21,7 @@
 	<tr<?php echo $class;?>>
 		<td><?php echo $this->Html->link($Coversheet['Coversheet']['id'], array('controller' => 'coversheets', 'action' => 'edit', $Coversheet['Coversheet']['id'], 'admin' => false)); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($Coversheet['CobrandedApplication']['DBA'], array('controller' => 'cobranded_applications', 'action' => 'add', 1, $Coversheet['CobrandedApplication']['id'], $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
+			<?php echo $this->Html->link($Coversheet['CobrandedApplication']['DBA'], array('controller' => 'cobranded_applications', 'action' => 'edit', $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
 		</td>
 		<td>
 			<?php echo $this->Html->link($Coversheet['User']['firstname'] . ' ' . $Coversheet['User']['lastname'], array('controller' => 'users', 'action' => 'view', 'admin' => true, $Coversheet['User']['id'])); ?>
