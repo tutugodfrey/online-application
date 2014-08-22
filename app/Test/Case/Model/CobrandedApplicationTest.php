@@ -1333,13 +1333,37 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		$expectedResponse = array(
 			'success' => false,
-			'msg' => 'Required field is empty: Text field 1',
-			'page' => 4,
 			'validationErrors' => array(
 				'field 1' => 'required',
 				'field 2' => 'required',
 				'field 3' => 'required',
 				'Text field 1' => 'required'
+     		),
+     		'validationErrorsArray' => array(
+				0 => array(
+            		'fieldName' => 'field 1',
+            		'mergeFieldName' => 'required_text_from_user_without_default',
+            		'msg' => 'Required field is empty: field 1',
+            		'page' => 1
+         		),
+         		1 => array(
+            		'fieldName' => 'field 2',
+            		'mergeFieldName' => 'required_text_from_user_without_default',
+            		'msg' => 'Required field is empty: field 2',
+            		'page' => 1
+         		),
+         		2 => array(
+            		'fieldName' => 'field 3',
+            		'mergeFieldName' => 'required_text_from_user_without_default',
+            		'msg' => 'Required field is empty: field 3',
+            		'page' => 1
+         		),
+         		3 => array(
+            		'fieldName' => 'Text field 1',
+            		'mergeFieldName' => 'rep_only_true_field_for_testing_rep_only_view_logic',
+            		'msg' => 'Required field is empty: Text field 1',
+            		'page' => 4
+         		)
      		)
 		);
 
