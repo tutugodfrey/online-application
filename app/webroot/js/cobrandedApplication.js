@@ -8,16 +8,18 @@ var quickAdd = function(e) {
 		data['id'] = target.attr('data-value-id');
 		data['value'] = target.is(":checked"); // not really needed...
 		data['template_field_id'] = target.attr('data-field-id');
+		data['field_id'] = target.attr('id');
 		persist(data);
 	} else if(target.is(":checkbox")) {
 		data['id'] = target.attr('data-value-id');
 		data['value'] = target.is(":checked"); // not really needed...
+		data['field_id'] = target.attr('id');
 	} else {
 		// need to validate the
 		if ($validator.element(target) === true) {
 			data['id'] = target.attr('data-value-id');
 			data['value'] = target.val();
-
+			data['field_id'] = target.attr('id');
 			persist(data);
 		}
 	}
@@ -30,7 +32,7 @@ var persist = function(data) {
 		data: data,
 		context: document.body
 	}).done(function(response) {
-		// noop
+		document.getElementById(data['field_id']).removeAttribute("style");
 	}).error(function() {
 		alert('failed to update application value');
 	});

@@ -47,8 +47,8 @@
 							$validationErrorsArray = $this->Session->read('validationErrorsArray');
 			
 							foreach ($validationErrorsArray as $arr) {
-								echo "document.getElementById('".$arr['mergeFieldName']."').style.borderColor = 'red';";
-								echo "document.getElementById('".$arr['mergeFieldName']."').value = 'required field is empty';";
+								echo "document.getElementById('".$arr['mergeFieldName']."').style.backgroundColor='#FF0000';";
+								echo "document.getElementById('".$arr['mergeFieldName']."').style.opacity='0.8';";
 							}
 
 							echo "</script>";
