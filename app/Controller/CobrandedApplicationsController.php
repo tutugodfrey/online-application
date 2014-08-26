@@ -247,8 +247,24 @@ class CobrandedApplicationsController extends AppController {
 							);
 							$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
 
+							$status = '';
+
+							if ($response['partner_name'] == 'Appfolio') {
+								$status = 'signed';
+							} else {
+								if ($response['response_url_type'] == 1) { // return nothing
+									$status = 'saved';
+								} elseif ($response['response_url_type'] == 2) { // return RS signing url
+									$status = 'completed';
+								} elseif ($response['response_url_type'] == 3) { // return online app url
+									$status = 'saved';
+								} else {
+									$status = 'saved';
+								}
+							}
+
 							$this->CobrandedApplication->id = $response['application_id'];
-							$this->CobrandedApplication->saveField('status', 'signed');
+							$this->CobrandedApplication->saveField('status', $status);
 						}
 
 						$this->set('keys', '');
