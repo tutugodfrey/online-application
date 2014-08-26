@@ -14,8 +14,8 @@
 </field>
     <?php if($cp === false) { ?>
 <field name="12">
-<field name="1"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true') ? 'Yes' : 'Off';?></value></field>
-<field name="2"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'true') ? 'Yes' : 'Off';?></value></field>
+<field name="1"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' || $data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'true') ? 'Yes' : 'Off';?></value></field>
+<field name="2"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'false' && $data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'false') ? 'Yes' : 'Off';?></value></field>
 <field name="3"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'true' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true')? 'Yes': 'Off';?></value></field>
 </field>
 <field name="13">
@@ -39,9 +39,11 @@
 <field name="3_Y"><value><?php echo ($data['Coversheet']['cp_giftcards'] == 'yes')? 'Yes': 'Off';?></value></field>
 <field name="4_N"><value><?php echo ($data['Coversheet']['cp_check_guarantee'] == 'no')? 'Yes': 'Off';?></value></field>
 <field name="4_Y"><value><?php echo ($data['Coversheet']['cp_check_guarantee'] == 'yes')? 'Yes': 'Off';?></value></field>
-<field name="5_N"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'true') ? 'Yes' : 'Off';?></value></field>
+
+<field name="5_Y"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' || $data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'true') ? 'Yes' : 'Off';?></value></field>
+<field name="5_N"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'false' && $data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'false') ? 'Yes' : 'Off';?></value></field>
+
 <field name="5_NEW"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-NotExisting'] == 'true' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true')? 'Yes': 'Off';?></value></field>
-<field name="5_Y"><value><?php echo ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true') ? 'Yes' : 'Off';?></value></field>
 <field name="6_N"><value><?php echo ($data['CobrandedApplication']['DoYouWantToAcceptDisc-NotNew'] == 'true')? 'Yes': 'Off';?></value></field>
 <field name="6_Y"><value><?php echo ($data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true')? 'Yes': 'Off';?></value></field>
 <field name="7_N"><value><?php echo ($data['Coversheet']['cp_pos'] == 'no')? 'Yes': 'Off';?></value></field>
