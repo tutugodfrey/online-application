@@ -476,25 +476,25 @@ class CoversheetsController extends AppController {
     public function getCobrandedApplicationValues($applicationId, $valueConditions = array(), $recursive = null) {
         $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 	
-	if (!isset($recursive)) {
-		$recursive = 1;
-	}
+        if (!isset($recursive)) {
+            $recursive = 1;
+        }
 	
-	$conditions = array(
-                'conditions' => array(
-                    'cobranded_application_id' => $applicationId,
-                ),
-		'recursive' => $recursive
-	);
+        $conditions = array(
+            'conditions' => array(
+                'cobranded_application_id' => $applicationId,
+            ),
+            'recursive' => $recursive
+        );
 	
-	if (!empty($valueConditions)) {
-		$conditions['conditions'][] = $valueConditions;
-	}
+        if (!empty($valueConditions)) {
+            $conditions['conditions'][] = $valueConditions;
+        }
         
         $appValues = $CobrandedApplicationValue->find(
-		'all',
-		$conditions  	
-	);
+            'all',
+            $conditions  	
+        );
 	
         $appValueArray = array();
         foreach ($appValues as $arr) {
