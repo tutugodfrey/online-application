@@ -565,7 +565,7 @@ class CobrandedApplicationsController extends AppController {
 				)
 			),
 			'limit' => 50,
-			'recursive' => 2
+			'recursive' => -1
 		);
 
 		$data = $this->paginate('CobrandedApplication');
@@ -830,6 +830,7 @@ class CobrandedApplicationsController extends AppController {
 		if (isset($xml['error']['message'])) {
 			$error = true;
 			$this->set('error', $error);
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
 			$this->set('data', $data);
 
 			$send_email = true;
