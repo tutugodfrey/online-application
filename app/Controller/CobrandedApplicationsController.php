@@ -830,6 +830,7 @@ class CobrandedApplicationsController extends AppController {
 		if (isset($xml['error']['message'])) {
 			$error = true;
 			$this->set('error', $error);
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
 			$this->set('data', $data);
 
 			$send_email = true;
