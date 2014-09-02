@@ -565,7 +565,7 @@ class CobrandedApplicationsController extends AppController {
 				)
 			),
 			'limit' => 50,
-			'recursive' => 2
+			'recursive' => -1
 		);
 
 		$data = $this->paginate('CobrandedApplication');
