@@ -36,6 +36,25 @@
 					</div>
 					<div>Fields marked with * are required.</div>
 					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
+
+					<?php 
+
+						if ($methodName == 'create_rightsignature_document') {
+
+							echo "<script>";
+							echo "var methodName = 'create_rightsignature_document';";
+						
+							$validationErrorsArray = $this->Session->read('validationErrorsArray');
+			
+							foreach ($validationErrorsArray as $arr) {
+								echo "document.getElementById('".$arr['mergeFieldName']."').style.backgroundColor='#FF0000';";
+								echo "document.getElementById('".$arr['mergeFieldName']."').style.opacity='0.8';";
+							}
+
+							echo "</script>";
+						}
+					?>
+					
 					<div id="actionButtons">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
@@ -52,7 +71,7 @@
 
 								echo $this->Html->scriptBlock(
 									"function fieldCompletion() {
-										if (confirm('Send for completion to: ".$values_map['Owner1Email']."')) {
+										if (confirm('Send for completion to: ' + document.getElementById('Owner1Email').value)) {
 											window.location = '".$completeFieldsUrl."';
 										}
 									}"

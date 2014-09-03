@@ -230,12 +230,14 @@ class CobrandedApplicationsController extends AppController {
 
 						$args = array(
 							'cobrand' => $cobrand['Cobrand']['partner_name'],
-							'link' => $response['application_url'],
+							'link' => $response['application_url_for_email'],
 							'attachments' => array($filepath)
 						);
 
 						// send email to data entry
 						$emailResponse = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
+
+						unset($response['application_url_for_email']);
 
 						if ($emailResponse['success'] == true) {
 							// add email timeline event
@@ -245,8 +247,24 @@ class CobrandedApplicationsController extends AppController {
 							);
 							$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
 
+							$status = '';
+
+							if ($response['partner_name'] == 'Appfolio') {
+								$status = 'signed';
+							} else {
+								if ($response['response_url_type'] == 1) { // return nothing
+									$status = 'saved';
+								} elseif ($response['response_url_type'] == 2) { // return RS signing url
+									$status = 'completed';
+								} elseif ($response['response_url_type'] == 3) { // return online app url
+									$status = 'saved';
+								} else {
+									$status = 'saved';
+								}
+							}
+
 							$this->CobrandedApplication->id = $response['application_id'];
-							$this->CobrandedApplication->saveField('status', 'signed');
+							$this->CobrandedApplication->saveField('status', $status);
 						}
 
 						$this->set('keys', '');
@@ -339,6 +357,9 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('rightsignature_install_template_guid', $template['Template']['rightsignature_install_template_guid']);
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
+
+			$this->set('methodName', $this->Session->read('methodName'));
+			$this->Session->delete('methodName');
 
 			// if it is a rep viewing/editing the application don't require fields to be filled in
 			// but if they do have data, validate it
@@ -549,7 +570,7 @@ class CobrandedApplicationsController extends AppController {
 				)
 			),
 			'limit' => 50,
-			'recursive' => 2
+			'recursive' => -1
 		);
 
 		$data = $this->paginate('CobrandedApplication');
@@ -651,8 +672,9 @@ class CobrandedApplicationsController extends AppController {
 
 			if ($response['success'] !== true) {
 				$this->CobrandedApplication->save(array('CobrandedApplication' => array('status' => 'validate')), array('validate' => false));
-				$this->Session->setFlash('The application is incomplete. '.$response['msg']);
-				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['page']));
+				$this->Session->write('validationErrorsArray', $response['validationErrorsArray']);
+				$this->Session->write('methodName', 'create_rightsignature_document');
+				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['validationErrorsArray'][0]['page']));
 			}
 		}
 
@@ -813,6 +835,7 @@ class CobrandedApplicationsController extends AppController {
 		if (isset($xml['error']['message'])) {
 			$error = true;
 			$this->set('error', $error);
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
 			$this->set('data', $data);
 
 			$send_email = true;

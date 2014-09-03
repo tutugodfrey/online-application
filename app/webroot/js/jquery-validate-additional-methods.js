@@ -68,6 +68,9 @@ jQuery.validator.addMethod("ssn", function(value, element) {
 jQuery.validator.addMethod("money", function(value, element) {
 	return this.optional(element) || /(?=.)^\$?(([1-9][0-9]{0,2}(,[0-9]{3})*)|[0-9]+)?(\.[0-9]{1,2})?$/.test(value);
 }, "The specified monetary value is invalid");
+jQuery.validator.addMethod("percent", function(value, element) {
+	return this.optional(element) || /(?=.)^\$?(([1-9][0-9]{0,2}(,[0-9]{3})*)|[0-9]+)?(\.[0-9]{1,3})?$/.test(value);
+}, "The specified percentage is invalid");
 
 /**
  * Return true, if the value is a valid vehicle identification number (VIN).

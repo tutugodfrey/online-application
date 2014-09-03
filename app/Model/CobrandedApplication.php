@@ -667,19 +667,15 @@ class CobrandedApplication extends AppModel {
 			$cobrand = $this->Cobrand->read();
 
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
+			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			$response['response_url_type'] = $cobrand['Cobrand']['response_url_type'];
+			$response['partner_name'] = $cobrand['Cobrand']['partner_name'];
 
 			switch ($cobrand['Cobrand']['response_url_type']) {
 				case 1: // return nothing
 					break;
 
 				case 2: // return RS signing url
-					// Perform validation
-					$validationResponse = $this->validateCobrandedApplication($newApp);
-
-					if ($validationResponse['success'] !== true) {
-						$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $validationResponse);
-					}
-
 					$client = $this->createRightSignatureClient();
 					$templateGuid = $newApp['Template']['rightsignature_template_guid'];
 					$getTemplateResponse = $this->getRightSignatureTemplate($client, $templateGuid);
@@ -724,6 +720,13 @@ class CobrandedApplication extends AppModel {
 		}
 		
 		$response['success'] = (count($response['validationErrors']) == 0);
+
+		if ($response['success'] == false) {
+			// delete the app
+			$this->delete($createAppResponse['cobrandedApplication']['id']);
+			$response['success'] = false;
+		}
+
 		return $response;
 	}
 
@@ -1771,12 +1774,11 @@ class CobrandedApplication extends AppModel {
 		));
 
 		foreach ($template['TemplatePages'] as $page) {
+			$pageOrder = $page['order'];
+			$pageOrder++;
 			foreach ($page['TemplateSections'] as $section) {
 				foreach ($section['TemplateFields'] as $templateField) {
-					$templateFieldName = $templateField['name'];
-					$templateMergeFieldName = $templateField['merge_field_name'];
-					$page = $page['order'];
-					$page++;
+					$fieldName = $templateField['name'];
 
 					if ($templateField['required'] == true) {
 						$found = false;
@@ -1788,9 +1790,15 @@ class CobrandedApplication extends AppModel {
 
 						if ($found == false) {
 							// update our validationErrors array
-							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateMergeFieldName, 'required');
-							$response['msg'] = 'Required field is empty: '.$templateMergeFieldName;
-							$response['page'] = $page;
+							$response['validationErrors'] = Hash::insert($response['validationErrors'], $fieldName, 'required');
+
+							$errorArray = array();
+							$errorArray['fieldName'] = $fieldName;
+							$errorArray['mergeFieldName'] = $templateField['merge_field_name'];
+							$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+							$errorArray['page'] = $pageOrder;
+							
+							$response['validationErrorsArray'][] = $errorArray;
 						}
 					} 
 				}
@@ -1801,7 +1809,7 @@ class CobrandedApplication extends AppModel {
 			$response['success'] = true;
 			$response['msg'] = '';
 		}
-		
+
 		return $response;
 	}
 	

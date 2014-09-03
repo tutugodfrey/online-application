@@ -211,7 +211,7 @@ class TemplateFieldHelper extends Helper {
 			// 'percent',       // 11 - (0-100)%
 			case 11:
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-				$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
+				$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'percent');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-2');
 				$fieldOptions = Hash::insert($fieldOptions, 'min', '0');
 				$fieldOptions = Hash::insert($fieldOptions, 'max', '100');
