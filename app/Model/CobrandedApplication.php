@@ -77,6 +77,13 @@ class CobrandedApplication extends AppModel {
 	);
 
 /**
+ * Custom find Method
+ *
+ * @var array
+ */
+	public $findMethods = array('index' => true);
+
+/**
  * belongsTo association
  * 
  * @var array
@@ -1803,9 +1810,10 @@ class CobrandedApplication extends AppModel {
  *
  * @return array
  */
-	public function getIndexInfo($data = array()) {
-		$options = array(
-			'fields' => array(
+	
+	protected function _findIndex($state, $query, $results = array()) {
+		if ($state === 'before') {
+			$query['fields'] = array(
 				'DISTINCT CobrandedApplication.id',
 				'CobrandedApplication.user_id',
 				'CobrandedApplication.template_id',
@@ -1825,9 +1833,9 @@ class CobrandedApplication extends AppModel {
 				'Dba.value',
 				'CorpName.value',
 				'CorpContact.value',
-			),
-			'recursive' => -1,
-			'joins' => array(
+			);
+			$query['recursive'] = -1;
+			$query['joins'] = array(
 				array('table' => 'onlineapp_cobranded_application_values',
 					'alias' => 'Dba',
 					'type' => 'LEFT',
@@ -1877,9 +1885,24 @@ class CobrandedApplication extends AppModel {
 						'CobrandedApplication.id = Coversheet.cobranded_application_id',
 					),
 				),
-			)
-		);
-		return $options;
+			);
+			//Because we are using a key value store for the application values instead of abiding by cake conventions 
+			//we have to manipulate the count parameters to get the appropriate results 
+			if (!empty($query['operation']) && $query['operation'] === 'count') {
+				if (!isset($query['conditions']['OR'])) {
+					unset($query['joins']['3']);
+					$query['joins'] = array_values($query['joins']);
+					if (isset($query['sort'])) {
+						$query['group']['0'] = $query['sort'];
+					}
+					return $query;
+				}	
+				
+				return $query;
+			}
+			return $query;
+		}
+		return $results;
 	}
 
 /**
@@ -1897,7 +1920,6 @@ class CobrandedApplication extends AppModel {
  * @return array
  */
 	public function orConditions($data = array()) {
-//		$this->unbindModel(array('belongsTo' => array('Template')));
 		$filter = $data['search'];
 			$conditions = array(
 				'OR' => array(
@@ -1913,31 +1935,6 @@ class CobrandedApplication extends AppModel {
 		return $conditions;
 	}
 
-/**
- * Work-a-round for paginating results based on a DISTINCT COUNT
- * 
- * @param array $conditions
- * @param integer $recursive
- * @return array
- */
-	function paginateCount($conditions, $recursive = -1) {
-		//grab the conditions used for pagination
-		$joins = $this->getIndexInfo();
-		
-		$params = Configure::read('paginate.params');
-		//specify DISTINCT for this model
-		$params['fields'] = "DISTINCT ($this->alias.id)";
-		$params['conditions'] = $conditions;
-		//parse out the joins from the pagination options
-		$params['joins'] = $joins['joins'];
-		$params['recursive'] = $recursive;
-		
-//		unset($params['group']);
-//		unset($params['contain']);
-		unset($params['order']);
-		
-		return $this->find('count', $params); 
-    }
 /**
  * Work-a-round for sorting on aliased columns that have been custom joined
  * without this code we are unable to properly sort all columns in the 

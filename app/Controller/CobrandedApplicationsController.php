@@ -360,12 +360,17 @@ class CobrandedApplicationsController extends AppController {
 		}
 		//paginate the applications
 		$this->Prg->commonProcess();
-		$this->Paginator->settings = $this->CobrandedApplication->getIndexInfo();
+		//grab results from the custom finder _findIndex and pass them to the paginator
+		$this->paginate = array('index');
+		$this->Paginator->settings = $this->paginate;
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
 		$this->Paginator->settings['order'] = array('CobrandedApplication.modified' => ' DESC');
+		//If someone sticks in someone elses user_id in the url, unset it so they can't grab other users applications
 		if(!in_array($this->passedArgs['user_id'], $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')))) {
 			unset($this->passedArgs['user_id']);
 		}
+		//If a user was not specified in the search and the user is not an admin (admin's can see everyone), set the appropriate users for the logged in user to view
+		//otherwise if no arguments were passed overwrite the conditions to search for apps belonging to the logged in user
 		if (empty($this->passedArgs['user_id']) && $this->Auth->user('group') !== User::ADMIN) {
 			$this->Paginator->settings['conditions'][] = array('CobrandedApplication.user_id' => $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')));
 		} else if (!is_array($this->passedArgs)) {
