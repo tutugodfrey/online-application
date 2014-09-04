@@ -21,7 +21,7 @@
 	<tr<?php echo $class;?>>
 		<td><?php echo $this->Html->link($Coversheet['Coversheet']['id'], array('controller' => 'coversheets', 'action' => 'edit', $Coversheet['Coversheet']['id'], 'admin' => false)); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($Coversheet['CobrandedApplication']['DBA'], array('controller' => 'cobranded_applications', 'action' => 'add', 1, $Coversheet['CobrandedApplication']['id'], $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
+			<?php echo $this->Html->link($Coversheet['Dba']['value'], array('controller' => 'cobranded_applications', 'action' => 'edit', $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
 		</td>
 		<td>
 			<?php echo $this->Html->link($Coversheet['User']['firstname'] . ' ' . $Coversheet['User']['lastname'], array('controller' => 'users', 'action' => 'view', 'admin' => true, $Coversheet['User']['id'])); ?>
@@ -34,7 +34,7 @@
 			<?php echo $this->Html->link(__('Override'), array('action' => 'override', $Coversheet['Coversheet']['id'])); ?>
                     <?php endif; ?>
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $Coversheet['Coversheet']['id'], 'admin' => false)); ?>
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['CobrandedApplication']['DBA']/*['Coversheet']['id']*/)); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['Dba']['value'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -59,18 +59,6 @@
 		<li><?php echo $this->Html->link(__('List  Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New  Application'), array('controller' => 'cobranded_applications', 'action' => 'add', 'admin' => false)); ?> </li>
                 <li><?php echo $this->Html->link(__('List  Coversheets'), array('controller' => 'coversheets', 'action' => 'index')); ?> </li>
-<!--                <li><?php echo $this->Form->create(); ?>
-                <?php if (in_array($this->Session->read('Auth.User.group'), array('admin'))) { ?>
-                <?php echo $this->Form->input('Select User',array('options' => array($users), 'default' => $this->Session->read('coversheet.user_id'), 'empty' => 'Show All', 'style' => 'width: 75%;')); ?>
-                <?php } ?>
-                
-                    <?php echo $this->Form->input('Coversheet Status', array('options' => array(
-                        'saved'=>'saved',
-                        'validated'=>'validated',
-                        'sent'=>'sent'
-                        ), 'default' => $this->Session->read('coversheet.status'),'empty' => 'Show All', 'style' => 'width: 75%;')); ?>
-                
-                <?php echo $this->Form->end('submit');?></li>-->
                 <?php echo $this->Element('coversheets/search'); ?>
 	</ul>
 </div>
