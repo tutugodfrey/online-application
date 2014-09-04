@@ -112,6 +112,8 @@ class Coversheet extends AppModel {
             'message' => 'Internet Merchants: Does the merchant store credit card numbers online?'
         )
     );
+	
+	public $findMethods = array('index' => true);
 
 	public $belongsTo = array(
 		'CobrandedApplication' => array(
@@ -382,6 +384,115 @@ class Coversheet extends AppModel {
         }
         
         return false;
-    }  
+	}  
+
+	protected function _findIndex($state, $query, $results = array()) {
+		if ($state === 'before') {
+			$query['fields'] = array(
+				'Coversheet.id',
+				'Dba.value',
+				'User.id',
+				'User.firstname',
+				'User.lastname',
+				'CobrandedApplication.id',
+				'CobrandedApplication.uuid',
+				'CobrandedApplication.status',
+				'Coversheet.status'
+			);
+			$query['recursive'] = -1;
+			$query['joins'] = array(
+				array(
+					'table' => 'onlineapp_cobranded_applications',
+					'alias' => 'CobrandedApplication',
+					'type' => 'LEFT', 
+					'conditions' => array(
+						'Coversheet.cobranded_application_id = CobrandedApplication.id'
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Dba',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Dba.cobranded_application_id and Dba.name =' . "'DBA'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpName',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpName.cobranded_application_id and CorpName.name =' . "'CorpName'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpCity',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpCity.cobranded_application_id and CorpCity.name =' . "'CorpCity'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpContact',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner1Name',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner1Name.cobranded_application_id and Owner1Name.name =' . "'Owner1Name'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner2Name',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner2Name.cobranded_application_id and Owner2Name.name =' . "'Owner2Name'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_users',
+					'alias' => 'User',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'Coversheet.user_id = User.id'
+					)
+				)
+			);
+			return $query;
+		}
+		return $results;
+	}
+
+	public $filterArgs = array(
+		'search' => array('type' => 'query', 'method' => 'orConditions'),
+		'user_id' => array('type' => 'value'),
+		'app_status' => array('type' => 'value', 'field' => 'CobrandedApplication.status'),
+		'coversheet_status' => array('type' => 'value', 'field' => 'Coversheet.status')
+	);
+
+	public function orConditions ($data = array()) {
+		$filter = $data['search'];
+			$conditions = array(
+				'OR' => array(
+					'Dba.value ILIKE' => '%' . $filter . '%',
+					'CorpName.value ILIKE' => '%' . $filter . '%',
+					'CorpCity.value ILIKE' => '%' . $filter . '%',
+					'CorpContact.value ILIKE' => '%' . $filter . '%',
+					'Owner1Name.value ILIKE' => '%' . $filter . '%',
+					'Owner2Name.value ILIKE' => '%' . $filter . '%',
+					'User.email ILIKE' => '%' . $filter . '%',
+				),
+			);
+		return $conditions;
+	}
+
 }
 ?>

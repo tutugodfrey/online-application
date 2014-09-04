@@ -21,7 +21,7 @@
 	<tr<?php echo $class;?>>
 		<td><?php echo $this->Html->link($Coversheet['Coversheet']['id'], array('controller' => 'coversheets', 'action' => 'edit', $Coversheet['Coversheet']['id'], 'admin' => false)); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($Coversheet['CobrandedApplication']['DBA'], array('controller' => 'cobranded_applications', 'action' => 'edit', $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
+			<?php echo $this->Html->link($Coversheet['Dba']['value'], array('controller' => 'cobranded_applications', 'action' => 'edit', $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
 		</td>
 		<td>
 			<?php echo $this->Html->link($Coversheet['User']['firstname'] . ' ' . $Coversheet['User']['lastname'], array('controller' => 'users', 'action' => 'view', 'admin' => true, $Coversheet['User']['id'])); ?>
@@ -34,7 +34,7 @@
 			<?php echo $this->Html->link(__('Override'), array('action' => 'override', $Coversheet['Coversheet']['id'])); ?>
                     <?php endif; ?>
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $Coversheet['Coversheet']['id'], 'admin' => false)); ?>
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['CobrandedApplication']['DBA']/*['Coversheet']['id']*/)); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $Coversheet['Coversheet']['id']), null, __('Are you sure you want to delete %s Cover Sheet?', $Coversheet['Dba']['value'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

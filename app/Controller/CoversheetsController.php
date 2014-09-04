@@ -19,10 +19,11 @@ class CoversheetsController extends AppController {
 
     /**
     * @todo Figure out why search does not work
+    * @todo UnockedActions should not be needed for search to work properly -- SJT 09-03-2014
     */
     function beforeFilter() {
         parent::beforeFilter();
-        $this->Security->unlockedActions = array('admin_search');
+        $this->Security->unlockedActions = array('admin_index');
         //if (!empty($this->Coversheet->id)&& $this->Session->read('Application.coversheet') == 'pdf') $this->Auth->allow(array('pdf','word'));
         //$this->Security->validatePost = false;
          //$this->Security->allowedControllers = array('Applications', 'Users');
@@ -280,9 +281,10 @@ class CoversheetsController extends AppController {
  * Display a list of coversheets
  */        
         
-	public function admin_index() {
-        $this->paginate = array(
-		'fields' => array('Coversheet.id', 'Coversheet.status'),
+    public function admin_index() {
+	$this->Prg->commonProcess();
+        $this->paginate = array('index',
+/*		'fields' => array('Coversheet.id', 'Coversheet.status'),
 		'limit' => 25,
 		'contain' => array(
 			'User' => array(
@@ -292,15 +294,16 @@ class CoversheetsController extends AppController {
 				'fields' => array('id', 'uuid', 'status')
 			)
 		),
-		'order' => array('Coversheet.id' => 'desc')
-        );  
-
+ */		'order' => array('Coversheet.id' => 'desc')
+	);  
+	$this->Paginator->settings = $this->paginate;
+	$this->Paginator->settings['conditions'] = $this->Coversheet->parseCriteria($this->passedArgs);
         if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
             $conditions =  array(
                     'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))
             );
         }
-
+/*
         $data = $this->paginate('Coversheet', $conditions);
 
         $counter = 0;
@@ -312,9 +315,9 @@ class CoversheetsController extends AppController {
             $data[$counter] = $array;
             $counter++;
         }
-    
+ */  
         $this->set('users', $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id')));
-        $this->set('Coversheets', $data);
+        $this->set('Coversheets', $this->Paginator->paginate());
 	}
         
 /*
