@@ -59,18 +59,6 @@
 		<li><?php echo $this->Html->link(__('List  Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New  Application'), array('controller' => 'cobranded_applications', 'action' => 'add', 'admin' => false)); ?> </li>
                 <li><?php echo $this->Html->link(__('List  Coversheets'), array('controller' => 'coversheets', 'action' => 'index')); ?> </li>
-<!--                <li><?php echo $this->Form->create(); ?>
-                <?php if (in_array($this->Session->read('Auth.User.group'), array('admin'))) { ?>
-                <?php echo $this->Form->input('Select User',array('options' => array($users), 'default' => $this->Session->read('coversheet.user_id'), 'empty' => 'Show All', 'style' => 'width: 75%;')); ?>
-                <?php } ?>
-                
-                    <?php echo $this->Form->input('Coversheet Status', array('options' => array(
-                        'saved'=>'saved',
-                        'validated'=>'validated',
-                        'sent'=>'sent'
-                        ), 'default' => $this->Session->read('coversheet.status'),'empty' => 'Show All', 'style' => 'width: 75%;')); ?>
-                
-                <?php echo $this->Form->end('submit');?></li>-->
                 <?php echo $this->Element('coversheets/search'); ?>
 	</ul>
 </div>

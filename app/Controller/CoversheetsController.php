@@ -23,7 +23,7 @@ class CoversheetsController extends AppController {
     */
     function beforeFilter() {
         parent::beforeFilter();
-        $this->Security->unlockedActions = array('admin_index');
+        //$this->Security->unlockedActions = array('admin_index');
         //if (!empty($this->Coversheet->id)&& $this->Session->read('Application.coversheet') == 'pdf') $this->Auth->allow(array('pdf','word'));
         //$this->Security->validatePost = false;
          //$this->Security->allowedControllers = array('Applications', 'Users');
@@ -281,91 +281,61 @@ class CoversheetsController extends AppController {
  * Display a list of coversheets
  */        
         
-    public function admin_index() {
-	$this->Prg->commonProcess();
-        $this->paginate = array('index',
-/*		'fields' => array('Coversheet.id', 'Coversheet.status'),
-		'limit' => 25,
-		'contain' => array(
-			'User' => array(
-				'fields' => array('id', 'firstname', 'lastname')
-			),
-			'CobrandedApplication' => array(
-				'fields' => array('id', 'uuid', 'status')
-			)
-		),
- */		'order' => array('Coversheet.id' => 'desc')
-	);  
-	$this->Paginator->settings = $this->paginate;
-	$this->Paginator->settings['conditions'] = $this->Coversheet->parseCriteria($this->passedArgs);
-        if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
-            $conditions =  array(
-                    'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))
-            );
-        }
-/*
-        $data = $this->paginate('Coversheet', $conditions);
-
-        $counter = 0;
-        foreach ($data as $array) {
-            $valuesMap = $this->getCobrandedApplicationValues($array['CobrandedApplication']['id'], array('CobrandedApplicationValue.name' => 'DBA'), -1);
-            foreach ($valuesMap as $key => $val) {
-                $array['CobrandedApplication'][$key] = $val;
-            }
-            $data[$counter] = $array;
-            $counter++;
-        }
- */  
-        $this->set('users', $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id')));
-        $this->set('Coversheets', $this->Paginator->paginate());
+	public function admin_index() {
+		//$this->Prg->commonProcess();
+		if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
+			$conditions =  array(
+				'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))
+			);
+		}
+		$this->paginate = array('index',
+			'conditions' => $conditions,
+			'order' => array('Coversheet.id' => 'desc')
+		);  
+		$this->Paginator->settings = $this->paginate;
+		$user_id = $this->Auth->user('id');
+		$users = $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+		$Coversheets = $this->Paginator->paginate();
+		$this->set(compact('users', 'Coversheets', 'user_id'));
 	}
         
 /*
  * Search for a coversheet, criteria available is determined by user rights
  */        
         
-    public function admin_search() {
-        $this->Prg->commonProcess();
-        $this->set('users', $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id')));
-        $criteria = trim($this->passedArgs['search']);
-        $criteria = '%' . $criteria . '%';
+	public function admin_search() {
+		$this->Prg->commonProcess();
 
-        $conditions = array(
-            'OR' => array(
-                'CobrandedApplication.CorpName ILIKE' => $criteria,
-                'CobrandedApplication.CorpCity ILIKE' => $criteria,
-                'CobrandedApplication.CorpContact ILIKE' => $criteria,
-                'CobrandedApplication.DBA ILIKE' => $criteria,
-                'CobrandedApplication.Owner1Name ILIKE' => $criteria,
-                'CobrandedApplication.Owner2Name ILIKE' => $criteria,
-                'CAST(CobrandedApplication.id AS TEXT) ILIKE' => $criteria,
-            ),                       
-        );
         
-        if ($this->passedArgs['Select User'] != '') {
-            $conditions[] = array('CobrandedApplication.user_id' => $this->passedArgs['Select User']);
-        } else if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
-            $conditions[] = array('CobrandedApplication.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id')));
-        }
-        
-        if ($this->passedArgs['Application Status'] != '') {
-            $conditions[] = array('CobrandedApplication.status' => $this->passedArgs['Application Status']);
-        }
+		if ($this->passedArgs['user_id'] != '' && !in_array($this->passedArgs['user_id'], $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id')))) {
+			unset($this->passedArgs['user_id']);
+			$conditions[] = array('Coversheet.user_id' => $this->Auth->user('id'));
+		} else if ($this->passedArgs['user_id'] != '') {
+			$conditions[] = array('Coversheet.user_id' => $this->passedArgs['user_id']);
+		} else if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
+			$conditions[] = array(
+				'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id')));
+		}
 
-        if ($this->passedArgs['Coversheet Status'] != '') {
-            $conditions[] = array('Coversheet.status' => $this->passedArgs['Coversheet Status']);
-        }
 
-        $this->paginate = array(
-            'limit' => 50,            
-            'order' => array('Coversheet.id' => 'desc')
-        );
+		if ($this->passedArgs['app_status'] != '') {
+			$conditions[] = array('CobrandedApplication.status' => $this->passedArgs['app_status']);
+		}
 
-        $Coversheets = $this->paginate('Coversheet', $conditions);
-        $this->set(compact('Coversheets'));
-        $this->set('criteria', $this->passedArgs['search']);
-        $this->render('admin_index');
-    }
+		if ($this->passedArgs['coversheet_status'] != '') {
+			$conditions[] = array('Coversheet.status' => $this->passedArgs['coversheet_status']);
+		}
+
+		$this->paginate = array('index',
+			'conditions' => $conditions,
+			'order' => array('Coversheet.id' => 'desc')
+		);  
+		$user_id = $this->Auth->user('id');
+		$Coversheets = $this->paginate();
+		$users = $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+		$this->set(compact('Coversheets', 'users', 'user_id'));
+		$this->render('admin_index');
+	}
         
 	public function admin_view($id = null) {
 		if (!$id) {
