@@ -1021,6 +1021,38 @@ class CobrandedApplicationsController extends AppController {
 		$this->Session->setFlash('Install sheet Successfully sent to: '.$email);
 	}
 
+/*
+ * API callback for the RightSignature API, the RS API hits this callback
+ * after a document has been successfully signed.
+ * callback implements logic for what should happen to applications after
+ * they have been signed.
+ */
+	function document_callback() {
+		$this->request->data = array_change_key_case($this->request->data);
+		CakeLog::write('debug', print_r($this->request->data, true));
+		
+		if ($this->request->data['callback']['guid'] && $this->data['callback']['status'] == 'signed') {
+
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($this->request->data['callback']['guid']);
+
+			if (empty($data)) {
+				$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($this->request->data['callback']['guid']);
+				if (!empty($data)) {
+					$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
+					$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
+				}
+				exit;
+			}
+
+			if (!empty($data)) {
+				$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
+				$this->CobrandedApplication->saveField('status', 'signed');
+			}
+		}
+		
+		exit;
+	}
+
 /**
  * pdf
  *
