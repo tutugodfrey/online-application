@@ -315,10 +315,29 @@ class Coversheet extends AppModel {
         $this->id = $id;
         $data = $this->findById($id);
 
+        $conditions = array(
+            'conditions' => array(
+                'cobranded_application_id' => $data['CobrandedApplication']['id'],
+            ),
+            'recursive' => 1
+        );
+        
+        $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+
+        $appValues = $CobrandedApplicationValue->find(
+            'all',
+            $conditions     
+        );
+    
+        $appValueArray = array();
+        foreach ($appValues as $arr) {
+            $appValueArray[] = $arr['CobrandedApplicationValue'];
+        }
+
         $dbaBusinessName = '';
         $corpName = '';
 
-        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($data['CobrandedApplicationValues']);
+        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
 
         if (!empty($valuesMap['DBA'])) {
             $dbaBusinessName = $valuesMap['DBA'];

@@ -661,6 +661,8 @@ class CobrandedApplication extends AppModel {
 
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
 			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			$response['response_url_type'] = $cobrand['Cobrand']['response_url_type'];
+			$response['partner_name'] = $cobrand['Cobrand']['partner_name'];
 
 			switch ($cobrand['Cobrand']['response_url_type']) {
 				case 1: // return nothing
@@ -1782,8 +1784,14 @@ class CobrandedApplication extends AppModel {
 						if ($found == false) {
 							// update our validationErrors array
 							$response['validationErrors'] = Hash::insert($response['validationErrors'], $fieldName, 'required');
-							$response['msg'] = 'Required field is empty: '.$fieldName;
-							$response['page'] = $pageOrder;
+
+							$errorArray = array();
+							$errorArray['fieldName'] = $fieldName;
+							$errorArray['mergeFieldName'] = $templateField['merge_field_name'];
+							$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+							$errorArray['page'] = $pageOrder;
+							
+							$response['validationErrorsArray'][] = $errorArray;
 						}
 					} 
 				}

@@ -247,8 +247,24 @@ class CobrandedApplicationsController extends AppController {
 							);
 							$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
 
+							$status = '';
+
+							if ($response['partner_name'] == 'Appfolio') {
+								$status = 'signed';
+							} else {
+								if ($response['response_url_type'] == 1) { // return nothing
+									$status = 'saved';
+								} elseif ($response['response_url_type'] == 2) { // return RS signing url
+									$status = 'completed';
+								} elseif ($response['response_url_type'] == 3) { // return online app url
+									$status = 'saved';
+								} else {
+									$status = 'saved';
+								}
+							}
+
 							$this->CobrandedApplication->id = $response['application_id'];
-							$this->CobrandedApplication->saveField('status', 'signed');
+							$this->CobrandedApplication->saveField('status', $status);
 						}
 
 						$this->set('keys', '');
@@ -341,6 +357,9 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('rightsignature_install_template_guid', $template['Template']['rightsignature_install_template_guid']);
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
+
+			$this->set('methodName', $this->Session->read('methodName'));
+			$this->Session->delete('methodName');
 
 			// if it is a rep viewing/editing the application don't require fields to be filled in
 			// but if they do have data, validate it
@@ -546,7 +565,7 @@ class CobrandedApplicationsController extends AppController {
 				)
 			),
 			'limit' => 50,
-			'recursive' => 2
+			'recursive' => -1
 		);
 
 		$data = $this->paginate('CobrandedApplication');
@@ -648,8 +667,9 @@ class CobrandedApplicationsController extends AppController {
 
 			if ($response['success'] !== true) {
 				$this->CobrandedApplication->save(array('CobrandedApplication' => array('status' => 'validate')), array('validate' => false));
-				$this->Session->setFlash('The application is incomplete. '.$response['msg']);
-				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['page']));
+				$this->Session->write('validationErrorsArray', $response['validationErrorsArray']);
+				$this->Session->write('methodName', 'create_rightsignature_document');
+				$this->redirect(array('action' => "/edit/".$cobrandedApplication['CobrandedApplication']['uuid']."#tab".$response['validationErrorsArray'][0]['page']));
 			}
 		}
 
@@ -810,6 +830,7 @@ class CobrandedApplicationsController extends AppController {
 		if (isset($xml['error']['message'])) {
 			$error = true;
 			$this->set('error', $error);
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
 			$this->set('data', $data);
 
 			$send_email = true;
@@ -998,6 +1019,38 @@ class CobrandedApplicationsController extends AppController {
 	public function var_success() {
 		$email = $this->Session->read('CobrandedApplication.email');
 		$this->Session->setFlash('Install sheet Successfully sent to: '.$email);
+	}
+
+/*
+ * API callback for the RightSignature API, the RS API hits this callback
+ * after a document has been successfully signed.
+ * callback implements logic for what should happen to applications after
+ * they have been signed.
+ */
+	function document_callback() {
+		$this->request->data = array_change_key_case($this->request->data);
+		CakeLog::write('debug', print_r($this->request->data, true));
+		
+		if ($this->request->data['callback']['guid'] && $this->data['callback']['status'] == 'signed') {
+
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($this->request->data['callback']['guid']);
+
+			if (empty($data)) {
+				$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($this->request->data['callback']['guid']);
+				if (!empty($data)) {
+					$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
+					$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
+				}
+				exit;
+			}
+
+			if (!empty($data)) {
+				$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
+				$this->CobrandedApplication->saveField('status', 'signed');
+			}
+		}
+		
+		exit;
 	}
 
 /**

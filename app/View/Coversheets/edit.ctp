@@ -31,19 +31,20 @@
                 </tr>
                 </table>
                 <table  style="border: 1px solid black; width: 100%;" class="radios">
-                <tr>
-                    <td><?php echo "Attached: " . $this->Form->input('setup_banking', array('label' => "Banking (no starter checks)")); ?></td>
-                    <td><?php echo $this->Form->input('setup_statements', array('label' => "3 Mo. Processing Stmts")); ?></td>
-                    <td><?php echo $this->Form->input('setup_drivers_license', array('label' => "Owner's Driver's License")); ?></td>
-                </tr>
+                    <tr>
+                        <td><?php echo "Attached:"?></td>
+                        <td><?php echo $this->Form->input('setup_banking', array('label' => "Banking (no starter checks)")); ?></td>
+                        <td><?php echo $this->Form->input('setup_statements', array('label' => "3 Mo. Processing Stmts")); ?></td>
+                        <td><?php echo $this->Form->input('setup_drivers_license', array('label' => "Owner's Driver's License")); ?></td>
+                    </tr>
                 </table>
                 <table  style="border: 1px solid black; width: 100%;" class="radios">
                     <tr>
-		<td><?php echo "For New Businesses:"?></td>
-		<td><?php echo $this->Form->input('setup_business_license', array('div' => false, 'label' => false)) . "Business License or Utility Bill"; ?></td>
-		<td><?php echo $this->Form->input('setup_other', array('div' => false, 'label' => false)); ?></td>
-		<td style="width: 25%;"><?php echo "Other:" . $this->Form->input('setup_field_other', array('div' => false, 'label' => false, 'style' => 'width: 120px;','size' => '20')); ?></td>
-                </tr>
+                        <td><?php echo "For New Businesses:"?></td>
+                        <td><?php echo $this->Form->input('setup_business_license', array('label' => "Business License or Utility Bill")); ?></td>
+                        <td><?php echo $this->Form->input('setup_other', array('label' => "Other:")); ?></td>
+                        <td style="width: 25%;"><?php echo $this->Form->input('setup_field_other', array('div' => false, 'label' => false, 'style' => 'width: 120px;','size' => '20')); ?></td>
+                    </tr>
                 </table>
                 <table  style="border: 1px solid black; width: 100%;" class="radios <?php if ($tier == 'tier1') echo 'bg-highlight'; ?>">
                     <tr>
@@ -216,15 +217,10 @@
                             $options = array('lease' => 'Lease - Terms: ');
                             $attributes = array('hiddenField' => false);
                             echo $this->Form->radio('setup_equipment_payment',$options,$attributes); ?>
-
-                            <?php echo '$' . $this->Form->input('setup_lease_price',array('div' => false, 'label' => false,'style' => 'width:40px','size' => '5')); ?>
-
-                            per month
-
-                            <?php echo $this->Form->input('setup_lease_months',array('div' => false, 'label' => false,'style' => 'width:40px','size' => '5')); ?>
-
-                            #of months
                         </td>
+
+                        <td><?php echo $this->Form->input('setup_lease_price',array('label' => '$ per month','style' => 'width:40px','size' => '5')); ?></td>
+                        <td><?php echo $this->Form->input('setup_lease_months',array('label' => '# of months','style' => 'width:40px','size' => '5')); ?></td>
                     </tr>
                 </table>
                 <table style="border: 1px solid black; width: 100%;" class="radios">
@@ -235,21 +231,20 @@
                 </table>
                 <table  style="border: 1px solid black; width: 100%;" class="radios">
                     <tr class="radios">
-                        <td>Referrer: <?php echo $this->Form->input('setup_referrer',array('div' => false, 'label' => false, 'style' => 'width:150px', 'size' => '25')); ?>
-                        <?php 
+                        <td>Referrer: <?php echo $this->Form->input('setup_referrer',array('div' => false, 'label' => false, 'style' => 'width:150px', 'size' => '25')); ?></td>
+                        <td><?php 
                         $options=array('gp' => 'GP','bp' => 'BP');
                         $attributes=array('legend' => false);
-                        echo $this->Form->radio('setup_referrer_type',$options,$attributes); ?>
-                        <?php echo $this->Form->input('setup_referrer_pct',array('div' => false, 'label' => false,'style' => 'width:20px','size' => '2')); ?>%
-                        </td>
-                        <td>
-                         Reseller<?php echo $this->Form->input('setup_reseller',array('div' => false, 'label' => false,'style' => 'width:150px','size' => '25')); ?>
-                         <?php 
+                        echo $this->Form->radio('setup_referrer_type',$options,$attributes); ?></td>
+                        <td><?php echo $this->Form->input('setup_referrer_pct',array('div' => false, 'label' => '%','style' => 'width:50px','size' => '2')); ?></td>
+                        
+                        <td>Reseller<?php echo $this->Form->input('setup_reseller',array('div' => false, 'label' => false,'style' => 'width:150px','size' => '25')); ?></td>
+                        <td><?php 
                         $options=array('gp' => 'GP','bp' => 'BP');
                         $attributes=array('legend' => false);
-                        echo $this->Form->radio('setup_reseller_type',$options,$attributes); ?>
-                        <?php echo $this->Form->input('setup_reseller_pct',array('div' => false, 'label' => false,'style' => 'width:20px', 'size' => '2')); ?>%
-                        </td>
+                        echo $this->Form->radio('setup_reseller_type',$options,$attributes); ?></td>
+                        <td><?php echo $this->Form->input('setup_reseller_pct',array('div' => false, 'label' => '%','style' => 'width:50px', 'size' => '2')); ?></td>
+                        
                     </tr>
                 </table>
                 <table  style="border: 1px solid black; width: 100%;" class="radios">
@@ -421,7 +416,7 @@
                  <?php 
                  }
                  if ($data['Coversheet']['status'] == 'saved'){
-                 if ($cp != true) { echo $this->Js->divEnd($div_string);}
+                    if ($cp != true) { echo '</div>'; }
                  }
                  if($data['Coversheet']['status'] == 'saved') {
                      if ($micros != true) {
