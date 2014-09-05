@@ -51,7 +51,7 @@ class CobrandedApplicationsController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
+		$this->Auth->allow('document_callback','quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
 
@@ -1034,7 +1034,7 @@ class CobrandedApplicationsController extends AppController {
  * they have been signed.
  */
 	function document_callback() {
-		$this->request->data = array_change_key_case($this->request->data);
+		$this->data = array_change_key_case($this->data, CASE_LOWER);	
 		CakeLog::write('debug', print_r($this->request->data, true));
 		
 		if ($this->request->data['callback']['guid'] && $this->data['callback']['status'] == 'signed') {
