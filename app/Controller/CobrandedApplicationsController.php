@@ -42,6 +42,7 @@ class CobrandedApplicationsController extends AppController {
 		'admin_app_extend' => array(User::ADMIN, User::REP, User::MANAGER),
 		'create_rightsignature_document' => array('*'),
 		'sign_rightsignature_document' => array('*'),
+                'document_callback' => array('*'),
 		'install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
 		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
 	);
