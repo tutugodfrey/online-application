@@ -1377,7 +1377,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 	public function testIndexInfo() {
 		$expectedResponse = array(
-			'cobrandedApplications' => array(
+			0 => array(
 					'CobrandedApplication' => array(
 						'id' => 1,
 						'user_id' => 1,
