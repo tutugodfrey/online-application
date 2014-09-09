@@ -126,6 +126,32 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
 		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 40,
+			'name' => 'DBA',
+			'value' => 'Doing Business As',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 41,
+			'name' => 'CorpName',
+			'value' => 'Corporate Name',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 42,
+			'name' => 'CorpContact',
+			'value' => 'Corporate Contact',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+	);
+	);
 	);
 
 }
