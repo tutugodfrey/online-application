@@ -17,6 +17,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.onlineappUser',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -24,7 +25,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
-		'app.onlineappUser',
 	);
 
 	private $__template;
@@ -52,6 +52,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
+		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 
@@ -80,7 +81,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'active' => 1,
 				'api_password' => 'notset',
 				'api_enabled' => 1,
-				'api' => 1,
+		//		'api' => 1,
 				'cobrand_id' => 2,
 				'template_id' => $this->__template['Template']['id'],
 			)
@@ -1384,7 +1385,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'user_id' => 1,
 						'template_id' => 1,
 						'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
-						'created' => '2014-01-24 09:07:08',	
 						'modified' => '2014-01-24 09:07:08',
 						'rightsignature_document_guid' => null,
 						'status' => null,
