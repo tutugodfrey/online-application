@@ -1799,17 +1799,16 @@ class CobrandedApplication extends AppModel {
 					$fieldName = $templateField['name'];
 
 					if ($templateField['required'] == true) {
+						// SSN should not be required if Ownership Type is Non Profit
+						if (($templateField['merge_field_name'] == 'OwnerSSN' || $templateField['merge_field_name'] == 'Owner2SSN') && $isNonProfit) {
+							continue;
+						}
+
 						$found = false;
+
 						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
 								$found = true;
-							}
-
-							// SSN should not be required if Ownership Type is Non Profit
-							if ($tmpVal['name'] == 'OwnerSSN' || $tmpVal['name'] == 'Owner2SSN') {
-								if ($isNonProfit) {
-									$found = true;
-								}
 							}
 						}
 
@@ -1825,7 +1824,7 @@ class CobrandedApplication extends AppModel {
 							
 							$response['validationErrorsArray'][] = $errorArray;
 						}
-					} 
+					}
 				}
 			}
 		}
