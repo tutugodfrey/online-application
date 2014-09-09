@@ -1039,9 +1039,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => true,
 			'msg' => '',
-			'dba' => '',
+			'dba' => 'Doing Business As',
 			'email' => 'testing@axiapayments.com',
-			'fullname' => ''
+			'fullname' => 'Corporate Contact'
 		);
 
 		$emailAddress = 'testing@axiapayments.com';
@@ -1153,9 +1153,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => true,
 			'msg' => '',
-			'dba' => '',
+			'dba' => 'Doing Business As',
 			'email' => 'testing@axiapayments.com',
-			'fullname' => ''
+			'fullname' => 'Corporate Contact'
 		);
 
 		// assertions
@@ -1312,7 +1312,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'TextField1' => 'text field 1',
 			'TextField2' => 'text field 2',
 			'TextField3' => 'text field 3',
-			'TextField4' => 'text field 4'
+			'TextField4' => 'text field 4',
+			'DBA' => 'Doing Business As',
+			'CorpName' => 'Corporate Name',
+			'CorpContact' => 'Corporate Contact'
 		);
 
 		// assertions
@@ -1415,7 +1418,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		);
 		
 
-		$response = $this->CobrandedApplication->find('Index');
+		$response = $this->CobrandedApplication->find('index');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
