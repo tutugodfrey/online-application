@@ -151,7 +151,5 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 			'modified' => '2014-01-23 17:28:15'
 		),
 	);
-	);
-	);
 
 }
