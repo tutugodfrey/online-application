@@ -24,6 +24,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
+		'app.onlineappUser',
 	);
 
 	private $__template;
@@ -1383,7 +1384,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'user_id' => 1,
 						'template_id' => 1,
 						'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
-						'created' => '2014-01-24 09:07:08',
+						'created' => '2014-01-24 09:07:08',	
 						'modified' => '2014-01-24 09:07:08',
 						'rightsignature_document_guid' => null,
 						'status' => null,
@@ -1409,7 +1410,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'CorpName' => array(
 						'value' => 'Corporate Name',
 					),
-					'CorporateContact' => array(
+					'CorpContact' => array(
 						'value' => 'Corporate Contact',
 					),
 			),
