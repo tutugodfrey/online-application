@@ -26,7 +26,7 @@ class OnlineappUserFixture extends CakeTestFixture {
 		'active' => array('type' => 'boolean', 'null' => true, 'default' => true),
 		'api_password' => array('type' => 'string', 'null' => true, 'length' => 50),
 		'api_enabled' => array('type' => 'boolean', 'null' => true),
-		'api' => array('type' => 'boolean', 'null' => true),
+//		'api' => array('type' => 'boolean', 'null' => true),
 		'cobrand_id' => array('type' => 'integer', 'null' => true),
 		'template_id' => array('type' => 'integer', 'null' => true),
 		'indexes' => array(
@@ -59,7 +59,7 @@ class OnlineappUserFixture extends CakeTestFixture {
 			'active' => 1,
 			'api_password' => 'Lorem ipsum dolor sit amet',
 			'api_enabled' => 1,
-			'api' => 1,
+//			'api' => 1,
 			'cobrand_id' => 1,
 			'template_id' => 1
 		),

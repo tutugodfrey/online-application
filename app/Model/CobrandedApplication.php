@@ -600,7 +600,7 @@ class CobrandedApplication extends AppModel {
 								// udpate the value to null
 								$radioOption['CobrandedApplicationValue']['value'] = null;
 								if (!$this->CobrandedApplicationValue->save($radioOption)) {
-									$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, 'failed to update application value with id ['.
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], 'failed to update application value with id ['.
 										$radioOption['CobrandedApplicationValue']['id'].'], to a value of null.');
 								}
 							}
@@ -612,8 +612,18 @@ class CobrandedApplication extends AppModel {
 
 					// handle required and empty first
 					if ($templateField['required'] == true && empty($value) == true) {
+
+						// SSN should not be required if Ownership Type is Non Profit
+						if ($appValue['CobrandedApplicationValues']['name'] == 'OwnerSSN' ||
+							$appValue['CobrandedApplicationValues']['name'] == 'Owner2SSN') {
+
+							if ($fieldsData['OwnerType-NonProfit'] == true) {
+								continue;
+							}
+						}
+
 						// update our validationErrors array
-						$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, 'required');
+						$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], 'required');
 					} else {
 						// only validate if we are not empty
 						if (isset($value)) {
@@ -630,14 +640,14 @@ class CobrandedApplication extends AppModel {
 							}
 	
 							// is the value valid?
-							$validValue =  $this->CobrandedApplicationValues->validApplicationValue($appValue['CobrandedApplicationValues'], $templateField['type']);
+							$validValue =  $this->CobrandedApplicationValues->validApplicationValue($appValue['CobrandedApplicationValues'], $templateField['type'], $templateField);
 							if ($validValue) {
 								// save it
 								$this->CobrandedApplicationValues->save($appValue);
 							} else {
 								// update our validationErrors array
 								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
-								$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $typeStr);
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], $typeStr);
 							}
 						}
 					}
@@ -1760,6 +1770,19 @@ class CobrandedApplication extends AppModel {
 		$response['success'] = false;
 		$response['validationErrors'] = array();
 
+		$isNonProfit = false;
+		$owner1Equity = 0;
+
+		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
+				$isNonProfit = true;
+			}
+
+			if ($tmpVal['name'] == 'Owner1Equity') {
+				$owner1Equity = $tmpVal['value'];
+			}
+		}
+
 		$template = $this->Template->find('first', array(
 			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
 			'contain' => array(
@@ -1780,8 +1803,34 @@ class CobrandedApplication extends AppModel {
 				foreach ($section['TemplateFields'] as $templateField) {
 					$fieldName = $templateField['name'];
 
+					// Owner2 information should be required if Owner1Equity < 40
+					if ($owner1Equity < 40) {
+						if ($templateField['merge_field_name'] == 'Owner2Name' ||
+							$templateField['merge_field_name'] == 'Owner2Title' ||
+							$templateField['merge_field_name'] == 'Owner2Address' ||
+							$templateField['merge_field_name'] == 'Owner2City' ||
+							$templateField['merge_field_name'] == 'Owner2State' ||
+							$templateField['merge_field_name'] == 'Owner2Zip' ||
+							$templateField['merge_field_name'] == 'Owner2Phone' ||
+							$templateField['merge_field_name'] == 'Owner2Fax' ||
+							$templateField['merge_field_name'] == 'Owner2DOB' ||
+							$templateField['merge_field_name'] == 'Owner2SSN' ||
+							$templateField['merge_field_name'] == 'Owner2Email' ||
+							$templateField['merge_field_name'] == 'Owner2Equity') {
+
+							$templateField['required'] = true;
+						}
+					}
+
+
 					if ($templateField['required'] == true) {
+						// SSN should not be required if Ownership Type is Non Profit
+						if (($templateField['merge_field_name'] == 'OwnerSSN' || $templateField['merge_field_name'] == 'Owner2SSN') && $isNonProfit) {
+							continue;
+						}
+
 						$found = false;
+
 						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
 								$found = true;
@@ -1800,7 +1849,7 @@ class CobrandedApplication extends AppModel {
 							
 							$response['validationErrorsArray'][] = $errorArray;
 						}
-					} 
+					}
 				}
 			}
 		}

@@ -104,7 +104,7 @@ class CobrandedApplicationValue extends AppModel {
 				return false;
 			}
 
-			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
+			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type'], $field['TemplateField']);
 
 			// check if field is set to encrypt
 			// if it is, encrypt and store data
@@ -119,7 +119,7 @@ class CobrandedApplicationValue extends AppModel {
 		return $retVal;
 	}
 
-	public function validApplicationValue($data, $fieldType) {
+	public function validApplicationValue($data, $fieldType, $templateField = null) {
 		$retVal = false;
 		$trimmedDataValue = trim($data['value']);
 
@@ -130,7 +130,6 @@ class CobrandedApplicationValue extends AppModel {
 			case 6:  // label    	 	- no validation
 			case 7:  // fees     	 	- (group of money?)
 			case 8:  // hr       	 	- no validation
-			case 20: // select 			- no validation
 			case 21: // textArea		- no validation
 			case 22: // multirecord		- no validation here, will happen in the multirecord Model
 				// always valid
@@ -189,6 +188,19 @@ class CobrandedApplicationValue extends AppModel {
 
 			case 19: // digits    - (#)+
 				$retVal = (preg_match("/\d+/", $trimmedDataValue) > 0);
+				break;
+				
+			case 20: // select - one of the options should be selected
+				if (!empty($templateField['default_value'])) {
+					foreach (split(',', $templateField['default_value']) as $keyValuePairStr) {
+						$keyValuePair = split('::', $keyValuePairStr);
+						if ($trimmedDataValue == $keyValuePair[0] || $trimmedDataValue == $keyValuePair[1]) {
+							$retVal = true;
+							break;
+						}
+					}
+				}
+
 				break;
 
 			case 23: // luhn - luhn validation
