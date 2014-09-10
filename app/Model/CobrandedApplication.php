@@ -1771,10 +1771,15 @@ class CobrandedApplication extends AppModel {
 		$response['validationErrors'] = array();
 
 		$isNonProfit = false;
+		$owner1Equity = 0;
 
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
 				$isNonProfit = true;
+			}
+
+			if ($tmpVal['name'] == 'Owner1Equity') {
+				$owner1Equity = $tmpVal['value'];
 			}
 		}
 
@@ -1797,6 +1802,26 @@ class CobrandedApplication extends AppModel {
 			foreach ($page['TemplateSections'] as $section) {
 				foreach ($section['TemplateFields'] as $templateField) {
 					$fieldName = $templateField['name'];
+
+					// Owner2 information should be required if Owner1Equity < 40
+					if ($owner1Equity < 40) {
+						if ($templateField['merge_field_name'] == 'Owner2Name' ||
+							$templateField['merge_field_name'] == 'Owner2Title' ||
+							$templateField['merge_field_name'] == 'Owner2Address' ||
+							$templateField['merge_field_name'] == 'Owner2City' ||
+							$templateField['merge_field_name'] == 'Owner2State' ||
+							$templateField['merge_field_name'] == 'Owner2Zip' ||
+							$templateField['merge_field_name'] == 'Owner2Phone' ||
+							$templateField['merge_field_name'] == 'Owner2Fax' ||
+							$templateField['merge_field_name'] == 'Owner2DOB' ||
+							$templateField['merge_field_name'] == 'Owner2SSN' ||
+							$templateField['merge_field_name'] == 'Owner2Email' ||
+							$templateField['merge_field_name'] == 'Owner2Equity') {
+
+							$templateField['required'] = true;
+						}
+					}
+
 
 					if ($templateField['required'] == true) {
 						// SSN should not be required if Ownership Type is Non Profit
