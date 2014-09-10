@@ -296,7 +296,7 @@
 		'$data[created]',
 		'$data[modified]',
 		'$data[rs_document_guid]',
-		'$data[var_status]',
+		'$data[status]',
 		'$data[install_var_rs_document_guid]',
 		''
             )
@@ -314,6 +314,7 @@
                     $key == 'user_id' ||
                     $key == 'guid' ||
                     $key == 'rs_document_guid' ||
+                    $key == 'status' ||
                     $key == 'var_status' ||
                     $key == 'install_var_rs_document_guid'
 	        ) {
