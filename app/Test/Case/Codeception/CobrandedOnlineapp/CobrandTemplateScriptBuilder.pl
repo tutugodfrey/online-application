@@ -231,8 +231,8 @@ my $templateMap = {
     },
     'Ownership Information' => {
         'OWNER / OFFICER (1)' => [
-            "'Percentage Ownership', \$sectionId, 12, 11, true, 2, '', 'OwnerEquity', '', null",
-            "'Full Name', \$sectionId, 12, 0, true, 2, '', 'Principal', '', null",
+            "'Percentage Ownership', \$sectionId, 12, 11, true, 2, '', 'Owner1Equity', '', null",
+            "'Full Name', \$sectionId, 12, 0, true, 2, '', 'Owner1Name', '', null",
             "'Title', \$sectionId, 12, 0, true, 2, '', 'Owner1Title', '', null",
             "'Address', \$sectionId, 12, 0, true, 2, '', 'Owner1Address', '', null",
             "'City', \$sectionId, 4, 0, true, 2, '', 'Owner1City', '', null",
