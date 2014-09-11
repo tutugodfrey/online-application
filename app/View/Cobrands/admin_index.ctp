@@ -8,8 +8,6 @@
 			<th><?php echo $this->Paginator->sort('logo_url'); ?></th>
 			<th><?php echo $this->Paginator->sort('description'); ?></th>
 			<th><?php echo $this->Paginator->sort('response_url_type'); ?></th>
-			<th><?php echo $this->Paginator->sort('created'); ?></th>
-			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
 		</tr>
 		<?php foreach ($cobrands as $cobrand): ?>
@@ -29,10 +27,17 @@
 			?></td>
 			<td><?php echo h($cobrand['Cobrand']['description']); ?></td>
 			<td><?php echo h($responseUrlTypes[$cobrand['Cobrand']['response_url_type']]); ?></td>
-			<td><?php echo h($cobrand['Cobrand']['created']); ?></td>
-			<td><?php echo h($cobrand['Cobrand']['modified']); ?></td>
 			<td class="actions">
 				<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $cobrand['Cobrand']['id'])); ?>
+				<?php echo $this->Html->link(
+					__('Delete'), 
+					array(
+						'action' => 'delete', 
+						$cobrand['Cobrand']['id']
+					),
+						 array(),
+						"Delete " . $cobrand['Cobrand']['partner_name'] . " Cobrand and associated Templates?"
+				); ?>
 				<?php echo $this->Html->link(__('List Templates'), String::insert('/admin/cobrands/:id/templates', array('id' => $cobrand['Cobrand']['id']))); ?>
 			</td>
 		</tr>
