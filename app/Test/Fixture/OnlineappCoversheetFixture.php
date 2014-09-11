@@ -68,6 +68,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 		'moto_email' => array('type' => 'string', 'null' => true, 'length' => 40),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'modified' => array('type' => 'datetime', 'null' => true),
+		'cobranded_application_id' => array('type' => 'integer', 'null' => true),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'onlineapp_application_id_key' => array('unique' => true, 'column' => 'onlineapp_application_id')
@@ -94,7 +95,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -138,9 +139,11 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'moto_phone' => 'Lorem ipsum dolor sit amet',
 			'moto_email' => 'Lorem ipsum dolor sit amet',
 			'created' => '2013-12-31 12:13:36',
-			'modified' => '2013-12-31 12:13:36'
+			'modified' => '2013-12-31 12:13:36',
+			'cobranded_application_id' => 1
 		),
-		array(
+	);
+/*		array(
 			'id' => 2,
 			'onlineapp_application_id' => 2,
 			'user_id' => 2,
@@ -153,7 +156,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -212,7 +215,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -271,7 +274,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -330,7 +333,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -389,7 +392,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -448,7 +451,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -507,7 +510,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -565,8 +568,8 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_new_merchant' => 1,
 			'setup_business_license' => 1,
 			'setup_other' => 1,
-			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_field_other' => '1 ipsum dolor ',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -625,7 +628,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'setup_business_license' => 1,
 			'setup_other' => 1,
 			'setup_field_other' => 'Lorem ipsum dolor ',
-			'setup_tier_select' => 'Lorem ipsum dolor sit ame',
+			'setup_tier_select' => '1',
 			'setup_tier3' => 1,
 			'setup_tier4' => 1,
 			'setup_tier5_financials' => 1,
@@ -670,7 +673,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'moto_email' => 'Lorem ipsum dolor sit amet',
 			'created' => '2013-12-31 12:13:36',
 			'modified' => '2013-12-31 12:13:36'
-		),
+ 		),
 	);
-
+ */
 }
