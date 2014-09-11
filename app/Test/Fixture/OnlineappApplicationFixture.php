@@ -491,7 +491,7 @@ class OnlineappApplicationFixture extends CakeTestFixture {
 			'guid' => 'Lorem ipsum dolor sit amet',
 			'redirect_url' => 'Lorem ipsum dolor sit amet'
 		),
-		array(
+/*		array(
 			'id' => 2,
 			'user_id' => 2,
 			'status' => 'Lorem ip',
@@ -2552,6 +2552,6 @@ class OnlineappApplicationFixture extends CakeTestFixture {
 			'guid' => 'Lorem ipsum dolor sit amet',
 			'redirect_url' => 'Lorem ipsum dolor sit amet'
 		),
-	);
+ */	);
 
 }
