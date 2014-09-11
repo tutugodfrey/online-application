@@ -377,8 +377,8 @@ $sectionId = $SP->createIfMissing('OWNER / OFFICER (1)', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 11, true, 2, '', 'OwnerEquity', '', null);
-$fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, true, 2, '', 'Principal', '', null);
+$fieldId = $FP->createIfMissing('Percentage Ownership', $sectionId, 12, 11, true, 2, '', 'Owner1Equity', '', null);
+$fieldId = $FP->createIfMissing('Full Name', $sectionId, 12, 0, true, 2, '', 'Owner1Name', '', null);
 $fieldId = $FP->createIfMissing('Title', $sectionId, 12, 0, true, 2, '', 'Owner1Title', '', null);
 // $fieldId = $FP->createIfMissing('Address', $sectionId, 12, 0, true, 2, '', 'Owner1Address', '', null);
 // $fieldId = $FP->createIfMissing('City', $sectionId, 4, 0, true, 2, '', 'Owner1City', '', null);
