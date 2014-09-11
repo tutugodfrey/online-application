@@ -261,7 +261,6 @@
 	";
 
 	$templateResult = pg_query($conn, $templateQuery);
-
 	$template_id = null;
 
 	if ($row = pg_fetch_assoc($templateResult)) {
@@ -294,10 +293,10 @@
 		$data[user_id],
 		$template_id,
 		'$uuid',
-		now(),
-		now(),
+		'$data[created]',
+		'$data[modified]',
 		'$data[rs_document_guid]',
-		'$data[var_status]',
+		'$data[status]',
 		'$data[install_var_rs_document_guid]',
 		''
             )
@@ -315,6 +314,7 @@
                     $key == 'user_id' ||
                     $key == 'guid' ||
                     $key == 'rs_document_guid' ||
+                    $key == 'status' ||
                     $key == 'var_status' ||
                     $key == 'install_var_rs_document_guid'
 	        ) {
@@ -416,8 +416,8 @@
                                     $templateFieldId,
                                     '$concatName',
                                     '$booleanVal',
-                                    now(),
-                                    now()
+		                    '$data[created]',
+		                    '$data[modified]'
                                 )
                             ";
 
@@ -440,8 +440,8 @@
                                 $templateFieldId,
                                 '$mergeFieldName',
                                 '$value',
-                                now(),
-                                now()
+		                '$data[created]',
+		                '$data[modified]'
                             )
                         ";
 

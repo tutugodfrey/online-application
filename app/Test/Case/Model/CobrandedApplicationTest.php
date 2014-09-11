@@ -17,6 +17,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.onlineappUser',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -51,6 +52,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
+		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 
@@ -79,7 +81,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'active' => 1,
 				'api_password' => 'notset',
 				'api_enabled' => 1,
-				'api' => 1,
+		//		'api' => 1,
 				'cobrand_id' => 2,
 				'template_id' => $this->__template['Template']['id'],
 			)
@@ -1039,9 +1041,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => true,
 			'msg' => '',
-			'dba' => '',
+			'dba' => 'Doing Business As',
 			'email' => 'testing@axiapayments.com',
-			'fullname' => ''
+			'fullname' => 'Corporate Contact'
 		);
 
 		$emailAddress = 'testing@axiapayments.com';
@@ -1153,9 +1155,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => true,
 			'msg' => '',
-			'dba' => '',
+			'dba' => 'Doing Business As',
 			'email' => 'testing@axiapayments.com',
-			'fullname' => ''
+			'fullname' => 'Corporate Contact'
 		);
 
 		// assertions
@@ -1312,7 +1314,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'TextField1' => 'text field 1',
 			'TextField2' => 'text field 2',
 			'TextField3' => 'text field 3',
-			'TextField4' => 'text field 4'
+			'TextField4' => 'text field 4',
+			'DBA' => 'Doing Business As',
+			'CorpName' => 'Corporate Name',
+			'CorpContact' => 'Corporate Contact'
 		);
 
 		// assertions
@@ -1372,91 +1377,47 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
-	public function testGetIndexInfo() {
+	public function testIndexInfo() {
 		$expectedResponse = array(
-			'fields' => array(
-				'DISTINCT CobrandedApplication.id',
-				'CobrandedApplication.user_id',
-				'CobrandedApplication.template_id',
-				'CobrandedApplication.uuid',
-				'CobrandedApplication.modified',
-				'CobrandedApplication.rightsignature_document_guid',
-				'CobrandedApplication.status',
-				'CobrandedApplication.rightsignature_install_document_guid',
-				'CobrandedApplication.rightsignature_install_status',
-				'Template.id',
-				'Template.name',
-				'User.id',
-				'User.firstname',
-				'User.lastname',
-				'User.email',
-				'Coversheet.id',
-				'Dba.value',
-				'CorpName.value',
-				'CorpContact.value'
+			0 => array(
+					'CobrandedApplication' => array(
+						'id' => 1,
+						'user_id' => 1,
+						'template_id' => 1,
+						'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
+						'modified' => '2014-01-24 09:07:08',
+						'rightsignature_document_guid' => null,
+						'status' => null,
+						'rightsignature_install_document_guid' => null,
+						'rightsignature_install_status' => null,
+					),
+					'Template' => array(
+						'id' => 1,
+						'name' => 'Template 1 for PN1',
+					),
+					'User' => array(
+						'id' => 1,
+						'firstname' => 'Lorem ipsum dolor sit amet',
+						'lastname' => 'Lorem ipsum dolor sit amet',
+						'email' => 'testing@axiapayments.com',
+					),
+					'Coversheet' => array(
+						'id' => null,
+					),
+					'Dba' => array(
+						'value' => 'Doing Business As',
+					),
+					'CorpName' => array(
+						'value' => 'Corporate Name',
+					),
+					'CorpContact' => array(
+						'value' => 'Corporate Contact',
+					),
 			),
-			'recursive' => -1,
-			'joins' => array(
-				array(
-					'table' => 'onlineapp_cobranded_application_values',
-					'alias' => 'Dba',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.id = Dba.cobranded_application_id and Dba.name =\'DBA\''
-					)
-				),
-				array(
-					'table' => 'onlineapp_cobranded_application_values',
-					'alias' => 'CorpName',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.id = CorpName.cobranded_application_id and CorpName.name =\'CorpName\''
-					)
-				),
-				array(
-					'table' => 'onlineapp_cobranded_application_values',
-					'alias' => 'CorpContact',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =\'CorpContact\''
-					)
-				),
-				array(
-					'table' => 'onlineapp_cobranded_application_values',
-					'alias' => 'CobrandedApplicationValue',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.id = CobrandedApplicationValue.cobranded_application_id'
-					)
-				),
-				array(
-					'table' => 'onlineapp_templates',
-					'alias' => 'Template',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.template_id = Template.id'
-					)
-				),
-				array(
-					'table' => 'onlineapp_users',
-					'alias' => 'User',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.user_id = User.id'
-					)
-				),
-				array(
-					'table' => 'onlineapp_coversheets',
-					'alias' => 'Coversheet',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.id = Coversheet.cobranded_application_id'
-					)
-				)
-			)
 		);
+		
 
-		$response = $this->CobrandedApplication->getIndexInfo();
+		$response = $this->CobrandedApplication->find('index');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
