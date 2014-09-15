@@ -8,10 +8,6 @@
     // create cobranded application values associated to previously created application
 
     $applicationMap = array(
-	'id'                             		=>		'id',
-	'user_id'                        		=>		'user_id', 
-	'status'                         		=>		'status', 
-	'rs_document_guid'               		=>      	'rightsignature_document_guid', 
 	'ownership_type'                        	=>		'OwnerType-:Corp,SoleProp,LLC,Partnership,NonProfit,Other', 
 	'legal_business_name'                   	=>		'CorpName', 
 	'mailing_address'                       	=>		'CorpAddress',
@@ -216,8 +212,6 @@
 	'rep_bus_open_operating'                	=>		'BusinessOpen-:Yes,No', 
 	'rep_visa_mc_decals_visible'            	=>		'CardDecalsVisible-:Yes,No', 
 	'rep_mail_tel_activity'                 	=> 		'MailTeleOrderActivity-:Yes,No',
-	'created'                               	=> 		'created',
-	'modified'                              	=> 		'modified',
 	'moto_inventory_owned'                  	=>		'product_:Yes,No', 
 	'moto_outsourced_customer_service_field'	=> 		'Customer Service',
 	'moto_outsourced_shipment_field'        	=> 		'Product Shipment',
@@ -225,9 +219,6 @@
 	'moto_sales_local'                      	=>		'locally', 
 	'moto_sales_national'                   	=> 		'nationally',
 	'site_survey_signature'                 	=> 		'site_survey_signature',
-	'var_status'                     		=>    		'rightsignature_install_status',
-	'install_var_rs_document_guid'  		=>      	'rightsignature_install_document_guid',
-	'tickler_id'                    		=>      	'tickler_id',
     );
 
     $file = "/tmp/legacy_to_cobranded_app_migration.txt"; 
@@ -307,18 +298,6 @@
 	    fwrite($filehandle, "adding application values to appId: $data[id]\n");
 	    // this foreach block creates the application value records
             foreach ($applicationMap as $key => $val) {
-
-	        // skip non application value fields
-	        if ($key == 'id' ||
-                    $key == 'user_id' ||
-                    $key == 'guid' ||
-                    $key == 'rs_document_guid' ||
-                    $key == 'status' ||
-                    $key == 'var_status' ||
-                    $key == 'install_var_rs_document_guid'
-	        ) {
-	            continue;	
-	        }
 
                 $mergeFieldName = $val;
 		$optionList = '';
