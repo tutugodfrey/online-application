@@ -388,11 +388,11 @@
 			    $tmpValue = $value;
 			    $tmpValue = str_replace(' ', '', $tmpValue);
 
-                            if (!empty($ownershipTypeMap($tmpValue))) {
+                            if ($ownershipTypeMap($tmpValue)) {
                                 $tmpValue = $ownershipTypeMap($tmpValue);
                             }
 
-                            if (!empty($locationTypeMap($tmpValue))) {
+                            if ($locationTypeMap($tmpValue)) {
                                 $tmpValue = $locationTypeMap($tmpValue);
                             }
 
