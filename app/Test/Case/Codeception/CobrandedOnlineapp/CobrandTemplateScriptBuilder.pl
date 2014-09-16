@@ -76,7 +76,8 @@ my $templateMap = {
             "'Phone', \$sectionId, 6, 9, true, 2, '', 'PhoneNum', '', null",
             "'Fax', \$sectionId, 6, 9, true, 2,'', 'FaxNum', '', null",
             "'Location Contact Name', \$sectionId, 8, 0, true, 2, '', 'Contact', '', null",
-            "'Title', \$sectionId, 4, 0, true, 2, '', 'LocTitle', '', null"
+            "'Title', \$sectionId, 4, 0, true, 2, '', 'LocTitle', '', null",
+            "'Email', \$sectionId, 12, 14, true, 2, '', 'LocEMail', '', null"
         ],
         'ADDITIONAL BUSINESS INFORMATION' => [
             "'Federal Tax ID',\$sectionId, 12, 0, true, 2, '', 'TaxID', '', null, null, true",

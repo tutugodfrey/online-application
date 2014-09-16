@@ -131,7 +131,7 @@
 	'term1_pin_pad_qty'                             =>		'QTY - PP1',
 	'term2_quantity'                                =>		'QTY2',
 	'term2_type'                      		=> 		'Terminal2',
-	'term2_provider'                        	=> 		'Provider2-:Axia_3,Merchant_3',
+	'term2_provider'                        	=> 		'Provider2-:Axia,Merchant',
 	'term2_use_autoclose'                   	=> 		'DoYouUseAutoclose2-:Yes,No',
 	'term2_what_time'                       	=> 		'Autoclose Time 2',
 	'term2_programming_avs'                 	=> 		'AVS_2',
@@ -243,6 +243,24 @@
         global $conn;
         global $applicationMap;
         global $filehandle;
+
+        $ownershipTypeMap = array(
+            'corporation' => 'Corp',
+            'sole prop' => 'SoleProp',
+            'llc' => 'LLC',
+            'partnership' => 'Partnership',
+            'non profit' => 'NonProfit',
+            'other' => 'Other'
+        );
+
+        $locationTypeMap = array(
+            'retail store' => 'RetailStore',
+            'industrial' => 'Industrial',
+            'trade' => 'Trade',
+            'office' => 'Office',
+            'residence' => 'Residence',
+            'other' => 'SiteInspectionOther'
+        );
 
 	$templateQuery = "
 	    SELECT template_id
@@ -369,6 +387,14 @@
 		        foreach ($array as $element) {
 			    $tmpValue = $value;
 			    $tmpValue = str_replace(' ', '', $tmpValue);
+
+                            if (!empty($ownershipTypeMap($tmpValue))) {
+                                $tmpValue = $ownershipTypeMap($tmpValue);
+                            }
+
+                            if (!empty($locationTypeMap($tmpValue))) {
+                                $tmpValue = $locationTypeMap($tmpValue);
+                            }
 
 			    $booleanVal = false;
 			    if (!empty($tmpValue)) {
