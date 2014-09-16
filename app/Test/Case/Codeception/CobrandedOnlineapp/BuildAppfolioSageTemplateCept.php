@@ -76,6 +76,8 @@ $fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, true, 0, '', 'PhoneN
 $fieldId = $FP->createIfMissing('Fax', $sectionId, 12, 0, true, 1, 'N/A', 'FaxNum', 'Business Fax', null);
 $fieldId = $FP->createIfMissing('Website',$sectionId, 12, 17, true, 0, '', 'WebAddress', 'Website Address', null);
 $fieldId = $FP->createIfMissing('Customer Service Phone',$sectionId, 12, 9, true, 0, '', 'Customer Service Phone', 'Customer Service Phone Number', null);
+$fieldId = $FP->createIfMissing('Title', $sectionId, 4, 0, true, 2, '', 'LocTitle', '', null);
+$fieldId = $FP->createIfMissing('Email', $sectionId, 12, 14, true, 2, '', 'LocEMail', '', null);
 
 // go back to the sections page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
