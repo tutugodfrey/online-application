@@ -92,7 +92,7 @@ my $templateMap = {
             "'Location Type', \$sectionId, 12, 4, true, 2, 'Retail Store::RetailStore,Industrial::Industrial,Trade::Trade,Office::Office,Residence::Residence,Other::SiteInspectionOther', 'LocationType-', '', null"
         ],
         'MERCHANT' => [
-            "'Merchant Ownes/Leases', \$sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', 'MerchantOwnes/Leases-', '', null",
+            "'Merchant Owns/Leases', \$sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', 'MerchantOwns/Leases-', '', null",
             "'Landlord Name', \$sectionId, 6, 0, false, 2, '', 'Landlord', '', null",
             "'Landlord Phone', \$sectionId, 6, 9, false, 2, '', 'Landlord Phone', '', null"
         ]
