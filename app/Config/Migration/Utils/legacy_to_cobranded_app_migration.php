@@ -388,12 +388,12 @@
 			    $tmpValue = $value;
 			    $tmpValue = str_replace(' ', '', $tmpValue);
 
-                            if ($ownershipTypeMap($tmpValue)) {
-                                $tmpValue = $ownershipTypeMap($tmpValue);
+                            if (!empty($ownershipTypeMap[$tmpValue])) {
+                                $tmpValue = $ownershipTypeMap[$tmpValue];
                             }
 
-                            if ($locationTypeMap($tmpValue)) {
-                                $tmpValue = $locationTypeMap($tmpValue);
+                            if (!empty($locationTypeMap[$tmpValue])) {
+                                $tmpValue = $locationTypeMap[$tmpValue];
                             }
 
 			    $booleanVal = false;
