@@ -122,7 +122,7 @@ $fieldId = $FP->createIfMissing('General Comments',$sectionId, 12, 21, true, 2, 
 // $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-// $fieldId = $FP->createIfMissing('Merchant Ownes/Leases', $sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', 'MerchantOwnes/Leases-', '', null);
+// $fieldId = $FP->createIfMissing('Merchant Owns/Leases', $sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', 'MerchantOwns/Leases-', '', null);
 // $fieldId = $FP->createIfMissing('Landlord Name', $sectionId, 6, 0, false, 2, '', 'Landlord', '', null);
 // $fieldId = $FP->createIfMissing('Landlord Phone', $sectionId, 6, 9, false, 2, '', 'Landlord Phone', '', null);
 

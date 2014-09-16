@@ -10,11 +10,11 @@ $SP = new SectionPage($I);
 $FP = new FieldPage($I);
 
 // authenticate
-$I->wantTo("build the default AxiaDefault template");
+$I->wantTo("build the default Axia template");
 $ULP->login();
 
 // start with the cobrand
-$cobrandId = $CP->createIfMissing('AxiaDefault');
+$cobrandId = $CP->createIfMissing('Axia');
 
 // next go to the template for this cobrand
 $I->amOnPage('/admin/cobrands/'.$cobrandId.'/templates');
@@ -123,7 +123,7 @@ $sectionId = $SP->createIfMissing('MERCHANT', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Merchant Ownes/Leases', $sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', 'MerchantOwnes/Leases-', '', null);
+$fieldId = $FP->createIfMissing('Merchant Owns/Leases', $sectionId, 12,4, true, 2, 'Owns::Owns,Leases::Leases', 'MerchantOwns/Leases-', '', null);
 $fieldId = $FP->createIfMissing('Landlord Name', $sectionId, 6, 0, false, 2, '', 'Landlord', '', null);
 $fieldId = $FP->createIfMissing('Landlord Phone', $sectionId, 6, 9, false, 2, '', 'Landlord Phone', '', null);
 
