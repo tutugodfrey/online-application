@@ -8,10 +8,6 @@
     // create cobranded application values associated to previously created application
 
     $applicationMap = array(
-	'id'                             		=>		'id',
-	'user_id'                        		=>		'user_id', 
-	'status'                         		=>		'status', 
-	'rs_document_guid'               		=>      	'rightsignature_document_guid', 
 	'ownership_type'                        	=>		'OwnerType-:Corp,SoleProp,LLC,Partnership,NonProfit,Other', 
 	'legal_business_name'                   	=>		'CorpName', 
 	'mailing_address'                       	=>		'CorpAddress',
@@ -24,7 +20,6 @@
 	'corp_contact_name'                     	=>		'CorpContact', 
 	'corp_contact_name_title'              		=>		'Title',
 	'corporate_email'                       	=>		'EMail', 
-	'loc_same_as_corp'                       	=>		'loc_same_as_corp',
 	'dba_business_name'                     	=>		'DBA', 
 	'location_address'                      	=>		'Address', 
 	'location_city'                         	=>		'City', 
@@ -136,7 +131,7 @@
 	'term1_pin_pad_qty'                             =>		'QTY - PP1',
 	'term2_quantity'                                =>		'QTY2',
 	'term2_type'                      		=> 		'Terminal2',
-	'term2_provider'                        	=> 		'Provider2-:Axia_3,Merchant_3',
+	'term2_provider'                        	=> 		'Provider2-:Axia,Merchant',
 	'term2_use_autoclose'                   	=> 		'DoYouUseAutoclose2-:Yes,No',
 	'term2_what_time'                       	=> 		'Autoclose Time 2',
 	'term2_programming_avs'                 	=> 		'AVS_2',
@@ -217,8 +212,6 @@
 	'rep_bus_open_operating'                	=>		'BusinessOpen-:Yes,No', 
 	'rep_visa_mc_decals_visible'            	=>		'CardDecalsVisible-:Yes,No', 
 	'rep_mail_tel_activity'                 	=> 		'MailTeleOrderActivity-:Yes,No',
-	'created'                               	=> 		'created',
-	'modified'                              	=> 		'modified',
 	'moto_inventory_owned'                  	=>		'product_:Yes,No', 
 	'moto_outsourced_customer_service_field'	=> 		'Customer Service',
 	'moto_outsourced_shipment_field'        	=> 		'Product Shipment',
@@ -226,9 +219,6 @@
 	'moto_sales_local'                      	=>		'locally', 
 	'moto_sales_national'                   	=> 		'nationally',
 	'site_survey_signature'                 	=> 		'site_survey_signature',
-	'var_status'                     		=>    		'rightsignature_install_status',
-	'install_var_rs_document_guid'  		=>      	'rightsignature_install_document_guid',
-	'tickler_id'                    		=>      	'tickler_id',
     );
 
     $file = "/tmp/legacy_to_cobranded_app_migration.txt"; 
@@ -253,6 +243,24 @@
         global $conn;
         global $applicationMap;
         global $filehandle;
+
+        $ownershipTypeMap = array(
+            'corporation' => 'Corp',
+            'sole prop' => 'SoleProp',
+            'llc' => 'LLC',
+            'partnership' => 'Partnership',
+            'non profit' => 'NonProfit',
+            'other' => 'Other'
+        );
+
+        $locationTypeMap = array(
+            'retail store' => 'RetailStore',
+            'industrial' => 'Industrial',
+            'trade' => 'Trade',
+            'office' => 'Office',
+            'residence' => 'Residence',
+            'other' => 'SiteInspectionOther'
+        );
 
 	$templateQuery = "
 	    SELECT template_id
@@ -308,18 +316,6 @@
 	    fwrite($filehandle, "adding application values to appId: $data[id]\n");
 	    // this foreach block creates the application value records
             foreach ($applicationMap as $key => $val) {
-
-	        // skip non application value fields
-	        if ($key == 'id' ||
-                    $key == 'user_id' ||
-                    $key == 'guid' ||
-                    $key == 'rs_document_guid' ||
-                    $key == 'status' ||
-                    $key == 'var_status' ||
-                    $key == 'install_var_rs_document_guid'
-	        ) {
-	            continue;	
-	        }
 
                 $mergeFieldName = $val;
 		$optionList = '';
@@ -392,15 +388,22 @@
 			    $tmpValue = $value;
 			    $tmpValue = str_replace(' ', '', $tmpValue);
 
-			    $booleanVal = false;
+                            if (!empty($ownershipTypeMap[$tmpValue])) {
+                                $tmpValue = $ownershipTypeMap[$tmpValue];
+                            }
+
+                            if (!empty($locationTypeMap[$tmpValue])) {
+                                $tmpValue = $locationTypeMap[$tmpValue];
+                            }
+
+			    $booleanVal = '';
 			    if (!empty($tmpValue)) {
 			        if (preg_match("/$tmpValue/i", $element)) {
-			            $booleanVal = true;
+			            $booleanVal = 'true';
                                 }
 			    }
 
 		            $concatName = "$mergeFieldName"."$element";
-			    $booleanVal = pg_escape_string($booleanVal);
 
 	                    $newAppValQuery = "
                                 INSERT INTO onlineapp_cobranded_application_values (
@@ -425,7 +428,11 @@
 		        }
 		    }
 		    else {
+                        if ($value == 't') { $value = 'true'; }
+                        if ($value == 'f') { $value = ''; }
+
 			$value = pg_escape_string($value);
+
 	                $newAppValQuery = "
                             INSERT INTO onlineapp_cobranded_application_values (
                                 cobranded_application_id,

@@ -10,11 +10,11 @@ $SP = new SectionPage($I);
 $FP = new FieldPage($I);
 
 // authenticate
-$I->wantTo("build the default Axia template");
+$I->wantTo("build the default Inspire Commerce template");
 $ULP->login();
 
 // start with the cobrand
-$cobrandId = $CP->createIfMissing('Axia');
+$cobrandId = $CP->createIfMissing('Inspire Commerce');
 
 // next go to the template for this cobrand
 $I->amOnPage('/admin/cobrands/'.$cobrandId.'/templates');
