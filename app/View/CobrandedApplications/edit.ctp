@@ -53,12 +53,14 @@
 
 							echo "</script>";
 						}
+							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+								echo $this->Html->link('Return to Applications Admin', array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => 'true')) . "<br/>"; 
+}
 					?>
 					
 					<div id="actionButtons">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo "<br/>Please Save Application before submitting this application for Signature <br/><br/>";
 								echo "<input type='button' onclick='fieldCompletion();' value='Email For Field Completion'>"."<br/>";
 								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'>"."<br/>";
 
