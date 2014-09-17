@@ -136,7 +136,7 @@
                 <div style="margin-top: 25px;">
                 <?php
                   if (!empty($cobrand_logo_url)) {
-                    $partner_logo = $this->Html->image($cobrand_logo_url);
+                    $partner_logo = $this->Html->image($cobrand_logo_url, array('height' => '50px'));
                     if (strlen($cobrand_logo_url) == 0) {
                       // no logo specified... use axia logo on the left
                       echo String::insert(
