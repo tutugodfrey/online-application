@@ -396,15 +396,14 @@
                                 $tmpValue = $locationTypeMap[$tmpValue];
                             }
 
-			    $booleanVal = false;
+			    $booleanVal = '';
 			    if (!empty($tmpValue)) {
 			        if (preg_match("/$tmpValue/i", $element)) {
-			            $booleanVal = true;
+			            $booleanVal = 'true';
                                 }
 			    }
 
 		            $concatName = "$mergeFieldName"."$element";
-			    $booleanVal = pg_escape_string($booleanVal);
 
 	                    $newAppValQuery = "
                                 INSERT INTO onlineapp_cobranded_application_values (
@@ -429,7 +428,11 @@
 		        }
 		    }
 		    else {
+                        if ($value == 't') { $value = 'true'; }
+                        if ($value == 'f') { $value = ''; }
+
 			$value = pg_escape_string($value);
+
 	                $newAppValQuery = "
                             INSERT INTO onlineapp_cobranded_application_values (
                                 cobranded_application_id,
