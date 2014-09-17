@@ -1914,13 +1914,6 @@ class CobrandedApplication extends AppModel {
 						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
 					),
 				),
-				array('table' => 'onlineapp_cobranded_application_values',
-					'alias' => 'CobrandedApplicationValue',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.id = CobrandedApplicationValue.cobranded_application_id',
-					),
-				),
 				array('table' => 'onlineapp_templates',
 					'alias' => 'Template',
 					'type' => 'LEFT',
@@ -1946,16 +1939,11 @@ class CobrandedApplication extends AppModel {
 			//Because we are using a key value store for the application values instead of abiding by cake conventions 
 			//we have to manipulate the count parameters to get the appropriate results 
 			if (!empty($query['operation']) && $query['operation'] === 'count') {
-				if (!isset($query['conditions']['OR'])) {
-					unset($query['joins']['3']);
-					$query['joins'] = array_values($query['joins']);
-					if (isset($query['sort'])) {
-						$query['group']['0'] = $query['sort'];
-					}
-					return $query;
-				}	
-				
+				if (isset($query['sort'])) {
+					unset($query['sort']);
+				}
 				return $query;
+				
 			}
 			return $query;
 		}
@@ -1980,11 +1968,9 @@ class CobrandedApplication extends AppModel {
 		$filter = $data['search'];
 			$conditions = array(
 				'OR' => array(
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-						'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),						
+					'Dba.value ILIKE' => '%' . $filter . '%',
+					'CorpName.value ILIKE' => '%' . $filter . '%',
+					'CorpContact.value ILIKE' => '%' . $filter . '%', 
 					'User.email ILIKE' => '%' . $filter . '%',
 					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '% '. $filter .'%',	
 				)
