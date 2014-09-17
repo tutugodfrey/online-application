@@ -322,7 +322,7 @@
 
 		// is this a multi-option field
                 $multi = false;
-		if (preg_match('/(\w+-):(.*)/', $val, $matches)) {
+		if (preg_match('/(.+?-):(.*)/', $val, $matches)) {
 		    $multi = true;
                     $mergeFieldName = $matches[1];
 		    $optionList = $matches[2];
@@ -456,7 +456,7 @@
 		    }
 	        }
                 else {
-	            fwrite($filehandle, "skipping app value for: $key - can't determine template field id\n");
+	            fwrite($filehandle, "skipping app value for: $key - can't determine template field id for merge field: $mergeFieldName\n");
 	        }
             }
         }
