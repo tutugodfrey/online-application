@@ -39,7 +39,7 @@
 	'general_comments'                              =>		'General Comments',
 	'location_type'                                 =>		'LocationType-:RetailStore,Industrial,Trade,Office,Residence,SiteInspectionOther',
 	'location_type_other'                           =>		'LocationTypeOther',
-	'merchant_status'                               =>		'Merchant Ownes/Leases-:Owns,Leases',
+	'merchant_status'                               =>		'Merchant Owns/Leases-:Owns,Leases',
 	'landlord_name'                          	=>		'Landlord',
 	'landlord_phone'                         	=>		'Landlord Phone',
 	'business_type'                                 =>		'BusinessType-:Retail,Restaurant,Lodging,MOTO,Internet,Grocery',
