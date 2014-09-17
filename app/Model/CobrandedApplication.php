@@ -1939,16 +1939,11 @@ class CobrandedApplication extends AppModel {
 			//Because we are using a key value store for the application values instead of abiding by cake conventions 
 			//we have to manipulate the count parameters to get the appropriate results 
 			if (!empty($query['operation']) && $query['operation'] === 'count') {
-				if (!isset($query['conditions']['OR'])) {
-					unset($query['joins']['3']);
-					$query['joins'] = array_values($query['joins']);
-					if (isset($query['sort'])) {
-						$query['group']['0'] = $query['sort'];
-					}
-					return $query;
-				}	
-				
+				if (isset($query['sort'])) {
+					unset($query['sort']);
+				}
 				return $query;
+				
 			}
 			return $query;
 		}

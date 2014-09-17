@@ -55,6 +55,7 @@ class TemplateFieldsController extends NestedResourceController {
 	public function admin_index() {
 		$this->paginate = array(
 			'limit' => 25,
+			'recursive' => -1,
 			'order' => array('TemplateField.order' => 'ASC'),
 			'conditions' => array('TemplateField.section_id' => $this->_getParentControllerId())
 		);
