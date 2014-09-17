@@ -26,7 +26,7 @@
 				}
 			?></td>
 			<td><?php echo h($cobrand['Cobrand']['description']); ?></td>
-			<td><?php echo h($responseUrlTypes[$cobrand['Cobrand']['response_url_type']]); ?></td>
+			<td><?php echo h($cobrand['Cobrand']['response_url_type']); ?></td>
 			<td class="actions">
 				<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $cobrand['Cobrand']['id'])); ?>
 				<?php echo $this->Html->link(
