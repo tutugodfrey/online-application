@@ -263,16 +263,20 @@
         );
 
 	$templateQuery = "
-	    SELECT template_id
-	      FROM onlineapp_users
-	     WHERE id = $data[user_id]
+	    SELECT users.template_id, cobrands.partner_name
+	      FROM onlineapp_users as users
+              JOIN onlineapp_cobrands as cobrands
+                ON users.cobrand_id = cobrands.id
+	     WHERE users.id = $data[user_id]
 	";
 
 	$templateResult = pg_query($conn, $templateQuery);
 	$template_id = null;
+	$partner_name = null;
 
 	if ($row = pg_fetch_assoc($templateResult)) {
 	    $template_id = $row['template_id'];
+	    $partner_name = $row['partner_name'];
 	}
 
 	if (empty($template_id)) {
@@ -382,6 +386,15 @@
 		    }
 
 		    if (!empty($optionList)) {
+
+                        if ($key == 'fees_rate_structure' && ($partner_name == 'FireSpring' || $partner_name == 'Shortcuts' || $partner_name == 'Inspire Commerce')) {
+                            $optionList .= ',Flat Rate';
+                        }
+
+                        if ($key == 'fees_qualification_exemptions' && ($partner_name == 'FireSpring' || $partner_name == 'Shortcuts' || $partner_name == 'Inspire Commerce')) {
+                            $optionList .= ',Flat Rate';
+                        }
+
 		        $array = preg_split('/,/', $optionList);
 
 		        foreach ($array as $element) {
