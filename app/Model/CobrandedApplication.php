@@ -1914,13 +1914,6 @@ class CobrandedApplication extends AppModel {
 						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
 					),
 				),
-				array('table' => 'onlineapp_cobranded_application_values',
-					'alias' => 'CobrandedApplicationValue',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'CobrandedApplication.id = CobrandedApplicationValue.cobranded_application_id',
-					),
-				),
 				array('table' => 'onlineapp_templates',
 					'alias' => 'Template',
 					'type' => 'LEFT',
@@ -1980,11 +1973,9 @@ class CobrandedApplication extends AppModel {
 		$filter = $data['search'];
 			$conditions = array(
 				'OR' => array(
-					'CobrandedApplicationValue.name' => 'name',
-					array('AND' => array(
-						'CobrandedApplicationValue.value ILIKE' => '%' . $filter . '%',
-						)
-					),						
+					'Dba.value ILIKE' => '%' . $filter . '%',
+					'CorpName.value ILIKE' => '%' . $filter . '%',
+					'CorpContact.value ILIKE' => '%' . $filter . '%', 
 					'User.email ILIKE' => '%' . $filter . '%',
 					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '% '. $filter .'%',	
 				)
