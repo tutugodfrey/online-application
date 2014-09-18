@@ -273,13 +273,13 @@ class Template extends AppModel {
 									break;
 							}
 
-							if ($merge_field_name == 'Rate Structure' && ($partner_name == 'FireSpring' || $partner_name == 'Shortcuts' || $partner_name == 'Inspire Commerce')) {
+							if ($merge_field_name == 'Rate Structure' && ($partnerName == 'FireSpring' || $partnerName == 'Shortcuts' || $partnerName == 'Inspire Commerce')) {
 								if (array_key_exists('default_value', $field)) {
 									$field['default_value'] .= ',Flat Rate::Flat Rate';
 								}
 							}
 
-							if ($merge_field_name == 'Downgrades' && ($partner_name == 'FireSpring' || $partner_name == 'Shortcuts' || $partner_name == 'Inspire Commerce')) {
+							if ($merge_field_name == 'Downgrades' && ($partnerName == 'FireSpring' || $partnerName == 'Shortcuts' || $partnerName == 'Inspire Commerce')) {
 								if (array_key_exists('default_value', $field)) {
 									$field['default_value'] .= ',Flat Rate::Flat Rate';
 								}
