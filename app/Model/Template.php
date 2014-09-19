@@ -221,6 +221,8 @@ class Template extends AppModel {
 				)
 			);
 
+            $partnerName = $this->data['Cobrand']['partner_name'];
+
 			$TemplateSection = ClassRegistry::init('TemplateSection');
 			$TemplateField = ClassRegistry::init('TemplateField');
 
@@ -269,6 +271,18 @@ class Template extends AppModel {
 										$merge_field_name = $this->__buildMergeFieldName($page['name'], $section['name'], $field['name']);
 									}
 									break;
+							}
+
+							if ($merge_field_name == 'Rate Structure' && ($partnerName == 'FireSpring' || $partnerName == 'Shortcuts' || $partnerName == 'Inspire Commerce')) {
+								if (array_key_exists('default_value', $field)) {
+									$field['default_value'] .= ',Flat Rate::Flat Rate';
+								}
+							}
+
+							if ($merge_field_name == 'Downgrades' && ($partnerName == 'FireSpring' || $partnerName == 'Shortcuts' || $partnerName == 'Inspire Commerce')) {
+								if (array_key_exists('default_value', $field)) {
+									$field['default_value'] .= ',Flat Rate::Flat Rate';
+								}
 							}
 
 							$TemplateField->create();

@@ -39,7 +39,7 @@
 	'general_comments'                              =>		'General Comments',
 	'location_type'                                 =>		'LocationType-:RetailStore,Industrial,Trade,Office,Residence,SiteInspectionOther',
 	'location_type_other'                           =>		'LocationTypeOther',
-	'merchant_status'                               =>		'Merchant Owns/Leases-:Owns,Leases',
+	'merchant_status'                               =>		'MerchantOwns/Leases-:Owns,Leases',
 	'landlord_name'                          	=>		'Landlord',
 	'landlord_phone'                         	=>		'Landlord Phone',
 	'business_type'                                 =>		'BusinessType-:Retail,Restaurant,Lodging,MOTO,Internet,Grocery',
@@ -263,16 +263,20 @@
         );
 
 	$templateQuery = "
-	    SELECT template_id
-	      FROM onlineapp_users
-	     WHERE id = $data[user_id]
+	    SELECT users.template_id, cobrands.partner_name
+	      FROM onlineapp_users as users
+              JOIN onlineapp_cobrands as cobrands
+                ON users.cobrand_id = cobrands.id
+	     WHERE users.id = $data[user_id]
 	";
 
 	$templateResult = pg_query($conn, $templateQuery);
 	$template_id = null;
+	$partner_name = null;
 
 	if ($row = pg_fetch_assoc($templateResult)) {
 	    $template_id = $row['template_id'];
+	    $partner_name = $row['partner_name'];
 	}
 
 	if (empty($template_id)) {
@@ -322,7 +326,7 @@
 
 		// is this a multi-option field
                 $multi = false;
-		if (preg_match('/(\w+-):(.*)/', $val, $matches)) {
+		if (preg_match('/(.+?-):(.*)/', $val, $matches)) {
 		    $multi = true;
                     $mergeFieldName = $matches[1];
 		    $optionList = $matches[2];
@@ -382,6 +386,15 @@
 		    }
 
 		    if (!empty($optionList)) {
+
+                        if ($key == 'fees_rate_structure' && ($partner_name == 'FireSpring' || $partner_name == 'Shortcuts' || $partner_name == 'Inspire Commerce')) {
+                            $optionList .= ',Flat Rate';
+                        }
+
+                        if ($key == 'fees_qualification_exemptions' && ($partner_name == 'FireSpring' || $partner_name == 'Shortcuts' || $partner_name == 'Inspire Commerce')) {
+                            $optionList .= ',Flat Rate';
+                        }
+
 		        $array = preg_split('/,/', $optionList);
 
 		        foreach ($array as $element) {
@@ -456,7 +469,7 @@
 		    }
 	        }
                 else {
-	            fwrite($filehandle, "skipping app value for: $key - can't determine template field id\n");
+	            fwrite($filehandle, "skipping app value for: $key - can't determine template field id for merge field: $mergeFieldName\n");
 	        }
             }
         }
