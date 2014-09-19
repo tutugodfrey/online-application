@@ -46,12 +46,15 @@ class Cobrand extends AppModel {
 	);
 
 	public function beforeValidate(array $options = array()) {
-		if (empty($this->data['Cobrand']['logo']['name']) &&
+		if(isset($this->data['Cobrand']['logo']))
+		{
+			if (empty($this->data['Cobrand']['logo']['name']) &&
 			empty($this->data['Cobrand']['logo']['name']) &&
 			$this->data['Cobrand']['logo']['error'] === '4'
 		) {
 			unset($this->data['Cobrand']['logo']);
 			return $this->data;
+		}
 		}
 	}
 

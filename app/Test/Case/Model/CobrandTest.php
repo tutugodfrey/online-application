@@ -16,7 +16,8 @@ class CobrandTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Cobrand = ClassRegistry::init('Cobrand');
-
+		
+		// mock filesystem
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
 	}
@@ -53,7 +54,10 @@ class CobrandTest extends CakeTestCase {
 		);
 
 		// try to create a new cobrand with out a partner_name or partner_name_short
-		$this->Cobrand->create(array('partner_name' => '', 'partner_name_short' => '', 'logo_url'));
+		$this->Cobrand->create(array(
+			'partner_name' => '', 'partner_name_short' => '', 
+			'logo_url',
+		));
 		$this->assertFalse($this->Cobrand->validates());
 		$this->assertEquals($expected_missing_both, $this->Cobrand->validationErrors);
 
