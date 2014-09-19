@@ -18,6 +18,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public $fixtures = array(
 //		'app.onlineappUser',
+		'app.onlineappCoversheet',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -39,6 +40,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->User = ClassRegistry::init('OnlineappUser');
+		$this->Coversheet = ClassRegistry::init('Coversheet');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -49,6 +51,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		// load data
+		$this->loadFixtures('OnlineappCoversheet');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -966,16 +969,16 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// knowns:
 		//     applicationId of the app we want to copy
 		// pre-test:
-		//     - should have one cobrandedApplications for this user
+		//     - should have no cobrandedApplications for this template
 		$apps = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id'] 
+					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
 				),
 			)
 		);
-		$this->assertEquals(1, count($apps), 'Expected to find no apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(0, count($apps), 'Expected to find no apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// create an app
 		$this->CobrandedApplication->create(
@@ -990,13 +993,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
+				//	'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
 				),
 			)
 		);
 
 		// should now have 2 apps
-		$this->assertEquals(2, count($apps), 'Expected to find one app for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// update the values
 		$expectedApp = $apps[0];
@@ -1009,30 +1013,31 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
+				//	'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
 				),
 			)
 		);
 
 		// should now have 3 apps
-		$this->assertEquals(3, count($apps), 'Expected to find two apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// and they should have the same user_id and template_id
 		$this->assertEquals(
 			$expectedApp['CobrandedApplication']['user_id'],
-			$apps[1]['CobrandedApplication']['user_id'],
+			$apps[0]['CobrandedApplication']['user_id'],
 			'Copied application should have the same userId'
 		);
 		$this->assertEquals(
 			$expectedApp['CobrandedApplication']['template_id'],
-			$apps[2]['CobrandedApplication']['template_id'],
+			$apps[1]['CobrandedApplication']['template_id'],
 			'Copied application should have the same templateId'
 		);
 
 		// and CobrandedApplicationValues
 		foreach ($expectedApp['CobrandedApplicationValues'] as $key => $value) {
 			$expected = $apps[0]['CobrandedApplicationValues'][$key]['value'];
-			$actual = $apps[2]['CobrandedApplicationValues'][$key]['value'];
+			$actual = $apps[1]['CobrandedApplicationValues'][$key]['value'];
 			$this->assertEquals($expected, $actual,
 				"Copied applications value [$expected] did not match original [$actual]"
 			);
@@ -1408,7 +1413,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'email' => 'testing@axiapayments.com',
 					),
 					'Coversheet' => array(
-						'id' => null,
+						'id' => 1,
 					),
 					'Dba' => array(
 						'value' => 'Doing Business As',
