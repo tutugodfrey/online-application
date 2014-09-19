@@ -17,6 +17,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+//		'app.onlineappUser',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -51,6 +52,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
+//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 
@@ -62,6 +64,10 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 				)
 			)
 		);
+
+//		$this->User->id = $this->User->find('first', array('fields' => 'id'));
+//		$this->User->saveField('template_id', $this->__template['Template']['id']);
+//		$this->__user = $this->User->find('first');
 
 		$this->User->create(
 			array(
@@ -85,7 +91,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			)
 		);
 		$this->__user = $this->User->save();
-	}
+ 	}
 
 /**
  * tearDown method
@@ -166,13 +172,13 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 	public function testBeforeSaveValidation() {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
-		$applictionData = array(
+		$applicationData = array(
 			'user_id' => $this->__user['OnlineappUser']['id'],
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
-
-		$this->CobrandedApplication->create($applictionData);
+debug($applicationData);
+		$this->CobrandedApplication->create($applicationData);
 		$cobrandedApplication = $this->CobrandedApplication->save();
 		$applicationAndValues = $this->CobrandedApplicationValue->find(
 			'all',

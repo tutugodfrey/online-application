@@ -17,7 +17,8 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.onlineappUser',
+//		'app.onlineappUser',
+		'app.onlineappCoversheet',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -29,6 +30,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 	private $__template;
 	private $__user;
+	private $__cobrandedApplication;
 
 /**
  * setUp method
@@ -38,6 +40,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->User = ClassRegistry::init('OnlineappUser');
+		$this->Coversheet = ClassRegistry::init('Coversheet');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -45,14 +48,16 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		// load data
+		$this->loadFixtures('OnlineappCoversheet');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
-		$this->loadFixtures('OnlineappUser');
+//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 
@@ -65,9 +70,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 			)
 		);
 
-		$this->User->create(
-			array(
-				'email' => 'compact(varname)',
+		//$this->User->create(
+		$user =	array(
+			'id' => 1,
+				'email' => 'testing@axiapayments.com',
 				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
 				'group_id' => 1,
 				'created' => '2014-01-24 11:02:22',
@@ -84,10 +90,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 		//		'api' => 1,
 				'cobrand_id' => 2,
 				'template_id' => $this->__template['Template']['id'],
-			)
+		//	)
 		);
 
-		$this->__user = $this->User->save();
+		$this->__user = $this->User->save($user);
+		$cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
+		$this->CobrandedApplication->id = $cobrandedApplication['CobrandedApplication']['id'];
+		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['OnlineappUser']['id']);
+		//$this->__cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
 	}
 
 /**
@@ -96,6 +106,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		$this->OnlineappEmailTimeline->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
@@ -167,7 +178,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'template_id' => (int) 1,
 				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
 				'created' => '2014-01-24 09:07:08',
-				'modified' => '2014-01-24 09:07:08',
+				'modified' => $this->__cobrandedApplication['CobrandedApplication']['modified'],
 				'rightsignature_document_guid' => null,
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
@@ -479,7 +490,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'template_id' => 1,
 				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
 				'created' => '2014-01-24 09:07:08',
-				'modified' => '2014-01-24 09:07:08',
+				'modified' => $this->__cobrandedApplication['CobrandedApplication']['modified'],
 				'rightsignature_document_guid' => null,
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
@@ -542,7 +553,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'template_id' => 1,
 				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
 				'created' => '2014-01-24 09:07:08',
-				'modified' => '2014-01-24 09:07:08',
+				'modified' => $this->__cobrandedApplication['CobrandedApplication']['modified'],
 				'rightsignature_document_guid' => null,
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
@@ -751,14 +762,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 		//     - user
 		//     - fieldsData
 		// pre-test:
-		//     - should not be cobrandedApplications for this user
+		//     - should be one cobrandedApplications for this user
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(0, count($applications), 'Did not expect to find any applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(1, count($applications), 'Did not expect to find any applications for user with id ['. $this->__user['OnlineappUser']['id'] .']');
 
 		// set expected results
 		$expectedValidationErrors = array(
@@ -779,7 +790,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// execute the method under test
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-
 		// assertions
 		$this->assertFalse($actualResponse['success'], 'saveFields with empty value for required field should fail');
 		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
@@ -959,12 +969,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// knowns:
 		//     applicationId of the app we want to copy
 		// pre-test:
-		//     - should not any cobrandedApplications for this user
+		//     - should have no cobrandedApplications for this template
 		$apps = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
 				),
 			)
 		);
@@ -983,12 +993,13 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
+				//	'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
 				),
 			)
 		);
 
-		// should now have 1 app
+		// should now have 2 apps
 		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// update the values
@@ -1002,18 +1013,19 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
+				//	'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
 				),
 			)
 		);
 
-		// should now have 2 apps
+		// should now have 3 apps
 		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// and they should have the same user_id and template_id
 		$this->assertEquals(
 			$expectedApp['CobrandedApplication']['user_id'],
-			$apps[1]['CobrandedApplication']['user_id'],
+			$apps[0]['CobrandedApplication']['user_id'],
 			'Copied application should have the same userId'
 		);
 		$this->assertEquals(
@@ -1189,7 +1201,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 				),
 			)
 		);
-
 		$response = $this->CobrandedApplication->repNotifySignedEmail($app['CobrandedApplication']['id']);
 
 		$expectedResponse = array(
@@ -1385,7 +1396,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'user_id' => 1,
 						'template_id' => 1,
 						'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
-						'modified' => '2014-01-24 09:07:08',
+						'modified' => $this->__cobrandedApplication['CobrandedApplication']['modified'],
 						'rightsignature_document_guid' => null,
 						'status' => null,
 						'rightsignature_install_document_guid' => null,
@@ -1397,12 +1408,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 					),
 					'User' => array(
 						'id' => 1,
-						'firstname' => 'Lorem ipsum dolor sit amet',
-						'lastname' => 'Lorem ipsum dolor sit amet',
+						'firstname' => 'testuser1firstname',
+						'lastname' => 'testuser1lastname',
 						'email' => 'testing@axiapayments.com',
 					),
 					'Coversheet' => array(
-						'id' => null,
+						'id' => 1,
 					),
 					'Dba' => array(
 						'value' => 'Doing Business As',
