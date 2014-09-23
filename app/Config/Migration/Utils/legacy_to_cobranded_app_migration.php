@@ -317,6 +317,30 @@
         $newAppResult = pg_query($conn, $newAppQuery);
 
         if ($newAppResult != false) {
+            $updateCoversheetsQuery = "
+                UPDATE onlineapp_coversheets
+                   SET cobranded_application_id = $data[id]
+                 WHERE onlineapp_application_id = $data[id]
+            ";
+    
+            $updateCoversheetsResult = pg_query($conn, $updateCoversheetsQuery);
+
+            if ($updateCoversheetsResult == false) {
+                fwrite($filehandle, "problem updating onlineapp_coversheets, can't set cobranded_application_id\n");
+            }
+
+            $updateEmailTimelinesQuery = "
+                UPDATE onlineapp_email_timelines
+                   SET cobranded_application_id = $data[id]
+                 WHERE app_id = $data[id]
+            ";
+    
+            $updateEmailTimelinesResult = pg_query($conn, $updateEmailTimelinesQuery);
+
+            if ($updateEmailTimelinesResult == false) {
+                fwrite($filehandle, "problem updating onlineapp_email_timelines, can't set cobranded_application_id\n");
+            }
+
 	    fwrite($filehandle, "adding application values to appId: $data[id]\n");
 	    // this foreach block creates the application value records
             foreach ($applicationMap as $key => $val) {
