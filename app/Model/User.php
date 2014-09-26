@@ -174,7 +174,14 @@ class User extends AppModel {
 				'joinTable' => 'onlineapp_users_managers',
 				'foreignKey' => 'manager_id',
 				'associationForeignKey' => 'user_id',
-		)
+		),
+		'Cobrand' => array(
+				'with' => 'UserCobrand',
+				'className' => 'User',
+				'joinTable' => 'onlineapp_users_onlineapp_cobrands',
+				'foreignKey' => 'user_id',
+				'associationForeignKey' => 'cobrand_id',
+		),
 	);
 
 	function bindNode($user) {
@@ -310,23 +317,37 @@ class User extends AppModel {
 		return $id;
 	}
 
-public function beforeSave($options = array()) {
-	parent::beforeSave($options);
-	if (!empty($this->data[$this->alias]['pwd'])) {
-		$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['pwd']);
-	}
+	public function beforeSave($options = array()) {
+		parent::beforeSave($options);
+		if (!empty($this->data[$this->alias]['pwd'])) {
+			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['pwd']);
+		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
-		$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
+			$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
+		}
+		return true;
 	}
-	return true;
-}
 
-public function arrayDiff($change) {
-	$new = Set::sort($change['User'], '{n}.id', 'asc');
-	$original = Set::sort(Set::combine($this->find('all', array('fields' => array('id','firstname','lastname','email','group_id','active'),'order' => array('firstname' => 'ASC'),'recursive' => -1)),'{n}.User.id','{n}.User'), '{n}.id', 'asc');
-	$delta = set::diff($new,$original);
-	return $delta;
-}
+	public function arrayDiff($change) {
+		$new = Set::sort($change['User'], '{n}.id', 'asc');
+		$original = Set::sort(Set::combine($this->find('all', array('fields' => array('id','firstname','lastname','email','group_id','active'),'order' => array('firstname' => 'ASC'),'recursive' => -1)),'{n}.User.id','{n}.User'), '{n}.id', 'asc');
+		$delta = set::diff($new,$original);
+		return $delta;
+	}
+
+	public function getCobrandIds($userId){
+		$cobrandIds = $this->UserCobrand->find(
+			'all',
+			array(
+				'conditions' => array('user_id' => $userId),
+				'fields' => array('cobrand_id')
+			)
+		);
+
+		$ids = Set::classicExtract($cobrandIds, '{n}.UserCobrand.cobrand_id');
+		return $ids;
+	}
+
 //public function beforeValidate($options = array()) {
 //    parent::beforeValidate($options);
 //    if(empty($this->data[$this->alias['pwd']]) && empty($this->data[$this->alias]['password_confirm'])) {
