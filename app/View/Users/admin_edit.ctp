@@ -32,6 +32,7 @@ echo $this->Form->input('token_uses');
 }
 
 echo $this->Form->input('Cobrand', array('label' => 'Select Cobrand(s)', 'multiple' => 'checkbox'));
+echo "<br>".$this->Form->input('template_id')."<br>";
 
 echo $this->Form->end('Save User');
 ?>

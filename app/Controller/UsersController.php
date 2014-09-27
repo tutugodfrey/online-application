@@ -135,7 +135,11 @@ class UsersController extends AppController {
 		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
 		$this->set('cobrands', $this->User->Cobrand->getList());
 		$user = $this->User->read();
-		$this->set('templates', $this->User->Template->getList($user['User']['cobrand_id']));
+
+		$cobrandIds = $this->User->getCobrandIds($id);
+		$templates = $this->User->Template->getList($cobrandIds);
+		$this->set('templates', $templates);
+
 		// TODO: add templates
 		if (empty($this->request->data)){
 			$this->request->data = $this->User->read();
