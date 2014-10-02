@@ -21,9 +21,9 @@ class CoversheetTest extends CakeTestCase {
 //		'app.onlineappGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
-		'app.onlineappTemplate_page',
-		'app.onlineappTemplate_section',
-		'app.onlineappTemplate_field',
+		'app.onlineappTemplatePage',
+		'app.onlineappTemplateSection',
+		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
 //		'app.onlineappApip',
@@ -78,7 +78,7 @@ class CoversheetTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		$this->Coversheet->deleteAll(true, false);
+		$this->Coversheet->delete(1);
 		$this->Application->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
@@ -295,8 +295,7 @@ class CoversheetTest extends CakeTestCase {
 					),
 				),
 		);
-		$response = $this->Coversheet->find('index', array('limit' => 4));
-		debug($response);
+		$response = $this->Coversheet->find('index', array('limit' => 1));
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 		
