@@ -106,15 +106,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
-
 		unset($this->CobrandedApplication);
 		unset($this->CobrandedApplicationValue);
 		unset($this->TemplateField);

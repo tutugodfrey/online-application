@@ -30,7 +30,6 @@
     <th><?php echo $this->Paginator->sort('email', 'Email'); ?></th>
     <th><?php echo $this->Paginator->sort('extension', 'Ext'); ?></th>
     <th><?php echo $this->Paginator->sort('group_id', 'Group'); ?></th>
-    <th><?php echo $this->Paginator->sort('cobrand_id', 'Cobrand'); ?></th>
     <th><?php echo $this->Paginator->sort('template_id', 'Template'); ?></th>
     <th><?php echo __('Actions');?></th>
   </tr>
@@ -57,7 +56,6 @@ echo "\n";
             echo "\t\t<td>\n\t\t\t" . $user['User']['email'] . " \n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . $user['User']['extension'] . " \n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . $this->Html->link($user['Group']['name'], array('controller' => 'groups', 'action' => 'view', $user['Group']['id'])) . "\n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $user['Cobrand']['partner_name'] . "\n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . ($user['Template']['name'] == null ? '' : $user['Template']['name']). "\n\t\t</td>\n";
             break;
           }

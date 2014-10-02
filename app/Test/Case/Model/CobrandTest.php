@@ -23,15 +23,7 @@ class CobrandTest extends CakeTestCase {
 	}
 
 	public function tearDown() {
-		// need to update this sql to be a little more flexible
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT IF EXISTS onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
 		unset($this->Cobrand);
 		parent::tearDown();
 	}

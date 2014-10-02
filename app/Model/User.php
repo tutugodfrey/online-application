@@ -66,19 +66,11 @@ class User extends AppModel {
 
 	public $displayField = 'fullname';
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
+	// The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $belongsTo = array(
 		'Group' => array(
 			'className' => 'Group',
 			'foreignKey' => 'group_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
-		'Cobrand' => array(
-			'className' => 'Cobrand',
-			'foreignKey' => 'cobrand_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''

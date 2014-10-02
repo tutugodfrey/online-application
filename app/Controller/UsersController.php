@@ -127,13 +127,15 @@ class UsersController extends AppController {
 	}
 
 	function admin_edit($id) {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->User->id = $id;
 		$this->User->read();
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('assigned_managers', $this->User->getAssignedManagerIds($id));
 		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
-		$this->set('cobrands', $this->User->Cobrand->getList());
+		$this->set('cobrands', $this->Cobrand->getList());
 		$user = $this->User->read();
 
 		$cobrandIds = $this->User->getCobrandIds($id);

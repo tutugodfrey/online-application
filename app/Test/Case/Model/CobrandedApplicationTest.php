@@ -114,15 +114,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
-
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
@@ -732,7 +724,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"http://www.domain.com",'.
 			'"12.82234",'.
 			'"1234567890",'.
-			'"true",'.
+			'"",'.
 			'"a whole lot of text can go into this field...",'.
 			'"text text text",'.
 			'"text text text",'.
@@ -762,18 +754,17 @@ class CobrandedApplicationTest extends CakeTestCase {
 		//     - user
 		//     - fieldsData
 		// pre-test:
-		//     - should be one cobrandedApplications for this user
+		//     - should be one cobrandedApplication for this user
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Did not expect to find any applications for user with id ['. $this->__user['OnlineappUser']['id'] .']');
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['. $this->__user['OnlineappUser']['id'] .']');
 
 		// set expected results
 		$expectedValidationErrors = array(
-			'required_text_from_api_without_default' => 'required',
 			'Text field' => 'required',
 			'Text field 1' => 'required'
 		);
@@ -799,7 +790,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(0, count($applications), 'Expect to find no applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
@@ -875,7 +867,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Expect to find one application for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		$this->assertEquals(2, count($applications), 'Expect to find two applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
 		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
