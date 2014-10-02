@@ -307,7 +307,7 @@ class CoversheetsController extends AppController {
 		$this->Prg->commonProcess();
 
         
-		if ($this->passedArgs['user_id'] != '' && !in_array($this->passedArgs['user_id'], $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id')))) {
+		if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID && $this->passedArgs['user_id'] != '' && !in_array($this->passedArgs['user_id'], $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id')))) {
 			unset($this->passedArgs['user_id']);
 			$conditions[] = array('Coversheet.user_id' => $this->Auth->user('id'));
 		} else if ($this->passedArgs['user_id'] != '') {
