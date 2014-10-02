@@ -423,7 +423,7 @@ class CobrandedApplicationsController extends AppController {
 			$response = $this->CobrandedApplication->createOnlineappForUser($user['User'], $this->request->data['CobrandedApplication']['uuid']);
 			if ($response['success'] == true) {
 				$this->Session->setFlash(__('Application created'));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => "/edit/".$response['cobrandedApplication']['uuid'], 'admin' => false));
 			} else {
 				$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
 			}
