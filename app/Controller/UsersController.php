@@ -142,8 +142,20 @@ class UsersController extends AppController {
 		$templates = $this->User->Template->getList($cobrandIds);
 		$this->set('templates', $templates);
 
+		$userTemplateIds = $this->User->getTemplateIds($id);
+		$userTemplates = $this->User->Template->find(
+			'list',
+			array(
+				'conditions' => array('Template.id' => $userTemplateIds),
+				'fields' => array('Template.id', 'Template.name')
+			)
+		);
+
+		$this->set('userTemplates', $userTemplates);
+		$this->set('userTemplateId', $user['User']['template_id']);
+
 		// TODO: add templates
-		if (empty($this->request->data)){
+		if (empty($this->request->data)) {
 			$this->request->data = $this->User->read();
 		} else {
 			if(empty($this->request->data['User']['pwd']) && empty($this->request->data['User']['password_confirm'])) {
@@ -188,6 +200,27 @@ class UsersController extends AppController {
 
 	function admin_logout() {
 		$this->redirect('/users/logout');
+	}
+
+	public function get_user_templates($id) {
+		$this->autoRender = false;
+		$userTemplateIds = $this->User->getTemplateIds($id);
+		$userTemplates = $this->User->Template->find(
+			'list',
+			array(
+				'conditions' => array('Template.id' => $userTemplateIds),
+				'fields' => array('Template.id', 'Template.name')
+			)
+		);
+
+		if (!empty($userTemplates) && is_array($userTemplates)) {
+			foreach ($userTemplates as $key => $val) {
+        		echo '<option value="'.$key.'">'.$val.'</option>';
+   			}
+		}
+		else {
+			echo '<option value="">NO TEMPLATES FOR USER</option>';
+		}
 	}
 }
 ?>

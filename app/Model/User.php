@@ -75,13 +75,6 @@ class User extends AppModel {
 			'fields' => '',
 			'order' => ''
 		),
-		'Template' => array(
-			'className' => 'Template',
-			'foreignKey' => 'template_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		)
 	);
 
 	public $hasMany = array(
@@ -169,10 +162,17 @@ class User extends AppModel {
 		),
 		'Cobrand' => array(
 				'with' => 'UserCobrand',
-				'className' => 'User',
+				'className' => 'Cobrand',
 				'joinTable' => 'onlineapp_users_onlineapp_cobrands',
 				'foreignKey' => 'user_id',
 				'associationForeignKey' => 'cobrand_id',
+		),
+		'Template' => array(
+				'with' => 'UserTemplate',
+				'className' => 'Template',
+				'joinTable' => 'onlineapp_users_onlineapp_templates',
+				'foreignKey' => 'user_id',
+				'associationForeignKey' => 'template_id',
 		),
 	);
 
@@ -320,6 +320,78 @@ class User extends AppModel {
 		return true;
 	}
 
+	public function afterSave($created, $options = array()) {
+		// make sure all templates selected have associated
+		// cobrands selected, otherwise delete those user template records
+
+		if (!empty($this->data['Template']['Template'])) {
+    		$this->Template = ClassRegistry::init('Template');
+    	
+    		$templates = $this->Template->find(
+				'all',
+				array(
+					'fields' => array(
+						'id',
+						'cobrand_id'
+					)
+				)
+			);
+
+			$templateToCobrandMap = array();
+
+			foreach ($templates as $template) {
+				$templateToCobrandMap[$template['Template']['id']] = $template['Template']['cobrand_id'];
+			}
+
+			$usersCobrands = $this->data['Cobrand']['Cobrand'];
+    		$usersTemplates = $this->data['Template']['Template'];
+
+    		foreach ($usersTemplates as $userTemplateId) {
+    			$assocCobrandId = $templateToCobrandMap[$userTemplateId];
+    			$flag = false;
+    			if (!empty($usersCobrands)) {
+    				foreach ($usersCobrands as $userCobrandId) {
+    					if ($userCobrandId == $assocCobrandId) {
+    						$flag = true;
+    					}
+    				}
+    			}
+    			if ($flag == false) {
+    				// get rid of the onlineapp_users_onlineapp_templates record
+    				// we don't have an associated cobrand selected by the user
+    				$this->UserTemplate->deleteAll(array(
+    					'UserTemplate.user_id' => $this->data['User']['id'],
+    					'UserTemplate.template_id' => $userTemplateId
+    				), false);
+    			}
+    		}
+    	}
+	}
+
+	public function afterFind($results, $primary = false) {
+		parent::afterFind($results, $primary);
+
+		if (!empty($results) && is_array($results)) {
+			foreach ($results as $key => $val) {
+				if (isset($val['User']['template_id'])) {
+					$template = $this->Template->find(
+						'first',
+						array(
+							'conditions' => array(
+								'Template.id' => $val['User']['template_id']
+							),
+							'fields' => array('Template.name')
+						)
+					);
+
+					$results[$key]['Template']['name'] = $template['Template']['name'];
+				}
+			}
+		}
+
+		return $results;
+	}
+
 	public function arrayDiff($change) {
 		$new = Set::sort($change['User'], '{n}.id', 'asc');
 		$original = Set::sort(Set::combine($this->find('all', array('fields' => array('id','firstname','lastname','email','group_id','active'),'order' => array('firstname' => 'ASC'),'recursive' => -1)),'{n}.User.id','{n}.User'), '{n}.id', 'asc');
@@ -337,6 +409,19 @@ class User extends AppModel {
 		);
 
 		$ids = Set::classicExtract($cobrandIds, '{n}.UserCobrand.cobrand_id');
+		return $ids;
+	}
+
+	public function getTemplateIds($userId){
+		$templateIds = $this->UserTemplate->find(
+			'all',
+			array(
+				'conditions' => array('user_id' => $userId),
+				'fields' => array('template_id')
+			)
+		);
+
+		$ids = Set::classicExtract($templateIds, '{n}.UserTemplate.template_id');
 		return $ids;
 	}
 

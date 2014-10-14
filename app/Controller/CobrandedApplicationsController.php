@@ -410,16 +410,11 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function admin_add() {
 		// look up the user to make sure we don't get stale session data
-		$this->User->read(null, $this->Session->read('Auth.User.id'));
+		$user = $this->User->read(null, $this->Session->read('Auth.User.id'));
 
 		if ($this->request->is('post')) {
-			// save the template_id for the user
-			$this->User->read(null, $this->User->id);
-			$this->User->set('template_id', $this->request->data['CobrandedApplication']['template_id']);
-			$this->User->save();
-
 			// now try to save with the data from the user model
-			$user = $this->User->read();
+			$user = $this->User->read(null, $this->User->id);
 			$response = $this->CobrandedApplication->createOnlineappForUser($user['User'], $this->request->data['CobrandedApplication']['uuid']);
 			if ($response['success'] == true) {
 				$this->Session->setFlash(__('Application created'));
@@ -440,9 +435,30 @@ class CobrandedApplicationsController extends AppController {
 		$users = $this->CobrandedApplication->User->find('list', array('order' => 'firstname, lastname'));
 		$this->set(compact('users'));
 
-		$cobrandIds = $this->CobrandedApplication->User->getCobrandIds($this->Session->read('Auth.User.id'));
-		$templates = $this->CobrandedApplication->User->Template->getList($cobrandIds);
+		$userTemplates = $this->CobrandedApplication->User->UserTemplate->find('list', array(
+				'conditions' => array(
+					'UserTemplate.user_id' => $this->User->id
+				),
+				'fields' => array(
+					'UserTemplate.template_id'
+				),
+			)
+		);
+
+		$ids = array();
+		foreach ($userTemplates as $key => $val) {
+			$ids[] = $val;
+		}
+
+		$templates = $this->CobrandedApplication->Template->find('list',
+			array(
+				'order' => array('Template.name' => 'asc'),
+				'conditions' => array('Template.id' => $ids),
+			)
+		);
+
 		$this->set(compact('templates'));
+		$this->set('user_template_id', $user['User']['template_id']);
 	}
 
 /**
