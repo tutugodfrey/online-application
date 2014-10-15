@@ -354,6 +354,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['logo_url']);
 			$this->set('include_axia_logo', $template['Template']['include_axia_logo']);
 			$this->set('cobrand_logo_position', $template['Template']['logo_position']);
+			$this->set('logoPositionTypes', $this->CobrandedApplication->Template->logoPositionTypes);
 			$this->set('rightsignature_template_guid', $template['Template']['rightsignature_template_guid']);
 			$this->set('rightsignature_install_template_guid', $template['Template']['rightsignature_install_template_guid']);
 			$this->set('templatePages', $template['Template']['TemplatePages']);
