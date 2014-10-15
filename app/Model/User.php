@@ -412,24 +412,36 @@ class User extends AppModel {
 		return $ids;
 	}
 
-	public function getTemplateIds($userId){
+	public function getTemplates($userId){
 		$templateIds = $this->UserTemplate->find(
-			'all',
+			'list',
 			array(
-				'conditions' => array('user_id' => $userId),
-				'fields' => array('template_id')
+				'conditions' => array(
+					'user_id' => $userId
+				),
+				'fields' => array(
+					'template_id'
+				),
 			)
 		);
 
-		$ids = Set::classicExtract($templateIds, '{n}.UserTemplate.template_id');
-		return $ids;
-	}
+		$ids = array();
+		
+		foreach ($templateIds as $key => $val) {
+			$ids[] = $val;
+		}
+		
+		$templates = $this->Template->find('all', 
+			array(
+				'contain' => array('Cobrand.partner_name'),
+				'fields' => array('Template.id', 'Template.name'),
+				'order' => array('Cobrand.partner_name' => 'ASC'),
+				'conditions' => array('Template.id' => $ids),
+			)
+		);
 
-//public function beforeValidate($options = array()) {
-//    parent::beforeValidate($options);
-//    if(empty($this->data[$this->alias['pwd']]) && empty($this->data[$this->alias]['password_confirm'])) {
-//        unset($this->data[$this->alias]['password_confirm']);
-//    }
-//}
+		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
+		return $templates;
+	}
 }
 ?>

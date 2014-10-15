@@ -53,13 +53,17 @@ class Template extends AppModel {
 		)
 	);
 
-	public function getList($cobrandId = 2) {
-		return $this->find('list',
+	public function getList($cobrandId) {
+		$templates = $this->find('all', 
 			array(
-				'order' => array('Template.name' => 'asc'),
+				'contain' => array('Cobrand.partner_name'),
+				'fields' => array('Template.id', 'Template.name'),
+				'order' => array('Cobrand.partner_name' => 'ASC'),
 				'conditions' => array('Template.cobrand_id' => $cobrandId),
 			)
 		);
+		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
+		return $templates;
 	}
 
 	public function getCobrand($cobrandId) {

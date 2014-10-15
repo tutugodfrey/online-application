@@ -433,36 +433,10 @@ class CobrandedApplicationsController extends AppController {
 		}
 
 		$users = $this->CobrandedApplication->User->find('list', array('order' => 'firstname, lastname'));
-		//@todo refactor this to $defaultTemplateId
-		$user_template_id = $user['User']['template_id'];
-
-		//@todo refactor this logic to the Template Model
-
-		$userTemplates = $this->CobrandedApplication->User->UserTemplate->find('list', array(
-				'conditions' => array(
-					'UserTemplate.user_id' => $this->User->id
-				),
-				'fields' => array(
-					'UserTemplate.template_id'
-				),
-			)
-		);
-		$ids = array();
-		foreach ($userTemplates as $key => $val) {
-			$ids[] = $val;
-		}
-		$templates = $this->CobrandedApplication->Template->find('all', 
-			array(
-				'contain' => array('Cobrand.partner_name'),
-				'fields' => array('Template.id', 'Template.name'),
-				'order' => array('Cobrand.partner_name' => 'ASC'),
-				'conditions' => array('Template.id' => $ids),
-			)
-		);
-		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name') 
-		);
+		$defaultTemplateId = $user['User']['template_id'];
+		$templates = $this->User->getTemplates($this->User->id);
 		
-		$this->set(compact('templates', 'users', 'user_template_id'));
+		$this->set(compact('templates', 'users', 'defaultTemplateId'));
 	}
 
 /**

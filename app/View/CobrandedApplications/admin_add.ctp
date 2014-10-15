@@ -21,7 +21,7 @@
 		<legend><?php echo __('Admin Add Application'); ?></legend>
 	<?php
 		echo $this->Form->input('user_id');
-		echo $this->Form->input('template_id', array('default' => $user_template_id));
+		echo $this->Form->input('template_id', array('default' => $defaultTemplateId));
 		echo $this->Form->input('uuid');
 	?>
 	</fieldset>

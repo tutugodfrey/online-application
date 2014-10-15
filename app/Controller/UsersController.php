@@ -142,17 +142,10 @@ class UsersController extends AppController {
 		$templates = $this->User->Template->getList($cobrandIds);
 		$this->set('templates', $templates);
 
-		$userTemplateIds = $this->User->getTemplateIds($id);
-		$userTemplates = $this->User->Template->find(
-			'list',
-			array(
-				'conditions' => array('Template.id' => $userTemplateIds),
-				'fields' => array('Template.id', 'Template.name')
-			)
-		);
+		$userTemplates = $this->User->getTemplates($id);
 
 		$this->set('userTemplates', $userTemplates);
-		$this->set('userTemplateId', $user['User']['template_id']);
+		$this->set('defaultTemplateId', $user['User']['template_id']);
 
 		// TODO: add templates
 		if (empty($this->request->data)) {
@@ -204,14 +197,8 @@ class UsersController extends AppController {
 
 	public function get_user_templates($id) {
 		$this->autoRender = false;
-		$userTemplateIds = $this->User->getTemplateIds($id);
-		$userTemplates = $this->User->Template->find(
-			'list',
-			array(
-				'conditions' => array('Template.id' => $userTemplateIds),
-				'fields' => array('Template.id', 'Template.name')
-			)
-		);
+
+		$userTemplates = $this->User->getTemplates($id);
 
 		if (!empty($userTemplates) && is_array($userTemplates)) {
 			foreach ($userTemplates as $key => $val) {

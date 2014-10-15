@@ -96,8 +96,8 @@ class TemplateTest extends CakeTestCase {
 
 	public function testGetList() {
 		$expected = array();
-		$expected[1] = 'Template 1 for PN1';
-		$expected[2] = 'Template 2 for PN1';
+		$expected[1] = 'Partner Name 1 - Template 1 for PN1';
+		$expected[2] = 'Partner Name 1 - Template 2 for PN1';
 
 		$result = $this->Template->getList(1);
 

@@ -41,7 +41,7 @@ echo $this->Form->input(
         'options' => $userTemplates,
         'label' => 'Select Default Template',
         'type' => 'select',
-        'default' => $userTemplateId
+        'default' => $defaultTemplateId
     )
 );
 echo "<br>";
