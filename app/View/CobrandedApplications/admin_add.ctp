@@ -22,7 +22,7 @@
 	<?php
 		echo $this->Form->input('user_id');
 		echo $this->Form->input('template_id', array('default' => $defaultTemplateId));
-		echo $this->Form->input('uuid');
+		echo $this->Form->hidden('uuid');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

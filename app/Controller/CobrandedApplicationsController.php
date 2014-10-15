@@ -414,8 +414,10 @@ class CobrandedApplicationsController extends AppController {
 
 		if ($this->request->is('post')) {
 			// now try to save with the data from the user model
-			$user = $this->User->read(null, $this->User->id);
-			$response = $this->CobrandedApplication->createOnlineappForUser($user['User'], $this->request->data['CobrandedApplication']['uuid']);
+			$tmpUser = $user;
+			$tmpUser['User']['template_id'] = $this->request->data['CobrandedApplication']['template_id'];
+
+			$response = $this->CobrandedApplication->createOnlineappForUser($tmpUser['User'], $this->request->data['CobrandedApplication']['uuid']);
 			if ($response['success'] == true) {
 				$this->Session->setFlash(__('Application created'));
 				$this->redirect(array('action' => "/edit/".$response['cobrandedApplication']['uuid'], 'admin' => false));
