@@ -39,7 +39,7 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
 $fieldId = $FP->createIfMissing('Ownership Type', $sectionId, 12, 4, true, 2, 'Corporation::Corp,Sole Prop::SoleProp,LLC::LLC,Partnership::Partnership,Non Profit/Tax Exempt (fed form 501C)::NonProfit,Other::Other', 'OwnerType-', '', null);
-$fieldId = $FP->createIfMissing('Corporate Status', $sectionId, 12, 0, false, 2, '', 'CorpStatus', '', null, true);
+//$fieldId = $FP->createIfMissing('Corporate Status', $sectionId, 12, 0, false, 2, '', 'CorpStatus', '', null, true);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -144,16 +144,16 @@ $sectionId = $SP->createIfMissing('General Underwriting Profile', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Business Type', $sectionId, 12, 4, true, 2, 'Retail::Retail,Restaurant::Restaurant,Lodging::Lodging,MOTO::MOTO,Internet::Internet,Grocery::Grocery', 'BusinessType-', '', null);
+$fieldId = $FP->createIfMissing('Business Type', $sectionId, 12, 4, true, 2, 'Retail::Retail{default},Restaurant::Restaurant,Lodging::Lodging,MOTO::MOTO,Internet::Internet,Grocery::Grocery', 'BusinessType-', '', null);
 $fieldId = $FP->createIfMissing('Products/Services Sold', $sectionId, 12, 0, true, 2, '', 'Products Services Sold', '', null);
-$fieldId = $FP->createIfMissing('Return Policy', $sectionId, 12, 0, true, 2, '', 'Return Policy', '', null);
-$fieldId = $FP->createIfMissing('Days Until Product Delivery', $sectionId, 12, 0, true, 2, '', 'Days Until Product Delivery', '', null);
+$fieldId = $FP->createIfMissing('Return Policy', $sectionId, 12, 0, true, 2, 'None', 'Return Policy', '', null);
+$fieldId = $FP->createIfMissing('Days Until Product Delivery', $sectionId, 12, 0, true, 2, 'Same Day', 'Days Until Product Delivery', '', null);
 $fieldId = $FP->createIfMissing('Monthly Volume', $sectionId, 4, 10, true, 2, '', 'MonthlyVol', '', null);
 $fieldId = $FP->createIfMissing('Average Ticket', $sectionId, 4, 10, true, 2, '', 'AvgTicket', '', null);
 $fieldId = $FP->createIfMissing('Highest Ticket', $sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null);
-$fieldId = $FP->createIfMissing('Current Processor', $sectionId, 12, 0, true, 2, '', 'Previous Processor', '', null);
-$fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped,Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null);
-$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer,Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null);
+$fieldId = $FP->createIfMissing('Current Processor', $sectionId, 12, 0, true, 2, 'Merchant Warehouse', 'Current Processor', '', null);
+$fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{95},Card Present Imprint::CardPresentImprint{0},Card Not Present (Keyed)::CardNotPresent-Keyed{5},Card Not Present (Internet)::CardNotPresent-Internet{0}', 'MethodofSales-', '', null);
+$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{100},Direct To Business::DirectToBusiness{0},Direct To Government::DirectToGovernment{0}', '%OfProductSold', '', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -268,6 +268,23 @@ $fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, ''
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
+$sectionId = $SP->createIfMissing('Trade Reference 1', $pageId);
+
+// next go to the fields for this section
+$I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
+
+// create new fields
+$fieldId = $FP->createIfMissing('Business Name', $sectionId, 12, 0, false, 2, '', 'TradeRef1', '', null);
+$fieldId = $FP->createIfMissing('Contact Person', $sectionId, 12, 0, false, 2, '', 'TradeRefContact1', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, false, 2, '', 'TradeRefPhone1', '', null);
+$fieldId = $FP->createIfMissing('Acct #', $sectionId, 6, 0, false, 2, '', 'TradeRefAccount1', '', null);
+$fieldId = $FP->createIfMissing('City', $sectionId, 6, 0, false, 2, '', 'TradeRefCity1', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 6, 20, false, 2, $FP::STATES, 'TradeRefSt1', '', null);
+
+// go to the sections for this page
+$I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
+
+// create a new section for the page
 $sectionId = $SP->createIfMissing('Trade Reference 2', $pageId);
 
 // next go to the fields for this section
@@ -323,11 +340,11 @@ $sectionId = $SP->createIfMissing('Terminal/Software Type(1)', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Quantity', $sectionId, 3, 19, true, 2, '', 'QTY1', '', null);
-$fieldId = $FP->createIfMissing('Type', $sectionId, 3, 0, true, 2, '', 'Terminal1', '', null);
-$fieldId = $FP->createIfMissing('Provider', $sectionId, 6, 4, true, 2, 'Axia::Axia,Merchant::Merchant', 'Provider-', '', null);
-$fieldId = $FP->createIfMissing('Do You Use Autoclose?', $sectionId, 6, 4, true, 2, 'Yes::Autoclose,No::NoAutoclose', 'DoYouUseAutoclose-', '', null);
-$fieldId = $FP->createIfMissing('If Yes, What Time?', $sectionId, 6, 2, false, 2, '', 'Autoclose Time 2', '', null);
+$fieldId = $FP->createIfMissing('Quantity', $sectionId, 3, 19, true, 2, '1', 'QTY1', '', null);
+$fieldId = $FP->createIfMissing('Type', $sectionId, 3, 0, true, 2, 'Axia ePay', 'Terminal1', '', null);
+$fieldId = $FP->createIfMissing('Provider', $sectionId, 6, 4, true, 2, 'Axia::Axia{default},Merchant::Merchant', 'Provider-', '', null);
+$fieldId = $FP->createIfMissing('Do You Use Autoclose?', $sectionId, 6, 4, true, 2, 'Yes::Autoclose{default},No::NoAutoclose', 'DoYouUseAutoclose-', '', null);
+$fieldId = $FP->createIfMissing('If Yes, What Time?', $sectionId, 6, 2, false, 2, '10 PM', 'Autoclose Time 1', '', null);
 $fieldId = $FP->createIfMissing('Terminal Programming Information (please select all that apply)', $sectionId, 12, 6, false, 3, '', 'label', '', null);
 $fieldId = $FP->createIfMissing('AVS', $sectionId, 2, 3, false, 2, '', 'AVS', '', null);
 $fieldId = $FP->createIfMissing('Server #s', $sectionId, 2, 3, false,  2, '', 'Server', '', null);
