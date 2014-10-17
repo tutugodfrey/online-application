@@ -288,6 +288,9 @@ class CobrandedApplicationsController extends AppController {
 			$response = Hash::insert($response, 'msg', 'Expecting POST data.');
 		}
 
+		unset($response['partner_name']);
+		unset($response['response_url_type']);
+		
 		echo json_encode($response);
 		$this->redirect(null, 200);
 	}

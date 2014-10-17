@@ -600,7 +600,7 @@ class CobrandedApplication extends AppModel {
 								// udpate the value to null
 								$radioOption['CobrandedApplicationValue']['value'] = null;
 								if (!$this->CobrandedApplicationValue->save($radioOption)) {
-									$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], 'failed to update application value with id ['.
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'failed to update application value with id ['.
 										$radioOption['CobrandedApplicationValue']['id'].'], to a value of null.');
 								}
 							}
@@ -623,7 +623,7 @@ class CobrandedApplication extends AppModel {
 						}
 
 						// update our validationErrors array
-						$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], 'required');
+						$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'required');
 					} else {
 						// only validate if we are not empty
 						if (isset($value)) {
@@ -647,7 +647,7 @@ class CobrandedApplication extends AppModel {
 							} else {
 								// update our validationErrors array
 								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
-								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], $typeStr);
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], $typeStr);
 							}
 						}
 					}
@@ -1839,7 +1839,7 @@ class CobrandedApplication extends AppModel {
 
 						if ($found == false) {
 							// update our validationErrors array
-							$response['validationErrors'] = Hash::insert($response['validationErrors'], $fieldName, 'required');
+							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'required');
 
 							$errorArray = array();
 							$errorArray['fieldName'] = $fieldName;
