@@ -222,10 +222,19 @@ class CobrandedApplicationsController extends AppController {
 						file_put_contents("$filepath", $csv);
 
 						$this->Cobrand = ClassRegistry::init('Cobrand');
+						$this->Template = ClassRegistry::init('Template');
+
+						$template = $this->Template->find(
+							'first',
+							array(
+								'conditions' => array('Template.id' => $user['User']['template_id']),
+							)
+						);
+
 						$cobrand = $this->Cobrand->find(
 							'first', 
 							array(
-								'conditions' => array('Cobrand.id' => $user['User']['cobrand_id']),
+								'conditions' => array('Cobrand.id' => $template['Template']['cobrand_id']),
 							)
 						);
 

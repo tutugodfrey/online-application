@@ -14,7 +14,7 @@ class Cobrand extends AppModel {
 	public $responseUrlTypes = array(
 		1 => 'return nothing',
 		2 => 'return RS signing url',
-		3 =>'return online app url'
+		3 => 'return online app url'
 	);
 
 	public $validate = array(

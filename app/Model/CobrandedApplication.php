@@ -659,8 +659,15 @@ class CobrandedApplication extends AppModel {
 			$response['success'] = (count($response['validationErrors']) == 0);
 		}
 
-		$this->id = $createAppResponse['cobrandedApplication']['id'];
-		$cobrandedApplication = $this->read();
+		$cobrandedApplication = $this->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $createAppResponse['cobrandedApplication']['id']
+				)
+			)
+		);
+
 		$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
 
 		if ($response['success'] == false || $tmpResponse['success'] == false) {
