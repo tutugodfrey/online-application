@@ -1775,6 +1775,8 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function validateCobrandedApplication($cobrandedApplication, $source = null) {
+		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+
 		$response['success'] = false;
 		$response['validationErrors'] = array();
 
@@ -1923,7 +1925,11 @@ class CobrandedApplication extends AppModel {
 
 						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
-								$found = true;
+								// is the value valid?
+								$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
+								if ($validValue == true) {
+									$found = true;
+								}
 							}
 						}
 

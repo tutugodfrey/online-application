@@ -260,7 +260,8 @@ class CobrandedApplicationValue extends AppModel {
 
 							if (strpos($stackTrace, 'createRightSignatureApplicationXml') !== false ||
 								strpos($stackTrace, 'CoversheetsController->getCobrandedApplicationValues') !== false ||
-								strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false) {
+								strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false ||
+								strpos($stackTrace, 'CobrandedApplicationsController->create_rightsignature_document') !== false) {
 								$maskValue = false;
 							}
 

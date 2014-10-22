@@ -218,7 +218,11 @@ class CobrandedApplicationsController extends AppController {
 
 						$csv = $this->render('/Elements/cobranded_applications/export', false);
 
-						$filepath = '/tmp/new_api_application_'.$response['application_id'].'.csv';
+						$dba = $data['DBA'];
+						$dba = preg_replace('/\s+/', '_', $dba);
+
+						$filepath = '/tmp/new_api_application_'.$dba.'.csv';
+
 						file_put_contents("$filepath", $csv);
 
 						$this->Cobrand = ClassRegistry::init('Cobrand');
