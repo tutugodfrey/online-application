@@ -669,7 +669,7 @@ class CobrandedApplicationsController extends AppController {
 
 		// Perform validation
 		if (!in_array($cobrandedApplication['CobrandedApplication']['status'], array('completed', 'signed'))) {
-			$response = $this->CobrandedApplication->validateCobrandedApplication($cobrandedApplication);
+			$response = $this->CobrandedApplication->validateCobrandedApplication($cobrandedApplication, 'ui');
 
 			if ($response['success'] !== true) {
 				$this->CobrandedApplication->save(array('CobrandedApplication' => array('status' => 'validate')), array('validate' => false));

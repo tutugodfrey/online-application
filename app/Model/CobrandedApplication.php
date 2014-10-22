@@ -1769,16 +1769,37 @@ class CobrandedApplication extends AppModel {
  * 
  * @params
  *     $cobrandedApplication array
+ *     $source string
  *
  * @returns
  *     $response array
  */
-	public function validateCobrandedApplication($cobrandedApplication) {
+	public function validateCobrandedApplication($cobrandedApplication, $source = null) {
 		$response['success'] = false;
 		$response['validationErrors'] = array();
 
 		$isNonProfit = false;
 		$owner1Equity = 0;
+
+		$methodofSalesPage;
+		$methodofSalesTotal = 0;
+		$methodofSalesCardNotPresentInternet = 0;
+ 		$methodofSalesCardNotPresentKeyed = 0;
+ 		$methodofSalesCardPresentImprint = 0;
+ 		$methodofSalesCardPresentSwiped = 0;
+
+ 		$productSoldDirectPage;
+		$productSoldDirectTotal = 0;
+ 		$productSoldDirectToGovernment = 0;
+ 		$productSoldDirectToCustomer = 0;
+ 		$productSoldDirectToBusiness = 0;
+
+ 		$percentOfPayPage;
+		$percentOfPayTotal = 0;
+ 		$percentFullPayUpFront = 0;
+ 		$percentPartialPayUpFront = 0;
+ 		$percentAndWithin = 0;
+ 		$percentPayReceivedAfter = 0;
 
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
@@ -1788,7 +1809,57 @@ class CobrandedApplication extends AppModel {
 			if ($tmpVal['name'] == 'Owner1Equity') {
 				$owner1Equity = $tmpVal['value'];
 			}
+
+			if ($tmpVal['name'] == 'MethodofSales-CardNotPresent-Internet') {
+				$methodofSalesCardNotPresentInternet = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'MethodofSales-CardNotPresent-Keyed') {
+				$methodofSalesCardNotPresentKeyed = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'MethodofSales-CardPresentImprint') {
+				$methodofSalesCardPresentImprint = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'MethodofSales-CardPresentSwiped') {
+				$methodofSalesCardPresentSwiped = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == '%OfProductSoldDirectToGovernment') {
+				$productSoldDirectToGovernment = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == '%OfProductSoldDirectToCustomer') {
+				$productSoldDirectToCustomer = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == '%OfProductSoldDirectToBusiness') {
+				$productSoldDirectToBusiness = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentFullPayUpFront') {
+				$percentFullPayUpFront = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentPartialPayUpFront') {
+				$percentPartialPayUpFront = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentAndWithin') {
+				$percentAndWithin = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentPayReceivedAfter') {
+				$percentPayReceivedAfter = $tmpVal['value'];
+			}
 		}
+
+		$methodofSalesTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed + $methodofSalesCardPresentImprint + $methodofSalesCardPresentSwiped;
+
+		$productSoldDirectTotal = $productSoldDirectToGovernment + $productSoldDirectToCustomer + $productSoldDirectToBusiness;
+
+		$percentOfPayTotal =  $percentFullPayUpFront + $percentPartialPayUpFront + $percentPayReceivedAfter + $percentAndWithin;
 
 		$template = $this->Template->find('first', array(
 			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
@@ -1809,6 +1880,18 @@ class CobrandedApplication extends AppModel {
 			foreach ($page['TemplateSections'] as $section) {
 				foreach ($section['TemplateFields'] as $templateField) {
 					$fieldName = $templateField['name'];
+
+					if ($templateField['merge_field_name'] == 'MethodofSales-') {
+						$methodofSalesPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == '%OfProductSold') {
+						$productSoldDirectPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == 'PercentFullPayUpFront') {
+						$percentOfPayPage = $pageOrder;
+					}
 
 					// Owner2 information should be required if Owner1Equity < 40
 					if ($owner1Equity < 40) {
@@ -1859,6 +1942,75 @@ class CobrandedApplication extends AppModel {
 					}
 				}
 			}
+		}
+
+		if ($methodofSalesTotal < 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'MethodofSales_Total', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Method of Sales Total';
+			$errorArray['mergeFieldName'] = 'MethodofSales_Total';
+			$errorArray['msg'] = 'Method of Sales Total is less than 100';
+			$errorArray['page'] = $methodofSalesPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($productSoldDirectTotal < 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'ofProductSold_Total', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = '% of Product Sold';
+			$errorArray['mergeFieldName'] = 'ofProductSold_Total';
+			$errorArray['msg'] = '% of Product Sold Total is less than 100';
+			$errorArray['page'] = $productSoldDirectPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($percentOfPayTotal < 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentFullPayUpFront', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent Full Pay Up Front';
+			$errorArray['mergeFieldName'] = 'PercentFullPayUpFront';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentPartialPayUpFront', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent Partial Pay Up Front';
+			$errorArray['mergeFieldName'] = 'PercentPartialPayUpFront';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentAndWithin', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent And Within';
+			$errorArray['mergeFieldName'] = 'PercentAndWithin';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentPayReceivedAfter', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent Pay Received After';
+			$errorArray['mergeFieldName'] = 'PercentPayReceivedAfter';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
 		}
 
 		if (count($response['validationErrors']) == 0) {

@@ -47,15 +47,16 @@
 							$validationErrorsArray = $this->Session->read('validationErrorsArray');
 			
 							foreach ($validationErrorsArray as $arr) {
-								echo "document.getElementById('".$arr['mergeFieldName']."').style.backgroundColor='#FF0000';";
-								echo "document.getElementById('".$arr['mergeFieldName']."').style.opacity='0.8';";
+								echo "document.getElementById('".$arr['mergeFieldName']."').style.backgroundColor='#FFFF00';";
 							}
 
 							echo "</script>";
 						}
-							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo $this->Html->link('Return to Applications Admin', array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => 'true')) . "<br/>"; 
-}
+						
+						if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+							echo $this->Html->link('Return to Applications Admin', array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => 'true')) . "<br/>"; 
+						}
+
 					?>
 					
 					<div id="actionButtons">
