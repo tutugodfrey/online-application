@@ -98,15 +98,13 @@ var motoQuestionnaireCheck = function(){
 	// combined are greater than or equal to 30
 	var methodOfSalesCardNotPresentKeyed = parseInt($('#MethodofSales-CardNotPresent-Keyed').val());
 	var methodOfSalesCardNotPresentInternet = parseInt($('#MethodofSales-CardNotPresent-Internet').val());
-
 	if (methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet >= 30) {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
 	} else {
 		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
 	}
-
-
 };
+
 $(document).ready(function() {
 	$(window).resize(onWindowResize);
 
@@ -169,6 +167,9 @@ $(document).ready(function() {
 			$('.api-field').toggle();
 		}
 	});
+
+	motoQuestionnaireCheck();
+
 	$('#MethodofSales-CardNotPresent-Keyed').on('change', motoQuestionnaireCheck);
 	$('#MethodofSales-CardNotPresent-Internet').on('change', motoQuestionnaireCheck);
 });
