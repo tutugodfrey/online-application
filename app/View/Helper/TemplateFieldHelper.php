@@ -144,6 +144,18 @@ class TemplateFieldHelper extends Helper {
 				$retVal = $retVal . '<legend>'.$field['name'].' <span class="small">(total must equal 100%)</span></legend>';
 
 				foreach ($field['CobrandedApplicationValues'] as $percentOption) {
+					$label = $percentOption['name'];
+
+					$defaultValues = split(',', $field['default_value']);
+
+					foreach ($defaultValues as $val) {
+						$nameValuePair = split('::', $val);
+
+						if (($field['merge_field_name'].$nameValuePair[1]) == $percentOption['name']) {
+							$label = $nameValuePair[0];	
+						}
+					}
+
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'name', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
@@ -151,7 +163,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'value', $percentOption['value']);
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-10');
 
-					$retVal = $retVal . $this->Html->tag('label', $percentOption['name']);
+					$retVal = $retVal . $this->Html->tag('label', $label);
 					$retVal = $retVal . $this->Html->tag(
 						'div',
 						$this->Html->tag('input', '', $fieldOptions).
