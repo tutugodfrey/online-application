@@ -1803,6 +1803,11 @@ class CobrandedApplication extends AppModel {
  		$percentAndWithin = 0;
  		$percentPayReceivedAfter = 0;
 
+ 		$ownerEquityPage;
+ 		$ownerEquityTotal = 0;
+ 		$owner1Equity = 0;
+ 		$owner2Equity = 0;
+
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
 				$isNonProfit = true;
@@ -1855,6 +1860,14 @@ class CobrandedApplication extends AppModel {
 			if ($tmpVal['name'] == 'PercentPayReceivedAfter') {
 				$percentPayReceivedAfter = $tmpVal['value'];
 			}
+
+			if ($tmpVal['name'] == 'Owner1Equity') {
+				$owner1Equity = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'Owner2Equity') {
+				$owner2Equity = $tmpVal['value'];
+			}
 		}
 
 		$methodofSalesTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed + $methodofSalesCardPresentImprint + $methodofSalesCardPresentSwiped;
@@ -1862,6 +1875,8 @@ class CobrandedApplication extends AppModel {
 		$productSoldDirectTotal = $productSoldDirectToGovernment + $productSoldDirectToCustomer + $productSoldDirectToBusiness;
 
 		$percentOfPayTotal =  $percentFullPayUpFront + $percentPartialPayUpFront + $percentPayReceivedAfter + $percentAndWithin;
+
+		$ownerEquityTotal = $owner1Equity + $owner2Equity;
 
 		$template = $this->Template->find('first', array(
 			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
@@ -1893,6 +1908,10 @@ class CobrandedApplication extends AppModel {
 
 					if ($templateField['merge_field_name'] == 'PercentFullPayUpFront') {
 						$percentOfPayPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == 'Owner1Equity') {
+						$ownerEquityPage = $pageOrder;
 					}
 
 					// Owner2 information should be required if Owner1Equity < 40
@@ -2015,6 +2034,29 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'PercentPayReceivedAfter';
 			$errorArray['msg'] = '';
 			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($ownerEquityTotal > 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'owner equity is greater than 100%');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Owner 1 Equity';
+			$errorArray['mergeFieldName'] = 'Owner1Equity';
+			$errorArray['msg'] = 'owner equity is greater than 100%';
+			$errorArray['page'] = $ownerEquityPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner2Equity', 'owner equity is greater than 100%');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Owner 2 Equity';
+			$errorArray['mergeFieldName'] = 'Owner2Equity';
+			$errorArray['msg'] = 'owner equity is greater than 100%';
+			$errorArray['page'] = $ownerEquityPage;
 							
 			$response['validationErrorsArray'][] = $errorArray;
 		}
