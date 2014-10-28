@@ -1793,7 +1793,6 @@ class CobrandedApplication extends AppModel {
 		$response['validationErrors'] = array();
 
 		$isNonProfit = false;
-		$owner1Equity = 0;
 
 		$methodofSalesPage;
 		$methodofSalesTotal = 0;
@@ -1823,10 +1822,6 @@ class CobrandedApplication extends AppModel {
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
 				$isNonProfit = true;
-			}
-
-			if ($tmpVal['name'] == 'Owner1Equity') {
-				$owner1Equity = $tmpVal['value'];
 			}
 
 			if ($tmpVal['name'] == 'MethodofSales-CardNotPresent-Internet') {
@@ -1873,7 +1868,7 @@ class CobrandedApplication extends AppModel {
 				$percentPayReceivedAfter = $tmpVal['value'];
 			}
 
-			if ($tmpVal['name'] == 'Owner1Equity') {
+			if ($tmpVal['name'] == 'Owner1Equity' || $tmpVal['name'] == 'OwnerEquity') {
 				$owner1Equity = $tmpVal['value'];
 			}
 
