@@ -312,8 +312,15 @@ class CobrandedApplication extends AppModel {
  *     $applicationId integer
  */
 	public function getTemplateAndAssociatedValues($applicationId, $userId = null) {
-		$this->id = $applicationId;
-		$application = $this->read();
+		$application = $this->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				)
+			)
+		);
+		//$application = $this->read();
 
 		// if user is not logged in, don't show rep-only fields
 		$conditions = '';
@@ -678,10 +685,15 @@ class CobrandedApplication extends AppModel {
 				$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $val);
 			}
 		} else {
-			$this->Cobrand->id = $newApp['Template']['cobrand_id'];
-			$this->Cobrand->recursive = -1;
-			$this->Cobrand->find('first');
-			$cobrand = $this->Cobrand->read();
+			$cobrand = $this->Cobrand->find(
+				'first',
+				array(
+					'conditions' => array(
+						'Cobrand.id' => $newApp['Template']['cobrand_id']
+					),
+					'recursive' => -1
+				)
+			);
 
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
 			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];

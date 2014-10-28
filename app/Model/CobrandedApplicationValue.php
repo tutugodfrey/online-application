@@ -94,7 +94,8 @@ class CobrandedApplicationValue extends AppModel {
 				array(
 					'conditions' => array(
 						'TemplateField.id' => $this->data[$this->alias]['template_field_id']
-					)
+					),
+					'recursive' => -1
 				)
 			);
 
