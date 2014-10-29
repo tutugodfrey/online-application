@@ -27,39 +27,39 @@ class OnlineappPopulateUsersCobrandsUsersTemplates extends CakeMigration {
  * @return boolean Should process continue
  */
 	public function before($direction) {
-		$User = ClassRegistry::init('User');
-		$Template = ClassRegistry::init('Template');
-		$UserCobrand = ClassRegistry::init('UserCobrand');
-		$UserTemplate = ClassRegistry::init('UserTemplate');
+		if ($direction == 'up') {
+			$User = ClassRegistry::init('User');
+			$Template = ClassRegistry::init('Template');
+			$UserCobrand = ClassRegistry::init('UserCobrand');
+			$UserTemplate = ClassRegistry::init('UserTemplate');
 
-		$users = $User->find(
-			'list',
-			array(
-				'fields' => array(
-					'id',
-					'template_id'
-				)
-			)
-		);
-
-		foreach ($users as $userId => $templateId) {
-			$template = $Template->find(
+			$users = $User->find(
 				'list',
 				array(
 					'fields' => array(
 						'id',
-						'cobrand_id'
-					),
-					'conditions' => array(
-						'Template.id' => $templateId
+						'template_id'
 					)
 				)
 			);
 
-			$key = key($template);
-			$cobrandId = $template[$key];
+			foreach ($users as $userId => $templateId) {
+				$template = $Template->find(
+					'list',
+					array(
+						'fields' => array(
+							'id',
+							'cobrand_id'
+						),
+						'conditions' => array(
+							'Template.id' => $templateId
+						)
+					)
+				);
 
-			if ($direction == 'up') {
+				$key = key($template);
+				$cobrandId = $template[$key];
+
 				$exists = $UserCobrand->find(
 					'first',
 					array (
