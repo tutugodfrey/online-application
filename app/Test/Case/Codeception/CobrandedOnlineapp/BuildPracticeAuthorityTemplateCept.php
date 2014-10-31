@@ -45,7 +45,7 @@ $fieldId = $FP->createIfMissing('Ownership Type', $sectionId, 12, 4, true, 2, 'C
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-$sectionId = $SP->createIfMissing('CORPORATE INFORMATION', $pageId);
+$sectionId = $SP->createIfMissing('CORPORATE INFORMATION', $pageId, 6);
 
 // next go to the fields for this section
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
@@ -66,7 +66,7 @@ $fieldId = $FP->createIfMissing('Email', $sectionId, 12, 14, true, 2, '', 'EMail
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-$sectionId = $SP->createIfMissing('LOCATION INFORMATION', $pageId);
+$sectionId = $SP->createIfMissing('LOCATION INFORMATION', $pageId, 6);
 
 // next go to the fields for this section
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
@@ -248,7 +248,7 @@ $sectionId = $SP->createIfMissing('Depository Account', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'RoutingNum', '', null, null, true);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 23, true, 2, '', 'RoutingNum', '', null, null, true);
 $fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'AccountNum', '', null, null, true);
 
 // go to the sections for this page
@@ -261,7 +261,7 @@ $sectionId = $SP->createIfMissing('Fees Account', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'FeesRoutingNum', '', null, null, true);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 23, true, 2, '', 'FeesRoutingNum', '', null, null, true);
 $fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'FeesAccountNum', '', null, null, true);
 
 // go to the sections for this page

@@ -45,7 +45,7 @@ $fieldId = $FP->createIfMissing('Corporate Status', $sectionId, 12, 0, false, 2,
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-$sectionId = $SP->createIfMissing('CORPORATE INFORMATION', $pageId);
+$sectionId = $SP->createIfMissing('CORPORATE INFORMATION', $pageId, 6);
 
 // next go to the fields for this section
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
@@ -66,7 +66,7 @@ $fieldId = $FP->createIfMissing('Email', $sectionId, 12, 14, true, 2, '', 'EMail
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-$sectionId = $SP->createIfMissing('LOCATION INFORMATION', $pageId);
+$sectionId = $SP->createIfMissing('LOCATION INFORMATION', $pageId, 6);
 
 // next go to the fields for this section
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
@@ -248,7 +248,7 @@ $sectionId = $SP->createIfMissing('Depository Account', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'RoutingNum', '', null, null, true);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 23, true, 2, '', 'RoutingNum', '', null, null, true);
 $fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'AccountNum', '', null, null, true);
 
 // go to the sections for this page
@@ -261,8 +261,21 @@ $sectionId = $SP->createIfMissing('Fees Account', $pageId);
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 0, true, 2, '', 'FeesRoutingNum', '', null, null, true);
+$fieldId = $FP->createIfMissing('Routing Number', $sectionId, 12, 23, true, 2, '', 'FeesRoutingNum', '', null, null, true);
 $fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, '', 'FeesAccountNum', '', null, null, true);
+
+// next go to the sections for this page
+$I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
+
+// create a new section for the page
+$sectionId = $SP->createIfMissing('Trade Reference 1', $pageId, 6);
+
+// next go to the sections for this page
+$I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
+
+$fieldId = $FP->createIfMissing('Business Name', $sectionId, 4, 0, true, 1, 'AppFolio, Inc.', 'TradeRefName', 'Trade Reference Name 1', null);
+$fieldId = $FP->createIfMissing('Contact Person', $sectionId, 4, 0, true, 0, '', 'TradeRefContact', 'Contact', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 4, 9, true, 0, '', 'TradeRefPhone1', 'Phone Number', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');

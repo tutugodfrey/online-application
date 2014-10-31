@@ -32,6 +32,7 @@ my $sections = {
         'Bank Information',
         'Depository Account',
         'Fees Account',
+        'Trade Reference 1',
         'Trade Reference 2'
     ],
     'Set Up Information' => [
@@ -164,14 +165,14 @@ my $templateMap = {
             "'Zip', \$sectionId, 4, 13, false, 2, '', 'BankZip', '', null"
         ],
         'Depository Account' => [
-            "'Routing Number', \$sectionId, 12, 0, true, 2, '', 'RoutingNum', '', null, null, true",
+            "'Routing Number', \$sectionId, 12, 23, true, 2, '', 'RoutingNum', '', null, null, true",
             "'Account Number', \$sectionId, 12, 0, true, 2, '', 'AccountNum', '', null, null, true"
         ],
         'Fees Account' => [
-            "'Routing Number', \$sectionId, 12, 0, true, 2, '', 'FeesRoutingNum', '', null, null, true",
+            "'Routing Number', \$sectionId, 12, 23, true, 2, '', 'FeesRoutingNum', '', null, null, true",
             "'Account Number', \$sectionId, 12, 0, true, 2, '', 'FeesAccountNum', '', null, null, true"
         ],
-        'Trade Reference 2' => [
+        'Trade Reference 1' => [
             "'Business Name', \$sectionId, 12, 0, true, 2, '', 'TradeRefName', '', null",
             "'Contact Person', \$sectionId, 12, 0, true, 2, '', 'TradeRefContact', '', null",
             "'Phone', \$sectionId, 6, 9, true, 2, '', 'TradeRefPhone1', '', null",
