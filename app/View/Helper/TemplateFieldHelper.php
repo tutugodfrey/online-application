@@ -135,7 +135,6 @@ class TemplateFieldHelper extends Helper {
 			case 5: // percent group
 				$cleanFieldId = str_replace($this->badCharacters, '', $field['name']);
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'number');
-				$fieldOptions = Hash::insert($fieldOptions, 'onkeypress', 'if ( isNaN(this.value + String.fromCharCode(event.which) )) return false;');
 				$fieldOptions = Hash::insert($fieldOptions, 'onblur', '$.event.trigger({type: "percentOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});');
 				$fieldOptions = Hash::insert($fieldOptions, 'min', 0);
 				$fieldOptions = Hash::insert($fieldOptions, 'max', 100);
