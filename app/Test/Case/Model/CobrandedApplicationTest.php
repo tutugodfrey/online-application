@@ -765,8 +765,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// set expected results
 		$expectedValidationErrors = array(
-			'Text field' => 'required',
-			'Text field 1' => 'required'
+			'required_text_from_api_without_default' => 'required',
+			'required_text_from_api_without_default_source_2' => 'required',
+			'required_text_from_user_without_default_repOnly' => 'required',
+			'required_text_from_user_without_default_textfield' => 'required',
+			'required_text_from_user_without_default_textfield1' => 'required'
 		);
 
 		// set knowns
@@ -1343,10 +1346,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => false,
 			'validationErrors' => array(
-				'field 1' => 'required',
-				'field 2' => 'required',
-				'field 3' => 'required',
-				'Text field 1' => 'required'
+				'required_text_from_user_without_default' => 'required',
+				'rep_only_true_field_for_testing_rep_only_view_logic' => 'required'
      		),
      		'validationErrorsArray' => array(
 				0 => array(
