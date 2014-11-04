@@ -99,6 +99,16 @@ class CobrandedApplicationValue extends AppModel {
 				)
 			);
 
+			// if WebAddress field is not empty, check if protocol exists
+			// if it doesn't, add it in
+			if ($field['TemplateField']['merge_field_name'] == 'WebAddress') {
+				if (!empty($this->data[$this->alias]['value'])) {
+					if (!preg_match('/^http:\/\//i', $this->data[$this->alias]['value'])) {
+						$this->data[$this->alias]['value'] = 'http://'.$this->data[$this->alias]['value'];
+					}
+				}
+			}
+
 			// if field is set to encrypt, check for masking
 			// if it's masked, do not update value, otherwise value in db will be masked
 			if ($field['TemplateField']['encrypt'] && preg_match('/^X+/', $this->data[$this->alias]['value'])) {
