@@ -1879,6 +1879,8 @@ class CobrandedApplication extends AppModel {
 
 		$methodofSalesTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed + $methodofSalesCardPresentImprint + $methodofSalesCardPresentSwiped;
 
+		$methodofSalesCardNotPresentTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed;
+
 		$productSoldDirectTotal = $productSoldDirectToGovernment + $productSoldDirectToCustomer + $productSoldDirectToBusiness;
 
 		$percentOfPayTotal =  $percentFullPayUpFront + $percentPartialPayUpFront + $percentPayReceivedAfter + $percentAndWithin;
@@ -1940,8 +1942,13 @@ class CobrandedApplication extends AppModel {
 						}
 					}
 
-
 					if ($templateField['required'] == true) {
+						// don't validate MOTO/Internet Questionnaire section if
+						// methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet < 30
+						if (preg_match('/MOTO\/Internet/', $section['name']) && $methodofSalesCardNotPresentTotal < 30) {
+							continue;
+						}
+
 						// SSN should not be required if Ownership Type is Non Profit
 						if (($templateField['merge_field_name'] == 'OwnerSSN' || $templateField['merge_field_name'] == 'Owner2SSN') && $isNonProfit) {
 							continue;
@@ -2016,7 +2023,7 @@ class CobrandedApplication extends AppModel {
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
-		if ($percentOfPayTotal < 100 && $source == 'ui') {
+		if ($methodofSalesCardNotPresentTotal >= 30 && $percentOfPayTotal < 100 && $source == 'ui') {
 			// update our validationErrors array
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentFullPayUpFront', 'less than 100');
 
