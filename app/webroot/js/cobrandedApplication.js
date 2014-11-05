@@ -11,6 +11,9 @@ var quickAdd = function(e) {
 		data['field_id'] = target.attr('id');
 		persist(data);
 	} else if(target.is(":checkbox")) {
+		if (target.attr('id') == 'loc_same_as_corp' || target.attr('id') == 'fees_same_as_depository') {
+			return true;
+		}
 		data['id'] = target.attr('data-value-id');
 		data['value'] = target.is(":checked"); // not really needed...
 		data['field_id'] = target.attr('id');
@@ -135,6 +138,13 @@ $(document).ready(function() {
 		$('#Contact').val() != '' &&
 		$('#LocTitle').val() != '') {
 			$('#loc_same_as_corp').attr('checked','checked');
+	}
+
+	if ($('#RoutingNum').val() != '' &&
+		$('#AccountNum').val() != '' &&
+		$('#FeesRoutingNum').val() != '' &&
+		$('#FeesAccountNum').val() != '') {
+			$('#fees_same_as_depository').attr('checked','checked');
 	}
 
 	$(document).on("percentOptionBlur", handlePercentOptionBlur);

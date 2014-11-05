@@ -179,6 +179,23 @@
 									$('#LocTitle').trigger('change');
 								}
 							}
+
+							function copyDepositoryToFeesFields() {
+								if ($('#fees_same_as_depository').prop('checked')) {
+									$('#FeesRoutingNum').val($('#RoutingNum').val());
+									$('#FeesAccountNum').val($('#AccountNum').val());
+									
+									$('#FeesRoutingNum').trigger('change');
+									$('#FeesAccountNum').trigger('change');
+								}
+								else {
+									$('#FeesRoutingNum').val('');
+									$('#FeesAccountNum').val('');
+									
+									$('#FeesRoutingNum').trigger('change');
+									$('#FeesAccountNum').trigger('change');
+								}
+							}
 						");
 					?>
 				</div>

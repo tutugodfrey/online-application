@@ -7,13 +7,20 @@ foreach ($templatePage['TemplateSections'] as $section) {
 			<div class="panel-heading">
 				<h4 class="panel-title">
 					<?php
-						echo $section['name']; 
-						if ($section['name'] == 'LOCATION INFORMATION') {
+						echo $section['name'];
+						if (preg_match('/location information/i', $section['name'])) {
 							$fieldOptions = array();
 							$fieldOptions = Hash::insert($fieldOptions, 'name', 'loc_same_as_corp');
 							$fieldOptions = Hash::insert($fieldOptions, 'hiddenField', 'false');
 							$fieldOptions = Hash::insert($fieldOptions, 'onchange', 'copyCorpToLocFields()');
 							echo "<tr><th> ".$this->Form->checkbox('loc_same_as_corp', $fieldOptions)."<font size='-1'>Same As Corporate Information</font></th></tr>";
+						}
+						if (preg_match('/depository account/i', $section['name'])) {
+							$fieldOptions = array();
+							$fieldOptions = Hash::insert($fieldOptions, 'name', 'fees_same_as_depository');
+							$fieldOptions = Hash::insert($fieldOptions, 'hiddenField', 'false');
+							$fieldOptions = Hash::insert($fieldOptions, 'onchange', 'copyDepositoryToFeesFields()');
+							echo "<tr><th> ".$this->Form->checkbox('fees_same_as_depository', $fieldOptions)."<font size='-1'>Same As Depository Information</font></th></tr>";
 						}
 					?>
 				</h4>
