@@ -432,24 +432,24 @@ $fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, false, 2, ''
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
 
 // create a new page for the template
-$pageId = $PP->createIfMissing('Merchant Referral Program', $templateId);
+// $pageId = $PP->createIfMissing('Merchant Referral Program', $templateId);
 
 // go to the sections for this page
-$I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
+// $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-$sectionId = $SP->createIfMissing('Any successful referrals will result in $100 credit to the Merchant bank account provided. Visit our referral program page for details.', $pageId);
+// $sectionId = $SP->createIfMissing('Any successful referrals will result in $100 credit to the Merchant bank account provided. Visit our referral program page for details.', $pageId);
 
 // next go to the fields for this section
-$I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
+// $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
-$fieldId = $FP->createIfMissing('Referral Business #1', $sectionId, 4, 0, false, 2, '', 'Referral1Business', '', null);
-$fieldId = $FP->createIfMissing('Owner/Officer', $sectionId, 4, 0, false, 2, '', 'Referral1Owner/Officer', '', null);
-$fieldId = $FP->createIfMissing('Phone #', $sectionId, 4, 9, false, 2, '', 'Referral1Phone', '', null);
-$fieldId = $FP->createIfMissing('Referral Business #2', $sectionId, 4, 0, false, 2, '', 'Referral2Business', '', null);
-$fieldId = $FP->createIfMissing('Owner/Officer 2', $sectionId, 4, 0, false, 2, '', 'Referral2Owner/Officer', '', null);
-$fieldId = $FP->createIfMissing('Phone # 2', $sectionId, 4, 9, false, 2, '', 'Referral2Phone', '', null);
-$fieldId = $FP->createIfMissing('Referral Business #3', $sectionId, 4, 0, false, 2, '', 'Referral3Business', '', null);
-$fieldId = $FP->createIfMissing('Owner/Officer 3', $sectionId, 4, 0, false, 2, '', 'Referral3Owner/Officer', '', null);
-$fieldId = $FP->createIfMissing('Phone # 3', $sectionId, 4, 9, false, 2, '', 'Referral3Phone', '', null);
+// $fieldId = $FP->createIfMissing('Referral Business #1', $sectionId, 4, 0, false, 2, '', 'Referral1Business', '', null);
+// $fieldId = $FP->createIfMissing('Owner/Officer', $sectionId, 4, 0, false, 2, '', 'Referral1Owner/Officer', '', null);
+// $fieldId = $FP->createIfMissing('Phone #', $sectionId, 4, 9, false, 2, '', 'Referral1Phone', '', null);
+// $fieldId = $FP->createIfMissing('Referral Business #2', $sectionId, 4, 0, false, 2, '', 'Referral2Business', '', null);
+// $fieldId = $FP->createIfMissing('Owner/Officer 2', $sectionId, 4, 0, false, 2, '', 'Referral2Owner/Officer', '', null);
+// $fieldId = $FP->createIfMissing('Phone # 2', $sectionId, 4, 9, false, 2, '', 'Referral2Phone', '', null);
+// $fieldId = $FP->createIfMissing('Referral Business #3', $sectionId, 4, 0, false, 2, '', 'Referral3Business', '', null);
+// $fieldId = $FP->createIfMissing('Owner/Officer 3', $sectionId, 4, 0, false, 2, '', 'Referral3Owner/Officer', '', null);
+// $fieldId = $FP->createIfMissing('Phone # 3', $sectionId, 4, 9, false, 2, '', 'Referral3Phone', '', null);

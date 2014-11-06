@@ -11,7 +11,7 @@ my $pages = [
     'ACH Bank and Trade Reference',
     'Set Up Information',
     'Ownership Information',
-    'Merchant Referral Program'
+#    'Merchant Referral Program'
 ];
 
 my $sections = {
@@ -45,9 +45,9 @@ my $sections = {
         'OWNER / OFFICER (1)',
         'OWNER / OFFICER (2)'
     ],
-    'Merchant Referral Program' => [
-        'Any successful referrals will result in $100 credit to the Merchant bank account provided. Visit our referral program page for details.',
-    ]
+#    'Merchant Referral Program' => [
+#        'Any successful referrals will result in $100 credit to the Merchant bank account provided. Visit our referral program page for details.',
+#    ]
 };
 
 my $templateMap = {
@@ -261,19 +261,19 @@ my $templateMap = {
             "'Date of Birth', \$sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null, null, true"
         ]
     },
-    'Merchant Referral Program' => {
-        "Any successful referrals will result in \$100 credit to the Merchant bank account provided. Visit our referral program page for details." => [
-            "'Referral Business #1', \$sectionId, 4, 0, false, 2, '', 'Referral1Business', '', null",
-            "'Owner/Officer', \$sectionId, 4, 0, false, 2, '', 'Referral1Owner/Officer', '', null",
-            "'Phone #', \$sectionId, 4, 9, false, 2, '', 'Referral1Phone', '', null",
-            "'Referral Business #2', \$sectionId, 4, 0, false, 2, '', 'Referral2Business', '', null",
-            "'Owner/Officer 2', \$sectionId, 4, 0, false, 2, '', 'Referral2Owner/Officer', '', null",
-            "'Phone # 2', \$sectionId, 4, 9, false, 2, '', 'Referral2Phone', '', null",
-            "'Referral Business #3', \$sectionId, 4, 0, false, 2, '', 'Referral3Business', '', null",
-            "'Owner/Officer 3', \$sectionId, 4, 0, false, 2, '', 'Referral3Owner/Officer', '', null",
-            "'Phone # 3', \$sectionId, 4, 9, false, 2, '', 'Referral3Phone', '', null"
-        ]
-    }
+#    'Merchant Referral Program' => {
+#        "Any successful referrals will result in \$100 credit to the Merchant bank account provided. Visit our referral program page for details." => [
+#            "'Referral Business #1', \$sectionId, 4, 0, false, 2, '', 'Referral1Business', '', null",
+#            "'Owner/Officer', \$sectionId, 4, 0, false, 2, '', 'Referral1Owner/Officer', '', null",
+#            "'Phone #', \$sectionId, 4, 9, false, 2, '', 'Referral1Phone', '', null",
+#            "'Referral Business #2', \$sectionId, 4, 0, false, 2, '', 'Referral2Business', '', null",
+#            "'Owner/Officer 2', \$sectionId, 4, 0, false, 2, '', 'Referral2Owner/Officer', '', null",
+#            "'Phone # 2', \$sectionId, 4, 9, false, 2, '', 'Referral2Phone', '', null",
+#            "'Referral Business #3', \$sectionId, 4, 0, false, 2, '', 'Referral3Business', '', null",
+#            "'Owner/Officer 3', \$sectionId, 4, 0, false, 2, '', 'Referral3Owner/Officer', '', null",
+#            "'Phone # 3', \$sectionId, 4, 9, false, 2, '', 'Referral3Phone', '', null"
+#        ]
+#    }
 };
 
 my $filename = "Build".$cobrand."TemplateCept.php";
