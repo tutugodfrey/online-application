@@ -87,8 +87,12 @@ class UsersController extends AppController {
 	}
 
 	function admin_add() {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
+		$this->set('cobrands', $this->Cobrand->getList());
+		$this->set('templates', $this->User->Template->getList());
 
 		if ($this->request->is('post')) {
 			$this->User->create();
