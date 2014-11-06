@@ -451,7 +451,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->request->data = $this->CobrandedApplication->data;
 		}
 
-		$users = $this->CobrandedApplication->User->find('list', array('order' => 'firstname, lastname'));
+		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
 		$defaultTemplateId = $user['User']['template_id'];
 		$templates = $this->User->getTemplates($this->User->id);
 		
