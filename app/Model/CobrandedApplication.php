@@ -1923,8 +1923,8 @@ class CobrandedApplication extends AppModel {
 						$ownerEquityPage = $pageOrder;
 					}
 
-					// Owner2 information should be required if Owner1Equity < 40
-					if ($owner1Equity < 40) {
+					// Owner2 information should be required if Owner1Equity < owner_equity_threshold
+					if ($owner1Equity < $template['Template']['owner_equity_threshold']) {
 						if ($templateField['merge_field_name'] == 'Owner2Name' ||
 							$templateField['merge_field_name'] == 'Owner2Title' ||
 							$templateField['merge_field_name'] == 'Owner2Address' ||

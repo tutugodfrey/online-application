@@ -8,6 +8,7 @@
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
 			<th><?php echo $this->Paginator->sort('logo_position'); ?></th>
 			<th><?php echo $this->Paginator->sort('include_axia_logo'); ?></th>
+			<th><?php echo "Owner Equity Threshold" ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -17,6 +18,7 @@
 			<td><?php echo $this->Html->tag('div', $template['Template']['name'], array('class' => 'help', 'title' => strlen($template['Template']['description']) > 0 ? $template['Template']['description'] : 'No description saved')); ?>&nbsp;</td>
 			<td><?php echo h($logoPositionTypes[$template['Template']['logo_position']]); ?>&nbsp;</td>
 			<td><?php echo h(($template['Template']['include_axia_logo'] ? 'yes':'no')); ?>&nbsp;</td>
+			<td><?php echo h($template['Template']['owner_equity_threshold']); ?>&nbsp;</td>
 			<td><?php echo h($template['Template']['created']); ?>&nbsp;</td>
 			<td><?php echo h($template['Template']['modified']); ?>&nbsp;</td>
 			<td class="actions">
