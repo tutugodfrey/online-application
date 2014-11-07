@@ -284,7 +284,7 @@ $fieldId = $FP->createIfMissing('Account Number', $sectionId, 12, 0, true, 2, ''
 // $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-// $sectionId = $SP->createIfMissing('Trade Reference 2', $pageId);
+// $sectionId = $SP->createIfMissing('Trade Reference 2', $pageId, 6);
 
 // next go to the fields for this section
 // $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');

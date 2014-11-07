@@ -285,7 +285,7 @@ $fieldId = $FP->createIfMissing('State', $sectionId, 6, 20, false, 2, $FP::STATE
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
 
 // create a new section for the page
-$sectionId = $SP->createIfMissing('Trade Reference 2', $pageId);
+$sectionId = $SP->createIfMissing('Trade Reference 2', $pageId, 6);
 
 // next go to the fields for this section
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
