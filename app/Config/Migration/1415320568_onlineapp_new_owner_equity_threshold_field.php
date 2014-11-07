@@ -17,13 +17,13 @@ class OnlineappNewOwnerEquityThresholdField extends CakeMigration {
 		'up' => array(
                         'create_field' => array(
                                 'onlineapp_templates' => array(
-                                        'owner1_equity_threshold' => array('type' => 'integer', 'null' => true),
+                                        'owner_equity_threshold' => array('type' => 'integer', 'null' => true),
                                 ),
                         ),
                 ),
                 'down' => array(
                         'drop_field' => array(
-                                'onlineapp_templates' => array('owner1_equity_threshold'),
+                                'onlineapp_templates' => array('owner_equity_threshold'),
                         ),
                 ),
 	);
