@@ -273,9 +273,13 @@ $sectionId = $SP->createIfMissing('Trade Reference 1', $pageId, 6);
 // next go to the sections for this page
 $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
-$fieldId = $FP->createIfMissing('Business Name', $sectionId, 4, 0, true, 1, 'AppFolio, Inc.', 'TradeRefName', 'Trade Reference Name 1', null);
-$fieldId = $FP->createIfMissing('Contact Person', $sectionId, 4, 0, true, 0, '', 'TradeRefContact', 'Contact', null);
-$fieldId = $FP->createIfMissing('Phone', $sectionId, 4, 9, true, 0, '', 'TradeRefPhone1', 'Phone Number', null);
+// create new fields
+$fieldId = $FP->createIfMissing('Business Name', $sectionId, 12, 0, false, 2, '', 'TradeRef1', '', null);
+$fieldId = $FP->createIfMissing('Contact Person', $sectionId, 12, 0, false, 2, '', 'TradeRefContact1', '', null);
+$fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, false, 2, '', 'TradeRefPhone1', '', null);
+$fieldId = $FP->createIfMissing('Acct #', $sectionId, 6, 0, false, 2, '', 'TradeRefAccount1', '', null);
+$fieldId = $FP->createIfMissing('City', $sectionId, 6, 0, false, 2, '', 'TradeRefCity1', '', null);
+$fieldId = $FP->createIfMissing('State', $sectionId, 6, 20, false, 2, $FP::STATES, 'TradeRefSt1', '', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');

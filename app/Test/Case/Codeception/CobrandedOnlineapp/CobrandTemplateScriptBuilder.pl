@@ -173,12 +173,12 @@ my $templateMap = {
             "'Account Number', \$sectionId, 12, 0, true, 2, '', 'FeesAccountNum', '', null, null, true"
         ],
         'Trade Reference 1' => [
-            "'Business Name', \$sectionId, 12, 0, true, 2, '', 'TradeRefName', '', null",
-            "'Contact Person', \$sectionId, 12, 0, true, 2, '', 'TradeRefContact', '', null",
-            "'Phone', \$sectionId, 6, 9, true, 2, '', 'TradeRefPhone1', '', null",
-            "'Acct #', \$sectionId, 6, 0, true, 2, '', 'TradeRefAccount1', '', null",
-            "'City', \$sectionId, 6, 0, true, 2, '', 'TradeRefCity1', '', null",
-            "'State', \$sectionId, 6, 20, true, 2, \$FP::STATES, 'TradeRefSt1', '', null"
+            "'Business Name', \$sectionId, 12, 0, false, 2, '', 'TradeRef1', '', null",
+            "'Contact Person', \$sectionId, 12, 0, false, 2, '', 'TradeRefContact1', '', null",
+            "'Phone', \$sectionId, 6, 9, false, 2, '', 'TradeRefPhone1', '', null",
+            "'Acct #', \$sectionId, 6, 0, false, 2, '', 'TradeRefAccount1', '', null",
+            "'City', \$sectionId, 6, 0, false, 2, '', 'TradeRefCity1', '', null",
+            "'State', \$sectionId, 6, 20, false, 2, \$FP::STATES, 'TradeRefSt1', '', null"
         ],
         'Trade Reference 2' => [
             "'Business Name', \$sectionId, 12, 0, false, 2, '', 'TradeRef2', '', null",
