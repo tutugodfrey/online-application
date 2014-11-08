@@ -91,8 +91,9 @@ class TemplateFieldTest extends CakeTestCase {
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
 			'include_axia_logo' => true,
-			'rightsignature_template_guid' => '',
-			'rightsignature_install_template_guid' => '',
+			'rightsignature_template_guid' => null,
+			'rightsignature_install_template_guid' => null,
+			'owner_equity_threshold' => 50
 		);
 
 		$returned_template = $this->TemplateField->getTemplate($section_id);

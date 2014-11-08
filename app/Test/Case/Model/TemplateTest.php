@@ -844,8 +844,9 @@ class TemplateTest extends CakeTestCase {
 			'cobrand_id' => (int) 2,
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
-			'rightsignature_template_guid' => '',
-			'rightsignature_install_template_guid' => '',
+			'rightsignature_template_guid' => null,
+			'rightsignature_install_template_guid' => null,
+			'owner_equity_threshold' => 50
 		);
 		$actualTemplate = $this->Template->find(
 			'first',

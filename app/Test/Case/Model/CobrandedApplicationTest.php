@@ -187,6 +187,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'modified' => '2007-03-18 10:41:31',
 				'rightsignature_template_guid' => null,
 				'rightsignature_install_template_guid' => null,
+				'owner_equity_threshold' => 50,
 				'Cobrand' => array(
 					'id' => (int) 1,
 					'partner_name' => 'Partner Name 1',
