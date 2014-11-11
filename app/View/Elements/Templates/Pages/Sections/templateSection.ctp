@@ -15,7 +15,7 @@ foreach ($templatePage['TemplateSections'] as $section) {
 							$fieldOptions = Hash::insert($fieldOptions, 'onchange', 'copyCorpToLocFields()');
 							echo "<tr><th> ".$this->Form->checkbox('loc_same_as_corp', $fieldOptions)."<font size='-1'>Same As Corporate Information</font></th></tr>";
 						}
-						if (preg_match('/depository account/i', $section['name'])) {
+						if (preg_match('/fees account/i', $section['name'])) {
 							$fieldOptions = array();
 							$fieldOptions = Hash::insert($fieldOptions, 'name', 'fees_same_as_depository');
 							$fieldOptions = Hash::insert($fieldOptions, 'hiddenField', 'false');
