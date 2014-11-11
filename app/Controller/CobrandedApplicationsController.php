@@ -416,7 +416,19 @@ class CobrandedApplicationsController extends AppController {
 			$this->Paginator->settings['conditions'] = array('CobrandedApplication.user_id' => $this->Auth->user('id'));
 		}
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
-		$this->set('users', $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id')));
+
+		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+
+		if (empty($users)) {
+			$users = $this->CobrandedApplication->User->find(
+				'list', 
+				array(
+					'conditions' => array('User.id' => $this->Auth->user('id')),
+				)
+			);
+		}
+
+		$this->set('users', $users);
 		$this->set('user_id', $this->Auth->user('id'));
 	}
 
@@ -452,6 +464,16 @@ class CobrandedApplicationsController extends AppController {
 		}
 
 		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+		
+		if (empty($users)) {
+			$users = $this->CobrandedApplication->User->find(
+				'list', 
+				array(
+					'conditions' => array('User.id' => $this->Auth->user('id')),
+				)
+			);
+		}
+
 		$defaultTemplateId = $user['User']['template_id'];
 		$templates = $this->User->getTemplates($this->User->id);
 		
