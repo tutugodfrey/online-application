@@ -146,6 +146,7 @@
 									$('#FaxNum').val($('#CorpFax').val());
 									$('#Contact').val($('#CorpContact').val());
 									$('#LocTitle').val($('#Title').val());
+									$('#LocEMail').val($('#EMail').val());
 
 									$('#DBA').trigger('change');
 									$('#Address').trigger('change');
@@ -156,6 +157,7 @@
 									$('#FaxNum').trigger('change');
 									$('#Contact').trigger('change');
 									$('#LocTitle').trigger('change');
+									$('#LocEMail').trigger('change');
 								}
 								else {
 									$('#DBA').val('');
@@ -167,6 +169,7 @@
 									$('#FaxNum').val('');
 									$('#Contact').val('');
 									$('#LocTitle').val('');
+									$('#LocEMail').val('');
 
 									$('#DBA').trigger('change');
 									$('#Address').trigger('change');
@@ -177,6 +180,7 @@
 									$('#FaxNum').trigger('change');
 									$('#Contact').trigger('change');
 									$('#LocTitle').trigger('change');
+									$('#LocEMail').trigger('change');
 								}
 							}
 
