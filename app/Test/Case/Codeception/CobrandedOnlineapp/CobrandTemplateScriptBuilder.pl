@@ -204,7 +204,7 @@ my $templateMap = {
             "'Type', \$sectionId, 3, 0, true, 2, '', 'Terminal1', '', null",
             "'Provider', \$sectionId, 6, 4, true, 2, 'Axia::Axia,Merchant::Merchant', 'Provider-', '', null",
             "'Do You Use Autoclose?', \$sectionId, 6, 4, true, 2, 'Yes::Autoclose,No::NoAutoclose', 'DoYouUseAutoclose-', '', null",
-            "'If Yes, What Time?', \$sectionId, 6, 2, false, 2, '', 'Autoclose Time 2', '', null",
+            "'If Yes, What Time?', \$sectionId, 6, 2, false, 2, '', 'Autoclose Time 1', '', null",
             "'Terminal Programming Information (please select all that apply)', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'AVS', \$sectionId, 2, 3, false, 2, '', 'AVS', '', null",
             "'Server #s', \$sectionId, 2, 3, false,  2, '', 'Server', '', null",
