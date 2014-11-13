@@ -61,6 +61,11 @@ class TemplateFieldHelper extends Helper {
 
 			case 1:  // 'date'
 			case 2:  // 'time'
+				$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
+				$fieldOptions = Hash::insert($fieldOptions, 'interval', '15');
+				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+				break;
+
 			case 9:  // 'phoneUS',       //  9 - (###) ###-####
 			case 12: // 'ssn',           // 12 - ###-##-####
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
@@ -70,7 +75,7 @@ class TemplateFieldHelper extends Helper {
 				if ($field['type'] == 1) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
 				} else if ($field['type'] == 2) {
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
+//					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
 				} else if ($field['type'] == 9) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'phoneUS');
 				} else if ($field['type'] == 12) {

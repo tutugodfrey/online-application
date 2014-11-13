@@ -19,12 +19,31 @@ var quickAdd = function(e) {
 		data['field_id'] = target.attr('id');
 		persist(data);
 	} else {
-		// need to validate the
-		if ($validator.element(target) === true) {
+		var id = target.attr('id');
+		var name = target.attr('name');
+
+		var patternHour = /Time.*?Hour/;
+		var patternMinute = /Time.*?Minute/;
+		var patternMeridian = /Time.*?Meridian/;
+
+		if (patternHour.test(id) || patternMinute.test(id) || patternMeridian.test(id)) {
+			var hourElement = document.getElementById(name+"Hour");
+			var minuteElement = document.getElementById(name+"Minute");
+			var meridianElement = document.getElementById(name+"Meridian");
+			var timeString = hourElement.value + ":" + minuteElement.value + " " + meridianElement.value;
 			data['id'] = target.attr('data-value-id');
-			data['value'] = target.val();
-			data['field_id'] = target.attr('id');
+			data['value'] = timeString;
+			data['field_id'] = id;
 			persist(data);
+		}
+		else {
+			// need to validate
+			if ($validator.element(target) === true) {
+				data['id'] = target.attr('data-value-id');
+				data['value'] = target.val();
+				data['field_id'] = target.attr('id');
+				persist(data);
+			}
 		}
 	}
 };
