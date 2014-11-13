@@ -377,7 +377,7 @@ $fieldId = $FP->createIfMissing('Server #s', $sectionId, 2, 3, false,  2, '', 'S
 $fieldId = $FP->createIfMissing('Invoice #', $sectionId, 2, 3, false, 2, '', 'Invoice_2', '', null);
 $fieldId = $FP->createIfMissing('Tips', $sectionId, 2, 3, false, 2, '', 'Tips_2', '', null);
 $fieldId = $FP->createIfMissing('Purchasing Cards', $sectionId, 2, 3, false, 2, '', 'Purchasing Cards_2', '', null);
-$fieldId = $FP->createIfMissing('Do you accept Debit on this terminal?', $sectionId, 4, 4, true, 2, 'Yes::Yes,No::No', 'TermAcceptDebit2-', '', null);
+$fieldId = $FP->createIfMissing('Do you accept Debit on this terminal?', $sectionId, 4, 4, false, 2, 'Yes::Yes,No::No', 'TermAcceptDebit2-', '', null);
 $fieldId = $FP->createIfMissing('If Yes, what type of PIN Pad?', $sectionId, 4, 0, false, 2, '', 'PinPad2', '', null);
 $fieldId = $FP->createIfMissing('PIN Pad Quantity', $sectionId, 4, 19, false, 2, '', 'QTY - PP2', '', null);
 

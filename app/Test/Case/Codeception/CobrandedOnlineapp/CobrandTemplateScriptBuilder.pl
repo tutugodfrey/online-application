@@ -110,8 +110,8 @@ my $templateMap = {
             "'Average Ticket', \$sectionId, 4, 10, true, 2, '', 'AvgTicket', '', null",
             "'Highest Ticket', \$sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null",
             "'Current Processor', \$sectionId, 12, 0, true, 2, '', 'Previous Processor', '', null",
-            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped,Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null",
-            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer,Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null"
+            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{100},Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null",
+            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{100},Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null"
         ],
         'High Volume Months' => [
             "'Jan', \$sectionId, 1, 3, false, 2, '', 'Jan', '', null",
@@ -227,7 +227,7 @@ my $templateMap = {
             "'Invoice #', \$sectionId, 2, 3, false, 2, '', 'Invoice_2', '', null",
             "'Tips', \$sectionId, 2, 3, false, 2, '', 'Tips_2', '', null",
             "'Purchasing Cards', \$sectionId, 2, 3, false, 2, '', 'Purchasing Cards_2', '', null",
-            "'Do you accept Debit on this terminal?', \$sectionId, 4, 4, true, 2, 'Yes::Yes,No::No', 'TermAcceptDebit2-', '', null",
+            "'Do you accept Debit on this terminal?', \$sectionId, 4, 4, false, 2, 'Yes::Yes,No::No', 'TermAcceptDebit2-', '', null",
             "'If Yes, what type of PIN Pad?', \$sectionId, 4, 0, false, 2, '', 'PinPad2', '', null",
             "'PIN Pad Quantity', \$sectionId, 4, 19, false, 2, '', 'QTY - PP2', '', null"
         ]

@@ -153,8 +153,8 @@ $fieldId = $FP->createIfMissing('Monthly Volume', $sectionId, 4, 10, true, 2, ''
 $fieldId = $FP->createIfMissing('Average Ticket', $sectionId, 4, 10, true, 2, '', 'AvgTicket', '', null);
 $fieldId = $FP->createIfMissing('Highest Ticket', $sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null);
 $fieldId = $FP->createIfMissing('Current Processor', $sectionId, 12, 0, true, 2, '', 'Previous Processor', '', null);
-$fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped,Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null);
-$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer,Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null);
+$fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{100},Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null);
+$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{100},Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -377,7 +377,7 @@ $fieldId = $FP->createIfMissing('Server #s', $sectionId, 2, 3, false,  2, '', 'S
 $fieldId = $FP->createIfMissing('Invoice #', $sectionId, 2, 3, false, 2, '', 'Invoice_2', '', null);
 $fieldId = $FP->createIfMissing('Tips', $sectionId, 2, 3, false, 2, '', 'Tips_2', '', null);
 $fieldId = $FP->createIfMissing('Purchasing Cards', $sectionId, 2, 3, false, 2, '', 'Purchasing Cards_2', '', null);
-$fieldId = $FP->createIfMissing('Do you accept Debit on this terminal?', $sectionId, 4, 4, true, 2, 'Yes::Yes,No::No', 'TermAcceptDebit2-', '', null);
+$fieldId = $FP->createIfMissing('Do you accept Debit on this terminal?', $sectionId, 4, 4, false, 2, 'Yes::Yes,No::No', 'TermAcceptDebit2-', '', null);
 $fieldId = $FP->createIfMissing('If Yes, what type of PIN Pad?', $sectionId, 4, 0, false, 2, '', 'PinPad2', '', null);
 $fieldId = $FP->createIfMissing('PIN Pad Quantity', $sectionId, 4, 19, false, 2, '', 'QTY - PP2', '', null);
 
