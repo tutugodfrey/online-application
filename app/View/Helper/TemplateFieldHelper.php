@@ -58,8 +58,7 @@ class TemplateFieldHelper extends Helper {
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
-
-			case 1:  // 'date'			
+		
 			case 9:  // 'phoneUS',       //  9 - (###) ###-####
 			case 12: // 'ssn',           // 12 - ###-##-####
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
@@ -67,7 +66,7 @@ class TemplateFieldHelper extends Helper {
 			case 19: // 'digits',        // 19 - (#)+
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				if ($field['type'] == 1) {
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
+//					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
 				} else if ($field['type'] == 2) {
 //					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
 				} else if ($field['type'] == 9) {
@@ -83,6 +82,31 @@ class TemplateFieldHelper extends Helper {
 				}
 				
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+				break;
+
+			case 1:  // 'date'
+				$year = null;
+				$month = null;
+				$day = null;
+
+				if (preg_match('/(\d{4})\/(\d{2})\/(\d{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
+					$year = $matches[1];
+					$month = $matches[2];
+					$day = $matches[3];
+				}
+
+				$fieldOptions = Hash::insert($fieldOptions, 'type', 'date');
+
+				if ($year != null && $month != null && $day != null) {
+					$fieldOptions = Hash::insert($fieldOptions, 'selected', array(
+							'year' => $year,
+							'month' => $month,
+							'day' => $day
+						)
+					);
+				}
+		
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 

@@ -22,9 +22,13 @@ var quickAdd = function(e) {
 		var id = target.attr('id');
 		var name = target.attr('name');
 
-		var patternHour = /Time.*?Hour/;
-		var patternMinute = /Time.*?Minute/;
-		var patternMeridian = /Time.*?Meridian/;
+		var patternHour = new RegExp(name+'Hour');
+		var patternMinute = new RegExp(name+'Minute');
+		var patternMeridian = new RegExp(name+'Meridian');
+
+		var patternMonth = new RegExp(name+'Month');
+		var patternDay = new RegExp(name+'Day');
+		var patternYear = new RegExp(name+'Year');
 
 		if (patternHour.test(id) || patternMinute.test(id) || patternMeridian.test(id)) {
 			var hourElement = document.getElementById(name+"Hour");
@@ -33,6 +37,16 @@ var quickAdd = function(e) {
 			var timeString = hourElement.value + ":" + minuteElement.value + " " + meridianElement.value;
 			data['id'] = target.attr('data-value-id');
 			data['value'] = timeString;
+			data['field_id'] = id;
+			persist(data);
+		}
+		else if (patternMonth.test(id) || patternDay.test(id) || patternYear.test(id)) {
+			var monthElement = document.getElementById(name+"Month");
+			var dayElement = document.getElementById(name+"Day");
+			var yearElement = document.getElementById(name+"Year");
+			var dateString = yearElement.value + "/" + monthElement.value + "/" + dayElement.value;
+			data['id'] = target.attr('data-value-id');
+			data['value'] = dateString;
 			data['field_id'] = id;
 			persist(data);
 		}
