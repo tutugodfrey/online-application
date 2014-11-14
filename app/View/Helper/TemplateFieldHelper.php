@@ -59,33 +59,7 @@ class TemplateFieldHelper extends Helper {
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
-			case 1:  // 'date'
-			case 2:  // 'time'
-				$hour = null;
-				$minute = null;
-				$meridian = null;
-
-				if (preg_match('/(\d{2}):(\d{2}) (\w{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
-					$hour = $matches[1];
-					$minute = $matches[2];
-					$meridian = $matches[3];
-				}
-
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
-				$fieldOptions = Hash::insert($fieldOptions, 'interval', '15');
-
-				if ($hour != null && $minute != null && $meridian != null) {
-					$fieldOptions = Hash::insert($fieldOptions, 'selected', array(
-							'hour' => $hour,
-							'min' => $minute,
-							'meridian' => $meridian
-						)
-					);
-				}
-		
-				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
-				break;
-
+			case 1:  // 'date'			
 			case 9:  // 'phoneUS',       //  9 - (###) ###-####
 			case 12: // 'ssn',           // 12 - ###-##-####
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
@@ -109,6 +83,32 @@ class TemplateFieldHelper extends Helper {
 				}
 				
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+				break;
+
+			case 2:  // 'time'
+				$hour = null;
+				$minute = null;
+				$meridian = null;
+
+				if (preg_match('/(\d{2}):(\d{2}) (\w{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
+					$hour = $matches[1];
+					$minute = $matches[2];
+					$meridian = $matches[3];
+				}
+
+				$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
+				$fieldOptions = Hash::insert($fieldOptions, 'interval', '15');
+
+				if ($hour != null && $minute != null && $meridian != null) {
+					$fieldOptions = Hash::insert($fieldOptions, 'selected', array(
+							'hour' => $hour,
+							'min' => $minute,
+							'meridian' => $meridian
+						)
+					);
+				}
+		
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
