@@ -20,7 +20,7 @@ $cobrandId = $CP->createIfMissing('Passport');
 $I->amOnPage('/admin/cobrands/'.$cobrandId.'/templates');
 
 // create a new template for this cobrand
-$templateId = $TP->createIfMissing('Default', $cobrandId);
+$templateId = $TP->createIfMissing('Default', $cobrandId, '3', true, '', 'a_5253273_402cab75a117423981cf006cc1fdbf50', 'a_5540921_0ca75dcf2a4d4a2795a378521f896426', '50');
 
 // go to the pages for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
@@ -408,7 +408,7 @@ $fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, true, 2, '', 'Owner1P
 $fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, true, 2, '', 'Owner1Fax', '', null);
 $fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, true, 2, '', 'Owner1Email', '', null);
 $fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, true, 2, '', 'OwnerSSN', '', null, null, true);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null, null, true);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -431,7 +431,7 @@ $fieldId = $FP->createIfMissing('Phone', $sectionId, 6, 9, false, 2, '', 'Owner2
 $fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, false, 2, '', 'Owner2Fax', '', null);
 $fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, false, 2, '', 'Owner2Email', '', null);
 $fieldId = $FP->createIfMissing('SSN', $sectionId, 6, 12, false, 2, '', 'Owner2SSN', '', null, null, true);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null, null, true);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null);
 
 // go to the pages for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');

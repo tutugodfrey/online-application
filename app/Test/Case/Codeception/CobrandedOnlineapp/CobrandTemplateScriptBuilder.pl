@@ -245,7 +245,7 @@ my $templateMap = {
             "'Fax', \$sectionId, 6, 9, true, 2, '', 'Owner1Fax', '', null",
             "'Email', \$sectionId, 6, 14, true, 2, '', 'Owner1Email', '', null",
             "'SSN', \$sectionId, 6, 12, true, 2, '', 'OwnerSSN', '', null, null, true",
-            "'Date of Birth', \$sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null, null, true"
+            "'Date of Birth', \$sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null"
         ],
         'OWNER / OFFICER (2)' => [
             "'Percentage Ownership', \$sectionId, 12, 11, false, 2, '', 'Owner2Equity', '', null",
@@ -259,7 +259,7 @@ my $templateMap = {
             "'Fax', \$sectionId, 6, 9, false, 2, '', 'Owner2Fax', '', null",
             "'Email', \$sectionId, 6, 14, false, 2, '', 'Owner2Email', '', null",
             "'SSN', \$sectionId, 6, 12, false, 2, '', 'Owner2SSN', '', null, null, true",
-            "'Date of Birth', \$sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null, null, true"
+            "'Date of Birth', \$sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null"
         ]
     },
 #    'Merchant Referral Program' => {

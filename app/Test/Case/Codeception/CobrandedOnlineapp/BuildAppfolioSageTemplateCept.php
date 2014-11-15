@@ -23,7 +23,7 @@ $cobrandId = $CP->createIfMissing('Appfolio', 'AF', '/img/amp-logo.png', '');
 $I->amOnPage('/admin/cobrands/'.$cobrandId.'/templates');
 
 // create a new template for this cobrand
-$templateId = $TP->createIfMissing('Sage Virtual Check Merchant Processing Agreement', $cobrandId);
+$templateId = $TP->createIfMissing('Sage Virtual Check Merchant Processing Agreement', $cobrandId, '3', true, '', '', '', '40');
 
 // next go to the pages for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
@@ -128,7 +128,7 @@ $fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, true, 0, '', 'Owner1Zi
 $fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, true, 0, '', 'Owner1Phone', 'Phone Number', null);
 //$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, true, 1, '', 'Owner1Fax', '', null);
 //$fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, true, 1, '', 'Owner1Email', '', null);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, true, 1, '', 'Owner1DOB', '', null, null, true);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, true, 1, '', 'Owner1DOB', '', null);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -152,7 +152,7 @@ $fieldId = $FP->createIfMissing('Zip', $sectionId, 4, 13, false, 0, '', 'Owner2Z
 $fieldId = $FP->createIfMissing('Phone', $sectionId, 12, 9, false, 0, '', 'Owner2Phone', 'Phone Number', null);
 //$fieldId = $FP->createIfMissing('Fax', $sectionId, 6, 9, false, 1, '', 'Owner2Fax', '', null);
 //$fieldId = $FP->createIfMissing('Email', $sectionId, 6, 14, false, 1, '', 'Owner2Email', '', null);
-$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, false, 1, '', 'Owner2DOB', '', null, null, true);
+$fieldId = $FP->createIfMissing('Date of Birth', $sectionId, 12,  1, false, 1, '', 'Owner2DOB', '', null);
 
 // next go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
