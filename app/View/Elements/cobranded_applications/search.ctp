@@ -16,13 +16,14 @@
 			'novalidate' => true,
 		)
 	);
-	echo $this->Html->link(' ', 
+
+	echo $this->Html->link('New Application', 
 		array(
 			'controller' => 'cobrandedApplications',
-			'action' => 'add'
+			'action' => 'add',
 		),
        		array(
-			'class' => 'btn btn-default glyphicon glyphicon-plus pull-right', 
+			'class' => 'btn btn-primary pull-right', 
 			'title' => 'New Application'
 		)
 	);
@@ -42,8 +43,8 @@
 			'empty' => 'Show All'
 		)
 	); 
-	echo $this->Form->submit(__('Search'), array('div' => 'form-group', 'class' => 'btn btn-default', 'name' => 'search'));
-	echo $this->Form->submit(__('Reset'), array('div' => 'form-group', 'class' => 'btn btn-default', 'name' => 'reset'));
+	echo $this->Form->submit(__('Search'), array('div' => 'form-group', 'class' => 'btn btn-success', 'name' => 'search'));
+	echo $this->Form->submit(__('Reset'), array('div' => 'form-group', 'class' => 'btn btn-success', 'name' => 'reset'));
 	echo $this->Form->end();
 ?>
 

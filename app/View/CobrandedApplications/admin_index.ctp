@@ -1,15 +1,5 @@
 <div class="cobrandedApplications">
-<!--	<h2><?php //echo __('Applications'); ?></h2>
-	<div class="btn-group"> 
-	<?php echo __('Create Application') . $this->BoostCakeHtml->link(' ',array('action' => 'add'),
-		array(
-			'class' => 'btn btn-default glyphicon glyphicon-plus',
-			'title' => __('Create Application')
-		)
-		
-	); ?>
-	</div>
--->	<?php echo $this->Element('cobranded_applications/search'); ?>
+	<?php echo $this->Element('cobranded_applications/search'); ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.id', 'ID'); ?></th>
@@ -25,7 +15,7 @@
 		<?php foreach ($cobrandedApplications as $cobrandedApplication): ?>
 		<tr>
 		<td><div class="btn-group"><?php
-				echo $this->BoostCakeHtml->link(' ', 
+				echo $this->Html->link(' ', 
 					array(
 						'controller' => 'cobrandedApplications',
 						'action' => 'edit',
@@ -33,20 +23,20 @@
 						'admin' => false,
 					),
 					array(
-						'class' => 'btn btn-default glyphicon glyphicon-edit',
+						'class' => 'btn btn-primary btn-sm glyphicon glyphicon-edit',
 						'title' => __('Edit ' . $cobrandedApplication['CobrandedApplication']['id'])
 					)
 				);
 		?></div></td>
 			<td>
-				<?php echo $this->Html->link($cobrandedApplication['User']['firstname'] . ' ' . $cobrandedApplication['User']['lastname'], array('controller' => 'users', 'action' => 'view', $cobrandedApplication['User']['id'])); ?>
+				<?php echo $cobrandedApplication['User']['firstname'] . ' ' . $cobrandedApplication['User']['lastname']; ?>
 			</td>
 			<td>
-				<?php echo $this->Html->link($cobrandedApplication['Template']['name'], String::insert('/admin/templates/:id/templatepages', array('id' => $cobrandedApplication['Template']['id']))); ?>
+				<?php echo $cobrandedApplication['Template']['name']; ?>
 			</td>
-			<td><?php echo $this->Html->link($cobrandedApplication['Dba']['value'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
-			<td><?php echo $this->Html->link($cobrandedApplication['CorpName']['value'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
-			<td><?php echo $this->Html->link($cobrandedApplication['CorpContact']['value'], '/cobranded_applications/edit/'.$cobrandedApplication['CobrandedApplication']['uuid']); ?>&nbsp;</td>
+			<td><?php echo $cobrandedApplication['Dba']['value']; ?>&nbsp;</td>
+			<td><?php echo $cobrandedApplication['CorpName']['value']; ?>&nbsp;</td>
+			<td><?php echo $cobrandedApplication['CorpContact']['value']; ?>&nbsp;</td>
 			<td>
 				<?php if($cobrandedApplication['CobrandedApplication']['status'] == 'completed' || $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
                     echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], array('controller' => 'cobrandedApplications', 'action' => 'app_status', $cobrandedApplication['CobrandedApplication']['id'], 'admin' => true)) . "\n\t\t</td>\n";
@@ -55,7 +45,7 @@
                                 }
 				?>&nbsp;
 			</td>
-			<td><?php echo h($cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
+			<td><?php echo $this->Time->format('m/d/y h:i A',$cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td><div class="btn-group"><?php
 				echo $this->BoostCakeHtml->link(' ', 
 					array(
@@ -63,7 +53,7 @@
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
-						'class' => 'btn btn-default btn-xs glyphicon glyphicon-export',
+						'class' => 'btn btn-default btn-sm glyphicon glyphicon-export',
 						'title' => __('Export')
 					)
 				); 
@@ -73,7 +63,7 @@
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
-						'class' => 'btn btn-default glyphicon glyphicon-tags',
+						'class' => 'btn btn-default btn-sm glyphicon glyphicon-tags',
 						'title' => __('Copy')
 					)
 				);
@@ -83,7 +73,7 @@
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
-						'class' => 'btn btn-default glyphicon glyphicon-calendar',
+						'class' => 'btn btn-default btn-sm glyphicon glyphicon-calendar',
 						'title' => __('Timeline for Emails')
 					)
 				);
@@ -93,7 +83,7 @@
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
-						'class' => 'btn btn-default glyphicon glyphicon-send', 
+						'class' => 'btn btn-info btn-sm glyphicon glyphicon-send', 
 						'title' => __('Email App For Field Completion')
 					)
 				);
@@ -104,7 +94,7 @@
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
-						'class' => 'btn btn-default glyphicon glyphicon-file', 
+						'class' => 'btn btn-default btn-sm glyphicon glyphicon-file', 
 						'title' => __('Install Sheet')
 					)
 				);
@@ -116,7 +106,7 @@
 							$cobrandedApplication['Coversheet']['id']
 						),
 						array(
-							'class' => 'btn btn-default glyphicon glyphicon-book',
+							'class' => 'btn btn-default btn-sm glyphicon glyphicon-book',
 							'title' => __('Cover Sheet')
 						)
 					); 
@@ -130,7 +120,7 @@
 							'admin' => false
 						),
 						array(
-							'class' => 'btn btn-default glyphicon glyphicon-book',
+							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
 							'title' => __('Cover Sheet')
 						)
 					); 
@@ -141,7 +131,7 @@
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
-						'class' => 'btn btn-default glyphicon glyphicon-cog',
+						'class' => 'btn btn-danger btn-sm glyphicon glyphicon-cog',
 						'title' => __('Override')
 					)
 				);
@@ -151,9 +141,8 @@
 						$cobrandedApplication['CobrandedApplication']['id']
 					), 
 					array(
-						'class' => 'btn btn-default glyphicon glyphicon-trash',
+						'class' => 'btn btn-warning btn-sm glyphicon glyphicon-trash',
 						'title' => __('Delete'),
-						'style' => 'margin-left:-2px'	
 					), 
 					__('Are you sure you want to delete # %s?', $cobrandedApplication['CobrandedApplication']['id'])				);
 ?>

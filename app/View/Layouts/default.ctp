@@ -116,7 +116,7 @@
            <br />If session expires you must to log back in and re-enter any unsaved work that was lost upon session expiration.
            </p> 
         <img src="/img/refreshing.gif" id="refreshIMG" style="display:none;float:right; margin-right: 25px" />   
-       <span id="cancelBtn" class="btn">Continue</span>
+       <span id="cancelBtn" class="btns">Continue</span>
    </div>
     <!-- End Session notification Dialog Box --> 
     <!--  span id="loginBtn" class="btn">Need to login?</span -->
