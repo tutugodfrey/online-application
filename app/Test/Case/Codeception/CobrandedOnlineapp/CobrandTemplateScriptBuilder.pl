@@ -174,12 +174,12 @@ my $templateMap = {
             "'Account Number', \$sectionId, 12, 0, true, 2, '', 'FeesAccountNum', '', null, null, true"
         ],
         'Trade Reference 1' => [
-            "'Business Name', \$sectionId, 12, 0, false, 2, '', 'TradeRef1', '', null",
-            "'Contact Person', \$sectionId, 12, 0, false, 2, '', 'TradeRefContact1', '', null",
-            "'Phone', \$sectionId, 6, 9, false, 2, '', 'TradeRefPhone1', '', null",
-            "'Acct #', \$sectionId, 6, 0, false, 2, '', 'TradeRefAccount1', '', null",
-            "'City', \$sectionId, 6, 0, false, 2, '', 'TradeRefCity1', '', null",
-            "'State', \$sectionId, 6, 20, false, 2, \$FP::STATES, 'TradeRefSt1', '', null"
+            "'Business Name', \$sectionId, 12, 0, true, 2, '', 'TradeRef1', '', null",
+            "'Contact Person', \$sectionId, 12, 0, true, 2, '', 'TradeRefContact1', '', null",
+            "'Phone', \$sectionId, 6, 9, true, 2, '', 'TradeRefPhone1', '', null",
+            "'Acct #', \$sectionId, 6, 0, true, 2, '', 'TradeRefAccount1', '', null",
+            "'City', \$sectionId, 6, 0, true, 2, '', 'TradeRefCity1', '', null",
+            "'State', \$sectionId, 6, 20, true, 2, \$FP::STATES, 'TradeRefSt1', '', null"
         ],
         'Trade Reference 2' => [
             "'Business Name', \$sectionId, 12, 0, false, 2, '', 'TradeRef2', '', null",
@@ -245,7 +245,7 @@ my $templateMap = {
             "'Fax', \$sectionId, 6, 9, true, 2, '', 'Owner1Fax', '', null",
             "'Email', \$sectionId, 6, 14, true, 2, '', 'Owner1Email', '', null",
             "'SSN', \$sectionId, 6, 12, true, 2, '', 'OwnerSSN', '', null, null, true",
-            "'Date of Birth', \$sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null, null, true"
+            "'Date of Birth', \$sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null"
         ],
         'OWNER / OFFICER (2)' => [
             "'Percentage Ownership', \$sectionId, 12, 11, false, 2, '', 'Owner2Equity', '', null",
@@ -259,7 +259,7 @@ my $templateMap = {
             "'Fax', \$sectionId, 6, 9, false, 2, '', 'Owner2Fax', '', null",
             "'Email', \$sectionId, 6, 14, false, 2, '', 'Owner2Email', '', null",
             "'SSN', \$sectionId, 6, 12, false, 2, '', 'Owner2SSN', '', null, null, true",
-            "'Date of Birth', \$sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null, null, true"
+            "'Date of Birth', \$sectionId, 8,  1, false, 2, '', 'Owner2DOB', '', null"
         ]
     },
 #    'Merchant Referral Program' => {
