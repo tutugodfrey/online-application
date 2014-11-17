@@ -128,8 +128,39 @@
                 <p class="navbar-text">
                 <?php echo $this->Html->getCrumbs(' > ', array('text' => _('Axia Admin Home'), 'url' => '/admin/')); ?>
                 </p>
-                <p class="navbar-text navbar-right">
-                  <?php echo $this->Html->link(__('Logout'), '/users/logout'); ?>
+                <p class="navbar-text navbar-right btn-group">
+                <?php 
+			echo $this->Html->link(__('Applications'), 
+				array(
+					'controller' => 'cobrandedApplications',
+					'action' => 'index',
+					'admin' => true,
+				),
+				array(
+					'class' => 'btn btn-default'
+				)
+			); 
+			echo $this->Html->link(__('Coversheets'), 
+				array(
+					'controller' => 'coversheets',
+					'action' => 'index',
+					'admin' => true,
+				),
+				array(
+					'class' => 'btn btn-default'
+				)
+			); 
+			echo $this->Html->link(__('Logout'), 
+				array(
+					'controller' => 'users',
+					'action' => 'logout',
+					'admin' => false,
+				),
+				array(
+					'class' => 'btn btn-default'
+				)
+			); 
+		?>
                 </p>
               </nav>
             <?php else: ?>

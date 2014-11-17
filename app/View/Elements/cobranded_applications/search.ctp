@@ -27,9 +27,17 @@
 			'title' => 'New Application'
 		)
 	);
-	echo $this->Form->input('search', array('placeholder' => 'Search'));
+	echo $this->Form->input('search',
+		array('placeholder' => 'Search Applications')
+	);
                         
-	echo $this->Form->input('user_id',array('options' => array($users), 'default' => $user_id, 'empty' => 'Show All')); 
+	echo $this->Form->input('user_id',
+		array(
+			'options' => array($users),
+			'default' => $user_id,
+			'empty' => 'Show All'
+		)
+	); 
 
 	echo $this->Form->input('status', 
 		array(

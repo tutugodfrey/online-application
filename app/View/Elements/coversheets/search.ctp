@@ -1,5 +1,3 @@
-<ul class="list-menu">
-        <li>
                 <?php
 			echo $this->Form->create('Coversheet', 
 				array(
@@ -7,15 +5,30 @@
 						array('action' => 'admin_search'),
 						$this->params['pass']
 					),
-					'class' => 'form-search form-inline',
+					'inputDefaults' => array(
+						'div' => 'form-group',
+						'label' => false,
+						'wrapInput' => false,
+						'class' => 'form-control'
+					),
+					'class' => 'well form-inline',
 					'novalidate' => true,
+				)
+			);
+			
+			echo $this->Html->link('New Coversheet',
+          			array(
+                       			'controller' => 'coversheets',
+                        		'action' => 'add',
+				),
+				array(
+					'class' => 'btn btn-primary pull-right',
+					'title' => 'New Coversheet'
 				)
 			);
 
 			echo $this->Form->input('search', 
-				array(
-					'div' => false, 
-					'label' => false)
+				array('placeholder' => 'Search Coversheets')
 			);
                         
 			echo $this->Form->input('user_id', 
@@ -23,38 +36,42 @@
 					'options' => array($users), 
 					'default' => $user_id,
 					'empty' => 'Show All',
-					'style' => 'width: 75%;')
-				); 
+				)
+			); 
 
 			echo $this->Form->input('app_status', 
 				array(
-					'label' => 'Application Status', 
 					'options' => array(
 						'saved'=>'saved',
 						'validate'=>'validate',
 						'completed'=>'completed',
 						'pending'=>'pending',
 						'signed'=>'signed'
-				),
-				'empty' => 'Show All',
-				'style' => 'width: 75%;')
+					),
+					'empty' => 'App Status Show All',
+				)
 			); 
                     
 			echo $this->Form->input('coversheet_status', 
 				array(
-					'label' => 'Coversheet Status', 
 					'options' => array(
 						'saved'=>'saved',
 						'validated'=>'validated',
 						'sent'=>'sent'
 					),
-					'empty' => 'Show All', 
-					'style' => 'width: 75%;'
+					'empty' => 'Coversheet Status Show All', 
 				)
 			);
 
-		    echo $this->Form->submit(__('Search'), array('div' => false, 'name' => 'Search'));
+			echo $this->Form->button($this->Html->tag('span', '',
+				array('class' => 'glyphicon glyphicon-search')
+				),
+				array(
+					'div' => 'form-group',
+					'class' => 'btn btn-success',
+					'name' => 'Search',
+					'type' => 'submit'
+				)
+			);
 		    		echo $this->Form->end();
                         ?>
-        </li>
-</ul>
