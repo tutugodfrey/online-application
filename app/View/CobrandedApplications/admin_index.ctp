@@ -47,7 +47,8 @@
 			</td>
 			<td><?php echo $this->Time->format('m/d/y h:i A',$cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td><div class="btn-group"><?php
-				echo $this->BoostCakeHtml->link(' ', 
+				if(in_array($this->Session->read('Auth.User.group'), array('admin'))) {
+				echo $this->Html->link(' ', 
 					array(
 						'action' => 'export', 
 						$cobrandedApplication['CobrandedApplication']['id']
@@ -57,7 +58,8 @@
 						'title' => __('Export')
 					)
 				); 
-				echo $this->BoostCakeHtml->link(' ', 
+				}
+				echo $this->Html->link(' ', 
 					array(
 						'action' => 'copy',
 						$cobrandedApplication['CobrandedApplication']['id']
@@ -67,7 +69,7 @@
 						'title' => __('Copy')
 					)
 				);
-				echo $this->BoostCakeHtml->link(' ', 
+				echo $this->Html->link(' ', 
 					array(
 						'action' => 'email_timeline', 
 						$cobrandedApplication['CobrandedApplication']['id']
@@ -77,7 +79,7 @@
 						'title' => __('Timeline for Emails')
 					)
 				);
-				echo $this->BoostCakeHtml->link(' ', 
+				echo $this->Html->link(' ', 
 					array(
 						'action' => 'complete_fields', 
 						$cobrandedApplication['CobrandedApplication']['id']
@@ -87,7 +89,9 @@
 						'title' => __('Email App For Field Completion')
 					)
 				);
-				echo $this->BoostCakeHtml->link(' ', 
+				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && 
+					$cobrandedApplication['CobrandedApplication']['status'] === 'signed') {
+				echo $this->Html->link(' ', 
 					array(
 						'action' => 'install_sheet_var', 
 						'admin' => 'false', 
@@ -98,20 +102,21 @@
 						'title' => __('Install Sheet')
 					)
 				);
+				}
 				if (isset($cobrandedApplication['Coversheet']['id'])) {
-					echo $this->BoostCakeHtml->link(' ',
+					echo $this->Html->link(' ',
 						array(
 							'Controller' => 'Coversheets',
 							'action' => 'edit',
 							$cobrandedApplication['Coversheet']['id']
 						),
 						array(
-							'class' => 'btn btn-default btn-sm glyphicon glyphicon-book',
+							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
 							'title' => __('Cover Sheet')
 						)
 					); 
 				} else {
-					echo $this->BoostCakeHtml->link(' ', 
+					echo $this->Html->link(' ', 
 						array(
 							'controller' => 'Coversheets', 
 							'action' => 'add', 
@@ -125,7 +130,8 @@
 						)
 					); 
 				}
-				echo $this->BoostCakeHtml->link(' ',
+				if(in_array($this->Session->read('Auth.User.group'), array('admin'))) {
+				echo $this->Html->link(' ',
 					array(
 						'action' => 'edit',
 						$cobrandedApplication['CobrandedApplication']['id']
@@ -135,6 +141,7 @@
 						'title' => __('Override')
 					)
 				);
+				}
 				echo $this->Form->postLink(' ', 
 					array(
 						'action' => 'delete', 

@@ -43,8 +43,27 @@
 			'empty' => 'Show All'
 		)
 	); 
-	echo $this->Form->submit(__('Search'), array('div' => 'form-group', 'class' => 'btn btn-success', 'name' => 'search'));
-	echo $this->Form->submit(__('Reset'), array('div' => 'form-group', 'class' => 'btn btn-success', 'name' => 'reset'));
+	echo $this->Form->button($this->Html->tag('span','', 
+		array('class' => 'glyphicon glyphicon-search')
+		),
+		array(
+			'div' => 'form-group', 
+			'class' => 'btn btn-success', 
+			'name' => 'search', 
+			'type' => 'submit'
+		)
+	);
+	echo $this->Form->button($this->Html->tag(
+		'span', '',
+			array('class' => 'glyphicon glyphicon-random')
+		),
+		array(
+			'div' => 'form-group', 
+			'class' => 'btn btn-success', 
+			'name' => 'reset',
+			'type' => 'submit'
+		)
+	);
 	echo $this->Form->end();
 ?>
 
