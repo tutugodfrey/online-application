@@ -499,13 +499,17 @@ class CobrandedApplicationsController extends AppController {
 				$this->Session->setFlash(__('The application could not be saved. Please, try again.'));
 			}
 		} else {
-			$options = array('conditions' => array('CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id));
+			$options = array('conditions' => array(
+				'CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id,
+				
+				),
+				'recursive' => -1
+			);
 			$this->request->data = $this->CobrandedApplication->find('first', $options);
 		}
-		$users = $this->CobrandedApplication->User->find('list');
+		$users = $this->CobrandedApplication->User->find('list',
+			array('order' => 'User.firstname ASC'));
 		$this->set(compact('users'));
-		$templates = $this->CobrandedApplication->User->Template->getList();
-		$this->set(compact('templates'));
 	}
 
 /**

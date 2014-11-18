@@ -38,11 +38,20 @@
 			<td><?php echo $cobrandedApplication['CorpName']['value']; ?>&nbsp;</td>
 			<td><?php echo $cobrandedApplication['CorpContact']['value']; ?>&nbsp;</td>
 			<td>
-				<?php if($cobrandedApplication['CobrandedApplication']['status'] == 'completed' || $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
-                    echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], array('controller' => 'cobrandedApplications', 'action' => 'app_status', $cobrandedApplication['CobrandedApplication']['id'], 'admin' => true)) . "\n\t\t</td>\n";
-                         } else {
-							echo $cobrandedApplication['CobrandedApplication']['status'];
-                                }
+				<?php if($cobrandedApplication['CobrandedApplication']['status'] == 'completed' 
+					|| $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
+                    			echo $this->Html->link(
+						$cobrandedApplication['CobrandedApplication']['status'], 
+						array(
+							'controller' => 'cobrandedApplications', 
+							'action' => 'app_status', 
+							$cobrandedApplication['CobrandedApplication']['id'], 
+							'admin' => true
+						)
+					) . "\n\t\t</td>\n";
+                         		} else {
+					echo $cobrandedApplication['CobrandedApplication']['status'];
+                                	}	
 				?>&nbsp;
 			</td>
 			<td><?php echo $this->Time->format('m/d/y h:i A',$cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
@@ -82,7 +91,8 @@
 				echo $this->Html->link(' ', 
 					array(
 						'action' => 'complete_fields', 
-						$cobrandedApplication['CobrandedApplication']['id']
+						$cobrandedApplication['CobrandedApplication']['id'],
+						'admin' => false
 					),
 					array(
 						'class' => 'btn btn-info btn-sm glyphicon glyphicon-send', 

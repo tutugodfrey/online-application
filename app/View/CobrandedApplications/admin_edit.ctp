@@ -4,6 +4,8 @@
 		<legend><?php echo __('Admin Edit Application'); ?></legend>
 	<?php
 		echo $this->Form->input('id');
+		echo $this->Form->input('uuid', array('type' => 'hidden'));
+		echo $this->Form->input('template_id', array('type' => 'hidden'));
 		echo $this->Form->input('user_id');
 		echo $this->Form->input('status',
                 	array(
