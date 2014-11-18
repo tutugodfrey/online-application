@@ -607,7 +607,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'hr',
 							'type' => 8,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => '',
 							'width' => 12,

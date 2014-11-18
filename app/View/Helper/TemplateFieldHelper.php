@@ -106,6 +106,14 @@ class TemplateFieldHelper extends Helper {
 						)
 					);
 				}
+
+				if ($field['name'] == 'Date of Birth') {
+					$fieldOptions = Hash::insert($fieldOptions, 'minYear', date('Y') - 100);
+					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y'));
+				} else {
+					$fieldOptions = Hash::insert($fieldOptions, 'minYear', date('Y') - 100);
+					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 20);
+				}
 		
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
