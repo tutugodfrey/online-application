@@ -54,6 +54,7 @@ my $templateMap = {
     'General Information' => {
         'OWNERSHIP TYPE' => [
             "'Ownership Type', \$sectionId, 12, 4, true, 2, 'Corporation::Corp,Sole Prop::SoleProp,LLC::LLC,Partnership::Partnership,Non Profit/Tax Exempt (fed form 501C)::NonProfit,Other::Other', 'OwnerType-', '', null",
+            "'Other', \$sectionId, 6, 0, false, 2, '', 'OwnerTypeOther', '', null",
             "'Corporate Status', \$sectionId, 12, 0, false, 2, '', 'CorpStatus', '', null, true"
         ],
         'CORPORATE INFORMATION' => [
