@@ -35,7 +35,7 @@
 		array(
 			'options' => array($users),
 			'default' => $user_id,
-			'empty' => 'Show All'
+			'empty' => 'Users - All'
 		)
 	); 
 
@@ -48,7 +48,7 @@
         			'pending'=>'pending',
         			'signed'=>'signed'
 			),
-			'empty' => 'Show All'
+			'empty' => 'App Status - All'
 		)
 	); 
 	echo $this->Form->button($this->Html->tag('span','', 

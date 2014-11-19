@@ -10,14 +10,9 @@
 			<th><?php echo __('Actions');?></th>
 	</tr>
 	<?php
-	$i = 0;
 	foreach ($Coversheets as $Coversheet):
-		$class = null;
-		if ($i++ % 2 == 0) {
-			$class = ' class="altrow"';
-		}
 	?>
-	<tr<?php echo $class;?>>
+	<tr>
 		<td><div class="btn-group"><?php 
 			echo $this->Html->link(' ',
 				array(
@@ -30,7 +25,9 @@
 					'class' => 'btn btn-primary btn-sm glyphicon glyphicon-edit',
 					'title' => __('Edit ' . $Coversheet['Coversheet']['id'])
 				)
-			); ?>&nbsp;</td>
+			); ?>&nbsp;
+		</div>
+		</td>
 		<td>
 			<?php echo $this->Html->link($Coversheet['Dba']['value'], array('controller' => 'cobranded_applications', 'action' => 'edit', $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
 		</td>
@@ -71,5 +68,4 @@
 	<?php
 	echo $this->Element('paginatorBottomNav');
 	?>
-	</div>
 </div>

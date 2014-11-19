@@ -37,7 +37,7 @@
 				array(
 					'options' => array($users), 
 					'default' => $user_id,
-					'empty' => 'Show All',
+					'empty' => 'Users - All',
 				)
 			); 
 
@@ -50,7 +50,7 @@
 						'pending'=>'pending',
 						'signed'=>'signed'
 					),
-					'empty' => 'App Status Show All',
+					'empty' => 'App Status - All',
 				)
 			); 
                     
@@ -61,7 +61,7 @@
 						'validated'=>'validated',
 						'sent'=>'sent'
 					),
-					'empty' => 'Coversheet Status Show All', 
+					'empty' => 'CS Status - All', 
 				)
 			);
 
