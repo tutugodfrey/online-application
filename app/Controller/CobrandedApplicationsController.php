@@ -404,17 +404,20 @@ class CobrandedApplicationsController extends AppController {
 		$this->Paginator->settings = $this->paginate;
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
 		$this->Paginator->settings['order'] = array('CobrandedApplication.modified' => ' DESC');
-		//If someone sticks in someone elses user_id in the url, unset it so they can't grab other users applications
-		if(!in_array($this->passedArgs['user_id'], $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')))) {
-			unset($this->passedArgs['user_id']);
-		}
-		//If a user was not specified in the search and the user is not an admin (admin's can see everyone), set the appropriate users for the logged in user to view
-		//otherwise if no arguments were passed overwrite the conditions to search for apps belonging to the logged in user
-		if (empty($this->passedArgs['user_id']) && $this->Auth->user('group') !== User::ADMIN) {
-			$this->Paginator->settings['conditions'][] = array('CobrandedApplication.user_id' => $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')));
-		} else if (!is_array($this->passedArgs)) {
-			$this->Paginator->settings['conditions'] = array('CobrandedApplication.user_id' => $this->Auth->user('id'));
-		}
+		// default to only show logged in user unless user is admin
+		if (empty($this->passedArgs) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
+			$this->Paginator->settings['conditions'] = array(
+				'CobrandedApplication.user_id' => $this->Auth->user('id')
+			);
+		} else if(isset($this->passedArgs['user_id'])) {
+			// perform some permissions checks
+			// Reps can see only their own apps
+			// Managers can see their own plus reps assigned to them
+			// Admins can see everything
+                	if (!in_array($this->passedArgs['user_id'], $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'))) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
+                        	$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'));  
+                	}
+		} 
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
 
 		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));

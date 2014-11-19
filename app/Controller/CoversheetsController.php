@@ -283,10 +283,12 @@ class CoversheetsController extends AppController {
         
 	public function admin_index() {
 		//$this->Prg->commonProcess();
-		if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
+		if ($this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
 			$conditions =  array(
-				'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))
+				'Coversheet.user_id' => $this->Auth->user('id') 
 			);
+		} else {
+			$conditions = null;
 		}
 		$this->paginate = array('index',
 			'conditions' => $conditions,
@@ -294,7 +296,16 @@ class CoversheetsController extends AppController {
 		);  
 		$this->Paginator->settings = $this->paginate;
 		$user_id = $this->Auth->user('id');
+		
 		$users = $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+                if (empty($users)) {
+                        $users = $this->Coversheet->User->find(
+                                'list', 
+                                array(
+                                        'conditions' => array('User.id' => $this->Auth->user('id')),
+                                )   
+                        );  
+                } 
 		$Coversheets = $this->Paginator->paginate();
 		$this->set(compact('users', 'Coversheets', 'user_id'));
 	}
@@ -306,17 +317,17 @@ class CoversheetsController extends AppController {
 	public function admin_search() {
 		$this->Prg->commonProcess();
 
-        
-		if ($this->passedArgs['user_id'] != '' && !in_array($this->passedArgs['user_id'], $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id')))) {
-			unset($this->passedArgs['user_id']);
-			$conditions[] = array('Coversheet.user_id' => $this->Auth->user('id'));
-		} else if ($this->passedArgs['user_id'] != '') {
+       		// perform some permissions checks
+		// Reps can see only their own apps
+		// Managers can see their own plus reps assigned to them
+		// Admins can see everything
+		if (!in_array($this->passedArgs['user_id'], $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
+			$conditions[] =  array(
+				'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))
+			);
+		} else {
 			$conditions[] = array('Coversheet.user_id' => $this->passedArgs['user_id']);
-		} else if ($this->Auth->user('group_id') != User::ADMIN_GROUP_ID) {
-			$conditions[] = array(
-				'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id')));
 		}
-
 
 		if ($this->passedArgs['app_status'] != '') {
 			$conditions[] = array('CobrandedApplication.status' => $this->passedArgs['app_status']);
