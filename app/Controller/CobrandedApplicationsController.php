@@ -318,9 +318,9 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->request->is('post')) {
 			// did we get a valid email?
 			$email = $this->request->data['CobrandedApplication']['email'];
-
+			$id = $this->request->data['CobrandedApplication']['id'];
 			if (Validation::email($email)) {
-				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email);
+				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email, $id);
 				if ($response['success'] == true) {
 					$this->set('dba', $response['dba']);
 					$this->set('email', $response['email']);
@@ -629,9 +629,7 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function complete_fields($id) {
 		$response = $this->CobrandedApplication->sendForCompletion($id);
-		$this->CobrandedApplication->id = $id;
-		$owner1Email['CobrandedApplicationValue']['Owner1Email'] = $response['email'];
-		if ($response['success'] == true && $this->CobrandedApplication->CobrandedApplicationValue->save($owner1Email)) {
+		if ($response['success'] == true) {
 			$this->set('dba', $response['dba']);
 			$this->set('email', $response['email']);
 			$this->set('fullname', $response['fullname']);

@@ -953,7 +953,7 @@ class CobrandedApplication extends AppModel {
  * @returns
  *     $response array
  */
-	public function sendFieldCompletionEmail($email) {
+	public function sendFieldCompletionEmail($email, $id = null) {
 		$response = array(
 			'success' => false,
 			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
@@ -962,8 +962,26 @@ class CobrandedApplication extends AppModel {
 		$apps = $this->findAppsByEmail($email);
 
 		if (count($apps) == 0) {
-			$response['msg'] = 'Could not find any applications with the specified email address.';
-			return $response;
+			if (isset($id)) {
+				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+				$this->CobrandedApplicationValue->id = $this->CobrandedApplicationValue->find(
+					'first', array(
+						'conditions' => array(
+							'CobrandedApplicationValue.name' => 'Owner1Email', 
+							'CobrandedApplicationValue.cobranded_application_id' => $id
+						), 
+						'recursive' => -1, 
+						'fields' => array('CobrandedApplicationValue.id')
+						)
+					);
+					$this->CobrandedApplicationValue->save(
+						array('CobrandedApplicationValue.value' => $email)
+					);
+				$this->sendFieldCompletionEmail($email);
+			} else {
+				$response['msg'] = 'Could not find any applications with the specified email address.';
+				return $response;
+			}
 		} else {
 			// send the email
 			$timestamp = time();
