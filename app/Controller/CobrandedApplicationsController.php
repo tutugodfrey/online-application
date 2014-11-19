@@ -51,7 +51,7 @@ class CobrandedApplicationsController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('document_callback','quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
+		$this->Auth->allow('index','document_callback','quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
 
@@ -629,8 +629,9 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function complete_fields($id) {
 		$response = $this->CobrandedApplication->sendForCompletion($id);
-
-		if ($response['success'] == true) {
+		$this->CobrandedApplication->id = $id;
+		$owner1Email['CobrandedApplicationValue']['Owner1Email'] = $response['email'];
+		if ($response['success'] == true && $this->CobrandedApplication->CobrandedApplicationValue->save($owner1Email)) {
 			$this->set('dba', $response['dba']);
 			$this->set('email', $response['email']);
 			$this->set('fullname', $response['fullname']);
