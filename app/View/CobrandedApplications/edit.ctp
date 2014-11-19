@@ -44,10 +44,18 @@
 							echo "<script>";
 							echo "var methodName = 'create_rightsignature_document';";
 						
+							echo "var allLabels = document.getElementsByTagName('label');";
+
 							$validationErrorsArray = $this->Session->read('validationErrorsArray');
-			
+
 							foreach ($validationErrorsArray as $arr) {
-								echo "document.getElementById('".$arr['mergeFieldName']."').style.backgroundColor='#FFFF00';";
+								echo "
+									for (l in allLabels) {
+										if (allLabels[l]['htmlFor'] == '".$arr['mergeFieldName']."') { 
+											allLabels[l].style.backgroundColor = '#FFFF00'
+										}
+									}
+								";
 							}
 
 							echo "</script>";
