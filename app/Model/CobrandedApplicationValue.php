@@ -86,6 +86,12 @@ class CobrandedApplicationValue extends AppModel {
 
 	public function beforeSave($options = array()) {
 		$retVal = true;
+
+		// need to be able to clear values in the db
+		if (empty($this->data[$this->alias]['value'])) {
+			return true;
+		}
+
 		// only validate in the update case, ignore during create; null will not be valid in all cases
 		if (key_exists('id', $this->data[$this->alias])) {
 			// look up the value's template field
