@@ -39,6 +39,7 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
 $fieldId = $FP->createIfMissing('Ownership Type', $sectionId, 12, 4, true, 2, 'Corporation::Corp,Sole Prop::SoleProp,LLC::LLC,Partnership::Partnership,Non Profit/Tax Exempt (fed form 501C)::NonProfit,Other::Other', 'OwnerType-', '', null);
+$fieldId = $FP->createIfMissing('Other', $sectionId, 6, 0, false, 2, '', 'OwnerTypeOther', '', null);
 //$fieldId = $FP->createIfMissing('Corporate Status', $sectionId, 12, 0, false, 2, '', 'CorpStatus', '', null, true);
 
 // go to the sections for this page
