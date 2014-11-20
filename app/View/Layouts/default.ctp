@@ -207,7 +207,14 @@
                     }
                   }
                   else {
-                    echo $this->Html->image('logo.png', array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com', 'style' => 'display: block; margin-left:auto; margin-right: auto;'));
+                    	echo $this->Html->image(
+				'logo.png', 
+				array(
+					'alt'=> __('Axia'), 
+					'border' => '0',  
+					'style' => 'display: block; margin-left:auto; margin-right: auto;'
+				)
+			);
                   }
                 ?>
               </div>

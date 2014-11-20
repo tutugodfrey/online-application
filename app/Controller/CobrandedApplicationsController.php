@@ -784,7 +784,7 @@ class CobrandedApplicationsController extends AppController {
 		$this->set('widgetWidth', $widgetWidth);
 
 		// Height of widget is changeable (Optional)
-		$widgetHeight = 500;
+		$widgetHeight = 600;
 		$this->set('widgetHeight', $widgetHeight);
 
 		$guid = htmlspecialchars($_REQUEST["guid"]);
