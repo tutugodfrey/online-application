@@ -180,16 +180,28 @@
                       );
                     } elseif ($include_axia_logo == true) {
                       // only one way to display this combination
-                      echo String::insert(
-                        '<div class="row">' .
-                        '<div class="col-md-6">:partner_logo</div>' .
-                        '<div class="col-md-6">:axia_logo</div>' .
-                        '</div>',
-                        array(
-                          'partner_logo' => $partner_logo,
-                          'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
-                        )
-                      );
+                      if ($cobrand_logo_position < 3) {
+                        echo String::insert(
+                          '<div class="row">' .
+                          '<div class="col-md-6">:partner_logo</div>' .
+                          '<div class="col-md-6">:axia_logo</div>' .
+                          '</div>',
+                          array(
+                            'partner_logo' => $partner_logo,
+                            'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                          )
+                        );
+                      }
+                      else {
+                        echo String::insert(
+                          '<div class="row">' .
+                          '<div class="col-md-6">:axia_logo</div>' .
+                          '</div>',
+                          array(
+                            'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                          )
+                        );
+                      }
                     } else {
                       // position the logo left,center or right
                       $logo_position = $cobrand_logo_position;
