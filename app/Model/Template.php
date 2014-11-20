@@ -368,7 +368,7 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'ContracotrID',
+							'merge_field_name' => 'ContractorID',
 						),
 						array(
 							'name' => 'Allow Merchant to Sign Application',
