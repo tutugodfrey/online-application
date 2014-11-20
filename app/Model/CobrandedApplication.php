@@ -1972,6 +1972,11 @@ class CobrandedApplication extends AppModel {
 							continue;
 						}
 
+						// WebAddress can be empty
+						if ($templateField['merge_field_name'] == 'WebAddress') {
+							continue;
+						}
+
 						$found = false;
 
 						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
