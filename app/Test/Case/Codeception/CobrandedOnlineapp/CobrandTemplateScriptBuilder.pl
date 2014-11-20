@@ -64,7 +64,7 @@ my $templateMap = {
             "'State', \$sectionId, 4, 20, true, 2, \$FP::STATES, 'CorpState', '', null",
             "'Zip', \$sectionId, 4, 13, true, 2, '', 'CorpZip', '', null",
             "'Phone', \$sectionId, 6, 9, true, 2, '', 'CorpPhone', '', null",
-            "'Fax', \$sectionId, 6, 9, true, 2,'', 'CorpFax', '', null",
+            "'Fax', \$sectionId, 6, 9, false, 2,'', 'CorpFax', '', null",
             "'Corp Contact Name', \$sectionId, 8, 0, true, 2, '', 'CorpContact', '', null",
             "'Title', \$sectionId, 4, 0, true, 2, '', 'Title', '', null",
             "'Email', \$sectionId, 12, 14, true, 2, '', 'EMail', '', null"
@@ -76,7 +76,7 @@ my $templateMap = {
             "'State', \$sectionId, 4, 20, true, 2, \$FP::STATES, 'State', '', null",
             "'Zip', \$sectionId, 4, 13, true, 2, '', 'Zip', '', null",
             "'Phone', \$sectionId, 6, 9, true, 2, '', 'PhoneNum', '', null",
-            "'Fax', \$sectionId, 6, 9, true, 2,'', 'FaxNum', '', null",
+            "'Fax', \$sectionId, 6, 9, false, 2,'', 'FaxNum', '', null",
             "'Location Contact Name', \$sectionId, 8, 0, true, 2, '', 'Contact', '', null",
             "'Title', \$sectionId, 4, 0, true, 2, '', 'LocTitle', '', null",
             "'Email', \$sectionId, 12, 14, true, 2, '', 'LocEMail', '', null"
@@ -243,7 +243,7 @@ my $templateMap = {
             "'State', \$sectionId, 4, 20, true, 2, \$FP::STATES, 'Owner1State', '', null",
             "'Zip', \$sectionId, 4, 13, true, 2, '', 'Owner1Zip', '', null",
             "'Phone', \$sectionId, 6, 9, true, 2, '', 'Owner1Phone', '', null",
-            "'Fax', \$sectionId, 6, 9, true, 2, '', 'Owner1Fax', '', null",
+            "'Fax', \$sectionId, 6, 9, false, 2, '', 'Owner1Fax', '', null",
             "'Email', \$sectionId, 6, 14, true, 2, '', 'Owner1Email', '', null",
             "'SSN', \$sectionId, 6, 12, true, 2, '', 'OwnerSSN', '', null, null, true",
             "'Date of Birth', \$sectionId, 8,  1, true, 2, '', 'Owner1DOB', '', null"
