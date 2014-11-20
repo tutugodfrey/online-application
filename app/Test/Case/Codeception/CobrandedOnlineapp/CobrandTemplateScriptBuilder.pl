@@ -87,7 +87,7 @@ my $templateMap = {
             "'Length of Current Ownership',\$sectionId, 12, 0, true, 2, '', 'Ownership Length', '', null",
             "'Existing Axia Merchant?', \$sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'ExistingAxiaMerchant-', '', null",
             "'Current MID #',\$sectionId, 12, 0, false, 2, '', 'Current MID', '', null",
-            "'General Comments',\$sectionId, 12, 21, true, 2, '', 'General Comments', '', null"
+            "'General Comments',\$sectionId, 12, 21, false, 2, '', 'General Comments', '', null"
         ],
         'LOCATION TYPE' => [
             "'Location Type', \$sectionId, 6, 4, true, 2, 'Retail Store::RetailStore,Industrial::Industrial,Trade::Trade,Office::Office,Residence::Residence,Other::SiteInspectionOther', 'LocationType-', '', null",

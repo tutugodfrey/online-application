@@ -98,7 +98,7 @@ $fieldId = $FP->createIfMissing('Customer Service Phone',$sectionId, 12, 9, true
 $fieldId = $FP->createIfMissing('Business Open Date', $sectionId, 12, 1, true, 2, 'N/A', 'OpenDate', '', null);
 $fieldId = $FP->createIfMissing('Length of Current Ownership',$sectionId, 12, 0, true, 2, 'N/A', 'Ownership Length', '', null);
 $fieldId = $FP->createIfMissing('Existing Axia Merchant?', $sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'ExistingAxiaMerchant-', '', null);
-$fieldId = $FP->createIfMissing('General Comments',$sectionId, 12, 21, true, 2, '', 'General Comments', '', null);
+$fieldId = $FP->createIfMissing('General Comments',$sectionId, 12, 21, false, 2, '', 'General Comments', '', null);
 
 // go to the sections for this page
 // $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
