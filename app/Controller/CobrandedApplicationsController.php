@@ -51,7 +51,7 @@ class CobrandedApplicationsController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('document_callback','quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
+		$this->Auth->allow('index','document_callback','quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
 
@@ -318,9 +318,9 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->request->is('post')) {
 			// did we get a valid email?
 			$email = $this->request->data['CobrandedApplication']['email'];
-
+			$id = $this->request->data['CobrandedApplication']['id'];
 			if (Validation::email($email)) {
-				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email);
+				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email, $id);
 				if ($response['success'] == true) {
 					$this->set('dba', $response['dba']);
 					$this->set('email', $response['email']);
@@ -629,7 +629,6 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function complete_fields($id) {
 		$response = $this->CobrandedApplication->sendForCompletion($id);
-
 		if ($response['success'] == true) {
 			$this->set('dba', $response['dba']);
 			$this->set('email', $response['email']);
