@@ -112,7 +112,7 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 
 // create new fields
 $fieldId = $FP->createIfMissing('Location Type', $sectionId, 6, 4, true, 2, 'Retail Store::RetailStore,Industrial::Industrial,Trade::Trade,Office::Office,Residence::Residence,Other::SiteInspectionOther', 'LocationType-', '', null);
-$fieldId = $FP->createIfMissing('Other', $sectionId, 6, 0, false, 2, '', 'LocationTypeOther', '', null);
+$fieldId = $FP->createIfMissing('', $sectionId, 6, 0, false, 2, '', 'LocationTypeOther', '', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
