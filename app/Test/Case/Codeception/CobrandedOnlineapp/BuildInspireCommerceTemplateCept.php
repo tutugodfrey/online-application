@@ -20,7 +20,7 @@ $cobrandId = $CP->createIfMissing('Inspire Commerce');
 $I->amOnPage('/admin/cobrands/'.$cobrandId.'/templates');
 
 // create a new template for this cobrand
-$templateId = $TP->createIfMissing('Default', $cobrandId, '3', true, '', 'a_5253273_402cab75a117423981cf006cc1fdbf50', 'a_5540921_0ca75dcf2a4d4a2795a378521f896426', '50');
+$templateId = $TP->createIfMissing('Default', $cobrandId, '3', true, '', 'a_7427708_a4bd58b7d889487ea94c23fba177cfc0', 'a_5540921_0ca75dcf2a4d4a2795a378521f896426', '50');
 
 // go to the pages for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
