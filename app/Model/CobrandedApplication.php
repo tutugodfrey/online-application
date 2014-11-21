@@ -1911,7 +1911,7 @@ class CobrandedApplication extends AppModel {
 				'TemplatePages' => array(
 					'TemplateSections' => array(
 						'TemplateFields' => array(
-							'fields' => array('id', 'type', 'name', 'default_value', 'merge_field_name', 'order', 'width', 'required')
+							'fields' => array('id', 'type', 'name', 'default_value', 'merge_field_name', 'order', 'width', 'required', 'rep_only')
 						)
 					),
 				),
@@ -2012,6 +2012,7 @@ class CobrandedApplication extends AppModel {
 							$errorArray['mergeFieldName'] = $templateField['merge_field_name'];
 							$errorArray['msg'] = 'Required field is empty: '.$fieldName;
 							$errorArray['page'] = $pageOrder;
+							$errorArray['rep_only'] = $templateField['rep_only'];
 							
 							$response['validationErrorsArray'][] = $errorArray;
 						}

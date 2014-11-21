@@ -48,14 +48,28 @@
 
 							$validationErrorsArray = $this->Session->read('validationErrorsArray');
 
+							$repOnlyField = false;
+
 							foreach ($validationErrorsArray as $arr) {
 								echo "
 									for (l in allLabels) {
-										if (allLabels[l]['htmlFor'] == '".$arr['mergeFieldName']."') { 
+										if (allLabels[l]['htmlFor'] == '".$arr['mergeFieldName']."') {
 											allLabels[l].style.backgroundColor = '#FFFF00'
 										}
 									}
 								";
+
+								if ($arr['rep_only']) {
+									$repOnlyField = true;
+								}
+							}
+
+							if (!in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+								if (is_array($validationErrorsArray) && count($validationErrorsArray) > 0) {
+									if ($repOnlyField == true) {
+										echo "alert('Application must be completed by the sales representative.');";
+									}
+								}
 							}
 
 							echo "</script>";
