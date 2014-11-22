@@ -921,7 +921,23 @@ class CobrandedApplication extends AppModel {
 		return false;
 	}
 
-	public function findAppsByEmail($email) {
+/**
+ * findAppsByEmail 
+ * 
+ * @params
+ *     $email string
+ *     $id integer
+ * @returns
+ *     $response array
+ */
+	public function findAppsByEmail($email, $id = null) {
+		$conditions[] = array('CobrandedApplicationValue.value' => $email);
+				// should probably check the state too
+		
+		if (isset($id)) {
+			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
+			$conditions[]['CobrandedApplicationValue.name'] = 'Owner1Email';
+		}
 		$apps = $this->find(
 			'all',
 			array(
@@ -933,38 +949,36 @@ class CobrandedApplication extends AppModel {
 						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
 					)
 				),
-				'conditions' => array(
-					'CobrandedApplicationValue.value' => $email,
-					// should probably check the state too
-				),
-				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'),
+				'conditions' => $conditions,
+				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'), 
 				'order' => 'CobrandedApplication.created desc'
 			)
 		);
 
 		return $apps;
 	}
-
+	
 /**
  * sendFieldCompletionEmail
  * 
  * @params
  *     $email string
+ *     $id integer
  * @returns
  *     $response array
  */
 	public function sendFieldCompletionEmail($email, $id = null) {
-		$response = array(
-			'success' => false,
-			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
-		);
+			$response = array(
+				'success' => false,
+				'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
+			);
 
-		$apps = $this->findAppsByEmail($email);
+		$apps = $this->findAppsByEmail($email, $id);
 
 		if (count($apps) == 0) {
 			if (isset($id)) {
 				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-				$this->CobrandedApplicationValue->id = $this->CobrandedApplicationValue->find(
+				$cav = $this->CobrandedApplicationValue->find(
 					'first', array(
 						'conditions' => array(
 							'CobrandedApplicationValue.name' => 'Owner1Email', 
@@ -972,12 +986,14 @@ class CobrandedApplication extends AppModel {
 						), 
 						'recursive' => -1, 
 						'fields' => array('CobrandedApplicationValue.id')
-						)
-					);
-					$this->CobrandedApplicationValue->save(
-						array('CobrandedApplicationValue.value' => $email)
-					);
-				$this->sendFieldCompletionEmail($email);
+					)
+				);
+				$appValue = $this->getApplicationValue($cav['CobrandedApplicationValue']['id']);
+				$appValue['CobrandedApplicationValue']['value'] = $email;
+				if ($this->CobrandedApplicationValue->save($appValue)) {
+
+					return $this->sendFieldCompletionEmail($email);
+				}
 			} else {
 				$response['msg'] = 'Could not find any applications with the specified email address.';
 				return $response;
@@ -997,7 +1013,6 @@ class CobrandedApplication extends AppModel {
 			);
 
 			$response = $this->sendEmail($args);
-
 			unset($args);
 
 			if ($response['success'] == true) {
@@ -1007,11 +1022,9 @@ class CobrandedApplication extends AppModel {
 				$response = $this->createEmailTimelineEntry($args);
 				unset($args);
 			}
-
 			$dbaBusinessName = '';
 			$ownerName = '';
 			$ownerEmail = '';
-
 			$valuesMap = $this->buildCobrandedApplicationValuesMap($apps[0]['CobrandedApplicationValues']);
 
 			if (!empty($valuesMap['DBA'])) {
