@@ -20,7 +20,7 @@ $cobrandId = $CP->createIfMissing('Inspire Commerce');
 $I->amOnPage('/admin/cobrands/'.$cobrandId.'/templates');
 
 // create a new template for this cobrand
-$templateId = $TP->createIfMissing('Default', $cobrandId, '3', true, '', 'a_5253273_402cab75a117423981cf006cc1fdbf50', 'a_5540921_0ca75dcf2a4d4a2795a378521f896426', '50');
+$templateId = $TP->createIfMissing('Default', $cobrandId, '3', true, '', 'a_7427708_a4bd58b7d889487ea94c23fba177cfc0', 'a_5540921_0ca75dcf2a4d4a2795a378521f896426', '50');
 
 // go to the pages for this template
 $I->amOnPage('/admin/templates/'.$templateId.'/templatepages');
@@ -192,9 +192,9 @@ $fieldId = $FP->createIfMissing('Does your organization have a store front locat
 $fieldId = $FP->createIfMissing('Are orders received and processed at business location?', $sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'OrdersProcAtBusinessLoc-', '', null);
 $fieldId = $FP->createIfMissing('Where is inventory housed?', $sectionId, 12, 0, true, 2, '', 'Where is inventory housed', '', null);
 $fieldId = $FP->createIfMissing('Are any of the following aspects of your business outsourced to other companies? (please select all that apply)', $sectionId, 12, 6, false, 2, '', 'label', '', null);
-$fieldId = $FP->createIfMissing('Customer Service (Desc)', $sectionId, 4, 0, true, 2, '', 'Customer Service', '', null);
-$fieldId = $FP->createIfMissing('Product Shipment (Desc)', $sectionId, 4, 0, true, 2, '', 'Product Shipment', '', null);
-$fieldId = $FP->createIfMissing('Handling of Returns (Desc)', $sectionId, 4, 0, true, 2, '', 'Handling of Returns', '', null);
+$fieldId = $FP->createIfMissing('Customer Service (Desc)', $sectionId, 4, 0, false, 2, '', 'Customer Service', '', null);
+$fieldId = $FP->createIfMissing('Product Shipment (Desc)', $sectionId, 4, 0, false, 2, '', 'Product Shipment', '', null);
+$fieldId = $FP->createIfMissing('Handling of Returns (Desc)', $sectionId, 4, 0, false, 2, '', 'Handling of Returns', '', null);
 $fieldId = $FP->createIfMissing('Cardholder Billing', $sectionId, 12, 0, true, 0, '', 'Cardholder Billing', '', null);
 $fieldId = $FP->createIfMissing('By what methods do sales take place? (i.e. internet, trade shows, etc.)', $sectionId, 12, 0, true, 2, '', 'By what methods to sales take place ie Internet trade shows etc ', '', null);
 $fieldId = $FP->createIfMissing('Are sales done:', $sectionId, 12, 6, false, 3, '', 'label', '', null);
