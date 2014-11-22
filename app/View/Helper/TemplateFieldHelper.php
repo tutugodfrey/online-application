@@ -115,6 +115,13 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 20);
 				}
 		
+				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
+						'day' => 'DAY',
+						'month' => 'MONTH',
+						'year' => 'YEAR'
+					)
+				);
+
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
@@ -141,6 +148,13 @@ class TemplateFieldHelper extends Helper {
 					);
 				}
 		
+				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
+						'minute' => 'MINUTE',
+						'hour' => 'HOUR',
+						'meridian' => 'AM/PM'
+					)
+				);
+
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
