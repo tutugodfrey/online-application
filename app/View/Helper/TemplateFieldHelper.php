@@ -56,6 +56,12 @@ class TemplateFieldHelper extends Helper {
 			case 0: // text
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+
+				if ($field['merge_field_name'] == 'ContractorID') {
+					$user = SessionHelper::read('Auth.User');
+					$fieldOptions = Hash::insert($fieldOptions, 'default', $user['firstname'].' '.$user['lastname']);
+				}
+				
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 		
