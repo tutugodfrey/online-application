@@ -265,8 +265,10 @@
 	$templateQuery = "
 	    SELECT users.template_id, cobrands.partner_name
 	      FROM onlineapp_users as users
+              JOIN onlineapp_templates as templates
+                ON users.template_id = templates.id
               JOIN onlineapp_cobrands as cobrands
-                ON users.cobrand_id = cobrands.id
+                ON templates.cobrand_id = cobrands.id
 	     WHERE users.id = $data[user_id]
 	";
 

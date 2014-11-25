@@ -56,11 +56,15 @@ class TemplateFieldHelper extends Helper {
 			case 0: // text
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+
+				if ($field['merge_field_name'] == 'ContractorID') {
+					$user = SessionHelper::read('Auth.User');
+					$fieldOptions = Hash::insert($fieldOptions, 'default', $user['firstname'].' '.$user['lastname']);
+				}
+				
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
-
-			case 1:  // 'date'
-			case 2:  // 'time'
+		
 			case 9:  // 'phoneUS',       //  9 - (###) ###-####
 			case 12: // 'ssn',           // 12 - ###-##-####
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
@@ -68,9 +72,9 @@ class TemplateFieldHelper extends Helper {
 			case 19: // 'digits',        // 19 - (#)+
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				if ($field['type'] == 1) {
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
+//					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
 				} else if ($field['type'] == 2) {
-					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
+//					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
 				} else if ($field['type'] == 9) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'phoneUS');
 				} else if ($field['type'] == 12) {
@@ -84,6 +88,79 @@ class TemplateFieldHelper extends Helper {
 				}
 				
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
+				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+				break;
+
+			case 1:  // 'date'
+				$year = null;
+				$month = null;
+				$day = null;
+
+				if (preg_match('/(\d{4})\/(\d{2})\/(\d{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
+					$year = $matches[1];
+					$month = $matches[2];
+					$day = $matches[3];
+				}
+
+				$fieldOptions = Hash::insert($fieldOptions, 'type', 'date');
+
+				if ($year != null && $month != null && $day != null) {
+					$fieldOptions = Hash::insert($fieldOptions, 'selected', array(
+							'year' => $year,
+							'month' => $month,
+							'day' => $day
+						)
+					);
+				}
+
+				if ($field['name'] == 'Date of Birth') {
+					$fieldOptions = Hash::insert($fieldOptions, 'minYear', date('Y') - 100);
+					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y'));
+				} else {
+					$fieldOptions = Hash::insert($fieldOptions, 'minYear', date('Y') - 100);
+					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 20);
+				}
+		
+				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
+						'day' => 'DAY',
+						'month' => 'MONTH',
+						'year' => 'YEAR'
+					)
+				);
+
+				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
+				break;
+
+			case 2:  // 'time'
+				$hour = null;
+				$minute = null;
+				$meridian = null;
+
+				if (preg_match('/(\d{2}):(\d{2}) (\w{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
+					$hour = $matches[1];
+					$minute = $matches[2];
+					$meridian = $matches[3];
+				}
+
+				$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
+				$fieldOptions = Hash::insert($fieldOptions, 'interval', '15');
+
+				if ($hour != null && $minute != null && $meridian != null) {
+					$fieldOptions = Hash::insert($fieldOptions, 'selected', array(
+							'hour' => $hour,
+							'min' => $minute,
+							'meridian' => $meridian
+						)
+					);
+				}
+		
+				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
+						'minute' => 'MINUTE',
+						'hour' => 'HOUR',
+						'meridian' => 'AM/PM'
+					)
+				);
+
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
@@ -135,7 +212,6 @@ class TemplateFieldHelper extends Helper {
 			case 5: // percent group
 				$cleanFieldId = str_replace($this->badCharacters, '', $field['name']);
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'number');
-				$fieldOptions = Hash::insert($fieldOptions, 'onkeypress', 'if ( isNaN(this.value + String.fromCharCode(event.which) )) return false;');
 				$fieldOptions = Hash::insert($fieldOptions, 'onblur', '$.event.trigger({type: "percentOptionBlur", origin: this, totalFieldId: "#' . $cleanFieldId . '_Total", "fieldset_id": "' . $cleanFieldId . '"});');
 				$fieldOptions = Hash::insert($fieldOptions, 'min', 0);
 				$fieldOptions = Hash::insert($fieldOptions, 'max', 100);
@@ -144,6 +220,18 @@ class TemplateFieldHelper extends Helper {
 				$retVal = $retVal . '<legend>'.$field['name'].' <span class="small">(total must equal 100%)</span></legend>';
 
 				foreach ($field['CobrandedApplicationValues'] as $percentOption) {
+					$label = $percentOption['name'];
+
+					$defaultValues = split(',', $field['default_value']);
+
+					foreach ($defaultValues as $val) {
+						$nameValuePair = split('::', $val);
+
+						if (($field['merge_field_name'].$nameValuePair[1]) == $percentOption['name']) {
+							$label = $nameValuePair[0];	
+						}
+					}
+
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'name', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
@@ -151,7 +239,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'value', $percentOption['value']);
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-10');
 
-					$retVal = $retVal . $this->Html->tag('label', $percentOption['name']);
+					$retVal = $retVal . $this->Html->tag('label', $label);
 					$retVal = $retVal . $this->Html->tag(
 						'div',
 						$this->Html->tag('input', '', $fieldOptions).

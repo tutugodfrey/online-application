@@ -31,8 +31,20 @@ echo $this->Form->input('token_used');
 echo $this->Form->input('token_uses');
 }
 
-echo $this->Form->input('cobrand_id');
-echo $this->Form->input('template_id');
+echo $this->Form->input('Cobrand', array('label' => 'Select Cobrand(s)', 'multiple' => 'checkbox'));
+echo "<br>";
+echo $this->Form->input('Template', array('label' => 'Select Template(s)', 'multiple' => 'checkbox'));
+echo "<br>";
+echo $this->Form->input(
+    'User.template_id',
+    array(
+        'options' => $userTemplates,
+        'label' => 'Select Default Template',
+        'type' => 'select',
+        'default' => $defaultTemplateId
+    )
+);
+echo "<br>";
 
 echo $this->Form->end('Save User');
 ?>

@@ -4,7 +4,6 @@ App::uses('AppModel', 'Model');
  * Cobrand Model
  *
  * @property Template $Template
- * @property User $User
  */
 class Cobrand extends AppModel {
 
@@ -15,7 +14,7 @@ class Cobrand extends AppModel {
 	public $responseUrlTypes = array(
 		1 => 'return nothing',
 		2 => 'return RS signing url',
-		3 =>'return online app url'
+		3 => 'return online app url'
 	);
 
 	public $validate = array(
@@ -66,11 +65,6 @@ class Cobrand extends AppModel {
  * @var array
  */
 	public $hasMany = array(
-		'Users' => array(
-			'className' => 'User',
-			'foreignKey' => 'cobrand_id',
-			'dependent' => false,
-		),
 		'Templates' => array(
 			'className' => 'Template',
 			'foreignKey' => 'cobrand_id',

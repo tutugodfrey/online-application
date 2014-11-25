@@ -53,13 +53,24 @@ class Template extends AppModel {
 		)
 	);
 
-	public function getList($cobrandId = 2) {
-		return $this->find('list',
+	public function getList($cobrandId = null) {
+		$conditions = array();
+
+		if ($cobrandId != null) {
+			$conditions = array('Template.cobrand_id' => $cobrandId);
+		}
+
+		$templates = $this->find('all', 
 			array(
-				'order' => array('Template.name' => 'asc'),
-				'conditions' => array('Template.cobrand_id' => $cobrandId),
+				'contain' => array('Cobrand.partner_name'),
+				'fields' => array('Template.id', 'Template.name'),
+				'order' => array('Cobrand.partner_name' => 'ASC'),
+				'conditions' => $conditions,
 			)
 		);
+
+		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
+		return $templates;
 	}
 
 	public function getCobrand($cobrandId) {
@@ -357,7 +368,16 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'ContracotrID',
+							'merge_field_name' => 'ContractorID',
+						),
+						array(
+							'name' => 'Allow Merchant to Sign Application',
+							'type' => 3,
+							'required' => false,
+							'source' => 1,
+							'width' => 12,
+							'rep_only' => true,
+							'merge_field_name' => 'AllowMerchantToSignApplication',
 						)
 					)
 				),
@@ -587,7 +607,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'hr',
 							'type' => 8,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => '',
 							'width' => 12,

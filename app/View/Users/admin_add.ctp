@@ -13,6 +13,22 @@
         echo $this->Form->input('api_password', array('label'=> 'Api Password','type'=>'password', 'value'=>'', 'autocomplete'=>'off'));
         echo $this->Form->input('group_id');
         echo $this->Form->input('Manager', array('label' => 'Select Manager(s)', 'multiple' => 'checkbox'));
+
+        echo "<br>";
+        echo $this->Form->input('Cobrand', array('label' => 'Select Cobrand(s)', 'multiple' => 'checkbox'));
+        echo "<br>";
+        echo $this->Form->input('Template', array('label' => 'Select Template(s)', 'multiple' => 'checkbox'));
+        echo "<br>";
+        echo $this->Form->input(
+            'User.template_id',
+            array(
+                'options' => $templates,
+                'label' => 'Select Default Template',
+                'type' => 'select'
+            )
+        );
+        echo "<br>";
+
         ?>
     </fieldset>
     <?php echo $this->Form->end('Submit'); ?>

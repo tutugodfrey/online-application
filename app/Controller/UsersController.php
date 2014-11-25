@@ -87,8 +87,12 @@ class UsersController extends AppController {
 	}
 
 	function admin_add() {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
+		$this->set('cobrands', $this->Cobrand->getList());
+		$this->set('templates', $this->User->Template->getList());
 
 		if ($this->request->is('post')) {
 			$this->User->create();
@@ -127,17 +131,28 @@ class UsersController extends AppController {
 	}
 
 	function admin_edit($id) {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->User->id = $id;
 		$this->User->read();
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('assigned_managers', $this->User->getAssignedManagerIds($id));
 		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
-		$this->set('cobrands', $this->User->Cobrand->getList());
+		$this->set('cobrands', $this->Cobrand->getList());
 		$user = $this->User->read();
-		$this->set('templates', $this->User->Template->getList($user['User']['cobrand_id']));
+
+		$cobrandIds = $this->User->getCobrandIds($id);
+		$templates = $this->User->Template->getList($cobrandIds);
+		$this->set('templates', $templates);
+
+		$userTemplates = $this->User->getTemplates($id);
+
+		$this->set('userTemplates', $userTemplates);
+		$this->set('defaultTemplateId', $user['User']['template_id']);
+
 		// TODO: add templates
-		if (empty($this->request->data)){
+		if (empty($this->request->data)) {
 			$this->request->data = $this->User->read();
 		} else {
 			if(empty($this->request->data['User']['pwd']) && empty($this->request->data['User']['password_confirm'])) {
@@ -182,6 +197,21 @@ class UsersController extends AppController {
 
 	function admin_logout() {
 		$this->redirect('/users/logout');
+	}
+
+	public function get_user_templates($id) {
+		$this->autoRender = false;
+
+		$userTemplates = $this->User->getTemplates($id);
+
+		if (!empty($userTemplates) && is_array($userTemplates)) {
+			foreach ($userTemplates as $key => $val) {
+        		echo '<option value="'.$key.'">'.$val.'</option>';
+   			}
+		}
+		else {
+			echo '<option value="">NO TEMPLATES FOR USER</option>';
+		}
 	}
 }
 ?>

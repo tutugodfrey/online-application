@@ -48,15 +48,7 @@ class TemplatePageTest extends CakeTestCase {
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
-
 		unset($this->TemplatePage);
 		unset($this->Template);
 		unset($this->Cobrand);
@@ -123,8 +115,9 @@ class TemplatePageTest extends CakeTestCase {
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
 			'include_axia_logo' => true,
-			'rightsignature_template_guid' => '',
-			'rightsignature_install_template_guid' => '',
+			'rightsignature_template_guid' => null,
+			'rightsignature_install_template_guid' => null,
+			'owner_equity_threshold' => 50
 		);
 		$returned_template = $this->TemplatePage->getTemplate($template_id);
 		$this->assertEquals($expected_template, $returned_template);
@@ -139,8 +132,9 @@ class TemplatePageTest extends CakeTestCase {
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
 			'include_axia_logo' => true,
-			'rightsignature_template_guid' => '',
-			'rightsignature_install_template_guid' => '',
+			'rightsignature_template_guid' => null,
+			'rightsignature_install_template_guid' => null,
+			'owner_equity_threshold' => 50
 		);
 		$returned_template = $this->TemplatePage->getTemplate($template_id);
 		$this->assertEquals($expected_template, $returned_template);
@@ -155,8 +149,9 @@ class TemplatePageTest extends CakeTestCase {
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
 			'include_axia_logo' => true,
-			'rightsignature_template_guid' => '',
-			'rightsignature_install_template_guid' => '',
+			'rightsignature_template_guid' => null,
+			'rightsignature_install_template_guid' => null,
+			'owner_equity_threshold' => 50
 		);
 		$returned_template = $this->TemplatePage->getTemplate($template_id);
 		$this->assertEquals($expected_template, $returned_template);

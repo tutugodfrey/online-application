@@ -114,15 +114,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
-
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
@@ -195,6 +187,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'modified' => '2007-03-18 10:41:31',
 				'rightsignature_template_guid' => null,
 				'rightsignature_install_template_guid' => null,
+				'owner_equity_threshold' => 50,
 				'Cobrand' => array(
 					'id' => (int) 1,
 					'partner_name' => 'Partner Name 1',
@@ -732,7 +725,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"http://www.domain.com",'.
 			'"12.82234",'.
 			'"1234567890",'.
-			'"true",'.
+			'"",'.
 			'"a whole lot of text can go into this field...",'.
 			'"text text text",'.
 			'"text text text",'.
@@ -762,20 +755,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 		//     - user
 		//     - fieldsData
 		// pre-test:
-		//     - should be one cobrandedApplications for this user
+		//     - should be one cobrandedApplication for this user
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Did not expect to find any applications for user with id ['. $this->__user['OnlineappUser']['id'] .']');
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['. $this->__user['OnlineappUser']['id'] .']');
 
 		// set expected results
 		$expectedValidationErrors = array(
 			'required_text_from_api_without_default' => 'required',
-			'Text field' => 'required',
-			'Text field 1' => 'required'
+			'required_text_from_api_without_default_source_2' => 'required',
+			'required_text_from_user_without_default_repOnly' => 'required',
+			'required_text_from_user_without_default_textfield' => 'required',
+			'required_text_from_user_without_default_textfield1' => 'required'
 		);
 
 		// set knowns
@@ -799,7 +794,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(0, count($applications), 'Expect to find no applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
@@ -875,7 +871,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Expect to find one application for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		$this->assertEquals(2, count($applications), 'Expect to find two applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
 		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
@@ -1350,10 +1347,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => false,
 			'validationErrors' => array(
-				'field 1' => 'required',
-				'field 2' => 'required',
-				'field 3' => 'required',
-				'Text field 1' => 'required'
+				'required_text_from_user_without_default' => 'required',
+				'rep_only_true_field_for_testing_rep_only_view_logic' => 'required'
      		),
      		'validationErrorsArray' => array(
 				0 => array(

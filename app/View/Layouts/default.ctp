@@ -116,7 +116,7 @@
            <br />If session expires you must to log back in and re-enter any unsaved work that was lost upon session expiration.
            </p> 
         <img src="/img/refreshing.gif" id="refreshIMG" style="display:none;float:right; margin-right: 25px" />   
-       <span id="cancelBtn" class="btn">Continue</span>
+       <span id="cancelBtn" class="btns">Continue</span>
    </div>
     <!-- End Session notification Dialog Box --> 
     <!--  span id="loginBtn" class="btn">Need to login?</span -->
@@ -128,8 +128,39 @@
                 <p class="navbar-text">
                 <?php echo $this->Html->getCrumbs(' > ', array('text' => _('Axia Admin Home'), 'url' => '/admin/')); ?>
                 </p>
-                <p class="navbar-text navbar-right">
-                  <?php echo $this->Html->link(__('Logout'), '/users/logout'); ?>
+                <p class="navbar-text navbar-right btn-group">
+                <?php 
+			echo $this->Html->link(__('Applications'), 
+				array(
+					'controller' => 'cobrandedApplications',
+					'action' => 'index',
+					'admin' => true,
+				),
+				array(
+					'class' => 'btn btn-default'
+				)
+			); 
+			echo $this->Html->link(__('Coversheets'), 
+				array(
+					'controller' => 'coversheets',
+					'action' => 'index',
+					'admin' => true,
+				),
+				array(
+					'class' => 'btn btn-default'
+				)
+			); 
+			echo $this->Html->link(__('Logout'), 
+				array(
+					'controller' => 'users',
+					'action' => 'logout',
+					'admin' => false,
+				),
+				array(
+					'class' => 'btn btn-default'
+				)
+			); 
+		?>
                 </p>
               </nav>
             <?php else: ?>
@@ -149,16 +180,28 @@
                       );
                     } elseif ($include_axia_logo == true) {
                       // only one way to display this combination
-                      echo String::insert(
-                        '<div class="row">' .
-                        '<div class="col-md-6">:partner_logo</div>' .
-                        '<div class="col-md-6">:axia_logo</div>' .
-                        '</div>',
-                        array(
-                          'partner_logo' => $partner_logo,
-                          'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
-                        )
-                      );
+                      if ($cobrand_logo_position < 3) {
+                        echo String::insert(
+                          '<div class="row">' .
+                          '<div class="col-md-6">:partner_logo</div>' .
+                          '<div class="col-md-6">:axia_logo</div>' .
+                          '</div>',
+                          array(
+                            'partner_logo' => $partner_logo,
+                            'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                          )
+                        );
+                      }
+                      else {
+                        echo String::insert(
+                          '<div class="row">' .
+                          '<div class="col-md-6">:axia_logo</div>' .
+                          '</div>',
+                          array(
+                            'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                          )
+                        );
+                      }
                     } else {
                       // position the logo left,center or right
                       $logo_position = $cobrand_logo_position;
@@ -176,7 +219,14 @@
                     }
                   }
                   else {
-                    echo $this->Html->image('logo.png', array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com', 'style' => 'display: block; margin-left:auto; margin-right: auto;'));
+                    	echo $this->Html->image(
+				'logo.png', 
+				array(
+					'alt'=> __('Axia'), 
+					'border' => '0',  
+					'style' => 'display: block; margin-left:auto; margin-right: auto;'
+				)
+			);
                   }
                 ?>
               </div>

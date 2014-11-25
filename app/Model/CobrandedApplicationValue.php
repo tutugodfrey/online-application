@@ -86,6 +86,12 @@ class CobrandedApplicationValue extends AppModel {
 
 	public function beforeSave($options = array()) {
 		$retVal = true;
+
+		// need to be able to clear values in the db
+		if (empty($this->data[$this->alias]['value'])) {
+			return true;
+		}
+
 		// only validate in the update case, ignore during create; null will not be valid in all cases
 		if (key_exists('id', $this->data[$this->alias])) {
 			// look up the value's template field
@@ -94,9 +100,20 @@ class CobrandedApplicationValue extends AppModel {
 				array(
 					'conditions' => array(
 						'TemplateField.id' => $this->data[$this->alias]['template_field_id']
-					)
+					),
+					'recursive' => -1
 				)
 			);
+
+			// if WebAddress field is not empty, check if protocol exists
+			// if it doesn't, add it in
+			if ($field['TemplateField']['merge_field_name'] == 'WebAddress') {
+				if (!empty($this->data[$this->alias]['value'])) {
+					if (!preg_match('/^http:\/\//i', $this->data[$this->alias]['value'])) {
+						$this->data[$this->alias]['value'] = 'http://'.$this->data[$this->alias]['value'];
+					}
+				}
+			}
 
 			// if field is set to encrypt, check for masking
 			// if it's masked, do not update value, otherwise value in db will be masked
@@ -260,7 +277,9 @@ class CobrandedApplicationValue extends AppModel {
 
 							if (strpos($stackTrace, 'createRightSignatureApplicationXml') !== false ||
 								strpos($stackTrace, 'CoversheetsController->getCobrandedApplicationValues') !== false ||
-								strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false) {
+								strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false ||
+								strpos($stackTrace, 'CobrandedApplicationsController->create_rightsignature_document') !== false ||
+								strpos($stackTrace, 'CobrandedApplicationsController->api_add()') !== false) {
 								$maskValue = false;
 							}
 

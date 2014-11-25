@@ -44,18 +44,41 @@
 							echo "<script>";
 							echo "var methodName = 'create_rightsignature_document';";
 						
+							echo "var allLabels = document.getElementsByTagName('label');";
+
 							$validationErrorsArray = $this->Session->read('validationErrorsArray');
-			
+
+							$repOnlyField = false;
+
 							foreach ($validationErrorsArray as $arr) {
-								echo "document.getElementById('".$arr['mergeFieldName']."').style.backgroundColor='#FF0000';";
-								echo "document.getElementById('".$arr['mergeFieldName']."').style.opacity='0.8';";
+								echo "
+									for (l in allLabels) {
+										if (allLabels[l]['htmlFor'] == '".$arr['mergeFieldName']."') {
+											allLabels[l].style.backgroundColor = '#FFFF00'
+										}
+									}
+								";
+
+								if ($arr['rep_only']) {
+									$repOnlyField = true;
+								}
+							}
+
+							if (!in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+								if (is_array($validationErrorsArray) && count($validationErrorsArray) > 0) {
+									if ($repOnlyField == true) {
+										echo "alert('Application must be completed by the sales representative.');";
+									}
+								}
 							}
 
 							echo "</script>";
 						}
-							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo $this->Html->link('Return to Applications Admin', array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => 'true')) . "<br/>"; 
-}
+						
+						if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+							echo $this->Html->link('Return to Applications Admin', array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => 'true')) . "<br/>"; 
+						}
+
 					?>
 					
 					<div id="actionButtons">
@@ -145,6 +168,7 @@
 									$('#FaxNum').val($('#CorpFax').val());
 									$('#Contact').val($('#CorpContact').val());
 									$('#LocTitle').val($('#Title').val());
+									$('#LocEMail').val($('#EMail').val());
 
 									$('#DBA').trigger('change');
 									$('#Address').trigger('change');
@@ -155,6 +179,7 @@
 									$('#FaxNum').trigger('change');
 									$('#Contact').trigger('change');
 									$('#LocTitle').trigger('change');
+									$('#LocEMail').trigger('change');
 								}
 								else {
 									$('#DBA').val('');
@@ -166,6 +191,7 @@
 									$('#FaxNum').val('');
 									$('#Contact').val('');
 									$('#LocTitle').val('');
+									$('#LocEMail').val('');
 
 									$('#DBA').trigger('change');
 									$('#Address').trigger('change');
@@ -176,6 +202,24 @@
 									$('#FaxNum').trigger('change');
 									$('#Contact').trigger('change');
 									$('#LocTitle').trigger('change');
+									$('#LocEMail').trigger('change');
+								}
+							}
+
+							function copyDepositoryToFeesFields() {
+								if ($('#fees_same_as_depository').prop('checked')) {
+									$('#FeesRoutingNum').val($('#RoutingNum').val());
+									$('#FeesAccountNum').val($('#AccountNum').val());
+									
+									$('#FeesRoutingNum').trigger('change');
+									$('#FeesAccountNum').trigger('change');
+								}
+								else {
+									$('#FeesRoutingNum').val('');
+									$('#FeesAccountNum').val('');
+									
+									$('#FeesRoutingNum').trigger('change');
+									$('#FeesAccountNum').trigger('change');
 								}
 							}
 						");
