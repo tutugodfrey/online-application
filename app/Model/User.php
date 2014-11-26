@@ -392,11 +392,48 @@ class User extends AppModel {
 		return $results;
 	}
 
+
 	public function arrayDiff($change) {
-		$new = Set::sort($change['User'], '{n}.id', 'asc');
-		$original = Set::sort(Set::combine($this->find('all', array('fields' => array('id','firstname','lastname','email','group_id','active'),'order' => array('firstname' => 'ASC'),'recursive' => -1)),'{n}.User.id','{n}.User'), '{n}.id', 'asc');
-		$delta = set::diff($new,$original);
-		return $delta;
+		$original = 
+			$this->find('all', 
+				array(
+					'contain' => array(
+						'Template' => array(
+							'fields' => array('Template.id')
+						),
+						'Cobrand' => array(
+							'fields' => array('Cobrand.id')
+						)
+					),
+					'fields' => array(
+						'User.id',
+						'User.firstname',
+						'User.lastname',
+						'User.email',
+						'User.group_id',
+						'User.template_id',
+						'User.active'
+					),
+					'recursive' => -1,
+					'order' => array('User.firstname' => 'ASC'),
+					'limit' => 150
+				)
+		);
+		$user = Hash::remove($original, '{n}.Cobrand.{n}.UserCobrand');
+		$user = Hash::remove($user, '{n}.Template.{n}.UserTemplate');
+		$user = Hash::remove($user, '{n}.Template.name');
+		$user = Hash::flatten($user);
+		foreach ($user as $key => $value) {
+			if(preg_match("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", $key)) {
+			$newKey = preg_replace("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", "$1.$2.$2.$3", $key);
+			unset($user[$key]);
+			$user[$newKey] = $value;
+		}
+		}
+		$user = Hash::expand($user);	
+		$changedUsers = Hash::diff($change, $user);
+		
+		return $changedUsers;
 	}
 
 	public function getCobrandIds($userId){

@@ -80,8 +80,10 @@ class UsersController extends AppController {
 			'conditions' => array('User.active' => 't'),
 			'recursive' => 0
 		);
-		$data = $this->paginate('User');
-		$this->set('users', $data);
+		$groups = $this->User->Group->find('list');
+		$templates = $this->User->Template->getList();
+		$users = $this->paginate('User');
+		$this->set(compact('groups', 'templates', 'users'));
 		$this->set('scaffoldFields', array_keys($this->User->schema()));
 		
 	}
@@ -111,19 +113,28 @@ class UsersController extends AppController {
 	function admin_bulk_edit() {
 		if (empty($this->request->data)) {
 			$this->paginate = array(
-				'limit' => 100,
+				'limit' => 150,
+				'contain' => array(
+					'Group',
+					'Template' => array('fields' => array('id')),
+					'Cobrand' => array('fields' => array('id')),
+				),
+				'recursive' => -1,
 				'order' => array('User.firstname' => 'ASC'),
 			);
 
 			$users = $this->paginate('User');
+			$cobrands = $this->User->Cobrand->getList();
+			$templates = $this->User->Template->getList();
 			$groups = $this->User->Group->find('list');
-			$this->set(compact('users','groups'));
-
+			$this->set(compact('cobrands','users','groups','templates'));
 			//unset($this->request->data['User']['password']);
 			} else {
-			$this->User->arrayDiff($this->request->data);
-
-			if ($this->User->saveAll(Sanitize::clean($this->User->arrayDiff($this->request->data)))){
+			$relatedData = Hash::extract($this->request->data, 'User');
+			$userData = Hash::remove($this->request->data, 'User');
+			$mergeData = Hash::merge($userData, $relatedData);
+			$changedUsers = $this->User->arrayDiff($mergeData);
+			if ($this->User->saveAll(Sanitize::clean($changedUsers), array('deep' => true))){
 				$this->Session->setFlash("Users Saved!");
 				$this->redirect('/admin/users');
 			}
