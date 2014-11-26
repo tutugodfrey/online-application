@@ -2126,6 +2126,19 @@ class CobrandedApplication extends AppModel {
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
+		if ($owner1Equity < $template['Template']['owner_equity_threshold']) {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Owner 1 Equity';
+			$errorArray['mergeFieldName'] = 'Owner1Equity';
+			$errorArray['msg'] = 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%';
+			$errorArray['page'] = $ownerEquityPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
 		if (count($response['validationErrors']) == 0) {
 			$response['success'] = true;
 			$response['msg'] = '';
