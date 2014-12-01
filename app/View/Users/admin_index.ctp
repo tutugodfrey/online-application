@@ -37,31 +37,14 @@
 $i = 0;
 foreach ($users as $user):
   // Skip items for reps when it doesn't belong to them
-  $class = null;
-  if ($i++ % 2 == 0) {
-    $class = ' class="altrow"';
-  }
-echo "\n";
-  echo "\t<tr{$class}>\n";
-    foreach ($scaffoldFields as $_field) {
-      $isKey = false;
-      if (!empty($user['Group'])) {
-        foreach ($user['Group'] as $_alias => $_details) {
-          if ($_field === 'group_id') {
-            $isKey = true;
             echo "\t\t<td>\n\t\t\t" . ($user['User']['active'] === true ? $this->Html->image('green_orb.gif',array('alt' => 'Active')) : $this->Html->image('red_orb.png',array('alt' => 'Inactive'))) . " \n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . $user['User']['id'] . " \n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . $user['User']['firstname'] . " \n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . $user['User']['lastname'] . " \n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . $user['User']['email'] . " \n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . $user['User']['extension'] . " \n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $this->Html->link($user['Group']['name'], array('controller' => 'groups', 'action' => 'view', $user['Group']['id'])) . "\n\t\t</td>\n";
+            echo "\t\t<td>\n\t\t\t" . $this->Html->link($user['Group']['name'], array('controller' => 'groups', 'action' => 'view', $user['User']['group_id'])) . "\n\t\t</td>\n";
             echo "\t\t<td>\n\t\t\t" . ($user['Template']['name'] == null ? '' : $user['Template']['name']). "\n\t\t</td>\n";
-            break;
-          }
-        }
-      }
-    }
       
     echo "\t\t<td class=\"actions\">\n";
 //      echo "\t\t\t" . $this->Html->link(__('View'), array('action' => 'view', 'admin' => true, $user['User']['id'])) . "\n";
