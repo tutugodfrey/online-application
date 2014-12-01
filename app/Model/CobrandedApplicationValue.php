@@ -180,7 +180,9 @@ class CobrandedApplicationValue extends AppModel {
 				break;
 
 			case 12: // ssn       - ###-##-####
-				$retVal = Validation::ssn($trimmedDataValue, null, 'us');
+				if (preg_match('/^\d{3}-?\d{2}-?\d{4}$/', $trimmedDataValue)) {
+					$retVal = true;
+				}
 				break;
 
 			case 13: // zipcodeUS - #####[-####]
