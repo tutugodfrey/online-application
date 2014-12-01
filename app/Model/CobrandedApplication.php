@@ -2001,7 +2001,7 @@ class CobrandedApplication extends AppModel {
 
 									// federal tax id should be 12-3456789
 									if ($templateField['merge_field_name'] == 'TaxID') {
-										if (!preg_match("/^\d{2}-\d{7}$/", $tmpVal['value'])) {
+										if (!preg_match("/^\d{2}-?\d{7}$/", $tmpVal['value'])) {
 											$found = false;
 										}
 									}

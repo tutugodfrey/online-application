@@ -15,6 +15,15 @@ class TemplateFieldHelper extends Helper {
 
 		$fieldOptions = array();
 		$label = ((key_exists('required', $field) && $field['required'] == true) ? $field['name'] . '*' : $field['name']);
+
+		if (preg_match('/SSN$/', $field['name'])) {
+			$label .= ' (111-11-1111)';
+		}
+
+		if (preg_match('/Federal Tax ID/', $field['name'])) {
+			$label .= ' (11-1111111)';
+		}
+
 		$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
 		$title = ($field['rep_only'] == true ? ' title="only the rep will see this"' : '');
 		// TODO:
