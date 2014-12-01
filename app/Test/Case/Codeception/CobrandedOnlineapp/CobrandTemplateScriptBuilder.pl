@@ -142,7 +142,7 @@ my $templateMap = {
             "'If product/service delivery requires recurring billing, please explain available billing options:', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'Monthly', \$sectionId, 3, 3, false, 2, '', 'Monthly Recurring', '', null",
             "'Quarterly', \$sectionId, 3, 3, false, 2, '', 'QUARTERLY', '', null",
-            "'Semi-Annually', \$sectionId, 3, 3, false, 2, '', 'SEMIANUALLY', '', null",
+            "'Semi-Annually', \$sectionId, 3, 3, false, 2, '', 'SEMIANNUALLY', '', null",
             "'Annually', \$sectionId, 3, 3, false, 2, '', 'ANNUALLY', '', null",
             "'If product/service delivery requires recurring billing, please explain available billing options:', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'Total must equal 100%', \$sectionId, 12, 6, false, 3, '', 'label', '', null",

@@ -16,29 +16,50 @@
 			<th><?php echo $this->Paginator->sort('lastname');?></th>
 			<th><?php echo $this->Paginator->sort('email');?></th>
 			<th><?php echo $this->Paginator->sort('group_id');?></th>
+			<th><?php echo 'Cobrands';?></th>
+			<th><?php echo 'Templates';?></th>
+			<th><?php echo $this->Paginator->sort('template_id', 'Default Template');?></th>
                         <th><?php echo $this->Paginator->sort('active');?></th>
 	</tr>
 	<?php
 	$i = 0;
         echo $this->Form->create('User', array('action' => 'bulk_edit'));
-        //debug($users);
 	foreach ($users as $user):
-		$class = null;
-		if ($i++ % 2 == 0) {
-			$class = ' class="altrow"';
-		}
+			$usersCobrands = Hash::extract($user, 'Cobrand.{n}.id');
+			$usersTemplates = Hash::extract($user, 'Template.{n}.id');
+			//debug($usersCobrands);
 	?>
-	<tr<?php echo $class;?>>
-		<?php echo $this->Form->input('User.'.$user['User']['id'].'.id', array('type' => 'hidden', 'default'=> $user['User']['id'])); ?>
-                <td> <?php echo $this->Form->input('User.' . $user['User']['id'] .'.firstname', array('default'=> trim($user['User']['firstname']))); ?>&nbsp;</td>
+		<?php echo $this->Form->input($i . '.User.id', array('type' => 'hidden', 'default'=> $user['User']['id'])); ?>
+                <td> <?php echo $this->Form->input($i . '.User.firstname', array('default'=> trim($user['User']['firstname']))); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Form->input('User.' . $user['User']['id'] .'.lastname', array('default'=> trim($user['User']['lastname']))); ?>
+			<?php echo $this->Form->input($i . '.User.lastname', array('default'=> trim($user['User']['lastname']))); ?>
 		</td>
 		<td>
-			<?php echo $this->Form->input('User.' . $user['User']['id'] .'.email', array('default'=> $user['User']['email'])); ?>
+			<?php echo $this->Form->input($i. '.User.email', array('default'=> $user['User']['email'])); ?>
 		</td>
-		<td><?php echo $this->Form->input('User.' . $user['User']['id'] .'.group_id', array('options' => $groups,'default'=> $user['User']['group_id'])); ?>&nbsp;</td>
-                <td><?php echo $this->Form->input('User.' . $user['User']['id'] .'.active', array('type' => 'checkbox','checked'=> $user['User']['active'])); ?>&nbsp;</td>
+		<td><?php echo $this->Form->input($i . '.User.group_id', array('options' => $groups,'default'=> $user['User']['group_id'])); ?>&nbsp;</td>
+		<td><?php echo $this->Form->input($i . '.Cobrand.Cobrand', array(
+			'label' => 'Select Cobrand(s)',
+			'multiple' => 'checkbox',
+			'value' => $usersCobrands
+		));
+		?></td>
+		<td><?php 
+		echo $this->Form->input($i . '.Template.Template', array(
+			'label' => 'Select Template(s)',
+			'multiple' => 'checkbox',
+			'default' => $usersTemplates
+		));
+		?></td>
+		<td><?php echo $this->Form->radio($i . '.User.template_id', 
+			$templates,
+			array(
+				'value' => $user['User']['template_id'],
+				'legend' => false
+			
+		)); ?></td>
+                <td><?php echo $this->Form->input($i . '.User.active', array('type' => 'checkbox','checked'=> $user['User']['active'])); ?>&nbsp;</td>
+	<?php $i++; ?>
 	</tr>
 <?php endforeach; ?>
 	</table>

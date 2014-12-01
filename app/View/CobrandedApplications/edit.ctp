@@ -54,12 +54,16 @@
 								echo "
 									for (l in allLabels) {
 										if (allLabels[l]['htmlFor'] == '".$arr['mergeFieldName']."') {
-											allLabels[l].style.backgroundColor = '#FFFF00'
+											allLabels[l].style.backgroundColor = '#FFFF00';
 										}
 									}
 								";
 
-								if ($arr['rep_only']) {
+								if (preg_match('/Combined Ownership Needs to Exceed/i', $arr['msg'])) {
+									echo "document.getElementById('OWNER\\ /\\ OFFICER\\ (2)').innerHTML = '".$arr['msg']."' + document.getElementById('OWNER\\ /\\ OFFICER\\ (2)').innerHTML";
+								}
+
+								if (!empty($arr['rep_only']) && $arr['rep_only']) {
 									$repOnlyField = true;
 								}
 							}
