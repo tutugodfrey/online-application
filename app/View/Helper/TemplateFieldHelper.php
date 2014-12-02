@@ -43,6 +43,13 @@ class TemplateFieldHelper extends Helper {
 			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');
 		}
 
+		// if application is signed or completed, make all fields read only
+		$applicationStatus = SessionHelper::read('applicationStatus');
+
+		if ($applicationStatus == 'signed' || $applicationStatus == 'completed') {
+			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');
+		}
+
 		$retVal = $retVal . String::insert(
 			'<div class="col-md-:width:api_field":title>',
 			array(
@@ -192,6 +199,11 @@ class TemplateFieldHelper extends Helper {
 					$disabled = '';
 					// make fields with a source of 3 read only... 3 = n/a (not available)
 					if ($field['source'] == 3) {
+						$disabled = 'disabled';
+					}
+
+					// if application is signed or completed, make all fields read only
+					if ($applicationStatus == 'signed' || $applicationStatus == 'completed') {
 						$disabled = 'disabled';
 					}
 

@@ -386,6 +386,8 @@ class CobrandedApplicationsController extends AppController {
 			// if it is a rep viewing/editing the application don't require fields to be filled in
 			// but if they do have data, validate it
 			$this->set('requireRequiredFields', false);
+
+			$this->Session->write('applicationStatus', $this->request->data['CobrandedApplication']['status']);
 		}
 	}
 
