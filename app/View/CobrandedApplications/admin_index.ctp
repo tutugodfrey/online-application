@@ -116,13 +116,14 @@
 				if (isset($cobrandedApplication['Coversheet']['id'])) {
 					echo $this->Html->link(' ',
 						array(
-							'Controller' => 'Coversheets',
+							'controller' => 'Coversheets',
 							'action' => 'edit',
-							$cobrandedApplication['Coversheet']['id']
+							$cobrandedApplication['Coversheet']['id'],
+							'admin' => false
 						),
 						array(
 							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
-							'title' => __('Cover Sheet')
+							'title' => __('Edit Cover Sheet')
 						)
 					); 
 				} else {
@@ -136,7 +137,7 @@
 						),
 						array(
 							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
-							'title' => __('Cover Sheet')
+							'title' => __('Create Cover Sheet')
 						)
 					); 
 				}
@@ -152,16 +153,21 @@
 					)
 				);
 				}
-				echo $this->Form->postLink(' ', 
-					array(
-						'action' => 'delete', 
-						$cobrandedApplication['CobrandedApplication']['id']
-					), 
-					array(
-						'class' => 'btn btn-warning btn-sm glyphicon glyphicon-trash',
-						'title' => __('Delete'),
-					), 
-					__('Are you sure you want to delete # %s?', $cobrandedApplication['CobrandedApplication']['id'])				);
+				if (!isset($cobrandedApplication['Coversheet']['id'])) {
+					echo $this->Form->postLink(' ', 
+						array(
+							'action' => 'delete', 
+							$cobrandedApplication['CobrandedApplication']['id']
+						), 
+						array(
+							'class' => 'btn btn-warning btn-sm glyphicon glyphicon-trash',
+							'title' => __('Delete'),
+						), 
+						__('Are you sure you want to delete # %s?', 
+						$cobrandedApplication['CobrandedApplication']['id'])				
+					);
+
+				}
 ?>
 		</div>
 		</td>
