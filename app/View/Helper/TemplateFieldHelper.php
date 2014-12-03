@@ -134,7 +134,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y'));
 				} else {
 					$fieldOptions = Hash::insert($fieldOptions, 'minYear', date('Y') - 100);
-					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 20);
+					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 2);
 				}
 		
 				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(

@@ -1963,7 +1963,6 @@ class CobrandedApplication extends AppModel {
 							$templateField['merge_field_name'] == 'Owner2State' ||
 							$templateField['merge_field_name'] == 'Owner2Zip' ||
 							$templateField['merge_field_name'] == 'Owner2Phone' ||
-							$templateField['merge_field_name'] == 'Owner2Fax' ||
 							$templateField['merge_field_name'] == 'Owner2DOB' ||
 							$templateField['merge_field_name'] == 'Owner2SSN' ||
 							$templateField['merge_field_name'] == 'Owner2Email' ||
