@@ -215,7 +215,7 @@ class TemplateFieldHelper extends Helper {
 								$nameValuePair[0], // no value <input />
 								array(
 									'type' => 'radio',
-									'name' => $field['name'],
+									'name' => $field['merge_field_name'],
 									'data-value-id' => $radioOption['id'],
 									'checked' => ($radioOption['value'] == null ? '' : 'checked'),
 									'disabled' => $disabled,

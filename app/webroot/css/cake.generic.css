@@ -28,7 +28,9 @@ body {
 	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
 	/*font-size:90%;*/
 	margin: 0;
+	padding-top:10px;
 }
+@media (max-width:767px) { body { padding-top:60px; } }
 /*
 a {
 	color: #003d4c;
@@ -79,9 +81,11 @@ ul, li {
 #container {
 	text-align: left;
 }
+/*
 #container #content {
 	padding-top: 25px;
 }
+
 #header{
 	padding: 10px 20px;
 }
@@ -95,10 +99,11 @@ ul, li {
 	color: #fff;
 /*	background: #003d4c url('../img/cake.icon.png') no-repeat left;
 */
-	font-weight: normal;
+/*	font-weight: normal;
 	text-decoration: none;
 	padding: 0 10px;
 }
+*/
 /*
 #header nav a {
 	color: #fff;
@@ -409,6 +414,7 @@ div.message {
 	margin: 0 0 1em 0;
 	background: #c73e14;
 	padding: 5px;
+	padding-top: 25px;
 }
 div.error-message {
 	clear: both;

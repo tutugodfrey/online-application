@@ -14,20 +14,8 @@ class CoversheetsController extends AppController {
         'edit' => array('rep','admin','manager'),
         'pdf_gen' => array('rep','admin','manager'),
         'email_coversheet' => array('rep','admin','manager'),
-        //'delete' => array('rep','admin','manager')
+        'admin_delete' => array('rep','admin','manager')
     );
-
-    /**
-    * @todo Figure out why search does not work
-    * @todo UnockedActions should not be needed for search to work properly -- SJT 09-03-2014
-    */
-    function beforeFilter() {
-        parent::beforeFilter();
-        //$this->Security->unlockedActions = array('admin_index');
-        //if (!empty($this->Coversheet->id)&& $this->Session->read('Application.coversheet') == 'pdf') $this->Auth->allow(array('pdf','word'));
-        //$this->Security->validatePost = false;
-         //$this->Security->allowedControllers = array('Applications', 'Users');
-    }
 
 	public function view($id = null) {
 		if (!$id) {
@@ -325,8 +313,10 @@ class CoversheetsController extends AppController {
 			$conditions[] =  array(
 				'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))
 			);
-		} else {
+		} else if ($this->Auth->user('group_id') === User::REPRESENTATIVE_GROUP_ID) {
 			$conditions[] = array('Coversheet.user_id' => $this->passedArgs['user_id']);
+		} else {
+			$conditions = null;
 		}
 
 		if ($this->passedArgs['app_status'] != '') {
