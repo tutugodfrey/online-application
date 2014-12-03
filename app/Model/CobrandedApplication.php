@@ -835,8 +835,7 @@ class CobrandedApplication extends AppModel {
 						'recursive' => -1
 					)
 				);
-				if ($templateField['TemplateField']['type'] == 4 ||
-					$templateField['TemplateField']['type'] == 5) {
+				if ($templateField['TemplateField']['type'] == 4) {
 					// dealing with a multiple option input/field
 					// need to special case the OwnerType because it expects "Yes"/"Off" instead of "On"/"Off"
 					if ($app['CobrandedApplicationValues'][$appKey]['value'] == 'true') {
