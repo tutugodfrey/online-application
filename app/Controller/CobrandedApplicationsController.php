@@ -794,8 +794,22 @@ class CobrandedApplicationsController extends AppController {
 				if ($signNow) {
 					$this->redirect(array('action' => 'sign_rightsignature_document?guid='.$response['document']['guid']));
 				} else {
+					$applicationValues = Hash::combine(
+						$cobrandedApplication, 
+						'CobrandedApplicationValues.{n}.name', 
+						'CobrandedApplicationValues.{n}.value'
+					);	
 					// if not simply send the documents
 					$emailResponse = $this->CobrandedApplication->sendApplicationForSigningEmail($applicationId);
+					if ($emailResponse['success'] === true) {
+						$this->Session->setFlash(
+							__('Application has been emailed to: ' . $applicationValues['Owner1Email'])
+						);
+						$this->redirect(array('action' => 'index', 'admin' => true));
+					} else {
+						$this->Session->setFlash(__($emailResponse['msg']));
+						$this->redirect($this->referer());
+					}
 				}
 			} else {
 				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
