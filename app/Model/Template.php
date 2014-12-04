@@ -537,7 +537,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Does business appear legitimate?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -547,7 +547,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Is site photo included with this application?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -557,7 +557,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Is inventory sufficient for Business Type?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -567,7 +567,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Are goods and services delivered at time of sale?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -577,7 +577,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Is business open and operating?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -587,7 +587,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Are Visa and MasterCard decals visible?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -597,7 +597,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Any mail/telephone order sales activity?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -618,7 +618,7 @@ class Template extends AppModel {
 							'name' => 'Please type name to confirm if you visted the site',
 							'type' => 0,
 							'width' => 12,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'rep_only' => true,
 							'merge_field_name' => 'site_survey_signature'
@@ -627,7 +627,7 @@ class Template extends AppModel {
 							'name' => 'Site survey date',
 							'type' => 1,
 							'width' => 12,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'rep_only' => true,
 						),
