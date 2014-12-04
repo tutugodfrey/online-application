@@ -220,7 +220,7 @@ class TemplateFieldHelper extends Helper {
 					$index = $index + 1;
 				}
 				$retVal = $retVal.
-					$this->Html->tag('label', $label).
+					$this->Form->label($label, null, array('for' => $field['merge_field_name'])).
 					$this->Html->tag('ul', $lis, array('class' => 'list-inline'));
 				break;
 
