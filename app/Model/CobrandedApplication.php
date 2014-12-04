@@ -1755,6 +1755,25 @@ class CobrandedApplication extends AppModel {
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
+			
+			if ($mergeField['name'] == "Customer Service") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+			if ($mergeField['name'] == "Product Shipment") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+			if ($mergeField['name'] == "Handling of Returns") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
 		}
 
 		if ($subject == 'Axia Install Sheet - VAR') {
