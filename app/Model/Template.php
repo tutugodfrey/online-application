@@ -513,7 +513,6 @@ class Template extends AppModel {
 							'type' => 18,
 							'width' => 12,
 							'source' => 1,
-							'default_value' => '2.89',
 							'rep_only' => true,
 							'merge_field_name' => 'Amex Discount Rate',
 						),
