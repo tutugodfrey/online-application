@@ -1936,6 +1936,8 @@ class CobrandedApplication extends AppModel {
 
 		$ownerEquityTotal = $owner1Equity + $owner2Equity;
 
+		$owner2FieldsNotComplete = false;
+
 		$template = $this->Template->find('first', array(
 			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
 			'contain' => array(
@@ -2045,6 +2047,21 @@ class CobrandedApplication extends AppModel {
 							$errorArray['rep_only'] = $templateField['rep_only'];
 							
 							$response['validationErrorsArray'][] = $errorArray;
+
+							if ($templateField['merge_field_name'] == 'Owner2Name' ||
+								$templateField['merge_field_name'] == 'Owner2Title' ||
+								$templateField['merge_field_name'] == 'Owner2Address' ||
+								$templateField['merge_field_name'] == 'Owner2City' ||
+								$templateField['merge_field_name'] == 'Owner2State' ||
+								$templateField['merge_field_name'] == 'Owner2Zip' ||
+								$templateField['merge_field_name'] == 'Owner2Phone' ||
+								$templateField['merge_field_name'] == 'Owner2DOB' ||
+								$templateField['merge_field_name'] == 'Owner2SSN' ||
+								$templateField['merge_field_name'] == 'Owner2Email' ||
+								$templateField['merge_field_name'] == 'Owner2Equity') {
+
+								$owner2FieldsNotComplete = true;
+							}
 						}
 					}
 				}
@@ -2143,7 +2160,7 @@ class CobrandedApplication extends AppModel {
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
-		if ($owner1Equity < $template['Template']['owner_equity_threshold']) {
+		if ($owner1Equity < $template['Template']['owner_equity_threshold'] && $owner2FieldsNotComplete == true) {
 			// update our validationErrors array
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%');
 
