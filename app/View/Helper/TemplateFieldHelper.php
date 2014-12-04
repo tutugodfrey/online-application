@@ -72,12 +72,6 @@ class TemplateFieldHelper extends Helper {
 			case 0: // text
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-
-				if ($field['merge_field_name'] == 'ContractorID') {
-					$user = SessionHelper::read('Auth.User');
-					$fieldOptions = Hash::insert($fieldOptions, 'default', $user['firstname'].' '.$user['lastname']);
-				}
-				
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 		
@@ -215,7 +209,7 @@ class TemplateFieldHelper extends Helper {
 								$nameValuePair[0], // no value <input />
 								array(
 									'type' => 'radio',
-									'name' => $field['merge_field_name'],
+									'name' => $field['name'],
 									'data-value-id' => $radioOption['id'],
 									'checked' => ($radioOption['value'] == null ? '' : 'checked'),
 									'disabled' => $disabled,

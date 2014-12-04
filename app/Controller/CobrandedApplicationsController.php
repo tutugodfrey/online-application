@@ -456,7 +456,40 @@ class CobrandedApplicationsController extends AppController {
 			$tmpUser['User']['template_id'] = $this->request->data['CobrandedApplication']['template_id'];
 
 			$response = $this->CobrandedApplication->createOnlineappForUser($tmpUser['User'], $this->request->data['CobrandedApplication']['uuid']);
+
 			if ($response['success'] == true) {
+				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+
+				$userId = $this->request->data['CobrandedApplication']['user_id'];
+				$user = $this->CobrandedApplication->User->find(
+					'first', 
+					array(
+						'conditions' => array('User.id' => $userId),
+					)
+				);
+
+				$app = $this->CobrandedApplication->find(
+					'first',
+					array(
+						'conditions' => array('CobrandedApplication.uuid' => $this->request->data['CobrandedApplication']['uuid']),
+						'recursive' => -1
+					)
+				);
+
+				$appValue = $this->CobrandedApplicationValue->find(
+					'first',
+					array(
+						'conditions' => array(
+							'CobrandedApplicationValue.cobranded_application_id' => $app['CobrandedApplication']['id'],
+							'CobrandedApplicationValue.name' => 'ContractorID'
+						),
+						'recursive' => -1
+					)
+				);
+
+				$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'].' '.$user['User']['lastname'];
+				$this->CobrandedApplicationValue->save($appValue);
+
 				$this->Session->setFlash(__('Application created'));
 				$this->redirect(array('action' => "/edit/".$response['cobrandedApplication']['uuid'], 'admin' => false));
 			} else {
