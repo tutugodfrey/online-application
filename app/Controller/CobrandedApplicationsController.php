@@ -51,7 +51,14 @@ class CobrandedApplicationsController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('index','document_callback','quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
+		$this->Auth->allow(
+			'expired',
+			'index',
+			'document_callback',
+			'quickAdd',
+			'retrieve',
+			'create_rightsignature_document',
+			'sign_rightsignature_document');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
 
@@ -84,6 +91,10 @@ class CobrandedApplicationsController extends AppController {
 			Configure::write('debug', 0);
 			$this->disableCache();
 		}
+	}
+
+	public function expired() {
+	
 	}
 
 /**
@@ -348,7 +359,10 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function edit($uuid = null) {
-		if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
+		if ($this->CobrandedApplication->isExpired($uuid) && !$this->Auth->loggedIn()) {
+			$this->redirect(array('action' => 'expired'));
+		}
+		else if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 			// redirect to a retrieve page
 			$this->redirect(array('action' => 'retrieve'));
 		} else {

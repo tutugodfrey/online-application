@@ -3,6 +3,7 @@ App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
 App::uses('CakeEmail', 'Network/Email');
+App::uses('CakeTime', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
 
 /**
@@ -2269,6 +2270,39 @@ class CobrandedApplication extends AppModel {
 		return $results;
 	}
 
+/**
+ * Function to determine whether a given Application should be displayed
+ * to a non logged in user.
+ * This function will take a single argument, the uuid for the application
+ * in question.  If the Application has not been modified in the last 30 days
+ * or if it has been signed it will be considered expired and visible only to
+ * logged in users.
+ *
+ * @param string $uuid
+ * @return bool
+ */
+
+	public function isExpired($uuid) {
+		$application = $this->find('first',
+			array(
+				'conditions' => array(
+					$this->alias . '.uuid' => $uuid
+				),
+				'fields' => array(
+					'CobrandedApplication.status',
+					'CobrandedApplication.modified'
+				),
+				'recursive' => -1
+			)
+		);
+		if ((CakeTime::wasWithinLast('30 days', 
+			$application['CobrandedApplication']['modified'])) &&
+			$application['CobrandedApplication']['status'] !== 'signed') {
+		
+			return false;
+		}
+		return true;
+	}
 /**
  * Array of Arguments to be used by the search plugin
  */
