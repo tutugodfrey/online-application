@@ -2010,58 +2010,70 @@ class CobrandedApplication extends AppModel {
 							continue;
 						}
 
-						$found = false;
-
 						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
-							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
-								// is the value valid?
-								$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
-								if ($validValue == true) {
-									$found = true;
+							$found = true;
 
-									// federal tax id should be 12-3456789 or 123-45-6789
-									if ($templateField['merge_field_name'] == 'TaxID') {
-										if (!preg_match("/^\d{2}-?\d{7}$/", $tmpVal['value']) && !preg_match("/^\d{3}-?\d{2}-?\d{4}$/", $tmpVal['value'])) {
-											$found = false;
+							if ($tmpVal['template_field_id'] == $templateField['id']) {
+								$found = false;
+
+								if (empty($tmpVal['value']) == false) {
+									// is the value valid?
+									$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
+									if ($validValue == true) {
+										$found = true;
+
+										// federal tax id should be 12-3456789 or 123-45-6789
+										if ($templateField['merge_field_name'] == 'TaxID') {
+											if (!preg_match("/^\d{2}-?\d{7}$/", $tmpVal['value']) && !preg_match("/^\d{3}-?\d{2}-?\d{4}$/", $tmpVal['value'])) {
+												$found = false;
+											}
 										}
-									}
 
-									// existing SE# should not be longer than 10 digits
-									if ($templateField['merge_field_name'] == 'AmexNum') {
-										if (strlen($tmpVal['value']) > 10) {
-											$found = false;
+										// existing SE# should not be longer than 10 digits
+										if ($templateField['merge_field_name'] == 'AmexNum') {
+											if (strlen($tmpVal['value']) > 10) {
+												$found = false;
+											}
 										}
 									}
 								}
 							}
-						}
 
-						if ($found == false) {
-							// update our validationErrors array
-							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'required');
+							if ($found == false) {
+								$mergeFieldName = $templateField['merge_field_name'];
 
-							$errorArray = array();
-							$errorArray['fieldName'] = $fieldName;
-							$errorArray['mergeFieldName'] = $templateField['merge_field_name'];
-							$errorArray['msg'] = 'Required field is empty: '.$fieldName;
-							$errorArray['page'] = $pageOrder;
-							$errorArray['rep_only'] = $templateField['rep_only'];
+								if (empty($mergeFieldName)) {
+									$mergeFieldName = $tmpVal['name'];
+									$fieldName = $tmpVal['name'];
+								}
+
+								// update our validationErrors array
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
+
+
+								$errorArray = array();
+								$errorArray['fieldName'] = $fieldName;
+								$errorArray['mergeFieldName'] = $mergeFieldName;
+								$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+								$errorArray['page'] = $pageOrder;
+								$errorArray['rep_only'] = $templateField['rep_only'];
 							
-							$response['validationErrorsArray'][] = $errorArray;
+								$response['validationErrorsArray'][] = $errorArray;
 
-							if ($templateField['merge_field_name'] == 'Owner2Name' ||
-								$templateField['merge_field_name'] == 'Owner2Title' ||
-								$templateField['merge_field_name'] == 'Owner2Address' ||
-								$templateField['merge_field_name'] == 'Owner2City' ||
-								$templateField['merge_field_name'] == 'Owner2State' ||
-								$templateField['merge_field_name'] == 'Owner2Zip' ||
-								$templateField['merge_field_name'] == 'Owner2Phone' ||
-								$templateField['merge_field_name'] == 'Owner2DOB' ||
-								$templateField['merge_field_name'] == 'Owner2SSN' ||
-								$templateField['merge_field_name'] == 'Owner2Email' ||
-								$templateField['merge_field_name'] == 'Owner2Equity') {
+								if ($templateField['merge_field_name'] == 'Owner2Name' ||
+									$templateField['merge_field_name'] == 'Owner2Title' ||
+									$templateField['merge_field_name'] == 'Owner2Address' ||
+									$templateField['merge_field_name'] == 'Owner2City' ||
+									$templateField['merge_field_name'] == 'Owner2State' ||
+									$templateField['merge_field_name'] == 'Owner2Zip' ||
+									$templateField['merge_field_name'] == 'Owner2Phone' ||
+									$templateField['merge_field_name'] == 'Owner2DOB' ||
+									$templateField['merge_field_name'] == 'Owner2SSN' ||
+									$templateField['merge_field_name'] == 'Owner2Email' ||
+									$templateField['merge_field_name'] == 'Owner2Equity') {
 
-								$owner2FieldsNotComplete = true;
+									$owner2FieldsNotComplete = true;
+								}
 							}
 						}
 					}

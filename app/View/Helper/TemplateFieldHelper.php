@@ -297,7 +297,17 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $nameValuePair[1]);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $feeOption['id']);
 					$fieldOptions = Hash::insert($fieldOptions, 'value', $feeOption['value']);
-					$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $nameValuePair[0], $nameValuePair[1]);
+
+					$requiredProp = ($field['required'] && $requireRequired) ? true : false;
+					$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
+					
+					$tmpLabel = $nameValuePair[0];
+
+					if ($field['required'] == true) {
+						$tmpLabel .= '*';
+					}
+
+					$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $tmpLabel, $nameValuePair[1]);
 					$index = $index + 1;
 				}
 				$retVal = $retVal . "</fieldset>";
