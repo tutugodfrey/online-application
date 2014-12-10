@@ -1,5 +1,4 @@
 <?php
-App::uses('Sanitize', 'Utility');
 class UsersController extends AppController {
 
 	public $scaffold = 'admin';
@@ -98,7 +97,7 @@ class UsersController extends AppController {
 
 		if ($this->request->is('post')) {
 			$this->User->create();
-			if ($this->User->save(Sanitize::clean($this->request->data))) {
+			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('The User has been created'));
 				$this->redirect(array('action'=> 'index', 'admin' => true));
 			} else {
@@ -128,13 +127,12 @@ class UsersController extends AppController {
 			$templates = $this->User->Template->getList();
 			$groups = $this->User->Group->find('list');
 			$this->set(compact('cobrands','users','groups','templates'));
-			//unset($this->request->data['User']['password']);
-			} else {
+		} else {
 			$relatedData = Hash::extract($this->request->data, 'User');
 			$userData = Hash::remove($this->request->data, 'User');
 			$mergeData = Hash::merge($userData, $relatedData);
 			$changedUsers = $this->User->arrayDiff($mergeData);
-			if ($this->User->saveAll(Sanitize::clean($changedUsers), array('deep' => true))){
+			if ($this->User->saveAll($changedUsers, array('deep' => true))){
 				$this->Session->setFlash("Users Saved!");
 				$this->redirect('/admin/users');
 			}
@@ -170,7 +168,7 @@ class UsersController extends AppController {
 				unset($this->request->data['User']['pwd']);
 				unset($this->request->data['User']['password_confirm']);
 			}
-			if ($this->User->saveAll(Sanitize::clean($this->request->data))) {
+			if ($this->User->saveAll($this->request->data)) {
 				$this->Session->setFlash("User Saved!");
 				$this->redirect('/admin/users');
 			}
