@@ -51,7 +51,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		// load data
-		$this->loadFixtures('OnlineappCoversheet');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -60,6 +59,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 //		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+		$this->loadFixtures('OnlineappCoversheet');
 
 		$this->__template = $this->Template->find(
 			'first',
@@ -106,6 +106,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		$this->Coversheet->deleteAll(true, false);
 		$this->OnlineappEmailTimeline->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
@@ -115,6 +116,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
