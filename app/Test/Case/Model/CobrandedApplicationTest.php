@@ -657,9 +657,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",'.
 			'"Off",'.
 			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
+			'"",'.
+			'"",'.
+			'"",'.
 			'"",'.
 			'"",'.
 			'"",'.
@@ -708,9 +708,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"On",'.
 			'"On",'.
 			'"On",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
+			'"10",'.
+			'"10",'.
+			'"10",'.
 			'"10.00",'.
 			'"10.00",'.
 			'"10.00",'.
@@ -1348,32 +1348,43 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'success' => false,
 			'validationErrors' => array(
 				'required_text_from_user_without_default' => 'required',
-				'rep_only_true_field_for_testing_rep_only_view_logic' => 'required'
+				'required_radio_from_user_without_default' => 'required'
      		),
      		'validationErrorsArray' => array(
 				0 => array(
             		'fieldName' => 'field 1',
             		'mergeFieldName' => 'required_text_from_user_without_default',
             		'msg' => 'Required field is empty: field 1',
-            		'page' => 1
+            		'page' => 1,
+            		'rep_only' => false
          		),
          		1 => array(
             		'fieldName' => 'field 2',
             		'mergeFieldName' => 'required_text_from_user_without_default',
             		'msg' => 'Required field is empty: field 2',
-            		'page' => 1
+            		'page' => 1,
+            		'rep_only' => false
          		),
          		2 => array(
-            		'fieldName' => 'field 3',
-            		'mergeFieldName' => 'required_text_from_user_without_default',
-            		'msg' => 'Required field is empty: field 3',
-            		'page' => 1
+            		'fieldName' => 'field 4',
+					'mergeFieldName' => 'required_radio_from_user_without_default',
+					'msg' => 'Required field is empty: field 4',
+					'page' => 1,
+					'rep_only' => false
          		),
          		3 => array(
-            		'fieldName' => 'Text field 1',
-            		'mergeFieldName' => 'rep_only_true_field_for_testing_rep_only_view_logic',
-            		'msg' => 'Required field is empty: Text field 1',
-            		'page' => 4
+					'fieldName' => 'field 4',
+					'mergeFieldName' => 'required_radio_from_user_without_default',
+					'msg' => 'Required field is empty: field 4',
+					'page' => 1,
+					'rep_only' => false
+         		),
+         		4 => array(
+					'fieldName' => 'field 4',
+					'mergeFieldName' => 'required_radio_from_user_without_default',
+					'msg' => 'Required field is empty: field 4',
+					'page' => 1,
+					'rep_only' => false
          		)
      		)
 		);
