@@ -1,5 +1,4 @@
 <?php
-App::uses('Sanitize', 'Utility');
 App::uses('NestedResourceController', 'Controller');
 /**
  * OnlineappTemplates Controller
@@ -21,7 +20,7 @@ class TemplatesController extends NestedResourceController {
 
 	public function admin_add() {
 		if ($this->request->is('post')) {
-			$data = Sanitize::clean($this->request->data);
+			$data = $this->request->data;
 			// set the cobrand_id
 			$data['Template']['cobrand_id'] = $this->_getParentControllerId();
 			$this->Template->create();
@@ -40,10 +39,10 @@ class TemplatesController extends NestedResourceController {
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Template->read();
 		} else {
-			$data = Sanitize::clean($this->request->data);
+			$data = $this->request->data;
 			// we know the cobrand_id from the uri
 			$data['Template']['cobrand_id'] = $this->_getParentControllerId();
-			if ($this->Template->saveAll(Sanitize::clean($data))) {
+			if ($this->Template->saveAll($data)) {
 				$this->Session->setFlash("Template Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
