@@ -2010,23 +2010,38 @@ class CobrandedApplication extends AppModel {
 							continue;
 						}
 
-						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
-							$found = true;
-
-							if ($templateField['type'] == 4) {
-								$found = false;
-								foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal2) {
-									if ($tmpVal2['template_field_id'] == $templateField['id']) {
-										if (empty($tmpVal2['value']) == false) {
-											$found = true;
-											continue;
-										}
+						if ($templateField['type'] == 4) {
+							$found = false;
+							foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+								if ($tmpVal['template_field_id'] == $templateField['id']) {
+									if (empty($tmpVal['value']) == false) {
+										$found = true;
 									}
 								}
-							} else {
+							}
+
+							if ($found == false) {
+								$mergeFieldName = $templateField['merge_field_name'];
+
+								// update our validationErrors array
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
+
+								$errorArray = array();
+								$errorArray['fieldName'] = $fieldName;
+								$errorArray['mergeFieldName'] = $mergeFieldName;
+								$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+								$errorArray['page'] = $pageOrder;
+								$errorArray['rep_only'] = $templateField['rep_only'];
+							
+								$response['validationErrorsArray'][] = $errorArray;
+							}
+						} else {
+							foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+								$found = true;
+
 								if ($tmpVal['template_field_id'] == $templateField['id']) {
 									$found = false;
-									if (empty($tmpVal['value']) == false || $tmpVal['value'] == 0) {
+									if (empty($tmpVal['value']) == false || preg_match('/\d+/', $tmpVal['value'])) {
 										// is the value valid?
 										$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
 										if ($validValue == true) {
@@ -2048,42 +2063,41 @@ class CobrandedApplication extends AppModel {
 										}
 									}
 								}
-							}
 
-							if ($found == false) {
-								$mergeFieldName = $templateField['merge_field_name'];
+								if ($found == false) {
+									$mergeFieldName = $templateField['merge_field_name'];
 
-								if (empty($mergeFieldName)) {
-									$mergeFieldName = $tmpVal['name'];
-									$fieldName = $tmpVal['name'];
-								}
+									if (empty($mergeFieldName)) {
+										$mergeFieldName = $tmpVal['name'];
+										$fieldName = $tmpVal['name'];
+									}
 
-								// update our validationErrors array
-								$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
+									// update our validationErrors array
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
 
-
-								$errorArray = array();
-								$errorArray['fieldName'] = $fieldName;
-								$errorArray['mergeFieldName'] = $mergeFieldName;
-								$errorArray['msg'] = 'Required field is empty: '.$fieldName;
-								$errorArray['page'] = $pageOrder;
-								$errorArray['rep_only'] = $templateField['rep_only'];
+									$errorArray = array();
+									$errorArray['fieldName'] = $fieldName;
+									$errorArray['mergeFieldName'] = $mergeFieldName;
+									$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+									$errorArray['page'] = $pageOrder;
+									$errorArray['rep_only'] = $templateField['rep_only'];
 							
-								$response['validationErrorsArray'][] = $errorArray;
+									$response['validationErrorsArray'][] = $errorArray;
 
-								if ($templateField['merge_field_name'] == 'Owner2Name' ||
-									$templateField['merge_field_name'] == 'Owner2Title' ||
-									$templateField['merge_field_name'] == 'Owner2Address' ||
-									$templateField['merge_field_name'] == 'Owner2City' ||
-									$templateField['merge_field_name'] == 'Owner2State' ||
-									$templateField['merge_field_name'] == 'Owner2Zip' ||
-									$templateField['merge_field_name'] == 'Owner2Phone' ||
-									$templateField['merge_field_name'] == 'Owner2DOB' ||
-									$templateField['merge_field_name'] == 'Owner2SSN' ||
-									$templateField['merge_field_name'] == 'Owner2Email' ||
-									$templateField['merge_field_name'] == 'Owner2Equity') {
+									if ($templateField['merge_field_name'] == 'Owner2Name' ||
+										$templateField['merge_field_name'] == 'Owner2Title' ||
+										$templateField['merge_field_name'] == 'Owner2Address' ||
+										$templateField['merge_field_name'] == 'Owner2City' ||
+										$templateField['merge_field_name'] == 'Owner2State' ||
+										$templateField['merge_field_name'] == 'Owner2Zip' ||
+										$templateField['merge_field_name'] == 'Owner2Phone' ||
+										$templateField['merge_field_name'] == 'Owner2DOB' ||
+										$templateField['merge_field_name'] == 'Owner2SSN' ||
+										$templateField['merge_field_name'] == 'Owner2Email' ||
+										$templateField['merge_field_name'] == 'Owner2Equity') {
 
-									$owner2FieldsNotComplete = true;
+										$owner2FieldsNotComplete = true;
+									}
 								}
 							}
 						}
