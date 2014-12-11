@@ -2026,8 +2026,7 @@ class CobrandedApplication extends AppModel {
 							} else {
 								if ($tmpVal['template_field_id'] == $templateField['id']) {
 									$found = false;
-
-									if (empty($tmpVal['value']) == false) {
+									if (empty($tmpVal['value']) == false || $tmpVal['value'] == 0) {
 										// is the value valid?
 										$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
 										if ($validValue == true) {
