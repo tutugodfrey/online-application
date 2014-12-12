@@ -152,8 +152,8 @@ $fieldId = $FP->createIfMissing('Monthly Volume', $sectionId, 4, 10, true, 2, ''
 $fieldId = $FP->createIfMissing('Average Ticket', $sectionId, 4, 10, true, 2, '', 'AvgTicket', '', null);
 $fieldId = $FP->createIfMissing('Highest Ticket', $sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null);
 $fieldId = $FP->createIfMissing('Current Processor', $sectionId, 12, 0, true, 2, '', 'Previous Processor', '', null);
-$fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{100},Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null);
-$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{100},Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null);
+$fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{0},Card Present Imprint::CardPresentImprint{0},Card Not Present (Keyed)::CardNotPresent-Keyed{0},Card Not Present (Internet)::CardNotPresent-Internet{0}', 'MethodofSales-', '', null);
+$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{0},Direct To Business::DirectToBusiness{0},Direct To Government::DirectToGovernment{0}', '%OfProductSold', '', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
@@ -191,11 +191,12 @@ $I->amOnPage('/admin/templatesections/'.$sectionId.'/templatefields');
 $fieldId = $FP->createIfMissing('Does your organization have a store front location?', $sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'StoreFrontLoc-', '', null);
 $fieldId = $FP->createIfMissing('Are orders received and processed at business location?', $sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'OrdersProcAtBusinessLoc-', '', null);
 $fieldId = $FP->createIfMissing('Where is inventory housed?', $sectionId, 12, 0, true, 2, '', 'Where is inventory housed', '', null);
+$fieldId = $FP->createIfMissing('Do you own the product/inventory?', $sectionId, 12, 4, true, 2, 'Yes::Yes,No::No', 'OwnInventory-', '', null);
 $fieldId = $FP->createIfMissing('Are any of the following aspects of your business outsourced to other companies? (please select all that apply)', $sectionId, 12, 6, false, 2, '', 'label', '', null);
 $fieldId = $FP->createIfMissing('Customer Service (Desc)', $sectionId, 4, 0, false, 2, '', 'Customer Service', '', null);
 $fieldId = $FP->createIfMissing('Product Shipment (Desc)', $sectionId, 4, 0, false, 2, '', 'Product Shipment', '', null);
 $fieldId = $FP->createIfMissing('Handling of Returns (Desc)', $sectionId, 4, 0, false, 2, '', 'Handling of Returns', '', null);
-$fieldId = $FP->createIfMissing('Cardholder Billing', $sectionId, 12, 0, true, 0, '', 'Cardholder Billing', '', null);
+//$fieldId = $FP->createIfMissing('Cardholder Billing', $sectionId, 12, 0, true, 0, '', 'Cardholder Billing', '', null);
 $fieldId = $FP->createIfMissing('By what methods do sales take place? (i.e. internet, trade shows, etc.)', $sectionId, 12, 0, true, 2, '', 'By what methods to sales take place ie Internet trade shows etc ', '', null);
 $fieldId = $FP->createIfMissing('Are sales done:', $sectionId, 12, 6, false, 3, '', 'label', '', null);
 $fieldId = $FP->createIfMissing('Locally', $sectionId, 6, 3, false, 2, '', 'locally', '', null);
@@ -206,7 +207,7 @@ $fieldId = $FP->createIfMissing('Quarterly', $sectionId, 3, 3, false, 2, '', 'QU
 $fieldId = $FP->createIfMissing('Semi-Annually', $sectionId, 3, 3, false, 2, '', 'SEMIANNUALLY', '', null);
 $fieldId = $FP->createIfMissing('Annually', $sectionId, 3, 3, false, 2, '', 'ANNUALLY', '', null);
 $fieldId = $FP->createIfMissing('If product/service delivery requires recurring billing, please explain available billing options:', $sectionId, 12, 6, false, 3, '', 'label', '', null);
-$fieldId = $FP->createIfMissing('Total must equal 100%', $sectionId, 12, 6, false, 3, '', 'label', '', null);
+$fieldId = $FP->createIfMissing('Please Explain your billing/delivery Policy. Total must equal 100%', $sectionId, 12, 6, false, 3, '', 'label', '', null);
 $fieldId = $FP->createIfMissing('% FULL PAYMENT UP FRONT WITH', $sectionId, 6, 11, false, 2, '', 'PercentFullPayUpFront', '', null);
 $fieldId = $FP->createIfMissing('DAYS UNTIL PRODUCT/SERVICE DELIVERY', $sectionId, 6, 19, false, 2, '', 'DaysUntilDelivery', '', null);
 $fieldId = $FP->createIfMissing('% PARTIAL PAYMENT REQUIRED UP FRONT WITH', $sectionId, 6, 11, false, 2, '', 'PercentPartialPayUpFront', '', null);

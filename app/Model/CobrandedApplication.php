@@ -3,6 +3,7 @@ App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
 App::uses('CakeEmail', 'Network/Email');
+App::uses('CakeTime', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
 
 /**
@@ -835,8 +836,7 @@ class CobrandedApplication extends AppModel {
 						'recursive' => -1
 					)
 				);
-				if ($templateField['TemplateField']['type'] == 4 ||
-					$templateField['TemplateField']['type'] == 5) {
+				if ($templateField['TemplateField']['type'] == 4) {
 					// dealing with a multiple option input/field
 					// need to special case the OwnerType because it expects "Yes"/"Off" instead of "On"/"Off"
 					if ($app['CobrandedApplicationValues'][$appKey]['value'] == 'true') {
@@ -1756,6 +1756,25 @@ class CobrandedApplication extends AppModel {
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
+			
+			if ($mergeField['name'] == "Customer Service") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+			if ($mergeField['name'] == "Product Shipment") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+			if ($mergeField['name'] == "Handling of Returns") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
 		}
 
 		if ($subject == 'Axia Install Sheet - VAR') {
@@ -1918,6 +1937,8 @@ class CobrandedApplication extends AppModel {
 
 		$ownerEquityTotal = $owner1Equity + $owner2Equity;
 
+		$owner2FieldsNotComplete = false;
+
 		$template = $this->Template->find('first', array(
 			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
 			'contain' => array(
@@ -1963,7 +1984,6 @@ class CobrandedApplication extends AppModel {
 							$templateField['merge_field_name'] == 'Owner2State' ||
 							$templateField['merge_field_name'] == 'Owner2Zip' ||
 							$templateField['merge_field_name'] == 'Owner2Phone' ||
-							$templateField['merge_field_name'] == 'Owner2Fax' ||
 							$templateField['merge_field_name'] == 'Owner2DOB' ||
 							$templateField['merge_field_name'] == 'Owner2SSN' ||
 							$templateField['merge_field_name'] == 'Owner2Email' ||
@@ -1990,44 +2010,96 @@ class CobrandedApplication extends AppModel {
 							continue;
 						}
 
-						$found = false;
-
-						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
-							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
-								// is the value valid?
-								$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
-								if ($validValue == true) {
-									$found = true;
-
-									// federal tax id should be 12-3456789
-									if ($templateField['merge_field_name'] == 'TaxID') {
-										if (!preg_match("/^\d{2}-?\d{7}$/", $tmpVal['value'])) {
-											$found = false;
-										}
-									}
-
-									// existing SE# should not be longer than 10 digits
-									if ($templateField['merge_field_name'] == 'AmexNum') {
-										if (strlen($tmpVal['value']) > 10) {
-											$found = false;
-										}
+						if ($templateField['type'] == 4) {
+							$found = false;
+							foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+								if ($tmpVal['template_field_id'] == $templateField['id']) {
+									if (empty($tmpVal['value']) == false) {
+										$found = true;
 									}
 								}
 							}
-						}
 
-						if ($found == false) {
-							// update our validationErrors array
-							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'required');
+							if ($found == false) {
+								$mergeFieldName = $templateField['merge_field_name'];
 
-							$errorArray = array();
-							$errorArray['fieldName'] = $fieldName;
-							$errorArray['mergeFieldName'] = $templateField['merge_field_name'];
-							$errorArray['msg'] = 'Required field is empty: '.$fieldName;
-							$errorArray['page'] = $pageOrder;
-							$errorArray['rep_only'] = $templateField['rep_only'];
+								// update our validationErrors array
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
+
+								$errorArray = array();
+								$errorArray['fieldName'] = $fieldName;
+								$errorArray['mergeFieldName'] = $mergeFieldName;
+								$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+								$errorArray['page'] = $pageOrder;
+								$errorArray['rep_only'] = $templateField['rep_only'];
 							
-							$response['validationErrorsArray'][] = $errorArray;
+								$response['validationErrorsArray'][] = $errorArray;
+							}
+						} else {
+							foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+								$found = true;
+
+								if ($tmpVal['template_field_id'] == $templateField['id']) {
+									$found = false;
+									if (empty($tmpVal['value']) == false || preg_match('/\d+/', $tmpVal['value'])) {
+										// is the value valid?
+										$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
+										if ($validValue == true) {
+											$found = true;
+
+											// federal tax id should be 12-3456789 or 123-45-6789
+											if ($templateField['merge_field_name'] == 'TaxID') {
+												if (!preg_match("/^\d{2}-?\d{7}$/", $tmpVal['value']) && !preg_match("/^\d{3}-?\d{2}-?\d{4}$/", $tmpVal['value'])) {
+													$found = false;
+												}
+											}
+
+											// existing SE# should not be longer than 10 digits
+											if ($templateField['merge_field_name'] == 'AmexNum') {
+												if (strlen($tmpVal['value']) > 10) {
+													$found = false;
+												}
+											}
+										}
+									}
+								}
+
+								if ($found == false) {
+									$mergeFieldName = $templateField['merge_field_name'];
+
+									if (empty($mergeFieldName)) {
+										$mergeFieldName = $tmpVal['name'];
+										$fieldName = $tmpVal['name'];
+									}
+
+									// update our validationErrors array
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
+
+									$errorArray = array();
+									$errorArray['fieldName'] = $fieldName;
+									$errorArray['mergeFieldName'] = $mergeFieldName;
+									$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+									$errorArray['page'] = $pageOrder;
+									$errorArray['rep_only'] = $templateField['rep_only'];
+							
+									$response['validationErrorsArray'][] = $errorArray;
+
+									if ($templateField['merge_field_name'] == 'Owner2Name' ||
+										$templateField['merge_field_name'] == 'Owner2Title' ||
+										$templateField['merge_field_name'] == 'Owner2Address' ||
+										$templateField['merge_field_name'] == 'Owner2City' ||
+										$templateField['merge_field_name'] == 'Owner2State' ||
+										$templateField['merge_field_name'] == 'Owner2Zip' ||
+										$templateField['merge_field_name'] == 'Owner2Phone' ||
+										$templateField['merge_field_name'] == 'Owner2DOB' ||
+										$templateField['merge_field_name'] == 'Owner2SSN' ||
+										$templateField['merge_field_name'] == 'Owner2Email' ||
+										$templateField['merge_field_name'] == 'Owner2Equity') {
+
+										$owner2FieldsNotComplete = true;
+									}
+								}
+							}
 						}
 					}
 				}
@@ -2126,7 +2198,7 @@ class CobrandedApplication extends AppModel {
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
-		if ($owner1Equity < $template['Template']['owner_equity_threshold']) {
+		if ($owner1Equity < $template['Template']['owner_equity_threshold'] && $owner2FieldsNotComplete == true) {
 			// update our validationErrors array
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%');
 
@@ -2235,6 +2307,39 @@ class CobrandedApplication extends AppModel {
 		return $results;
 	}
 
+/**
+ * Function to determine whether a given Application should be displayed
+ * to a non logged in user.
+ * This function will take a single argument, the uuid for the application
+ * in question.  If the Application has not been modified in the last 30 days
+ * or if it has been signed it will be considered expired and visible only to
+ * logged in users.
+ *
+ * @param string $uuid
+ * @return bool
+ */
+
+	public function isExpired($uuid) {
+		$application = $this->find('first',
+			array(
+				'conditions' => array(
+					$this->alias . '.uuid' => $uuid
+				),
+				'fields' => array(
+					'CobrandedApplication.status',
+					'CobrandedApplication.modified'
+				),
+				'recursive' => -1
+			)
+		);
+		if ((CakeTime::wasWithinLast('30 days', 
+			$application['CobrandedApplication']['modified'])) &&
+			$application['CobrandedApplication']['status'] !== 'signed') {
+		
+			return false;
+		}
+		return true;
+	}
 /**
  * Array of Arguments to be used by the search plugin
  */

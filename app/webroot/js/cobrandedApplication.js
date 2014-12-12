@@ -205,9 +205,9 @@ $(document).ready(function() {
 	$('#wizard textarea').on('change', quickAdd);
 
 	// look for percent group and find the first input and fire a blur event to update the total field
-	$('#wizard fieldset.percent').each(function(index, item) {
-		$(item).find('input:first').trigger('blur');
-	});
+	//$('#wizard fieldset.percent').each(function(index, item) {
+	//	$(item).find('input:first').trigger('blur');
+	//});
 
 	$('div.tab-pane.active').on('click', function(e) {
 		var event = $(e).get(0);

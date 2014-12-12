@@ -51,7 +51,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		// load data
-		$this->loadFixtures('OnlineappCoversheet');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -60,6 +59,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 //		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+		$this->loadFixtures('OnlineappCoversheet');
 
 		$this->__template = $this->Template->find(
 			'first',
@@ -106,6 +106,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		$this->Coversheet->deleteAll(true, false);
 		$this->OnlineappEmailTimeline->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
@@ -115,6 +116,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
@@ -657,9 +659,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",'.
 			'"Off",'.
 			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
+			'"",'.
+			'"",'.
+			'"",'.
 			'"",'.
 			'"",'.
 			'"",'.
@@ -708,9 +710,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"On",'.
 			'"On",'.
 			'"On",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
+			'"10",'.
+			'"10",'.
+			'"10",'.
 			'"10.00",'.
 			'"10.00",'.
 			'"10.00",'.
@@ -1348,32 +1350,43 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'success' => false,
 			'validationErrors' => array(
 				'required_text_from_user_without_default' => 'required',
-				'rep_only_true_field_for_testing_rep_only_view_logic' => 'required'
+				'required_radio_from_user_without_default' => 'required'
      		),
      		'validationErrorsArray' => array(
 				0 => array(
             		'fieldName' => 'field 1',
             		'mergeFieldName' => 'required_text_from_user_without_default',
             		'msg' => 'Required field is empty: field 1',
-            		'page' => 1
+            		'page' => 1,
+            		'rep_only' => false
          		),
          		1 => array(
             		'fieldName' => 'field 2',
             		'mergeFieldName' => 'required_text_from_user_without_default',
             		'msg' => 'Required field is empty: field 2',
-            		'page' => 1
+            		'page' => 1,
+            		'rep_only' => false
          		),
          		2 => array(
-            		'fieldName' => 'field 3',
-            		'mergeFieldName' => 'required_text_from_user_without_default',
-            		'msg' => 'Required field is empty: field 3',
-            		'page' => 1
+            		'fieldName' => 'field 4',
+					'mergeFieldName' => 'required_radio_from_user_without_default',
+					'msg' => 'Required field is empty: field 4',
+					'page' => 1,
+					'rep_only' => false
          		),
          		3 => array(
-            		'fieldName' => 'Text field 1',
-            		'mergeFieldName' => 'rep_only_true_field_for_testing_rep_only_view_logic',
-            		'msg' => 'Required field is empty: Text field 1',
-            		'page' => 4
+					'fieldName' => 'field 4',
+					'mergeFieldName' => 'required_radio_from_user_without_default',
+					'msg' => 'Required field is empty: field 4',
+					'page' => 1,
+					'rep_only' => false
+         		),
+         		4 => array(
+					'fieldName' => 'field 4',
+					'mergeFieldName' => 'required_radio_from_user_without_default',
+					'msg' => 'Required field is empty: field 4',
+					'page' => 1,
+					'rep_only' => false
          		)
      		)
 		);

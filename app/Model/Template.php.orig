@@ -426,7 +426,7 @@ class Template extends AppModel {
 							'required' => true,
 							'source' => 1,
 							'width' => 3,
-							'default_value' => 'Application::CreditAppFee,Equipment::CreditEquipmentFee,Expedite::CreditExpediteFee,Reprogramming::CreditReprogramFee,Training::CreditVirtualTrainingFee,Wireless Activation::CreditMobileSetupFee,Total::Total',
+							'default_value' => 'Application::CreditAppFee,Equipment::CreditEquipmentFee,Expedite::CreditExpediteFee,Reprogramming::CreditReprogramFee,Training::CreditVirtualTrainingFee,Wireless Activation::CreditMobileSetupFee,Tax (CA only)::Tax,Total::Total',
 							'rep_only' => true,
 							'merge_field_name' => '',
 						),
@@ -514,7 +514,10 @@ class Template extends AppModel {
 							'width' => 12,
 							'required' => true,
 							'source' => 1,
+<<<<<<< HEAD
 							'default_value' => 'Monthly::Monthly,Daily::Daily',
+=======
+>>>>>>> 9d5132847a402fe95925b656193487614494f579
 							'rep_only' => true,
 							'merge_field_name' => 'Discount Paid',
 						),

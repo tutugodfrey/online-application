@@ -51,7 +51,14 @@ class CobrandedApplicationsController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('index','document_callback','quickAdd','retrieve','create_rightsignature_document','sign_rightsignature_document');
+		$this->Auth->allow(
+			'expired',
+			'index',
+			'document_callback',
+			'quickAdd',
+			'retrieve',
+			'create_rightsignature_document',
+			'sign_rightsignature_document');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
 
@@ -84,6 +91,10 @@ class CobrandedApplicationsController extends AppController {
 			Configure::write('debug', 0);
 			$this->disableCache();
 		}
+	}
+
+	public function expired() {
+	
 	}
 
 /**
@@ -348,7 +359,10 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function edit($uuid = null) {
-		if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
+		if ($this->CobrandedApplication->isExpired($uuid) && !$this->Auth->loggedIn()) {
+			$this->redirect(array('action' => 'expired'));
+		}
+		else if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 			// redirect to a retrieve page
 			$this->redirect(array('action' => 'retrieve'));
 		} else {
@@ -386,6 +400,8 @@ class CobrandedApplicationsController extends AppController {
 			// if it is a rep viewing/editing the application don't require fields to be filled in
 			// but if they do have data, validate it
 			$this->set('requireRequiredFields', false);
+
+			$this->Session->write('applicationStatus', $this->request->data['CobrandedApplication']['status']);
 		}
 	}
 
@@ -454,7 +470,40 @@ class CobrandedApplicationsController extends AppController {
 			$tmpUser['User']['template_id'] = $this->request->data['CobrandedApplication']['template_id'];
 
 			$response = $this->CobrandedApplication->createOnlineappForUser($tmpUser['User'], $this->request->data['CobrandedApplication']['uuid']);
+
 			if ($response['success'] == true) {
+				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+
+				$userId = $this->request->data['CobrandedApplication']['user_id'];
+				$user = $this->CobrandedApplication->User->find(
+					'first', 
+					array(
+						'conditions' => array('User.id' => $userId),
+					)
+				);
+
+				$app = $this->CobrandedApplication->find(
+					'first',
+					array(
+						'conditions' => array('CobrandedApplication.uuid' => $this->request->data['CobrandedApplication']['uuid']),
+						'recursive' => -1
+					)
+				);
+
+				$appValue = $this->CobrandedApplicationValue->find(
+					'first',
+					array(
+						'conditions' => array(
+							'CobrandedApplicationValue.cobranded_application_id' => $app['CobrandedApplication']['id'],
+							'CobrandedApplicationValue.name' => 'ContractorID'
+						),
+						'recursive' => -1
+					)
+				);
+
+				$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'].' '.$user['User']['lastname'];
+				$this->CobrandedApplicationValue->save($appValue);
+
 				$this->Session->setFlash(__('Application created'));
 				$this->redirect(array('action' => "/edit/".$response['cobrandedApplication']['uuid'], 'admin' => false));
 			} else {
@@ -759,8 +808,22 @@ class CobrandedApplicationsController extends AppController {
 				if ($signNow) {
 					$this->redirect(array('action' => 'sign_rightsignature_document?guid='.$response['document']['guid']));
 				} else {
+					$applicationValues = Hash::combine(
+						$cobrandedApplication, 
+						'CobrandedApplicationValues.{n}.name', 
+						'CobrandedApplicationValues.{n}.value'
+					);	
 					// if not simply send the documents
 					$emailResponse = $this->CobrandedApplication->sendApplicationForSigningEmail($applicationId);
+					if ($emailResponse['success'] === true) {
+						$this->Session->setFlash(
+							__('Application has been emailed to: ' . $applicationValues['Owner1Email'])
+						);
+						$this->redirect(array('action' => 'index', 'admin' => true));
+					} else {
+						$this->Session->setFlash(__($emailResponse['msg']));
+						$this->redirect($this->referer());
+					}
 				}
 			} else {
 				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];

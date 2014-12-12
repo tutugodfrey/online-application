@@ -42,7 +42,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input('required', array('div' => 'col-md-6'));
 		echo '</div>';
 		echo '<div class="row">';
-		echo $this->Form->input('default_value', array('div' => 'col-md-12'));
+		echo $this->Form->input('default_value', array('type' => 'textarea', 'escape' => false, 'div' => 'col-md-12'));
 		echo $this->Form->input('merge_field_name', array('div' => 'col-md-12'));
 		echo $this->Form->input('description', array('div' => 'col-md-12'));
 		echo $this->Form->input('encrypt', array('div' => 'col-md-6'));

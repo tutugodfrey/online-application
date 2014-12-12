@@ -43,6 +43,13 @@ class TemplateFieldHelper extends Helper {
 			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');
 		}
 
+		// if application is signed or completed, make all fields read only
+		$applicationStatus = SessionHelper::read('applicationStatus');
+
+		if ($applicationStatus == 'signed' || $applicationStatus == 'completed') {
+			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');
+		}
+
 		$retVal = $retVal . String::insert(
 			'<div class="col-md-:width:api_field":title>',
 			array(
@@ -65,12 +72,6 @@ class TemplateFieldHelper extends Helper {
 			case 0: // text
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-
-				if ($field['merge_field_name'] == 'ContractorID') {
-					$user = SessionHelper::read('Auth.User');
-					$fieldOptions = Hash::insert($fieldOptions, 'default', $user['firstname'].' '.$user['lastname']);
-				}
-				
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 		
@@ -127,7 +128,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y'));
 				} else {
 					$fieldOptions = Hash::insert($fieldOptions, 'minYear', date('Y') - 100);
-					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 20);
+					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 2);
 				}
 		
 				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
@@ -195,6 +196,11 @@ class TemplateFieldHelper extends Helper {
 						$disabled = 'disabled';
 					}
 
+					// if application is signed or completed, make all fields read only
+					if ($applicationStatus == 'signed' || $applicationStatus == 'completed') {
+						$disabled = 'disabled';
+					}
+
 					$nameValuePair = split('::', $defaultValues[$index]);
 					$lis = $lis.$this->Html->tag('li',
 						$this->Html->tag('label',
@@ -203,7 +209,7 @@ class TemplateFieldHelper extends Helper {
 								$nameValuePair[0], // no value <input />
 								array(
 									'type' => 'radio',
-									'name' => $field['name'],
+									'name' => $field['merge_field_name'],
 									'data-value-id' => $radioOption['id'],
 									'checked' => ($radioOption['value'] == null ? '' : 'checked'),
 									'disabled' => $disabled,
@@ -214,7 +220,7 @@ class TemplateFieldHelper extends Helper {
 					$index = $index + 1;
 				}
 				$retVal = $retVal.
-					$this->Html->tag('label', $label).
+					$this->Form->label($label, null, array('for' => $field['merge_field_name'])).
 					$this->Html->tag('ul', $lis, array('class' => 'list-inline'));
 				break;
 
@@ -291,7 +297,17 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $nameValuePair[1]);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $feeOption['id']);
 					$fieldOptions = Hash::insert($fieldOptions, 'value', $feeOption['value']);
-					$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $nameValuePair[0], $nameValuePair[1]);
+
+					$requiredProp = ($field['required'] && $requireRequired) ? true : false;
+					$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
+					
+					$tmpLabel = $nameValuePair[0];
+
+					if ($field['required'] == true) {
+						$tmpLabel .= '*';
+					}
+
+					$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $tmpLabel, $nameValuePair[1]);
 					$index = $index + 1;
 				}
 				$retVal = $retVal . "</fieldset>";

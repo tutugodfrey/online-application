@@ -109,8 +109,8 @@ my $templateMap = {
             "'Average Ticket', \$sectionId, 4, 10, true, 2, '', 'AvgTicket', '', null",
             "'Highest Ticket', \$sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null",
             "'Current Processor', \$sectionId, 12, 0, true, 2, '', 'Previous Processor', '', null",
-            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{100},Card Present Imprint::CardPresentImprint,Card Not Present (Keyed)::CardNotPresent-Keyed,Card Not Present (Internet)::CardNotPresent-Internet', 'MethodofSales-', '', null",
-            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{100},Direct To Business::DirectToBusiness,Direct To Government::DirectToGovernment', '%OfProductSold', '', null"
+            "'Method of Sales', \$sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{0},Card Present Imprint::CardPresentImprint{0},Card Not Present (Keyed)::CardNotPresent-Keyed{0},Card Not Present (Internet)::CardNotPresent-Internet{0}', 'MethodofSales-', '', null",
+            "'% of Product Sold', \$sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{0},Direct To Business::DirectToBusiness{0},Direct To Government::DirectToGovernment{0}', '%OfProductSold', '', null"
         ],
         'High Volume Months' => [
             "'Jan', \$sectionId, 1, 3, false, 2, '', 'Jan', '', null",
@@ -134,7 +134,7 @@ my $templateMap = {
             "'Customer Service (Desc)', \$sectionId, 4, 0, false, 2, '', 'Customer Service', '', null",
             "'Product Shipment (Desc)', \$sectionId, 4, 0, false, 2, '', 'Product Shipment', '', null",
             "'Handling of Returns (Desc)', \$sectionId, 4, 0, false, 2, '', 'Handling of Returns', '', null",
-            "'Cardholder Billing', \$sectionId, 12, 0, true, 0, '', 'Cardholder Billing', '', null",
+#            "'Cardholder Billing', \$sectionId, 12, 0, true, 0, '', 'Cardholder Billing', '', null",
             "'By what methods do sales take place? (i.e. internet, trade shows, etc.)', \$sectionId, 12, 0, true, 2, '', 'By what methods to sales take place ie Internet trade shows etc ', '', null",
             "'Are sales done:', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'Locally', \$sectionId, 6, 3, false, 2, '', 'locally', '', null",
