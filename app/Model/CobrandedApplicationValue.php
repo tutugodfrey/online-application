@@ -243,6 +243,7 @@ class CobrandedApplicationValue extends AppModel {
  */
 	public function afterFind($results, $primary = false) {
 		parent::afterFind($results, $primary);
+		$session = new CakeSession();
 
 		if (!empty($results) && is_array($results)) {
 			foreach ($results as $resultKey => $resultValue) {
@@ -272,31 +273,33 @@ class CobrandedApplicationValue extends AppModel {
 							$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 										base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
 
-							$maskValue = true;
+							if (!in_array($session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+								$maskValue = true;
 
-							$e = new Exception;
-							$stackTrace = $e->getTraceAsString();
+								$e = new Exception;
+								$stackTrace = $e->getTraceAsString();
 
-							if (strpos($stackTrace, 'createRightSignatureApplicationXml') !== false ||
-								strpos($stackTrace, 'CoversheetsController->getCobrandedApplicationValues') !== false ||
-								strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false ||
-								strpos($stackTrace, 'CobrandedApplicationsController->create_rightsignature_document') !== false ||
-								strpos($stackTrace, 'CobrandedApplicationsController->api_add()') !== false) {
-								$maskValue = false;
-							}
+								if (strpos($stackTrace, 'createRightSignatureApplicationXml') !== false ||
+									strpos($stackTrace, 'CoversheetsController->getCobrandedApplicationValues') !== false ||
+									strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false ||
+									strpos($stackTrace, 'CobrandedApplicationsController->create_rightsignature_document') !== false ||
+									strpos($stackTrace, 'CobrandedApplicationsController->api_add()') !== false) {
+									$maskValue = false;
+								}
 
-							if ($maskValue) {
-								// mask all but last 4 values
-    							$dataArray = str_split($data);
-								$dataLength = count($dataArray);
-								$data = '';
-								for ($x = 0; $x < $dataLength; $x++) {
-									if ($x < ($dataLength - 4)) {                   
-										$data .= 'X';                                   
-									}                                               
-									else {                                          
-										$data .= $dataArray[$x];                        
-									}                                               
+								if ($maskValue) {
+									// mask all but last 4 values
+    								$dataArray = str_split($data);
+									$dataLength = count($dataArray);
+									$data = '';
+									for ($x = 0; $x < $dataLength; $x++) {
+										if ($x < ($dataLength - 4)) {                   
+											$data .= 'X';                                   
+										}                                               
+										else {                                          
+											$data .= $dataArray[$x];                        
+										}                                               
+									}
 								}
 							}
 
