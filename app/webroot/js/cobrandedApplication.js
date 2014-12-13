@@ -108,20 +108,13 @@ var handlePercentOptionBlur = function(event) {
 	});
 
 	var newTotal = percentSum + parseInt(originatingField.val());
-	if (newTotal <= 100) {
-		// set it
-		parseInt(originatingField.val());
-		totalField.val(newTotal);
-		if (newTotal < 100) {
-			document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFF00';
-		}
-		else {
-			document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFFFF';
-		}
-	} else {
-		//var maxOriginatingValue = 100 - percentSum;
-		//originatingField.val(maxOriginatingValue < 0 ? 0 : maxOriginatingValue);
-		totalField.val(newTotal);
+	totalField.val(newTotal);
+
+	if (newTotal != 100) {
+		document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFF00';
+	}
+	else {
+		document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFFFF';
 	}
 };
 
