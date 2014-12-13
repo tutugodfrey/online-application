@@ -2106,27 +2106,27 @@ class CobrandedApplication extends AppModel {
 			}
 		}
 
-		if ($methodofSalesTotal < 100 && $source == 'ui') {
+		if ($methodofSalesTotal != 100 && $source == 'ui') {
 			// update our validationErrors array
-			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'MethodofSales_Total', 'less than 100');
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'MethodofSales_Total', 'does not equal 100');
 
 			$errorArray = array();
 			$errorArray['fieldName'] = 'Method of Sales Total';
 			$errorArray['mergeFieldName'] = 'MethodofSales_Total';
-			$errorArray['msg'] = 'Method of Sales Total is less than 100';
+			$errorArray['msg'] = 'Method of Sales Total does not equal 100';
 			$errorArray['page'] = $methodofSalesPage;
 							
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
-		if ($productSoldDirectTotal < 100 && $source == 'ui') {
+		if ($productSoldDirectTotal != 100 && $source == 'ui') {
 			// update our validationErrors array
-			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'ofProductSold_Total', 'less than 100');
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'ofProductSold_Total', 'does not equal 100');
 
 			$errorArray = array();
 			$errorArray['fieldName'] = '% of Product Sold';
 			$errorArray['mergeFieldName'] = 'ofProductSold_Total';
-			$errorArray['msg'] = '% of Product Sold Total is less than 100';
+			$errorArray['msg'] = '% of Product Sold Total does not equal 100';
 			$errorArray['page'] = $productSoldDirectPage;
 							
 			$response['validationErrorsArray'][] = $errorArray;
