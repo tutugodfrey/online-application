@@ -94,7 +94,17 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 	public function expired() {
-	
+		$userTemplate = $this->CobrandedApplication->User->Template->find(
+			'first',
+			array(
+				'conditions' => array('Template.id' => $this->Auth->user('template_id')),
+			)
+		);
+
+		$this->set('cobrand_logo_url', $userTemplate['Cobrand']['logo_url']);
+		$this->set('cobrand_logo_position', '1');
+		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
+		$this->set('include_axia_logo', false);
 	}
 
 /**
@@ -424,6 +434,7 @@ class CobrandedApplicationsController extends AppController {
 		$this->Paginator->settings = $this->paginate;
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
 		$this->Paginator->settings['order'] = array('CobrandedApplication.modified' => ' DESC');
+		
 		// default to only show logged in user unless user is admin
 		if (empty($this->passedArgs) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
 			$this->Paginator->settings['conditions'] = array(
@@ -437,8 +448,20 @@ class CobrandedApplicationsController extends AppController {
                 	if (!in_array($this->passedArgs['user_id'], $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'))) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
                         	$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'));  
                 	}
-		} 
+		}
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
+
+		$userTemplate = $this->User->Template->find(
+			'first',
+			array(
+				'conditions' => array('Template.id' => $this->Auth->user('template_id')),
+			)
+		);
+
+		$this->set('cobrand_logo_url', $userTemplate['Cobrand']['logo_url']);
+		$this->set('cobrand_logo_position', '1');
+		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
+		$this->set('include_axia_logo', false);
 
 		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
 
@@ -840,6 +863,17 @@ class CobrandedApplicationsController extends AppController {
  *     
  */
 	public function sign_rightsignature_document() {
+		$userTemplate = $this->CobrandedApplication->User->Template->find(
+			'first',
+			array(
+				'conditions' => array('Template.id' => $this->Auth->user('template_id')),
+			)
+		);
+		$this->set('cobrand_logo_url', $userTemplate['Cobrand']['logo_url']);
+		$this->set('cobrand_logo_position', '1');
+		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
+		$this->set('include_axia_logo', false);
+
 		$client = $this->CobrandedApplication->createRightSignatureClient();
 		$this->set('rightsignature', $client);
 
