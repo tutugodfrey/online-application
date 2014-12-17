@@ -108,20 +108,13 @@ var handlePercentOptionBlur = function(event) {
 	});
 
 	var newTotal = percentSum + parseInt(originatingField.val());
-	if (newTotal <= 100) {
-		// set it
-		parseInt(originatingField.val());
-		totalField.val(newTotal);
-		if (newTotal < 100) {
-			document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFF00';
-		}
-		else {
-			document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFFFF';
-		}
-	} else {
-		var maxOriginatingValue = 100 - percentSum;
-		originatingField.val(maxOriginatingValue < 0 ? 0 : maxOriginatingValue);
-		totalField.val(100);
+	totalField.val(newTotal);
+
+	if (newTotal != 100) {
+		document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFF00';
+	}
+	else {
+		document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFFFF';
 	}
 };
 
@@ -205,9 +198,9 @@ $(document).ready(function() {
 	$('#wizard textarea').on('change', quickAdd);
 
 	// look for percent group and find the first input and fire a blur event to update the total field
-	//$('#wizard fieldset.percent').each(function(index, item) {
-	//	$(item).find('input:first').trigger('blur');
-	//});
+	$('#wizard fieldset.percent').each(function(index, item) {
+		$(item).find('input:first').trigger('blur');
+	});
 
 	$('div.tab-pane.active').on('click', function(e) {
 		var event = $(e).get(0);
