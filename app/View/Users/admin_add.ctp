@@ -1,3 +1,59 @@
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $('input[type=checkbox]').each(function () {
+            var id = $(this).attr('id');
+            var pattern = /Template/;
+            if (pattern.test(id)) {
+                $('label[for="'+id+'"]').hide();
+            }
+        });
+
+        $('#UserTemplateId')[0].options.length = 0;
+
+        $(document).on("click", "input[type='checkbox']", function(){
+            value = $(this).attr('value');
+            id = $(this).attr('id');
+            checked = $(this).is(":checked");
+    
+            var cobrandPattern = /Cobrand/;
+            var templatePattern = /Template/;
+
+            if (cobrandPattern.test(id)) {
+                $.ajax({
+                    url: "/cobrands/get_template_ids/"+value,
+                    data: value,
+                    success: function(response){
+                        if (response.length != 0) {
+                            response = $.parseJSON(response)
+                            $.each(response, function(key, val) {
+                                if (checked) {
+                                    $('label[for="TemplateTemplate'+val+'"]').show();
+                                } else {
+                                    $('label[for="TemplateTemplate'+val+'"]').hide();
+                                }
+                            });
+                        }
+                    },
+                    cache: false
+                });
+            }
+
+            if (templatePattern.test(id)) {
+                var labelText = $('label[for="TemplateTemplate'+value+'"]').text();
+                if (checked) {
+                    $('#UserTemplateId').append('<option value="'+value+'">'+labelText+'</option>');
+                } else {
+                    $('#UserTemplateId option[value="'+value+'"]').remove();
+                }
+                
+            }
+        });
+    });
+
+</script>
+
 <div class="users form">
     <?php echo $this->Form->create('User');?>
     <fieldset>
