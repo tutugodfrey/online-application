@@ -163,9 +163,8 @@
 		?>
                 </p>
               </nav>
-            <?php endif; ?>
-
-                <div style="margin-top: 100px;">
+            <?php else: ?>
+                <div style="margin-top: 25px;">
                 <?php
                   if (!empty($cobrand_logo_url)) {
                     $partner_logo = $this->Html->image($cobrand_logo_url, array('height' => '50px'));
@@ -221,16 +220,17 @@
                   }
                   else {
                     	echo $this->Html->image(
-				              'logo.png', 
-				              array(
-					               'alt'=> __('Axia'), 
-					               'border' => '0',  
-					               'style' => 'display: block; margin-left:auto; margin-right: auto;'
-				              )
-			               );
+				'logo.png', 
+				array(
+					'alt'=> __('Axia'), 
+					'border' => '0',  
+					'style' => 'display: block; margin-left:auto; margin-right: auto;'
+				)
+			);
                   }
                 ?>
               </div>
+            <?php endif; ?>
         </div>
         <div id="content">
             <?php echo $this->Session->flash(); ?>
