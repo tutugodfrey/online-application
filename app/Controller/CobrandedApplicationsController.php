@@ -93,15 +93,20 @@ class CobrandedApplicationsController extends AppController {
 		}
 	}
 
-	public function expired() {
-		$userTemplate = $this->CobrandedApplication->User->Template->find(
+	public function expired($uuid = null) {
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array('conditions' => array('CobrandedApplication.uuid' => $uuid))
+		);
+
+		$template = $this->CobrandedApplication->User->Template->find(
 			'first',
 			array(
-				'conditions' => array('Template.id' => $this->Auth->user('template_id')),
+				'conditions' => array('Template.id' => $app['CobrandedApplication']['template_id'])
 			)
 		);
 
-		$this->set('cobrand_logo_url', $userTemplate['Cobrand']['logo_url']);
+		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
 		$this->set('include_axia_logo', false);
@@ -128,6 +133,20 @@ class CobrandedApplicationsController extends AppController {
 		}
 
 		$applications = $this->CobrandedApplication->findAppsByEmail($email);
+
+		$app = $applications[0];
+
+		$template = $this->CobrandedApplication->User->Template->find(
+			'first',
+			array(
+				'conditions' => array('Template.id' => $app['CobrandedApplication']['template_id'])
+			)
+		);
+
+		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+		$this->set('cobrand_logo_position', '1');
+		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
+		$this->set('include_axia_logo', false);
 
 		if ($applications) {
 			foreach ($applications as $key => $val) {
@@ -370,7 +389,7 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function edit($uuid = null) {
 		if ($this->CobrandedApplication->isExpired($uuid) && !$this->Auth->loggedIn()) {
-			$this->redirect(array('action' => 'expired'));
+			$this->redirect(array('action' => '/expired/'.$uuid));
 		}
 		else if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 			// redirect to a retrieve page
@@ -863,17 +882,6 @@ class CobrandedApplicationsController extends AppController {
  *     
  */
 	public function sign_rightsignature_document() {
-		$userTemplate = $this->CobrandedApplication->User->Template->find(
-			'first',
-			array(
-				'conditions' => array('Template.id' => $this->Auth->user('template_id')),
-			)
-		);
-		$this->set('cobrand_logo_url', $userTemplate['Cobrand']['logo_url']);
-		$this->set('cobrand_logo_position', '1');
-		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
-
 		$client = $this->CobrandedApplication->createRightSignatureClient();
 		$this->set('rightsignature', $client);
 
@@ -906,10 +914,13 @@ class CobrandedApplicationsController extends AppController {
 		$result = Set::normalize($xml);
 		$this->set('xml', $xml);
 
+		$appTemplateId;
+
 		$data = array();
 
 		if ($this->CobrandedApplication->findByRightsignatureDocumentGuid($guid)) {
 			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
+			$appTemplateId = $data['CobrandedApplication']['template_id'];
 			$this->layout = 'default';
 
 			if (key_exists('error', $xml) && 
@@ -941,6 +952,7 @@ class CobrandedApplicationsController extends AppController {
 
         if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
 			$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
+			$appTemplateId = $data['CobrandedApplication']['template_id'];
 			$this->set('data', $data);
 			$varSigner = true;
 			$this->set('varSigner', $varSigner);
@@ -961,6 +973,17 @@ class CobrandedApplicationsController extends AppController {
 				}
 			}
 		}
+
+		$template = $this->CobrandedApplication->User->Template->find(
+			'first',
+			array(
+				'conditions' => array('Template.id' => $appTemplateId),
+			)
+		);
+		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+		$this->set('cobrand_logo_position', '1');
+		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
+		$this->set('include_axia_logo', false);
 
 		$alreadySigned = false;
 		$this->set('alreadySigned', $alreadySigned);
