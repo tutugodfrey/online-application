@@ -236,17 +236,20 @@ class TemplateFieldHelper extends Helper {
 
 				foreach ($field['CobrandedApplicationValues'] as $percentOption) {
 					$label = $percentOption['name'];
-
 					$defaultValues = split(',', $field['default_value']);
 
 					foreach ($defaultValues as $val) {
+						if (preg_match('/\{(.+)\}/', $val, $matches)) {
+							$val = preg_replace('/\{.+\}/', '', $val);
+						}
+
 						$nameValuePair = split('::', $val);
 
 						if (($field['merge_field_name'].$nameValuePair[1]) == $percentOption['name']) {
 							$label = $nameValuePair[0];	
 						}
 					}
-
+					
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'name', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
