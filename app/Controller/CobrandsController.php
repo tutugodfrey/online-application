@@ -69,4 +69,19 @@ class CobrandsController extends AppController {
 		$this->Session->setFlash("Cobrand Deleted!");
 		$this->redirect($this->_listUrl);
 	}
+
+	public function get_template_ids($cobrandId) {
+		$this->autoRender = false;
+		$templateIds = $this->Cobrand->getTemplateIds($cobrandId);
+
+		$response = array();
+
+		if (!empty($templateIds) && is_array($templateIds)) {
+			foreach ($templateIds as $key => $val) {
+				$response[$key] = $val;
+   			}
+		}
+		
+		echo json_encode($response);
+	}
 }

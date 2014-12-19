@@ -292,6 +292,7 @@ class CobrandedApplicationsController extends AppController {
 						$emailResponse = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
 
 						unset($response['application_url_for_email']);
+						unlink($filepath);
 
 						if ($emailResponse['success'] == true) {
 							// add email timeline event
