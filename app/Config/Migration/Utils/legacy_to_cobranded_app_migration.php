@@ -30,7 +30,7 @@
 	'customer_svc_phone'                            =>		'Customer Service Phone',
 	'loc_contact_name'                              =>		'Contact',
 	'loc_contact_name_title'                        =>		'LocTitle',
-	'location_email'                                =>		'LocEmail',
+	'location_email'                                =>		'LocEMail',
 	'website'      					=>		'WebAddress',                          
 	'bus_open_date'                           	=>		'OpenDate',
 	'length_current_ownership'                	=>		'Ownership Length',
@@ -54,11 +54,9 @@
 	'card_present_imprint'                          =>		'MethodofSales-CardPresentImprint',
 	'card_not_present_keyed'                        =>		'MethodofSales-CardNotPresent-Keyed',
 	'card_not_present_internet'                     =>		'MethodofSales-CardNotPresent-Internet',
-	'method_total'                                  =>		'MethodTotal',
 	'direct_to_customer'                            =>		'%OfProductSold-DirectToCustomer',
 	'direct_to_business'                            =>		'%OfProductSold-DirectToBusiness',
 	'direct_to_govt'                                =>		'%OfProductSold-DirectToGovernment',
-	'products_total'                                =>		'ProductsTotal',
 	'high_volume_january'                    	=>		'Jan',
 	'high_volume_february'                   	=>		'Feb',
 	'high_volume_march'                      	=>		'Mar',
@@ -77,11 +75,10 @@
 	'moto_outsourced_customer_service'              =>		'Customer Service',
 	'moto_outsourced_shipment'                      =>		'Product Shipment',
 	'moto_outsourced_returns'                       =>		'Handling of Returns',
-	'moto_outsourced_billing'                       =>		'Cardholder Billing',
 	'moto_sales_methods'                            =>		'By what methods to sales take place ie Internet trade shows etc',
 	'moto_billing_monthly'                          =>		'Monthly Recurring',
 	'moto_billing_quarterly'                        =>		'QUARTERLY',
-	'moto_billing_semiannually'                     =>		'SEMIANUALLY',
+	'moto_billing_semiannually'                     =>		'SEMIANNUALLY',
 	'moto_billing_annually'                         =>		'ANNUALLY',
 	'moto_policy_full_up_front'                     =>		'PercentFullPayUpFront',
 	'moto_policy_days_until_delivery'               =>		'DaysUntilDelivery',
@@ -100,8 +97,8 @@
 	'depository_account_number'                     =>		'AccountNum',
 	'fees_routing_number'                           =>		'FeesRoutingNum',
 	'fees_account_number'                           =>		'FeesAccountNum',
-	'trade1_business_name'                          =>		'TradeRefName',
-	'trade1_contact_person'                         =>		'TradeRefContact',
+	'trade1_business_name'                          =>		'TradeRef1',
+	'trade1_contact_person'                         =>		'TradeRefContact1',
 	'trade1_phone'                                  =>		'TradeRefPhone1',
 	'trade1_acct_num'                               =>		'TradeRefAccount1',
 	'trade1_city'                                   =>		'TradeRefCity1',
@@ -120,7 +117,7 @@
 	'term1_type'                                    =>		'Terminal1',
 	'term1_provider'                                =>		'Provider-:Axia,Merchant',
 	'term1_use_autoclose'                           =>		'DoYouUseAutoclose-:Yes,No',
-	'term1_what_time'                               =>		'Autoclose Time',
+	'term1_what_time'                               =>		'Autoclose Time 1',
 	'term1_programming_avs'                         =>		'AVS',
 	'term1_programming_server_nums'                 =>		'Server',
 	'term1_programming_tips'                        =>		'Tips',
@@ -152,7 +149,7 @@
 	'owner1_phone'                          	=> 		'Owner1Phone',
 	'owner1_fax'                            	=>		'Owner1Fax', 
 	'owner1_email'                          	=>		'Owner1Email', 
-	'owner1_ssn'                            	=> 		'Owner1SSN',
+	'owner1_ssn'                            	=> 		'OwnerSSN',
 	'owner1_dob'                            	=>		'Owner1DOB', 
 	'owner2_percentage'                     	=> 		'Owner2Equity',
 	'owner2_fullname'                       	=>		'Owner2Name',
@@ -166,15 +163,6 @@
 	'owner2_email'                          	=> 		'Owner2Email',
 	'owner2_ssn'                            	=>		'Owner2SSN', 
 	'owner2_dob'                            	=> 		'Owner2DOB',
-	'referral1_business'                    	=> 		'Referral1Business',
-	'referral1_owner_officer'               	=> 		'Referral1Owner/Officer',
-	'referral1_phone'                       	=> 		'Referral1Phone',
-	'referral2_business'                    	=> 		'Referral2Business',
-	'referral2_owner_officer'               	=>		'Referral2Owner/Officer', 
-	'referral2_phone'                       	=> 		'Referral2Phone',
-	'referral3_business'                    	=> 		'Referral3Business',
-	'referral3_owner_officer'               	=> 		'Referral3Owner/Officer',
-	'referral3_phone'                       	=> 		'Referral3Phone',
 	'rep_contractor_name'                   	=> 		'ContractorID',
 	'fees_rate_discount'                    	=> 		'DiscRate1',
 	'fees_rate_structure'                   	=> 		'Rate Structure-:Interchange Pass Thru,Downgrades At Cost,Cost Plus,Bucketed,Bucketed (Rewards),Simply Swipe It Rates',
@@ -212,7 +200,7 @@
 	'rep_bus_open_operating'                	=>		'BusinessOpen-:Yes,No', 
 	'rep_visa_mc_decals_visible'            	=>		'CardDecalsVisible-:Yes,No', 
 	'rep_mail_tel_activity'                 	=> 		'MailTeleOrderActivity-:Yes,No',
-	'moto_inventory_owned'                  	=>		'product_:Yes,No', 
+	'moto_inventory_owned'                  	=>		'OwnInventory-:Yes,No', 
 	'moto_outsourced_customer_service_field'	=> 		'Customer Service',
 	'moto_outsourced_shipment_field'        	=> 		'Product Shipment',
 	'moto_outsourced_returns_field'         	=> 		'Handling of Returns',
@@ -377,11 +365,7 @@
 		    $key == 'fees_startup_wireless_activation' ||
 		    $key == 'fees_monthly_wireless_access' ||
 		    $key == 'fees_startup_tax' ||
-		    $key == 'fees_startup_total' ||
-		    $key == 'fees_pin_debit_auth' ||
-		    $key == 'fees_ebt_discount' ||
-		    $key == 'fees_pin_debit_discount'||
-		    $key == 'fees_ebt_auth') {
+		    $key == 'fees_startup_total') {
 
 		    $getTemplateFieldIdQuery = "
                         SELECT otf.id
@@ -392,13 +376,31 @@
                            AND otf.default_value ilike '%$val%'";
 		}
 		else {
+                    $tmpMergeFieldName = $mergeFieldName;
+
+                    if (preg_match('/^MethodofSales-/', $mergeFieldName, $matches)) {
+                        $tmpMergeFieldName = 'MethodofSales-';
+                    }
+
+                    if (preg_match('/^%OfProductSold-/', $mergeFieldName, $matches)) {
+                        $tmpMergeFieldName = '%OfProductSold';
+                    }
+
+                    if (preg_match('/^Rate Structure-/', $mergeFieldName, $matches)) {
+                        $tmpMergeFieldName = 'Rate Structure';
+                    }
+
+                    if (preg_match('/^Downgrades-/', $mergeFieldName, $matches)) {
+                        $tmpMergeFieldName = 'Downgrades';
+                    }
+
                     $getTemplateFieldIdQuery = "
 	                SELECT otf.id
                           FROM onlineapp_template_fields otf
 	                  JOIN onlineapp_template_sections ots ON otf.section_id = ots.id
 	                  JOIN onlineapp_template_pages otp ON ots.page_id = otp.id
 	                 WHERE otp.template_id = $template_id
-	                   AND otf.merge_field_name = '$mergeFieldName'";
+	                   AND otf.merge_field_name = '$tmpMergeFieldName'";
 		}
 
                 $getFieldIdResult = pg_query($conn, $getTemplateFieldIdQuery);
@@ -406,10 +408,6 @@
 	        if ($row = pg_fetch_row($getFieldIdResult)) {
                     $templateFieldId = $row[0];
 		    $value = $data[$key];
-
-                    if ($key == 'method_total' || $key == 'products_total') {
-			$value = '100';
-		    }
 
 		    if (!empty($optionList)) {
 
@@ -437,7 +435,7 @@
 
 			    $booleanVal = '';
 			    if (!empty($tmpValue)) {
-			        if (preg_match("/$tmpValue/i", $element)) {
+			        if (preg_match("~$tmpValue~i", $element)) {
 			            $booleanVal = 'true';
                                 }
 			    }
