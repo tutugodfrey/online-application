@@ -1,6 +1,6 @@
 #wizard input {
 	padding: 0;
-	height: 30px;
+	height: 25px;
 }
 #wizard .nav.nav-pills {
 	padding: 13px;
@@ -46,7 +46,7 @@
 	width: 26px;
 }
 #wizard input[type="checkbox"],  #wizard input[type="radio"] {
-	height: 18px;
+	height: 13px;
 }
 #wizard input[type="radio"] {
 	float: left;
@@ -54,11 +54,8 @@
 	margin-right: 5px;
 }
 #wizard .input-group-addon {
-	padding: 8px 22px 6px 10px;
-}
-#wizard select {
-	margin-top: 5px;
-	margin-bottom: 10px;
+	padding: 4px 22px 6px 10px;
+	height: 25px;
 }
 #wizard textarea {
 	width: 100%;
@@ -72,4 +69,37 @@
 }
 div.api-field {
 	display: none;
+}
+
+
+select {
+	border:1px solid #ccc;
+	vertical-align:top;
+	height: 25px;
+}
+input, select{
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	/*border-radius: 0px;*/
+}
+
+.panel-title {
+	max-height: 17px;
+}
+input.percent {
+	text-align: right;
+}
+label {
+	margin-bottom: 0;
+}
+ul {
+	margin-bottom: 0;
+}
+ul.list-inline {
+	margin-top: 5px;
+}
+
+fieldset > legend > span.small {
+	font-size: 50%;
 }

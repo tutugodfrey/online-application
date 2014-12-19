@@ -137,9 +137,13 @@ var motoQuestionnaireCheck = function(){
 	var methodOfSalesCardNotPresentKeyed = parseInt($('#MethodofSales-CardNotPresent-Keyed').val());
 	var methodOfSalesCardNotPresentInternet = parseInt($('#MethodofSales-CardNotPresent-Internet').val());
 	if (methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet >= 30) {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
+		if (document.getElementById('MOTO/Internet Questionnaire') !== null) {
+			document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
+		}
 	} else {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
+		if (document.getElementById('MOTO/Internet Questionnaire') !== null) {
+			document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
+		}
 	}
 };
 

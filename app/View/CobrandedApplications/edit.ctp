@@ -4,9 +4,13 @@
 		<section id="wizard">
 			<form id="onlineapp" method="get" action="">
 				<div id="rootwizard">
+					<?php
+					$numberOfPages = count($templatePages);
+					if ($numberOfPages > 1) {
+					?>
 					<ul>
 						<?php
-						$numberOfPages = count($templatePages);
+						
 						for ($index = 0; $index < $numberOfPages; $index ++) {
 							$templatePage = $templatePages[$index];
 							$pageDescription = $templatePage['description'];
@@ -28,6 +32,11 @@
 					</ul>
 
 					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
+					<?php	
+					} else {
+						echo '<br />';
+					}
+					?>
 
 					<div class="tab-content">
 
@@ -35,9 +44,11 @@
 
 					</div>
 					<div>Fields marked with * are required.</div>
-					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
 
 					<?php 
+						if ($numberOfPages > 1) {
+							echo $this->Element('Templates/Pages/wizardPager');
+						}
 
 						if ($methodName == 'create_rightsignature_document') {
 
