@@ -17,11 +17,16 @@ class TemplateFieldHelper extends Helper {
 		$label = ((key_exists('required', $field) && $field['required'] == true) ? $field['name'] . '*' : $field['name']);
 
 		if (preg_match('/SSN$/', $field['name'])) {
-			$label .= ' (111-11-1111)';
+			//$label .= ' (111-11-1111)';
+			$fieldOptions = Hash::insert($fieldOptions, 'placeholder', '111-11-1111');
 		}
 
 		if (preg_match('/Federal Tax ID/', $field['name'])) {
-			$label .= ' (11-1111111)';
+			$fieldOptions = Hash::insert($fieldOptions, 'placeholder','11-1111111');
+		}
+
+		if ($field['type'] == 1) {
+			$label .= ' (MM-DD-YYYY)';
 		}
 
 		$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
@@ -132,11 +137,14 @@ class TemplateFieldHelper extends Helper {
 				}
 		
 				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
-						'day' => 'DAY',
-						'month' => 'MONTH',
-						'year' => 'YEAR'
+						'day' => '--',
+						'month' => '--',
+						'year' => '----'
 					)
 				);
+
+				// display numeric months
+				$fieldOptions = Hash::insert($fieldOptions, 'monthNames', false);
 
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
@@ -255,7 +263,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
 					$fieldOptions = Hash::insert($fieldOptions, 'label', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'value', $percentOption['value']);
-					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-10');
+					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-xs-12 col-sm-12 col-md-9 percent');
 
 					$retVal = $retVal . $this->Html->tag('label', $label);
 					$retVal = $retVal . $this->Html->tag(
@@ -336,7 +344,7 @@ class TemplateFieldHelper extends Helper {
 					$this->Html->tag('label', $label, array('for' => $fieldId)).
 					$this->Html->tag('input', '', $fieldOptions).
 					$this->Html->tag('span', '%', array('class' => 'input-group-addon col-md-1')),
-					array('class' => 'input-group col-md-12')
+					array('class' => 'input-group col-md-9')
 				);
 				break;
 
@@ -365,12 +373,13 @@ class TemplateFieldHelper extends Helper {
 					$keyValuePair = split('::', $keyValuePairStr);
 					$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
 				}
-				$fieldOptions = Hash::insert($fieldOptions, 'empty', __('(choose one)'));
+				$fieldOptions = Hash::insert($fieldOptions, 'empty', __('--'));
 				$fieldOptions = Hash::insert($fieldOptions, 'options', $radioOptions);
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
 			case 21: // textarea
+				$fieldOptions = Hash::insert($fieldOptions, 'rows', 7);
 				$retVal = $retVal.
 					$this->Html->tag('label', $field['name'], array('for', $fieldId)).
 					$this->Form->textarea($field['name'], $fieldOptions);
@@ -395,7 +404,7 @@ class TemplateFieldHelper extends Helper {
 	private function __buildMoneyField($fieldOptions, $label, $fieldId) {
 		$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 		$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
-		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-10');
+		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-9');
 		$retVal = $this->Html->tag('label', $label, array('for' => $fieldId)).
 		$this->Html->tag(
 			'div',
