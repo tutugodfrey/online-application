@@ -94,16 +94,19 @@ var handlePercentOptionBlur = function(event) {
 	var totalField = $(event.totalFieldId);
 	var originatingField = $(event.origin);
 
-	// start from the top of the fieldset and all sum the inputs
-	// except for the originatingField
+	// start from the top of the fieldset and sum all the inputs
+	// except for the originatingField and the total field
+	var totalFieldPattern = new RegExp('_Total');
 	var percentSum = 0;
+	
 	$("#"+event.fieldset_id).find("input").map(function(index, input) {
 		var inputObj = $(input);
-		if (!inputObj.is(':disabled') &&
-				inputObj.attr("id") != originatingField.attr("id")) {
-			if (inputObj.val() != '') {
-				percentSum += parseInt(inputObj.val());
-			}
+		
+		if (inputObj.attr("id") != originatingField.attr("id") &&
+			!totalFieldPattern.test(inputObj.attr("name"))) {
+				if (inputObj.val() != '') {
+					percentSum += parseInt(inputObj.val());
+				}
 		}
 	});
 

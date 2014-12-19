@@ -45,15 +45,13 @@ class Cobrand extends AppModel {
 	);
 
 	public function beforeValidate(array $options = array()) {
-		if(isset($this->data['Cobrand']['logo']))
-		{
+		if (isset($this->data['Cobrand']['logo'])) {
 			if (empty($this->data['Cobrand']['logo']['name']) &&
 			empty($this->data['Cobrand']['logo']['name']) &&
-			$this->data['Cobrand']['logo']['error'] === '4'
-		) {
-			unset($this->data['Cobrand']['logo']);
-			return $this->data;
-		}
+			$this->data['Cobrand']['logo']['error'] === '4') {
+				unset($this->data['Cobrand']['logo']);
+				return $this->data;
+			}
 		}
 	}
 
@@ -106,6 +104,7 @@ class Cobrand extends AppModel {
 		}
 		return false;
 	}
+
 	public function setLogoUrl($cobrand) {
 		if (!empty($cobrand['Cobrand']['logo']['name'])) {
 			$cobrand['Cobrand']['logo_url'] = DS . 'img' . DS . $cobrand['Cobrand']['logo']['name']; 
@@ -114,4 +113,21 @@ class Cobrand extends AppModel {
 		return $cobrand;
 	}
 
+	public function getTemplateIds($cobrandId){
+		$this->Template = ClassRegistry::init('Template');
+
+		$templateIds = $this->Template->find(
+			'list',
+			array(
+				'conditions' => array(
+					'Template.cobrand_id' => $cobrandId
+				),
+				'fields' => array(
+					'Template.id'
+				),
+			)
+		);
+
+		return $templateIds;
+	}
 }
