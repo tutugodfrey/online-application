@@ -3,6 +3,7 @@
 App::uses('Controller', 'Controller');
 App::uses('View', 'View');
 App::uses('TemplateFieldHelper', 'View/Helper');
+App::uses('SessionHelper', 'View/Helper');
 
 class TemplateFieldHelperTest extends CakeTestCase {
 	public function setUp() {
