@@ -18,14 +18,15 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public $fixtures = array(
 //		'app.onlineappUser',
-		'app.onlineappCoversheet',
 		'app.onlineappCobrand',
+		'app.onlineappApplication',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
+		'app.onlineappCoversheet',
 	);
 
 	private $__template;
@@ -46,20 +47,21 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
+		$this->Application = ClassRegistry::init('Application');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		// load data
+//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
-//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
-		$this->loadFixtures('OnlineappCoversheet');
+		
 
 		$this->__template = $this->Template->find(
 			'first',
@@ -88,7 +90,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'api_password' => 'notset',
 				'api_enabled' => 1,
 		//		'api' => 1,
-				'cobrand_id' => 2,
+		//		'cobrand_id' => 2,
 				'template_id' => $this->__template['Template']['id'],
 		//	)
 		);
@@ -98,6 +100,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->CobrandedApplication->id = $cobrandedApplication['CobrandedApplication']['id'];
 		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['OnlineappUser']['id']);
 		//$this->__cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
+
+		$this->loadFixtures('OnlineappApplication');
+		$this->loadFixtures('OnlineappCoversheet');
 	}
 
 /**
@@ -110,6 +115,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimeline->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
+		$this->Application->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
@@ -119,6 +125,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
+		unset($this->Application);
 		unset($this->TemplateField);
 		unset($this->TemplateSection);
 		unset($this->TemplatePage);
@@ -1350,7 +1357,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'success' => false,
 			'validationErrors' => array(
 				'required_text_from_user_without_default' => 'required',
-				'required_radio_from_user_without_default' => 'required'
      		),
      		'validationErrorsArray' => array(
 				0 => array(
@@ -1366,27 +1372,6 @@ class CobrandedApplicationTest extends CakeTestCase {
             		'msg' => 'Required field is empty: field 2',
             		'page' => 1,
             		'rep_only' => false
-         		),
-         		2 => array(
-            		'fieldName' => 'field 4',
-					'mergeFieldName' => 'required_radio_from_user_without_default',
-					'msg' => 'Required field is empty: field 4',
-					'page' => 1,
-					'rep_only' => false
-         		),
-         		3 => array(
-					'fieldName' => 'field 4',
-					'mergeFieldName' => 'required_radio_from_user_without_default',
-					'msg' => 'Required field is empty: field 4',
-					'page' => 1,
-					'rep_only' => false
-         		),
-         		4 => array(
-					'fieldName' => 'field 4',
-					'mergeFieldName' => 'required_radio_from_user_without_default',
-					'msg' => 'Required field is empty: field 4',
-					'page' => 1,
-					'rep_only' => false
          		)
      		)
 		);

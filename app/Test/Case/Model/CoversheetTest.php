@@ -58,10 +58,10 @@ class CoversheetTest extends CakeTestCase {
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
-                $this->loadFixtures('OnlineappCobrand');
-                $this->loadFixtures('OnlineappTemplate');
-                $this->loadFixtures('OnlineappTemplatePage');
-                $this->loadFixtures('OnlineappTemplateSection');
+		$this->loadFixtures('OnlineappCobrand');
+		$this->loadFixtures('OnlineappTemplate');
+		$this->loadFixtures('OnlineappTemplatePage');
+		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
 		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
@@ -87,14 +87,7 @@ class CoversheetTest extends CakeTestCase {
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-		DROP CONSTRAINT onlineapp_users_cobrand_fk;
-		UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-		ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
