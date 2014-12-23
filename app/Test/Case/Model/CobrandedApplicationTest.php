@@ -17,6 +17,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.onlineappGroup',
 //		'app.onlineappUser',
 		'app.onlineappCobrand',
 		'app.onlineappApplication',
@@ -40,6 +41,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->Group = ClassRegistry::init('OnlineappGroup');
 		$this->User = ClassRegistry::init('OnlineappUser');
 		$this->Coversheet = ClassRegistry::init('Coversheet');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
@@ -53,6 +55,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		// load data
+		$this->loadFixtures('OnlineappGroup');
 //		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
@@ -117,6 +120,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->Application->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
+		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
@@ -132,6 +136,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->Template);
 		unset($this->Cobrand);
 		unset($this->User);
+		unset($this->Group);
 
 		parent::tearDown();
 	}
