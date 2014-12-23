@@ -16,17 +16,8 @@ class TemplateFieldHelper extends Helper {
 		$fieldOptions = array();
 		$label = ((key_exists('required', $field) && $field['required'] == true) ? $field['name'] . '*' : $field['name']);
 
-		if (preg_match('/SSN$/', $field['name'])) {
-			//$label .= ' (111-11-1111)';
-			$fieldOptions = Hash::insert($fieldOptions, 'placeholder', '111-11-1111');
-		}
-
 		if (preg_match('/Federal Tax ID/', $field['name'])) {
-			$fieldOptions = Hash::insert($fieldOptions, 'placeholder','11-1111111');
-		}
-
-		if ($field['type'] == 1) {
-			$label .= ' (MM-DD-YYYY)';
+			$fieldOptions = Hash::insert($fieldOptions, 'placeholder', '#########');
 		}
 
 		$fieldOptions = Hash::insert($fieldOptions, 'label', $label);
@@ -92,10 +83,13 @@ class TemplateFieldHelper extends Helper {
 //					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
 				} else if ($field['type'] == 9) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'phoneUS');
+					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'mask': '(999)999-9999', 'placeholder': '(###)###-####'");
 				} else if ($field['type'] == 12) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'ssn');
+					$fieldOptions = Hash::insert($fieldOptions, 'placeholder', '###-##-####');
 				} else if ($field['type'] == 13) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'zipcodeUS');
+					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'mask': '99999[-9999]', 'placeholder': '#####-####', 'greedy': false");
 				} else if ($field['type'] == 18) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
 				} else if ($field['type'] == 19) {
@@ -117,15 +111,8 @@ class TemplateFieldHelper extends Helper {
 					$day = $matches[3];
 				}
 
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'date');
-
 				if ($year != null && $month != null && $day != null) {
-					$fieldOptions = Hash::insert($fieldOptions, 'selected', array(
-							'year' => $year,
-							'month' => $month,
-							'day' => $day
-						)
-					);
+					$fieldOptions = Hash::insert($fieldOptions, 'value', $month.'/'.$day.'/'.$year);
 				}
 
 				if ($field['name'] == 'Date of Birth') {
@@ -136,15 +123,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 2);
 				}
 		
-				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
-						'day' => '--',
-						'month' => '--',
-						'year' => '----'
-					)
-				);
-
-				// display numeric months
-				$fieldOptions = Hash::insert($fieldOptions, 'monthNames', false);
+				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'mm/dd/yyyy', 'placeholder': 'mm/dd/yyyy'");
 
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
@@ -209,22 +188,25 @@ class TemplateFieldHelper extends Helper {
 						$disabled = 'disabled';
 					}
 
-					$nameValuePair = split('::', $defaultValues[$index]);
-					$lis = $lis.$this->Html->tag('li',
-						$this->Html->tag('label',
-							$this->Html->tag(
-								'input',
-								$nameValuePair[0], // no value <input />
-								array(
-									'type' => 'radio',
-									'name' => $field['merge_field_name'],
-									'data-value-id' => $radioOption['id'],
-									'checked' => ($radioOption['value'] == null ? '' : 'checked'),
-									'disabled' => $disabled,
+					if (array_key_exists($index, $defaultValues)) {
+						$nameValuePair = split('::', $defaultValues[$index]);
+						$lis = $lis.$this->Html->tag('li',
+							$this->Html->tag('label',
+								$this->Html->tag(
+									'input',
+									$nameValuePair[0], // no value <input />
+									array(
+										'type' => 'radio',
+										'name' => $field['merge_field_name'],
+										'data-value-id' => $radioOption['id'],
+										'checked' => ($radioOption['value'] == null ? '' : 'checked'),
+										'disabled' => $disabled,
+									)
 								)
 							)
-						)
-					);
+						);
+
+					}
 					$index = $index + 1;
 				}
 				$retVal = $retVal.
@@ -330,6 +312,7 @@ class TemplateFieldHelper extends Helper {
 
 			// 'money',         // 10 - $###.##
 			case 10:
+				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0'");
 				$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $label, $fieldId);
 				break;
 			// 'percent',       // 11 - (0-100)%
@@ -348,7 +331,8 @@ class TemplateFieldHelper extends Helper {
 				);
 				break;
 
-			case 14: // 'url'            // 17 - http(s)?://...
+			case 14: // 'email'
+				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'email'");
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'email');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);

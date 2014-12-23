@@ -34,6 +34,7 @@
 					<?php echo $this->Element('Templates/Pages/wizardPager') ?>
 					<?php	
 					} else {
+						$templatePage = $templatePages[0];
 						echo '<br />';
 					}
 					?>
@@ -247,6 +248,7 @@
 
 <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
 <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
+<script type="text/javascript" src="/js/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 <script type="text/javascript" src="/js/jquery.bootstrap.wizard.js"></script>
 <script type="text/javascript" src="/js/cobrandedApplication.js"></script>
 
