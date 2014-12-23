@@ -17,7 +17,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.onlineappGroup',
+		'app.Group',
 //		'app.onlineappUser',
 		'app.onlineappCobrand',
 		'app.onlineappApplication',
@@ -41,7 +41,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Group = ClassRegistry::init('OnlineappGroup');
+		$this->Group = ClassRegistry::init('Group');
 		$this->User = ClassRegistry::init('OnlineappUser');
 		$this->Coversheet = ClassRegistry::init('Coversheet');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
@@ -55,7 +55,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		// load data
-		$this->loadFixtures('OnlineappGroup');
+		$this->loadFixtures('Group');
 //		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
