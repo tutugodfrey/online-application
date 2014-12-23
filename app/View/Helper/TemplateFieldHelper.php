@@ -139,24 +139,7 @@ class TemplateFieldHelper extends Helper {
 					$meridian = $matches[3];
 				}
 
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'time');
-				$fieldOptions = Hash::insert($fieldOptions, 'interval', '15');
-
-				if ($hour != null && $minute != null && $meridian != null) {
-					$fieldOptions = Hash::insert($fieldOptions, 'selected', array(
-							'hour' => $hour,
-							'min' => $minute,
-							'meridian' => $meridian
-						)
-					);
-				}
-		
-				$fieldOptions = Hash::insert($fieldOptions, 'empty', array(
-						'minute' => 'MINUTE',
-						'hour' => 'HOUR',
-						'meridian' => 'AM/PM'
-					)
-				);
+				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'hh:mm t', 'placeholder': 'hh:mm xm'");
 
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
