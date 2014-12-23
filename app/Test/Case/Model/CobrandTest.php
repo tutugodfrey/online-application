@@ -7,7 +7,10 @@ App::uses('Cobrand', 'Model');
  */
 class CobrandTest extends CakeTestCase {
 
-	public $fixtures = array('app.onlineappCobrand');
+	public $fixtures = array(
+		'app.onlineappTemplate',
+		'app.onlineappCobrand'
+	);
 
 	public $autoFixtures = false;
 
@@ -15,14 +18,17 @@ class CobrandTest extends CakeTestCase {
 
 	public function setUp() {
 		parent::setUp();
+		$this->Template = ClassRegistry::init('Template');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		
 		// mock filesystem
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
+		$this->loadFixtures('OnlineappTemplate');
 	}
 
 	public function tearDown() {
+		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
 		unset($this->Cobrand);
 		parent::tearDown();

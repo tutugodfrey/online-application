@@ -17,7 +17,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.Group',
+		'app.group',
 //		'app.onlineappUser',
 		'app.onlineappCobrand',
 		'app.onlineappApplication',

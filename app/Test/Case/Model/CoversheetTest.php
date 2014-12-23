@@ -15,6 +15,7 @@ class CoversheetTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.group',
 		'app.onlineappCoversheet',
 		'app.onlineappApplication',
 		'app.onlineappUser',
@@ -46,6 +47,7 @@ class CoversheetTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->Group = ClassRegistry::init('Group');
 		$this->Coversheet = ClassRegistry::init('Coversheet');
 		$this->Application = ClassRegistry::init('Application');
 		$this->User = ClassRegistry::init('OnlineappUser');
@@ -58,6 +60,7 @@ class CoversheetTest extends CakeTestCase {
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
+		$this->loadFixtures('Group');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -82,7 +85,8 @@ class CoversheetTest extends CakeTestCase {
 		$this->Application->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
-		$this->User->delete(1);;
+		$this->User->delete(1);
+		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
@@ -98,7 +102,7 @@ class CoversheetTest extends CakeTestCase {
 		unset($this->Coversheet);
 		unset($this->Application);
 		unset($this->User);
-		
+		unset($this->Group);
 		parent::tearDown();
 	}
 
