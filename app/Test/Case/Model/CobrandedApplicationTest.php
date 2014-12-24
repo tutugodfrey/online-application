@@ -119,6 +119,8 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function tearDown() {
 		$this->Coversheet->deleteAll(true, false);
+		$this->OnlineappEmailTimeline->deleteAll(true, false);
+		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->Application->deleteAll(true, false);
@@ -129,8 +131,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
-		$this->OnlineappEmailTimeline->deleteAll(true, false);
-		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
