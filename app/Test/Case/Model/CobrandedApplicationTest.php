@@ -119,8 +119,6 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function tearDown() {
 		$this->Coversheet->deleteAll(true, false);
-		$this->OnlineappEmailTimeline->deleteAll(true, false);
-		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->Application->deleteAll(true, false);
@@ -131,6 +129,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+		$this->OnlineappEmailTimeline->deleteAll(true, false);
+		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
@@ -147,7 +147,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		parent::tearDown();
 	}
-/*
+
 	public function testValidation() {
 		// create a new appliction
 		// only validation currently in place is for the uuid
@@ -1061,7 +1061,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			);
 		}
 	}
-*/
+
 	public function testSendFieldCompletionEmail() {
 		$CakeEmail = new CakeEmail('default');
 		$CakeEmail->transport('Debug');
@@ -1096,7 +1096,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertFalse($response['success'], 'sendFieldCompletionEmail with bad email address should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
-/*
+
 	public function testSendNewApiApplicationEmail() {
 		$CakeEmail = new CakeEmail('default');
 		$CakeEmail->transport('Debug');
@@ -1530,5 +1530,4 @@ class CobrandedApplicationTest extends CakeTestCase {
 			}
 		}
 	}
-*/
 }
