@@ -39,23 +39,24 @@ var quickAdd = function(e) {
 			data['value'] = timeString;
 			data['field_id'] = id;
 			persist(data);
-		}
-		else if (patternMonth.test(id) || patternDay.test(id) || patternYear.test(id)) {
-			var monthElement = document.getElementById(name+"Month");
-			var dayElement = document.getElementById(name+"Day");
-			var yearElement = document.getElementById(name+"Year");
-			var dateString = yearElement.value + "/" + monthElement.value + "/" + dayElement.value;
-			data['id'] = target.attr('data-value-id');
-			data['value'] = dateString;
-			data['field_id'] = id;
-			persist(data);
-		}
-		else {
+		} else {
 			// need to validate
 			if ($validator.element(target) === true) {
 				data['id'] = target.attr('data-value-id');
-				data['value'] = target.val();
 				data['field_id'] = target.attr('id');
+
+				var isDateField = (target.attr('data-inputmask') === 'date' || target.attr('data-inputmask') === "'alias': 'mm/dd/yyyy'");
+				data['value'] = target.val();
+				if (isDateField) {
+					var newDate = new Date(Date.parse(target.val()));
+					var d = ("0" + newDate.getDate()).slice(-2);
+					var m = newDate.getMonth();
+					m += 1;  // JavaScript months are 0-11
+					m = ("0" + m).slice(-2);
+					var y = newDate.getFullYear();
+					data['value'] = y+'/'+m+'/'+d;
+				}
+
 				persist(data);
 			}
 		}
@@ -228,4 +229,6 @@ $(document).ready(function() {
 
 	$('#MethodofSales-CardNotPresent-Keyed').on('change', motoQuestionnaireCheck);
 	$('#MethodofSales-CardNotPresent-Internet').on('change', motoQuestionnaireCheck);
+
+	$(":input").inputmask();
 });

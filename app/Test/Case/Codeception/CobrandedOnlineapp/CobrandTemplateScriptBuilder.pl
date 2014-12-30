@@ -135,7 +135,7 @@ my $templateMap = {
             "'Product Shipment (Desc)', \$sectionId, 4, 0, false, 2, '', 'Product Shipment', '', null",
             "'Handling of Returns (Desc)', \$sectionId, 4, 0, false, 2, '', 'Handling of Returns', '', null",
 #            "'Cardholder Billing', \$sectionId, 12, 0, true, 0, '', 'Cardholder Billing', '', null",
-            "'By what methods do sales take place? (i.e. internet, trade shows, etc.)', \$sectionId, 12, 0, true, 2, '', 'By what methods to sales take place ie Internet trade shows etc ', '', null",
+            "'By what methods do sales take place? (i.e. internet, trade shows, etc.)', \$sectionId, 12, 0, true, 2, '', 'By what methods do sales take place ie internet trade shows etc', '', null",
             "'Are sales done:', \$sectionId, 12, 6, false, 3, '', 'label', '', null",
             "'Locally', \$sectionId, 6, 3, false, 2, '', 'locally', '', null",
             "'Nationally', \$sectionId, 6, 3, false, 2, '', 'nationally', '', null",
