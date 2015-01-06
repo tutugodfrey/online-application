@@ -188,13 +188,13 @@ class TemplateFieldHelperTest extends CakeTestCase {
 					'<label for="value1">name1*</label>'.
 					'<div class="input-group col-md-12">'.
 						'<span class="input-group-addon col-md-1">$</span>'.
-						'<input label="name*" name="name1" id="value1" required="required" type="text" class="col-md-9" data-value-id="id1" value="" data-vtype="money">'.
+						'<input label="name*" name="name1" id="value1" required="required" type="text" class="col-md-9" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: false, &#039;placeholder&#039;: &#039;0.00&#039;" data-vtype="money">'.
 						'</input>'.
 					'</div>'.
 					'<label for="value2">name2*</label>'.
 					'<div class="input-group col-md-12">'.
 						'<span class="input-group-addon col-md-1">$</span>'.
-						'<input label="name*" name="name2" id="value2" required="required" type="text" class="col-md-9" data-value-id="id2" value="" data-vtype="money">'.
+						'<input label="name*" name="name2" id="value2" required="required" type="text" class="col-md-9" data-value-id="id2" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: false, &#039;placeholder&#039;: &#039;0.00&#039;" data-vtype="money">'.
 						'</input>'.
 					'</div>'.
 				'</fieldset>'.
