@@ -225,7 +225,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 				'<label for="merge_field_name">name*</label>'.
 				'<div class="input-group col-md-12">'.
 					'<span class="input-group-addon col-md-1">$</span>'.
-					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: false, &#039;placeholder&#039;: &#039;0&#039;" type="text" data-vtype="money" class="col-md-9">'.
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: false, &#039;placeholder&#039;: &#039;0:00&#039;" type="text" data-vtype="money" class="col-md-9">'.
 					'</input>'.
 				'</div>'.
 			'</div>',
