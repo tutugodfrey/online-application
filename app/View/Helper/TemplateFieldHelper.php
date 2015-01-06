@@ -276,6 +276,8 @@ class TemplateFieldHelper extends Helper {
 
 					$requiredProp = ($field['required'] && $requireRequired) ? true : false;
 					$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
+
+					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00'");
 					
 					$tmpLabel = $nameValuePair[0];
 
