@@ -106,7 +106,12 @@ var handlePercentOptionBlur = function(event) {
 		}
 	});
 
-	var newTotal = percentSum + parseInt(originatingField.val());
+	var originatingFieldValue = parseInt(originatingField.val());
+	if (isNaN(originatingFieldValue)) {
+		originatingFieldValue = 0;
+	}
+
+	var newTotal = percentSum + originatingFieldValue;
 	totalField.val(newTotal);
 
 	if (newTotal != 100) {
