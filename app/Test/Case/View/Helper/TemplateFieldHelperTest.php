@@ -95,7 +95,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">'.
 				'<div class="input text">'.
 					'<label for="merge_field_name">name*</label>'.
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" minYear="1914" maxYear="2016" data-inputmask="&#039;alias&#039;: &#039;mm/dd/yyyy&#039;, &#039;placeholder&#039;: &#039;mm/dd/yyyy&#039;" type="text"/>'.
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" minYear="1915" maxYear="2017" data-inputmask="&#039;alias&#039;: &#039;mm/dd/yyyy&#039;, &#039;placeholder&#039;: &#039;mm/dd/yyyy&#039;" type="text"/>'.
 				'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
