@@ -148,12 +148,11 @@ class UsersController extends AppController {
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('assigned_managers', $this->User->getAssignedManagerIds($id));
 		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
-		$this->set('cobrands', $this->Cobrand->getList());
+		
 		$user = $this->User->read();
 
-		$cobrandIds = $this->User->getCobrandIds($id);
-		$templates = $this->User->Template->getList($cobrandIds);
-		$this->set('templates', $templates);
+		$this->set('cobrands', $this->Cobrand->getList());
+		$this->set('templates', $this->User->Template->getList());
 
 		$userTemplates = $this->User->getTemplates($id);
 

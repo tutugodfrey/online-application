@@ -22,43 +22,24 @@ var quickAdd = function(e) {
 		var id = target.attr('id');
 		var name = target.attr('name');
 
-		var patternHour = new RegExp(name+'Hour');
-		var patternMinute = new RegExp(name+'Minute');
-		var patternMeridian = new RegExp(name+'Meridian');
-
-		var patternMonth = new RegExp(name+'Month');
-		var patternDay = new RegExp(name+'Day');
-		var patternYear = new RegExp(name+'Year');
-
-		if (patternHour.test(id) || patternMinute.test(id) || patternMeridian.test(id)) {
-			var hourElement = document.getElementById(name+"Hour");
-			var minuteElement = document.getElementById(name+"Minute");
-			var meridianElement = document.getElementById(name+"Meridian");
-			var timeString = hourElement.value + ":" + minuteElement.value + " " + meridianElement.value;
+		// need to validate
+		if ($validator.element(target) === true) {
 			data['id'] = target.attr('data-value-id');
-			data['value'] = timeString;
-			data['field_id'] = id;
-			persist(data);
-		} else {
-			// need to validate
-			if ($validator.element(target) === true) {
-				data['id'] = target.attr('data-value-id');
-				data['field_id'] = target.attr('id');
+			data['field_id'] = target.attr('id');
 
-				var isDateField = (target.attr('data-inputmask') === 'date' || target.attr('data-inputmask') === "'alias': 'mm/dd/yyyy'");
-				data['value'] = target.val();
-				if (isDateField) {
-					var newDate = new Date(Date.parse(target.val()));
-					var d = ("0" + newDate.getDate()).slice(-2);
-					var m = newDate.getMonth();
-					m += 1;  // JavaScript months are 0-11
-					m = ("0" + m).slice(-2);
-					var y = newDate.getFullYear();
-					data['value'] = y+'/'+m+'/'+d;
-				}
-
-				persist(data);
+			var isDateField = (target.attr('data-inputmask') === 'date' || target.attr('data-inputmask') && target.attr('data-inputmask').indexOf('\'alias\': \'mm\/dd\/yyyy\'') >= 0);
+			data['value'] = target.val();
+			if (isDateField) {
+				var newDate = new Date(Date.parse(target.val()));
+				var d = ("0" + newDate.getDate()).slice(-2);
+				var m = newDate.getMonth();
+				m += 1;  // JavaScript months are 0-11
+				m = ("0" + m).slice(-2);
+				var y = newDate.getFullYear();
+				data['value'] = y+'/'+m+'/'+d;
 			}
+
+			persist(data);
 		}
 	}
 };

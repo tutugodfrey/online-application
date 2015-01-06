@@ -295,7 +295,7 @@ class TemplateFieldHelper extends Helper {
 
 			// 'money',         // 10 - $###.##
 			case 10:
-				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0'");
+				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00'");
 				$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $label, $fieldId);
 				break;
 			// 'percent',       // 11 - (0-100)%
