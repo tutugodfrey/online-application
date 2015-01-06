@@ -9,6 +9,20 @@ var quickAdd = function(e) {
 		data['value'] = target.is(":checked"); // not really needed...
 		data['template_field_id'] = target.attr('data-field-id');
 		data['field_id'] = target.attr('id');
+
+		/*if (target.attr('name') == 'BusinessType-') {
+			var businessType = $("input[name='BusinessType-']:checked").parent().text();
+
+			if (businessType == 'Retail' || businessType == 'Grocery') {
+				$('#Amex\\ Discount\\ Rate').val(2.89);
+				$('#Amex\\ Discount\\ Rate').trigger('change');
+			}
+			else if (businessType == 'Restaurant' || businessType == 'MOTO' || businessType == 'Internet') {
+				$('#Amex\\ Discount\\ Rate').val(3.5);
+				$('#Amex\\ Discount\\ Rate').trigger('change');
+			}
+		}*/
+
 		persist(data);
 	} else if(target.is(":checkbox")) {
 		if (target.attr('id') == 'loc_same_as_corp' || target.attr('id') == 'fees_same_as_depository') {
