@@ -169,6 +169,31 @@
 									}
 			 					");
 							}
+
+							if (!in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) && $values_map['AllowMerchantToSignApplication'] != 'true') {
+								echo "<input type='button' onclick='submitForReview();' value='Submit for Review'>";
+
+								$submitForReviewUrl = Router::url(array(
+									'controller' => 'cobranded_applications',
+									'action' => 'submit_for_review',
+									$this->request->data['CobrandedApplication']['id'],
+									True
+								));
+		
+								echo $this->Html->scriptBlock("
+									function submitForReview() {
+			   							if (". (isset($errors) && is_array($errors) ? '1' : '0') .") {
+											alert('The application must be saved with all required fields completed before submitting for review.');
+											return null;
+										}
+										else if (" . ($this->request->data['CobrandedApplication']['status'] == 'signed' ? '1' : '0') . ") {
+											answer = confirm('This application has already been signed.');
+											return null;
+										}
+										window.location = '".$submitForReviewUrl."';
+									}
+			 					");
+							}
 						?>
 					</div>
 					<?php

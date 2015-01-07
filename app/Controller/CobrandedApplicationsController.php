@@ -42,9 +42,10 @@ class CobrandedApplicationsController extends AppController {
 		'admin_app_extend' => array(User::ADMIN, User::REP, User::MANAGER),
 		'create_rightsignature_document' => array('*'),
 		'sign_rightsignature_document' => array('*'),
-                'document_callback' => array('*'),
+		'document_callback' => array('*'),
 		'install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
 		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
+		'submit_for_review' => array('*')
 	);
 
 	public $helper = array('TemplateField');
@@ -58,7 +59,8 @@ class CobrandedApplicationsController extends AppController {
 			'quickAdd',
 			'retrieve',
 			'create_rightsignature_document',
-			'sign_rightsignature_document');
+			'sign_rightsignature_document',
+			'submit_for_review');
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = false;
 
@@ -1190,7 +1192,7 @@ class CobrandedApplicationsController extends AppController {
  * callback implements logic for what should happen to applications after
  * they have been signed.
  */
-	function document_callback() {
+	public function document_callback() {
 		$this->data = array_change_key_case($this->data, CASE_LOWER);	
 		CakeLog::write('debug', print_r($this->request->data, true));
 		
@@ -1214,6 +1216,28 @@ class CobrandedApplicationsController extends AppController {
 		}
 		
 		exit;
+	}
+
+/**
+ * submit_for_review
+ *
+ * @params
+ *     $applicationId int
+ */
+	public function submit_for_review($applicationId = null) {
+		$this->CobrandedApplication->id = $applicationId;
+
+		if (!$this->CobrandedApplication->exists()) {
+			throw new NotFoundException(__('Invalid application'));
+		}
+
+		$response = $this->CobrandedApplication->submitForReviewEmail($applicationId);
+
+		if ($response['success'] != true) {
+			$this->set('error', $response['msg']);
+		}
+
+		$this->render('end');
 	}
 
 /**
