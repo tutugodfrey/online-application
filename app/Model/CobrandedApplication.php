@@ -1324,6 +1324,65 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * submitForReviewEmail
+ * 
+ * @params
+ *     $applicationId int
+ * @returns
+ *     $response array
+ */
+	public function submitForReviewEmail($applicationId) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+		
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		$dbaBusinessName = '';
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		$to = $cobrandedApplication['User']['email'];
+		$subject = $dbaBusinessName.' - Online Application Merchant Portion Completed';
+		$format = 'text';
+		$template = 'rep_notify';
+		$viewVars = array();
+		$viewVars['rep'] = $cobrandedApplication['User']['email'];
+		$viewVars['merchant'] = $dbaBusinessName;
+		$viewVars['link'] = Router::url('/users/login', true);
+
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::MERCHANT_PORTION_COMPLETE;
+			$args['recipient'] = $cobrandedApplication['User']['email'];
+			$response = $this->createEmailTimelineEntry($args);
+		}
+
+		return $response;
+	}
+
+/**
  * sendRightsignatureInstallSheetEmail
  *
  * @params
