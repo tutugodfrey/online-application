@@ -44,12 +44,9 @@
 					<?php echo $this->Element('Templates/Pages/templatePage', array('numberOfPages' => $numberOfPages, 'templatePage' => $templatePage, 'requireRequiredFields' => $requireRequiredFields)) ?>
 
 					</div>
-					<div>Fields marked with * are required.</div>
+					<div>Fields marked with * are required.<br><br></div>
 
-					<?php 
-						if ($numberOfPages > 1) {
-							echo $this->Element('Templates/Pages/wizardPager');
-						}
+					<?php
 
 						if ($methodName == 'create_rightsignature_document') {
 
@@ -97,7 +94,7 @@
 
 					?>
 					
-					<div id="actionButtons">
+					<div id="actionButtons" align="right">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
 								echo "<input type='button' onclick='fieldCompletion();' value='Email For Field Completion'>"."<br/>";
@@ -196,6 +193,13 @@
 							}
 						?>
 					</div>
+
+					<?php
+						if ($numberOfPages > 1) {
+							echo $this->Element('Templates/Pages/wizardPager');
+						}
+					?>
+
 					<?php
 						echo $this->Html->scriptBlock("
 							function copyCorpToLocFields() {
