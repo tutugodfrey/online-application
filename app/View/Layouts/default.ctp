@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    
+
     <?php echo $this->Html->charset(); ?>
-    
+
     <title>
         <?php echo __('Axia - '); ?>
         <?php echo $title_for_layout; ?>
@@ -40,23 +40,21 @@
     ?>
 
     <?php
-
         echo $scripts_for_layout;
-        
-         if ($this->Session->read('Auth.User.id')!=''){
-             //echo Security::inactiveMins() * Configure::read('Session.timeout');
+
+		if ($this->Session->read('Auth.User.id')!=''){
             echo "<script type='text/javascript'>
                 var c=0;
                 var t;
                 var timer_is_on=0;
+				var remainingMins;
 
                 function sessionCount(){
-                var remainingMins = Math.round((" . Security::inactiveMins() * Configure::read('Session.timeout') . " - c) / 60 );
+                remainingMins = Math.round((" . Security::inactiveMins() * Configure::read('Session.timeout') . " - c) / 60);
                 document.getElementById('sessCountDn').innerHTML= remainingMins + ' minutes';
                 /*If half the total session timeout is reached*/
-                    
                     if(remainingMins <= 10){
-                        document.getElementById('sessCountDn').innerHTML= '<b>' + remainingMins + ((remainingMins > 1) ? ' minutes.</b>' : ' minute.</b>');                        
+                        document.getElementById('sessCountDn').innerHTML= '<b>' + remainingMins + ((remainingMins > 1) ? ' minutes.</b>' : ' minute.</b>');
                         document.getElementById('msg_fader').style.display = 'block';
                         document.getElementById('session_box').style.display = 'block';
                        }
@@ -66,71 +64,72 @@
                      return
                     }
                 c=c+1;
-                t=setTimeout(\"sessionCount()\",1000);
+				t=setTimeout(\"sessionCount()\",1000);
                 }
 
                 function doTimer(){
-                if (!timer_is_on){
-                  timer_is_on=1;
-                  sessionCount();
-                  }
+					if (!timer_is_on){
+						 timer_is_on=1;
+						sessionCount();
+					}
                 }
-                //window.onload = doTimer;
-                window.onload=function() {
-                    doTimer();
-                    var cancel = document.getElementById('cancelBtn');
-                    //Hide Login Box
-                    cancel.onclick = function() {
-                            document.getElementById('refreshIMG').style.display='block';
-                            var fader = document.getElementById('msg_fader');
-                            var session_box = document.getElementById('session_box');
-                            var isAppStep = 0;
-                            var pElements = document.getElementsByTagName('p');
-                            var regExPattrn=/steps/gi;
 
-                            for(x=0; x < pElements.length;x++){
-                                if(pElements[x].className.match(regExPattrn)){
-                                    isAppStep = 1;
-                                    break;
-                                }
-                            }
-                            if(isAppStep)
-                                document.forms[0].submit()
-                            else
-                                window.location.reload()
-                            fader.style.display = 'none';
-                            session_box.style.display = 'none';
-                            session_box.removeChild(document.getElementById('cancelBtn'));
-                         }
-                     }
+				function resetTimer(){
+					if(remainingMins < 12){
+							$.ajax({
+								type: 'POST',
+								url: '/Pages/refreshSession',
+								dataType: 'html',
+								success: function(data) {
+									window.clearTimeout(t);
+									c = 0;
+									timer_is_on=0;
+									doTimer();
+									hideExpirationNotice();
+								}
+							});
+					}
+				}
+
+				function hideExpirationNotice(){
+					var fader = document.getElementById('msg_fader');
+					var session_box = document.getElementById('session_box');
+					fader.style.display = 'none';
+					session_box.style.display = 'none';
+				}
+                window.onload=function() {
+					$('body').on('click', resetTimer).on('keypress', resetTimer);
+                    doTimer();
+					}
         </script>";
          }
     ?>
 </head>
 <body>
-   <!-- Session notification Dialog Box --> 
+	<div id='countTST'></div>
+   <!-- Session notification Dialog Box -->
    <div id="msg_fader">&nbsp;</div>
-   <div id="session_box" >
-       <h2>Session Expiring Soon</h2>
+   <div id="session_box" style='height: 5.5cm'>
+       <h2><span class="label label-danger">Session Expiring Soon!</span></h2><br />
       <p style="color:black ">Session will expire in <span id="sessCountDn">$nbsp;</span>
-           <br />If session expires you must to log back in and re-enter any unsaved work that was lost upon session expiration.
-           </p> 
-        <img src="/img/refreshing.gif" id="refreshIMG" style="display:none;float:right; margin-right: 25px" />   
-       <span id="cancelBtn" class="btns">Continue</span>
+           <br />All unsaved work will be lost upon session expiration.
+		   <br /><br /><span class="label label-success" style="font-size: 10pt">Click or hit any key continue.</span>
+	</p>
+        <img src="/img/refreshing.gif" id="refreshIMG" style="display:none;float:right; margin-right: 25px" />
    </div>
-    <!-- End Session notification Dialog Box --> 
+    <!-- End Session notification Dialog Box -->
     <!--  span id="loginBtn" class="btn">Need to login?</span -->
     <div id="container">
         <div id="header">
-            <?php if (array_key_exists('admin', $this->request->params) && 
+            <?php if (array_key_exists('admin', $this->request->params) &&
                       $this->request->params['admin'] === true): ?>
               <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
                 <p class="navbar-text">
                 <?php echo $this->Html->getCrumbs(' > ', array('text' => _('Axia Admin Home'), 'url' => '/admin/')); ?>
                 </p>
                 <p class="navbar-text navbar-right btn-group">
-                <?php 
-			echo $this->Html->link(__('Applications'), 
+                <?php
+			echo $this->Html->link(__('Applications'),
 				array(
 					'controller' => 'cobrandedApplications',
 					'action' => 'index',
@@ -139,8 +138,8 @@
 				array(
 					'class' => 'btn btn-default'
 				)
-			); 
-			echo $this->Html->link(__('Coversheets'), 
+			);
+			echo $this->Html->link(__('Coversheets'),
 				array(
 					'controller' => 'coversheets',
 					'action' => 'index',
@@ -149,8 +148,8 @@
 				array(
 					'class' => 'btn btn-default'
 				)
-			); 
-			echo $this->Html->link(__('Logout'), 
+			);
+			echo $this->Html->link(__('Logout'),
 				array(
 					'controller' => 'users',
 					'action' => 'logout',
@@ -159,7 +158,7 @@
 				array(
 					'class' => 'btn btn-default'
 				)
-			); 
+			);
 		?>
                 </p>
               </nav>
@@ -220,10 +219,10 @@
                   }
                   else {
                     	echo $this->Html->image(
-				'logo.png', 
+				'logo.png',
 				array(
-					'alt'=> __('Axia'), 
-					'border' => '0',  
+					'alt'=> __('Axia'),
+					'border' => '0',
 					'style' => 'display: block; margin-left:auto; margin-right: auto;'
 				)
 			);
