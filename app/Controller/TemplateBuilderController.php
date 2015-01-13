@@ -80,6 +80,11 @@ class TemplateBuilderController extends AppController {
  * @return void
  */
 	public function add() {
+		$response = array(
+			'success' => true,
+			'msg' => '',
+		);
+
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -88,101 +93,137 @@ class TemplateBuilderController extends AppController {
 
 		$requestData = $this->request->data['TemplateBuilder'];
 
-    	$newTemplate['Template'] = array(
-    		'cobrand_id' => $requestData['new_template_cobrand_id'],
-    		'name' => $requestData['name'],
-    		'logo_position' => $requestData['logo_position'],
-    		'include_axia_logo' => $requestData['include_axia_logo'],
-    		'description' => $requestData['description'],
-    		'rightsignature_template_guid' => $requestData['rightsignature_template_guid'],
-    		'rightsignature_install_template_guid' => $requestData['rightsignature_install_template_guid'],
-    		'owner_equity_threshold' => $requestData['owner_equity_threshold']
-    	);
-
-    	$this->Template->create();
-    	$newTemplateData = $this->Template->save($newTemplate);
-
-$this->log($requestData, 'debug');
-
-		$pageIdMap = array();
-		$sectionIdMap = array();
-
 		foreach ($requestData as $key => $val) {
 			if ($val) {
-				if (preg_match('/^template_page_id_(\d+)$/', $key, $matches)) {
-					$templatePage = $this->TemplatePage->find(
-						'first',
-						array(
-							'conditions' => array('TemplatePage.id' => $matches[1]),
-							'recursive' => -1
-						)
-					);
-
-					$newTemplatePage['TemplatePage'] = array(
-						'name' =>  $templatePage['TemplatePage']['name'],
-						'description' =>  $templatePage['TemplatePage']['description'],
-						'rep_only' =>  $templatePage['TemplatePage']['rep_only'],
-						'template_id' =>  $newTemplateData['Template']['id'],
-						'order' =>  $templatePage['TemplatePage']['order']
-					);
-
-					$this->TemplatePage->create();
-					$this->TemplatePage->save($newTemplatePage);
-
-					$pageIdMap[$matches[1]] = $this->TemplatePage->getLastInsertID();
-				}
-
+				// make sure all selected sections have a selected parent page
 				if (preg_match('/^template_page_id_(\d+)_section_id_(\d+)$/', $key, $matches)) {
-					$templateSection = $this->TemplateSection->find(
-						'first',
-						array(
-							'conditions' => array('TemplateSection.id' => $matches[2]),
-							'recursive' => -1
-						)
-					);
+					$parentPageId = 'template_page_id_'.$matches[1];
 
-					$newTemplateSection['TemplateSection'] = array(
-						'name' =>  $templateSection['TemplateSection']['name'],
-						'description' =>  $templateSection['TemplateSection']['description'],
-						'rep_only' =>  $templateSection['TemplateSection']['rep_only'],
-						'width' =>  $templateSection['TemplateSection']['width'],
-						'page_id' =>  $pageIdMap[$matches[1]],
-						'order' =>  $templateSection['TemplateSection']['order']
-					);
-
-					$this->TemplateSection->create();
-					$this->TemplateSection->save($newTemplateSection);
-					$sectionIdMap[$matches[2]] = $this->TemplateSection->getLastInsertID();
+					if (!$requestData[$parentPageId]) {
+						$response['success'] = false;
+						$response['msg'] .= 'selected section missing selected page ';
+					}
 				}
 
+				// make sure all selected fields have a selected section
 				if (preg_match('/^template_page_id_(\d+)_section_id_(\d+)_field_id_(\d+)$/', $key, $matches)) {
-					$templateField = $this->TemplateField->find(
-						'first',
-						array(
-							'conditions' => array('TemplateField.id' => $matches[3]),
-							'recursive' => -1
-						)
-					);
+					$parentSectionId = 'template_page_id_'.$matches[1].'_section_id_'.$matches[2];
 
-					$newTemplateField['TemplateField'] = array(
-						'name' =>  $templateField['TemplateField']['name'],
-						'description' =>  $templateField['TemplateField']['description'],
-						'rep_only' =>  $templateField['TemplateField']['rep_only'],
-						'width' =>  $templateField['TemplateField']['width'],
-						'type' =>  $templateField['TemplateField']['type'],
-						'required' =>  $templateField['TemplateField']['required'],
-						'source' =>  $templateField['TemplateField']['source'],
-						'default_value' =>  $templateField['TemplateField']['default_value'],
-						'merge_field_name' =>  $templateField['TemplateField']['merge_field_name'],
-						'order' =>  $templateField['TemplateField']['order'],
-						'section_id' =>  $sectionIdMap[$matches[2]],
-						'encrypt' =>  $templateField['TemplateField']['encrypt']
-					);
-
-					$this->TemplateField->create();
-					$this->TemplateField->save($newTemplateField);
+					if (!$requestData[$parentSectionId]) {
+						$response['success'] = false;
+						$response['msg'] .= 'selected field missing selected section ';
+					}
 				}
 			}
+		}
+
+		if ($response['success'] == true) {
+			$response['msg'] = 'successfully created a new template';
+			
+    		$newTemplate['Template'] = array(
+    			'cobrand_id' => $requestData['new_template_cobrand_id'],
+    			'name' => $requestData['name'],
+    			'logo_position' => $requestData['logo_position'],
+    			'include_axia_logo' => $requestData['include_axia_logo'],
+    			'description' => $requestData['description'],
+    			'rightsignature_template_guid' => $requestData['rightsignature_template_guid'],
+    			'rightsignature_install_template_guid' => $requestData['rightsignature_install_template_guid'],
+    			'owner_equity_threshold' => $requestData['owner_equity_threshold']
+    		);
+
+    		$this->Template->create();
+    		$newTemplateData = $this->Template->save($newTemplate);
+
+			$pageIdMap = array();
+			$sectionIdMap = array();
+
+			foreach ($requestData as $key => $val) {
+				if ($val) {
+					if (preg_match('/^template_page_id_(\d+)$/', $key, $matches)) {
+						$templatePage = $this->TemplatePage->find(
+							'first',
+							array(
+								'conditions' => array('TemplatePage.id' => $matches[1]),
+								'recursive' => -1
+							)
+						);
+
+						$repOnly = $requestData['rep_only_template_page_id_'.$matches[1]];
+
+						$newTemplatePage['TemplatePage'] = array(
+							'name' =>  $templatePage['TemplatePage']['name'],
+							'description' =>  $templatePage['TemplatePage']['description'],
+							'rep_only' =>  $repOnly,
+							'template_id' =>  $newTemplateData['Template']['id'],
+							'order' =>  $templatePage['TemplatePage']['order']
+						);
+
+						$this->TemplatePage->create();
+						$this->TemplatePage->save($newTemplatePage);
+
+						$pageIdMap[$matches[1]] = $this->TemplatePage->getLastInsertID();
+					}
+
+					if (preg_match('/^template_page_id_(\d+)_section_id_(\d+)$/', $key, $matches)) {
+						$templateSection = $this->TemplateSection->find(
+							'first',
+							array(
+								'conditions' => array('TemplateSection.id' => $matches[2]),
+								'recursive' => -1
+							)
+						);
+
+						$repOnly = $requestData['rep_only_template_page_id_'.$matches[1].'_section_id_'.$matches[2]];
+
+						$newTemplateSection['TemplateSection'] = array(
+							'name' =>  $templateSection['TemplateSection']['name'],
+							'description' =>  $templateSection['TemplateSection']['description'],
+							'rep_only' =>  $repOnly,
+							'width' =>  $templateSection['TemplateSection']['width'],
+							'page_id' =>  $pageIdMap[$matches[1]],
+							'order' =>  $templateSection['TemplateSection']['order']
+						);
+
+						$this->TemplateSection->create();
+						$this->TemplateSection->save($newTemplateSection);
+						$sectionIdMap[$matches[2]] = $this->TemplateSection->getLastInsertID();
+					}
+
+					if (preg_match('/^template_page_id_(\d+)_section_id_(\d+)_field_id_(\d+)$/', $key, $matches)) {
+						$templateField = $this->TemplateField->find(
+							'first',
+							array(
+								'conditions' => array('TemplateField.id' => $matches[3]),
+								'recursive' => -1
+							)
+						);
+
+						$repOnly = $requestData['rep_only_template_page_id_'.$matches[1].'_section_id_'.$matches[2].'_field_id_'.$matches[3]];
+
+						$newTemplateField['TemplateField'] = array(
+							'name' =>  $templateField['TemplateField']['name'],
+							'description' =>  $templateField['TemplateField']['description'],
+							'rep_only' =>  $repOnly,
+							'width' =>  $templateField['TemplateField']['width'],
+							'type' =>  $templateField['TemplateField']['type'],
+							'required' =>  $templateField['TemplateField']['required'],
+							'source' =>  $templateField['TemplateField']['source'],
+							'default_value' =>  $templateField['TemplateField']['default_value'],
+							'merge_field_name' =>  $templateField['TemplateField']['merge_field_name'],
+							'order' =>  $templateField['TemplateField']['order'],
+							'section_id' =>  $sectionIdMap[$matches[2]],
+							'encrypt' =>  $templateField['TemplateField']['encrypt']
+						);
+
+						$this->TemplateField->create();
+						$this->TemplateField->save($newTemplateField);
+					}
+				}
+			}
+		}
+
+		if ($response['success'] != true) {
+			$this->set('errors', $response['msg']);
 		}
 	}
 }
