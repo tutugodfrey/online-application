@@ -1,13 +1,9 @@
-<div class="template builder form">
-
 <?php
 
-	if ($errors) {
-		echo $errors;
-	} else {
-		echo "new template created";
-	}
+echo $this->Html->link('Admin', array('controller' => 'admin', 'action' => 'index'));
+
+echo "<div class='template builder form'>";
+echo $response;
+echo "</div>";
 
 ?>
-
-</div>

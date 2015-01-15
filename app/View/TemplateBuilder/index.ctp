@@ -58,7 +58,11 @@
 </script>
 
 <?php
-if ($template) {
+
+echo $this->Html->link('Admin', array('controller' => 'admin', 'action' => 'index'));
+echo "<br><br>";
+
+if (!empty($template) && $template) {
     echo "<div class='template builder form'>";
             echo $this->Form->create('TemplateBuilder', array('url' => '/template_builder/add'));
                 echo $this->Form->input(
@@ -89,9 +93,12 @@ if ($template) {
                 echo $this->Form->input('description');
                 echo $this->Form->input('rightsignature_template_guid');
                 echo $this->Form->input('rightsignature_install_template_guid');
-                echo $this->Form->input('owner_equity_threshold');
-                echo "<br><br>";
+                echo $this->Form->input('owner_equity_threshold');     
 
+                echo "<table cellpadding='0' cellspacing='0' border='1'>";
+
+                echo "<tr>";
+                echo "<td colspan='4'>";
                 echo $this->Form->input('check_all',
                     array(
                         'label' => 'CHECK ALL',
@@ -100,10 +107,13 @@ if ($template) {
                         'onclick' => 'checkAll();'
                     )
                 );
-                echo "<br>";
+                echo "</td>";
+                echo "</tr>";
 
-                echo "<table cellpadding='0' cellspacing='0'>";
-                echo "<th>TEMP</th><th>REP ONLY</th>";
+                echo "<th style='text-align:center'>Page/Section/Field</th>";
+                echo "<th style='text-align:center'>Rep Only</th>";
+                echo "<th style='text-align:center'>Required</th>";
+                echo "<th style='text-align:center'>Default Value(s)</th>";
 
                 foreach ($template['TemplatePages'] as $page) {
                     if ($page['name'] == 'Validate Application') {
@@ -130,11 +140,13 @@ if ($template) {
                                 array(
                                     'type' => 'radio',
                                     'legend' => false,
-                                    'options' => array('true' => 'Yes', 'false' => 'No'),
+                                    'options' => array('true' => 'Yes ', 'false' => 'No'),
                                     'default' => $repOnly
                                 )
                             );
                         echo "</td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
                     echo "</tr>";
 
                     foreach ($page['TemplateSections'] as $section) {
@@ -153,17 +165,19 @@ if ($template) {
 
                             $repOnly = $section['rep_only'] ? 'true' : 'false';
 
-                            echo "<td style='padding-left: 3em;'>";
+                            echo "<td>";
                                 echo $this->Form->input(
                                     "rep_only_template_page_id_".$page['id']."_section_id_".$section['id'],
                                     array(
                                         'type' => 'radio',
                                         'legend' => false,
-                                        'options' => array('true' => 'Yes', 'false' => 'No'),
+                                        'options' => array('true' => 'Yes ', 'false' => 'No'),
                                         'default' => $repOnly
                                     )
                                 );
                             echo "</td>";
+                            echo "<td></td>";
+                            echo "<td></td>";
                         echo "</tr>";
 
                         foreach ($section['TemplateFields'] as $field) {
@@ -182,17 +196,43 @@ if ($template) {
 
                                 $repOnly = $field['rep_only'] ? 'true' : 'false';
 
-                                echo "<td style='padding-left: 6em;'>";
+                                echo "<td>";
                                     echo $this->Form->input(
                                         "rep_only_template_page_id_".$page['id']."_section_id_".$section['id']."_field_id_".$field['id'],
                                         array(
                                             'type' => 'radio',
                                             'legend' => false,
-                                            'options' => array('true' => 'Yes', 'false' => 'No'),
+                                            'options' => array('true' => 'Yes ', 'false' => 'No'),
                                             'default' => $repOnly
                                         )
                                     );
                                 echo "</td>";
+
+                                $required = $field['required'] ? 'true' : 'false';
+
+                                echo "<td>";
+                                    echo $this->Form->input(
+                                        "required_template_page_id_".$page['id']."_section_id_".$section['id']."_field_id_".$field['id'],
+                                        array(
+                                            'type' => 'radio',
+                                            'legend' => false,
+                                            'options' => array('true' => 'Yes ', 'false' => 'No'),
+                                            'default' => $required
+                                        )
+                                    );
+                                echo "</td>";
+
+                                echo "<td>";
+                                    echo $this->Form->input(
+                                        "default_template_page_id_".$page['id']."_section_id_".$section['id']."_field_id_".$field['id'],
+                                        array(
+                                            'type' => 'textarea',
+                                            'label' => false,
+                                            'default' => $field['default_value']
+                                        )
+                                    );
+                                echo "</td>";
+
                             echo "</tr>";
                         }
                     }
@@ -201,6 +241,7 @@ if ($template) {
                 }
 
                 echo "</table>";
+                echo "<br>";
         
             echo $this->Form->end('Submit');
     echo "</div>";
