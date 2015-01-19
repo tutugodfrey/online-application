@@ -1,8 +1,7 @@
 <?php
 
-echo $this->Html->link('Admin', array('controller' => 'admin', 'action' => 'index'));
-
-echo "<div class='template builder form'>";
+echo "<div class='cobrandedApplications form'>";
+echo "<br><br>";
 echo $response;
 echo "</div>";
 

@@ -59,12 +59,16 @@
 
 <?php
 
-echo $this->Html->link('Admin', array('controller' => 'admin', 'action' => 'index'));
-echo "<br><br>";
-
 if (!empty($template) && $template) {
-    echo "<div class='template builder form'>";
-            echo $this->Form->create('TemplateBuilder', array('url' => '/template_builder/add'));
+    echo "<div>";
+        echo "<br><br>";
+                echo $this->Form->create('TemplateBuilder',
+                    array(
+                        'url' => '/admin/template_builder/add',
+                        'class' => 'form-inline'
+                    )
+                );
+
                 echo $this->Form->input(
                     'new_template_cobrand_id',
                     array(
@@ -76,7 +80,7 @@ if (!empty($template) && $template) {
                 echo "<br><br>";
 
                 echo "New Template:<br><br>";
-                echo $this->Form->input('name');
+                echo $this->Form->input('name', array('style' => 'width:500px; height:30px;'));
                 echo $this->Form->input(
                     'logo_position',
                     array(
@@ -90,10 +94,10 @@ if (!empty($template) && $template) {
                         'type' => 'checkbox'
                     )
                 );
-                echo $this->Form->input('description');
-                echo $this->Form->input('rightsignature_template_guid');
-                echo $this->Form->input('rightsignature_install_template_guid');
-                echo $this->Form->input('owner_equity_threshold');     
+                echo $this->Form->input('description', array('style' => 'width:500px; height:30px;'));
+                echo $this->Form->input('rightsignature_template_guid', array('style' => 'width:500px; height:30px;'));
+                echo $this->Form->input('rightsignature_install_template_guid', array('style' => 'width:500px; height:30px;'));
+                echo $this->Form->input('owner_equity_threshold', array('style' => 'width:500px; height:30px;'));     
 
                 echo "<table cellpadding='0' cellspacing='0' border='1'>";
 
@@ -247,7 +251,7 @@ if (!empty($template) && $template) {
     echo "</div>";
 }
 else {
-    echo "<div class='template builder form'>";
+    echo "<div class='cobrandedApplications form'>";
     echo $this->Form->create('TemplateBuilder');
         echo "<fieldset>";
             echo "<legend>Choose Base Template</legend>";

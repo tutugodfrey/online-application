@@ -8,45 +8,11 @@ App::uses('AppController', 'Controller');
 class TemplateBuilderController extends AppController {
 
 /**
- * Components
- *
- * @var array
- */
-	public $components = array('Security');
-
-	//public $permissions = array(
-	//	'index' => array(User::ADMIN, User::REP, User::MANAGER)
-	//);
-
-	public function beforeFilter() {
-		parent::beforeFilter();
-		$this->Auth->allow('index');
-		$this->Security->validatePost = false;
-		$this->Security->csrfCheck = false;
-
-/*			// are we authenticated?
-			if (is_null($this->Auth->user('id'))) {
-				// not authenticated
-				// next -> were we passed a valid uuid?
-				$uuid = (isset($this->params['pass'][0]) ? $this->params['pass'][0] : '');
-				if (Validation::uuid($uuid)) {
-					// yup, allow edit action
-					$this->Auth->allow('edit');
-					// could look it up even
-				} else {
-					// invalid uuid - allow retrievel of their application via their email
-					$this->Auth->allow('retrieve', 'retrieve_thankyou');
-				}
-			}
-			*/
-	}
-
-/**
- * index method
+ * admin_index method
  *
  * @return void
  */
-	public function index() {
+	public function admin_index() {
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 
@@ -75,11 +41,11 @@ class TemplateBuilderController extends AppController {
 	}
 
 /**
- * add method
+ * admin_add method
  *
  * @return void
  */
-	public function add() {
+	public function admin_add() {
 		$response = array(
 			'success' => true,
 			'msg' => '',
@@ -100,8 +66,24 @@ class TemplateBuilderController extends AppController {
 					$parentPageId = 'template_page_id_'.$matches[1];
 
 					if (!$requestData[$parentPageId]) {
+						$parentPage = $this->TemplatePage->find(
+							'first',
+							array(
+								'conditions' => array('TemplatePage.id' => $matches[1]),
+								'recursive' => -1
+							)
+						);
+
+						$section = $this->TemplateSection->find(
+							'first',
+							array(
+								'conditions' => array('TemplateSection.id' => $matches[2]),
+								'recursive' => -1
+							)
+						);
+
 						$response['success'] = false;
-						$response['msg'] .= 'selected section missing selected page ';
+						$response['msg'] .= 'section: '.$section['TemplateSection']['name'].' was selected, but not it\'s parent page: '.$parentPage['TemplatePage']['name'].'<br>';
 					}
 				}
 
@@ -110,8 +92,24 @@ class TemplateBuilderController extends AppController {
 					$parentSectionId = 'template_page_id_'.$matches[1].'_section_id_'.$matches[2];
 
 					if (!$requestData[$parentSectionId]) {
+						$parentSection = $this->TemplateSection->find(
+							'first',
+							array(
+								'conditions' => array('TemplateSection.id' => $matches[2]),
+								'recursive' => -1
+							)
+						);
+
+						$field = $this->TemplateField->find(
+							'first',
+							array(
+								'conditions' => array('TemplateField.id' => $matches[3]),
+								'recursive' => -1
+							)
+						);
+
 						$response['success'] = false;
-						$response['msg'] .= 'selected field missing selected section ';
+						$response['msg'] .= 'field: '.$field['TemplateField']['name'].' was selected, but not it\'s parent section: '.$parentSection['TemplateSection']['name'].'<br>';
 					}
 				}
 			}
@@ -199,6 +197,8 @@ class TemplateBuilderController extends AppController {
 						);
 
 						$repOnly = $requestData['rep_only_template_page_id_'.$matches[1].'_section_id_'.$matches[2].'_field_id_'.$matches[3]];
+						$required = $requestData['required_template_page_id_'.$matches[1].'_section_id_'.$matches[2].'_field_id_'.$matches[3]];
+						$defaultValue = $requestData['default_template_page_id_'.$matches[1].'_section_id_'.$matches[2].'_field_id_'.$matches[3]];
 
 						$newTemplateField['TemplateField'] = array(
 							'name' =>  $templateField['TemplateField']['name'],
@@ -206,9 +206,9 @@ class TemplateBuilderController extends AppController {
 							'rep_only' =>  $repOnly,
 							'width' =>  $templateField['TemplateField']['width'],
 							'type' =>  $templateField['TemplateField']['type'],
-							'required' =>  $templateField['TemplateField']['required'],
+							'required' =>  $required,
 							'source' =>  $templateField['TemplateField']['source'],
-							'default_value' =>  $templateField['TemplateField']['default_value'],
+							'default_value' =>  $defaultValue,
 							'merge_field_name' =>  $templateField['TemplateField']['merge_field_name'],
 							'order' =>  $templateField['TemplateField']['order'],
 							'section_id' =>  $sectionIdMap[$matches[2]],
@@ -222,9 +222,7 @@ class TemplateBuilderController extends AppController {
 			}
 		}
 
-		if ($response['success'] != true) {
-			$this->set('errors', $response['msg']);
-		}
+		$this->set('response', $response['msg']);
 	}
 }
 
