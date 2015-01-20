@@ -449,6 +449,9 @@ class CobrandedApplicationsController extends AppController {
 				$this->request->data['CobrandedApplication'][$i]= '';
 			}
 		}
+
+		$userIds = $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'));
+
 		//paginate the applications
 		$this->Prg->commonProcess();
 		//grab results from the custom finder _findIndex and pass them to the paginator
@@ -456,20 +459,28 @@ class CobrandedApplicationsController extends AppController {
 		$this->Paginator->settings = $this->paginate;
 		$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
 		$this->Paginator->settings['order'] = array('CobrandedApplication.modified' => ' DESC');
-		
 		// default to only show logged in user unless user is admin
-		if (empty($this->passedArgs) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
-			$this->Paginator->settings['conditions'] = array(
-				'CobrandedApplication.user_id' => $this->Auth->user('id')
-			);
-		} else if(isset($this->passedArgs['user_id'])) {
-			// perform some permissions checks
-			// Reps can see only their own apps
-			// Managers can see their own plus reps assigned to them
-			// Admins can see everything
-                	if (!in_array($this->passedArgs['user_id'], $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'))) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
-                        	$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'));  
-                	}
+		// perform some permissions checks
+		// Reps can see only their own apps
+		// Managers can see their own plus reps assigned to them
+		// Admins can see everything
+		switch($this->Auth->user('group_id')) {
+			case User::REPRESENTATIVE_GROUP_ID:
+				$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $this->Auth->user('id');
+				break;
+			case User::MANAGER_GROUP_ID:
+				if (array_key_exists('search', $this->passedArgs)) {
+					if (in_array($this->passedArgs['user_id'], $userIds)) {
+						$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
+					} else if (!in_array($this->passedArgs['user_id'], $userIds)) {
+						$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $userIds;
+					}
+				} else {
+					$this->Paginator->settings['conditions'] = array(
+                                        	'CobrandedApplication.user_id' => $this->Auth->user('id')
+					);
+				}
+				break;
 		}
 		$this->set('cobrandedApplications',  $this->Paginator->paginate());
 
@@ -479,11 +490,6 @@ class CobrandedApplicationsController extends AppController {
 				'conditions' => array('Template.id' => $this->Auth->user('template_id')),
 			)
 		);
-
-		$this->set('cobrand_logo_url', $userTemplate['Cobrand']['logo_url']);
-		$this->set('cobrand_logo_position', '1');
-		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
 
 		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
 

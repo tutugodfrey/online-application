@@ -2,7 +2,7 @@
 			echo $this->Form->create('Coversheet', 
 				array(
 					'url' => array_merge(
-						array('action' => 'admin_search'),
+						array('action' => 'admin_index'),
 						$this->params['pass']
 					),
 					'inputDefaults' => array(
