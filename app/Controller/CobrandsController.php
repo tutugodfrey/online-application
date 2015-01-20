@@ -1,5 +1,4 @@
 <?php
-App::uses('Sanitize', 'Utility');
 App::uses('AppController', 'Controller');
 /**
  * Cobrands Controller
@@ -16,7 +15,7 @@ class CobrandsController extends AppController {
 		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
 
 		if ($this->request->is('post')) {
-			$data = Sanitize::clean($this->request->data);
+			$data = $this->request->data;
 			$data = $this->Cobrand->setLogoUrl($data);
 			$this->Cobrand->create();
 			if ($this->Cobrand->save($data)) {
@@ -44,7 +43,7 @@ class CobrandsController extends AppController {
 					$this->request->data['Cobrand']['logo_url'] = '';
 				}
 			$this->request->data = $this->Cobrand->setLogoUrl($this->request->data);
-			if ($this->Cobrand->saveAll(Sanitize::clean($this->request->data))) {
+			if ($this->Cobrand->saveAll($this->request->data)) {
 				$this->Session->setFlash("Cobrand Saved!");
 				return $this->redirect($this->_listUrl);
 			}
@@ -69,5 +68,20 @@ class CobrandsController extends AppController {
 		$this->Cobrand->delete($idToDelete);
 		$this->Session->setFlash("Cobrand Deleted!");
 		$this->redirect($this->_listUrl);
+	}
+
+	public function get_template_ids($cobrandId) {
+		$this->autoRender = false;
+		$templateIds = $this->Cobrand->getTemplateIds($cobrandId);
+
+		$response = array();
+
+		if (!empty($templateIds) && is_array($templateIds)) {
+			foreach ($templateIds as $key => $val) {
+				$response[$key] = $val;
+   			}
+		}
+		
+		echo json_encode($response);
 	}
 }

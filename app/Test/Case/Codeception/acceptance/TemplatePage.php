@@ -19,6 +19,15 @@ class TemplatePage
 	public static $descriptionField = 'TemplateDescription';
 	public static $descriptionLabel = 'Description';
 
+	public static $templateRightsignatureTemplateGuidField = 'TemplateRightsignatureTemplateGuid';
+	public static $templateRightsignatureTemplateGuidLabel = 'Rightsignature Template Guid';
+
+	public static $templateRightsignatureInstallTemplateGuidField = 'TemplateRightsignatureInstallTemplateGuid';
+	public static $templateRightsignatureInstallTemplateGuidLabel = 'Rightsignature Install Template Guid';
+
+	public static $templateOwnerEquityThresholdField = 'TemplateOwnerEquityThreshold';
+	public static $templateOwnerEquityThresholdLabel = 'Owner Equity Threshold';
+
 	// buttons
 	public static $newButtonLabel = 'New Template';
 	public static $editButtonLabel = 'Edit';

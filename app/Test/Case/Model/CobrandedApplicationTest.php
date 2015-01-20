@@ -17,15 +17,19 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.group',
 //		'app.onlineappUser',
-		'app.onlineappCoversheet',
 		'app.onlineappCobrand',
+		'app.onlineappApplication',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
+		'app.onlineappCoversheet',
+		'app.onlineappEmailTimelineSubject',
+		'app.onlineappEmailTimeline'
 	);
 
 	private $__template;
@@ -39,6 +43,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->Group = ClassRegistry::init('Group');
 		$this->User = ClassRegistry::init('OnlineappUser');
 		$this->Coversheet = ClassRegistry::init('Coversheet');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
@@ -46,20 +51,24 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
+		$this->Application = ClassRegistry::init('Application');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
-
+		
 		// load data
-		$this->loadFixtures('OnlineappCoversheet');
+		$this->loadFixtures('Group');
+//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
-//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+		$this->loadFixtures('OnlineappEmailTimelineSubject');
+		$this->loadFixtures('OnlineappEmailTimeline');
 
 		$this->__template = $this->Template->find(
 			'first',
@@ -88,7 +97,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'api_password' => 'notset',
 				'api_enabled' => 1,
 		//		'api' => 1,
-				'cobrand_id' => 2,
+		//		'cobrand_id' => 2,
 				'template_id' => $this->__template['Template']['id'],
 		//	)
 		);
@@ -98,6 +107,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->CobrandedApplication->id = $cobrandedApplication['CobrandedApplication']['id'];
 		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['OnlineappUser']['id']);
 		//$this->__cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
+
+		$this->loadFixtures('OnlineappApplication');
+		$this->loadFixtures('OnlineappCoversheet');
 	}
 
 /**
@@ -106,31 +118,32 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		$this->Coversheet->deleteAll(true, false);
 		$this->OnlineappEmailTimeline->deleteAll(true, false);
+		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
+		$this->Application->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
+		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
-
+		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
+		unset($this->Application);
 		unset($this->TemplateField);
 		unset($this->TemplateSection);
 		unset($this->TemplatePage);
 		unset($this->Template);
 		unset($this->Cobrand);
 		unset($this->User);
+		unset($this->Group);
+		unset($this->EmailTimeline);
+		unset($this->EmailTimelineSubject);
 
 		parent::tearDown();
 	}
@@ -195,6 +208,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'modified' => '2007-03-18 10:41:31',
 				'rightsignature_template_guid' => null,
 				'rightsignature_install_template_guid' => null,
+				'owner_equity_threshold' => 50,
 				'Cobrand' => array(
 					'id' => (int) 1,
 					'partner_name' => 'Partner Name 1',
@@ -664,9 +678,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",'.
 			'"Off",'.
 			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
+			'"",'.
+			'"",'.
+			'"",'.
 			'"",'.
 			'"",'.
 			'"",'.
@@ -715,9 +729,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"On",'.
 			'"On",'.
 			'"On",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
+			'"10",'.
+			'"10",'.
+			'"10",'.
 			'"10.00",'.
 			'"10.00",'.
 			'"10.00",'.
@@ -732,7 +746,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"http://www.domain.com",'.
 			'"12.82234",'.
 			'"1234567890",'.
-			'"true",'.
+			'"",'.
 			'"a whole lot of text can go into this field...",'.
 			'"text text text",'.
 			'"text text text",'.
@@ -762,20 +776,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 		//     - user
 		//     - fieldsData
 		// pre-test:
-		//     - should be one cobrandedApplications for this user
+		//     - should be one cobrandedApplication for this user
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Did not expect to find any applications for user with id ['. $this->__user['OnlineappUser']['id'] .']');
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['. $this->__user['OnlineappUser']['id'] .']');
 
 		// set expected results
 		$expectedValidationErrors = array(
 			'required_text_from_api_without_default' => 'required',
-			'Text field' => 'required',
-			'Text field 1' => 'required'
+			'required_text_from_api_without_default_source_2' => 'required',
+			'required_text_from_user_without_default_repOnly' => 'required',
+			'required_text_from_user_without_default_textfield' => 'required',
+			'required_text_from_user_without_default_textfield1' => 'required'
 		);
 
 		// set knowns
@@ -799,7 +815,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(0, count($applications), 'Expect to find no applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
@@ -875,7 +892,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Expect to find one application for user with id ['.$this->__user['OnlineappUser']['id'].']');
+
+		$this->assertEquals(2, count($applications), 'Expect to find two applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
 
 		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
 		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
@@ -1350,35 +1368,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => false,
 			'validationErrors' => array(
-				'field 1' => 'required',
-				'field 2' => 'required',
-				'field 3' => 'required',
-				'Text field 1' => 'required'
+				'required_text_from_user_without_default' => 'required',
      		),
      		'validationErrorsArray' => array(
 				0 => array(
             		'fieldName' => 'field 1',
             		'mergeFieldName' => 'required_text_from_user_without_default',
             		'msg' => 'Required field is empty: field 1',
-            		'page' => 1
+            		'page' => 1,
+            		'rep_only' => false
          		),
          		1 => array(
             		'fieldName' => 'field 2',
             		'mergeFieldName' => 'required_text_from_user_without_default',
             		'msg' => 'Required field is empty: field 2',
-            		'page' => 1
-         		),
-         		2 => array(
-            		'fieldName' => 'field 3',
-            		'mergeFieldName' => 'required_text_from_user_without_default',
-            		'msg' => 'Required field is empty: field 3',
-            		'page' => 1
-         		),
-         		3 => array(
-            		'fieldName' => 'Text field 1',
-            		'mergeFieldName' => 'rep_only_true_field_for_testing_rep_only_view_logic',
-            		'msg' => 'Required field is empty: Text field 1',
-            		'page' => 4
+            		'page' => 1,
+            		'rep_only' => false
          		)
      		)
 		);
@@ -1525,5 +1530,4 @@ class CobrandedApplicationTest extends CakeTestCase {
 			}
 		}
 	}
-
 }

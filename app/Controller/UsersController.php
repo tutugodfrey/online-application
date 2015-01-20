@@ -1,5 +1,4 @@
 <?php
-App::uses('Sanitize', 'Utility');
 class UsersController extends AppController {
 
 	public $scaffold = 'admin';
@@ -80,19 +79,25 @@ class UsersController extends AppController {
 			'conditions' => array('User.active' => 't'),
 			'recursive' => 0
 		);
-		$data = $this->paginate('User');
-		$this->set('users', $data);
+		$groups = $this->User->Group->find('list');
+		$templates = $this->User->Template->getList();
+		$users = $this->paginate('User');
+		$this->set(compact('groups', 'templates', 'users'));
 		$this->set('scaffoldFields', array_keys($this->User->schema()));
 		
 	}
 
 	function admin_add() {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
+		$this->set('cobrands', $this->Cobrand->getList());
+		$this->set('templates', $this->User->Template->getList());
 
 		if ($this->request->is('post')) {
 			$this->User->create();
-			if ($this->User->save(Sanitize::clean($this->request->data))) {
+			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('The User has been created'));
 				$this->redirect(array('action'=> 'index', 'admin' => true));
 			} else {
@@ -107,19 +112,27 @@ class UsersController extends AppController {
 	function admin_bulk_edit() {
 		if (empty($this->request->data)) {
 			$this->paginate = array(
-				'limit' => 100,
+				'limit' => 150,
+				'contain' => array(
+					'Group',
+					'Template' => array('fields' => array('id')),
+					'Cobrand' => array('fields' => array('id')),
+				),
+				'recursive' => -1,
 				'order' => array('User.firstname' => 'ASC'),
 			);
 
 			$users = $this->paginate('User');
+			$cobrands = $this->User->Cobrand->getList();
+			$templates = $this->User->Template->getList();
 			$groups = $this->User->Group->find('list');
-			$this->set(compact('users','groups'));
-
-			//unset($this->request->data['User']['password']);
-			} else {
-			$this->User->arrayDiff($this->request->data);
-
-			if ($this->User->saveAll(Sanitize::clean($this->User->arrayDiff($this->request->data)))){
+			$this->set(compact('cobrands','users','groups','templates'));
+		} else {
+			$relatedData = Hash::extract($this->request->data, 'User');
+			$userData = Hash::remove($this->request->data, 'User');
+			$mergeData = Hash::merge($userData, $relatedData);
+			$changedUsers = $this->User->arrayDiff($mergeData);
+			if ($this->User->saveAll($changedUsers, array('deep' => true))){
 				$this->Session->setFlash("Users Saved!");
 				$this->redirect('/admin/users');
 			}
@@ -127,24 +140,34 @@ class UsersController extends AppController {
 	}
 
 	function admin_edit($id) {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->User->id = $id;
 		$this->User->read();
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('assigned_managers', $this->User->getAssignedManagerIds($id));
 		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
-		$this->set('cobrands', $this->User->Cobrand->getList());
+		
 		$user = $this->User->read();
-		$this->set('templates', $this->User->Template->getList($user['User']['cobrand_id']));
+
+		$this->set('cobrands', $this->Cobrand->getList());
+		$this->set('templates', $this->User->Template->getList());
+
+		$userTemplates = $this->User->getTemplates($id);
+
+		$this->set('userTemplates', $userTemplates);
+		$this->set('defaultTemplateId', $user['User']['template_id']);
+
 		// TODO: add templates
-		if (empty($this->request->data)){
+		if (empty($this->request->data)) {
 			$this->request->data = $this->User->read();
 		} else {
 			if(empty($this->request->data['User']['pwd']) && empty($this->request->data['User']['password_confirm'])) {
 				unset($this->request->data['User']['pwd']);
 				unset($this->request->data['User']['password_confirm']);
 			}
-			if ($this->User->saveAll(Sanitize::clean($this->request->data))) {
+			if ($this->User->saveAll($this->request->data)) {
 				$this->Session->setFlash("User Saved!");
 				$this->redirect('/admin/users');
 			}
@@ -182,6 +205,21 @@ class UsersController extends AppController {
 
 	function admin_logout() {
 		$this->redirect('/users/logout');
+	}
+
+	public function get_user_templates($id) {
+		$this->autoRender = false;
+
+		$userTemplates = $this->User->getTemplates($id);
+
+		if (!empty($userTemplates) && is_array($userTemplates)) {
+			foreach ($userTemplates as $key => $val) {
+        		echo '<option value="'.$key.'">'.$val.'</option>';
+   			}
+		}
+		else {
+			echo '<option value="">NO TEMPLATES FOR USER</option>';
+		}
 	}
 }
 ?>

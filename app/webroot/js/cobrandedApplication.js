@@ -9,17 +9,50 @@ var quickAdd = function(e) {
 		data['value'] = target.is(":checked"); // not really needed...
 		data['template_field_id'] = target.attr('data-field-id');
 		data['field_id'] = target.attr('id');
+
+		/*if (target.attr('name') == 'BusinessType-') {
+			var businessType = $("input[name='BusinessType-']:checked").parent().text();
+
+			if (businessType == 'Retail' || businessType == 'Grocery') {
+				$('#Amex\\ Discount\\ Rate').val(2.89);
+				$('#Amex\\ Discount\\ Rate').trigger('change');
+			}
+			else if (businessType == 'Restaurant' || businessType == 'MOTO' || businessType == 'Internet') {
+				$('#Amex\\ Discount\\ Rate').val(3.5);
+				$('#Amex\\ Discount\\ Rate').trigger('change');
+			}
+		}*/
+
 		persist(data);
 	} else if(target.is(":checkbox")) {
+		if (target.attr('id') == 'loc_same_as_corp' || target.attr('id') == 'fees_same_as_depository') {
+			return true;
+		}
 		data['id'] = target.attr('data-value-id');
 		data['value'] = target.is(":checked"); // not really needed...
 		data['field_id'] = target.attr('id');
+		persist(data);
 	} else {
-		// need to validate the
+		var id = target.attr('id');
+		var name = target.attr('name');
+
+		// need to validate
 		if ($validator.element(target) === true) {
 			data['id'] = target.attr('data-value-id');
-			data['value'] = target.val();
 			data['field_id'] = target.attr('id');
+
+			var isDateField = (target.attr('data-inputmask') === 'date' || target.attr('data-inputmask') && target.attr('data-inputmask').indexOf('\'alias\': \'mm\/dd\/yyyy\'') >= 0);
+			data['value'] = target.val();
+			if (isDateField) {
+				var newDate = new Date(Date.parse(target.val()));
+				var d = ("0" + newDate.getDate()).slice(-2);
+				var m = newDate.getMonth();
+				m += 1;  // JavaScript months are 0-11
+				m = ("0" + m).slice(-2);
+				var y = newDate.getFullYear();
+				data['value'] = y+'/'+m+'/'+d;
+			}
+
 			persist(data);
 		}
 	}
@@ -57,28 +90,35 @@ var handlePercentOptionBlur = function(event) {
 	var totalField = $(event.totalFieldId);
 	var originatingField = $(event.origin);
 
-	// start from the top of the fieldset and all sum the inputs
-	// except for the originatingField
+	// start from the top of the fieldset and sum all the inputs
+	// except for the originatingField and the total field
+	var totalFieldPattern = new RegExp('_Total');
 	var percentSum = 0;
+	
 	$("#"+event.fieldset_id).find("input").map(function(index, input) {
 		var inputObj = $(input);
-		if (!inputObj.is(':disabled') &&
-				inputObj.attr("id") != originatingField.attr("id")) {
-			if (inputObj.val() != '') {
-				percentSum += parseInt(inputObj.val());
-			}
+		
+		if (inputObj.attr("id") != originatingField.attr("id") &&
+			!totalFieldPattern.test(inputObj.attr("name"))) {
+				if (inputObj.val() != '') {
+					percentSum += parseInt(inputObj.val());
+				}
 		}
 	});
 
-	var newTotal = percentSum + parseInt(originatingField.val());
-	if (newTotal <= 100) {
-		// set it
-		parseInt(originatingField.val());
-		totalField.val(newTotal);
-	} else {
-		var maxOriginatingValue = 100 - percentSum;
-		originatingField.val(maxOriginatingValue < 0 ? 0 : maxOriginatingValue);
-		totalField.val(100);
+	var originatingFieldValue = parseInt(originatingField.val());
+	if (isNaN(originatingFieldValue)) {
+		originatingFieldValue = 0;
+	}
+
+	var newTotal = percentSum + originatingFieldValue;
+	totalField.val(newTotal);
+
+	if (newTotal != 100) {
+		document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFF00';
+	}
+	else {
+		document.getElementById(totalField.attr("id")).style.backgroundColor='#FFFFFF';
 	}
 };
 
@@ -97,15 +137,17 @@ var motoQuestionnaireCheck = function(){
 	// combined are greater than or equal to 30
 	var methodOfSalesCardNotPresentKeyed = parseInt($('#MethodofSales-CardNotPresent-Keyed').val());
 	var methodOfSalesCardNotPresentInternet = parseInt($('#MethodofSales-CardNotPresent-Internet').val());
-
 	if (methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet >= 30) {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
+		if (document.getElementById('MOTO/Internet Questionnaire') !== null) {
+			document.getElementById('MOTO/Internet Questionnaire').style.display = 'block';
+		}
 	} else {
-		document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
+		if (document.getElementById('MOTO/Internet Questionnaire') !== null) {
+			document.getElementById('MOTO/Internet Questionnaire').style.display = 'none';
+		}
 	}
-
-
 };
+
 $(document).ready(function() {
 	$(window).resize(onWindowResize);
 
@@ -130,6 +172,13 @@ $(document).ready(function() {
 		$('#Contact').val() != '' &&
 		$('#LocTitle').val() != '') {
 			$('#loc_same_as_corp').attr('checked','checked');
+	}
+
+	if ($('#RoutingNum').val() != '' &&
+		$('#AccountNum').val() != '' &&
+		$('#FeesRoutingNum').val() != '' &&
+		$('#FeesAccountNum').val() != '') {
+			$('#fees_same_as_depository').attr('checked','checked');
 	}
 
 	$(document).on("percentOptionBlur", handlePercentOptionBlur);
@@ -168,6 +217,18 @@ $(document).ready(function() {
 			$('.api-field').toggle();
 		}
 	});
+
+	var allSelects = document.getElementsByTagName('select');
+
+	for (var x = 0; x < allSelects.length; x++) {
+		var id = allSelects[x].id;
+		$("[id='"+id+"']").trigger('change');
+	}
+
+	motoQuestionnaireCheck();
+
 	$('#MethodofSales-CardNotPresent-Keyed').on('change', motoQuestionnaireCheck);
 	$('#MethodofSales-CardNotPresent-Internet').on('change', motoQuestionnaireCheck);
+
+	$(":input").inputmask();
 });

@@ -1,12 +1,11 @@
 <?php
-App::uses('Sanitize', 'Utility');
 App::uses('User','Model');
 class MultipassesController extends AppController {
     public $components = array('Search.Prg');
     function admin_add($id = null) {        
         if ($this->request->is('post')) {
             $this->Multipass->create();
-            if ($this->Multipass->save(Sanitize::clean($this->request->data))) {
+            if ($this->Multipass->save($this->request->data)) {
                 $this->Session->setFlash(__('A Multipass record has been created'));
                 $this->redirect(array('action'=> 'index', 'admin' => true));
             } else {

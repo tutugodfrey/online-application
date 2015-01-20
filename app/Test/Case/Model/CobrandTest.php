@@ -7,7 +7,10 @@ App::uses('Cobrand', 'Model');
  */
 class CobrandTest extends CakeTestCase {
 
-	public $fixtures = array('app.onlineappCobrand');
+	public $fixtures = array(
+		'app.onlineappTemplate',
+		'app.onlineappCobrand'
+	);
 
 	public $autoFixtures = false;
 
@@ -15,23 +18,18 @@ class CobrandTest extends CakeTestCase {
 
 	public function setUp() {
 		parent::setUp();
+		$this->Template = ClassRegistry::init('Template');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		
 		// mock filesystem
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
+		$this->loadFixtures('OnlineappTemplate');
 	}
 
 	public function tearDown() {
-		// need to update this sql to be a little more flexible
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT IF EXISTS onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
+		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
 		unset($this->Cobrand);
 		parent::tearDown();
 	}

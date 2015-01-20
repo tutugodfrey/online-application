@@ -13,26 +13,7 @@ class ApipTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.onlineappApip',
-		'app.onlineappApplication',
-		'app.user',
-		'app.group',
-		'app.onlineappCobrand',
-		'app.onlineappTemplate',
-		'app.onlineappTemplate_page',
-		'app.onlineappTemplate_section',
-		'app.onlineappTemplate_field',
-		'app.onlineappEpayment',
-		'app.onlineappApi_log',
-		'app.onlineappUsers_manager',
-		'app.onlineappCoversheet',
-		'app.onlineappMultipass',
-		'app.merchant',
-		'app.equipment_programming',
-		'app.timeline_entry',
-		'app.timeline_item',
-		'app.onlineappEmail_timeline',
-		'app.onlineappEmail_timeline_subject'
+		'app.onlineappApip'
 	);
 
 /**

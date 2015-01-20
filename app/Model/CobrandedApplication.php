@@ -3,6 +3,7 @@ App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
 App::uses('CakeEmail', 'Network/Email');
+App::uses('CakeTime', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
 
 /**
@@ -312,8 +313,15 @@ class CobrandedApplication extends AppModel {
  *     $applicationId integer
  */
 	public function getTemplateAndAssociatedValues($applicationId, $userId = null) {
-		$this->id = $applicationId;
-		$application = $this->read();
+		$application = $this->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				)
+			)
+		);
+		//$application = $this->read();
 
 		// if user is not logged in, don't show rep-only fields
 		$conditions = '';
@@ -600,7 +608,7 @@ class CobrandedApplication extends AppModel {
 								// udpate the value to null
 								$radioOption['CobrandedApplicationValue']['value'] = null;
 								if (!$this->CobrandedApplicationValue->save($radioOption)) {
-									$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], 'failed to update application value with id ['.
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'failed to update application value with id ['.
 										$radioOption['CobrandedApplicationValue']['id'].'], to a value of null.');
 								}
 							}
@@ -623,7 +631,7 @@ class CobrandedApplication extends AppModel {
 						}
 
 						// update our validationErrors array
-						$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], 'required');
+						$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'required');
 					} else {
 						// only validate if we are not empty
 						if (isset($value)) {
@@ -647,7 +655,7 @@ class CobrandedApplication extends AppModel {
 							} else {
 								// update our validationErrors array
 								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
-								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['name'], $typeStr);
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], $typeStr);
 							}
 						}
 					}
@@ -659,8 +667,15 @@ class CobrandedApplication extends AppModel {
 			$response['success'] = (count($response['validationErrors']) == 0);
 		}
 
-		$this->id = $createAppResponse['cobrandedApplication']['id'];
-		$cobrandedApplication = $this->read();
+		$cobrandedApplication = $this->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $createAppResponse['cobrandedApplication']['id']
+				)
+			)
+		);
+
 		$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
 
 		if ($response['success'] == false || $tmpResponse['success'] == false) {
@@ -671,10 +686,15 @@ class CobrandedApplication extends AppModel {
 				$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $val);
 			}
 		} else {
-			$this->Cobrand->id = $newApp['Template']['cobrand_id'];
-			$this->Cobrand->recursive = -1;
-			$this->Cobrand->find('first');
-			$cobrand = $this->Cobrand->read();
+			$cobrand = $this->Cobrand->find(
+				'first',
+				array(
+					'conditions' => array(
+						'Cobrand.id' => $newApp['Template']['cobrand_id']
+					),
+					'recursive' => -1
+				)
+			);
 
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
 			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
@@ -816,8 +836,7 @@ class CobrandedApplication extends AppModel {
 						'recursive' => -1
 					)
 				);
-				if ($templateField['TemplateField']['type'] == 4 ||
-					$templateField['TemplateField']['type'] == 5) {
+				if ($templateField['TemplateField']['type'] == 4) {
 					// dealing with a multiple option input/field
 					// need to special case the OwnerType because it expects "Yes"/"Off" instead of "On"/"Off"
 					if ($app['CobrandedApplicationValues'][$appKey]['value'] == 'true') {
@@ -902,7 +921,23 @@ class CobrandedApplication extends AppModel {
 		return false;
 	}
 
-	public function findAppsByEmail($email) {
+/**
+ * findAppsByEmail 
+ * 
+ * @params
+ *     $email string
+ *     $id integer
+ * @returns
+ *     $response array
+ */
+	public function findAppsByEmail($email, $id = null) {
+		$conditions[] = array('CobrandedApplicationValue.value' => $email);
+				// should probably check the state too
+		
+		if (isset($id)) {
+			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
+			$conditions[]['CobrandedApplicationValue.name'] = 'Owner1Email';
+		}
 		$apps = $this->find(
 			'all',
 			array(
@@ -914,37 +949,55 @@ class CobrandedApplication extends AppModel {
 						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
 					)
 				),
-				'conditions' => array(
-					'CobrandedApplicationValue.value' => $email,
-					// should probably check the state too
-				),
-				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'),
+				'conditions' => $conditions,
+				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'), 
 				'order' => 'CobrandedApplication.created desc'
 			)
 		);
 
 		return $apps;
 	}
-
+	
 /**
  * sendFieldCompletionEmail
  * 
  * @params
  *     $email string
+ *     $id integer
  * @returns
  *     $response array
  */
-	public function sendFieldCompletionEmail($email) {
-		$response = array(
-			'success' => false,
-			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
-		);
+	public function sendFieldCompletionEmail($email, $id = null) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
+			);
 
-		$apps = $this->findAppsByEmail($email);
+		$apps = $this->findAppsByEmail($email, $id);
 
 		if (count($apps) == 0) {
-			$response['msg'] = 'Could not find any applications with the specified email address.';
-			return $response;
+			if (isset($id)) {
+				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+				$cav = $this->CobrandedApplicationValue->find(
+					'first', array(
+						'conditions' => array(
+							'CobrandedApplicationValue.name' => 'Owner1Email', 
+							'CobrandedApplicationValue.cobranded_application_id' => $id
+						), 
+						'recursive' => -1, 
+						'fields' => array('CobrandedApplicationValue.id')
+					)
+				);
+				$appValue = $this->getApplicationValue($cav['CobrandedApplicationValue']['id']);
+				$appValue['CobrandedApplicationValue']['value'] = $email;
+				if ($this->CobrandedApplicationValue->save($appValue)) {
+
+					return $this->sendFieldCompletionEmail($email);
+				}
+			} else {
+				$response['msg'] = 'Could not find any applications with the specified email address.';
+				return $response;
+			}
 		} else {
 			// send the email
 			$timestamp = time();
@@ -960,7 +1013,6 @@ class CobrandedApplication extends AppModel {
 			);
 
 			$response = $this->sendEmail($args);
-
 			unset($args);
 
 			if ($response['success'] == true) {
@@ -970,11 +1022,9 @@ class CobrandedApplication extends AppModel {
 				$response = $this->createEmailTimelineEntry($args);
 				unset($args);
 			}
-
 			$dbaBusinessName = '';
 			$ownerName = '';
 			$ownerEmail = '';
-
 			$valuesMap = $this->buildCobrandedApplicationValuesMap($apps[0]['CobrandedApplicationValues']);
 
 			if (!empty($valuesMap['DBA'])) {
@@ -1266,6 +1316,65 @@ class CobrandedApplication extends AppModel {
 		if ($response['success'] == true) {
 			$args['cobranded_application_id'] = $applicationId;
 			$args['email_timeline_subject_id'] = EmailTimeline::MERCHANT_SIGNED;
+			$args['recipient'] = $cobrandedApplication['User']['email'];
+			$response = $this->createEmailTimelineEntry($args);
+		}
+
+		return $response;
+	}
+
+/**
+ * submitForReviewEmail
+ * 
+ * @params
+ *     $applicationId int
+ * @returns
+ *     $response array
+ */
+	public function submitForReviewEmail($applicationId) {
+		if (!$this->exists($applicationId)) {
+			$response = array(
+				'success' => false,
+				'msg' => 'Invalid application.',
+			);
+			return $response;
+		}
+		
+		$this->id = $applicationId;
+		$cobrandedApplication = $this->read();
+
+		$dbaBusinessName = '';
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+
+		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+		$to = $cobrandedApplication['User']['email'];
+		$subject = $dbaBusinessName.' - Online Application Merchant Portion Completed';
+		$format = 'text';
+		$template = 'rep_notify';
+		$viewVars = array();
+		$viewVars['rep'] = $cobrandedApplication['User']['email'];
+		$viewVars['merchant'] = $dbaBusinessName;
+		$viewVars['link'] = Router::url('/users/login', true);
+
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::MERCHANT_PORTION_COMPLETE;
 			$args['recipient'] = $cobrandedApplication['User']['email'];
 			$response = $this->createEmailTimelineEntry($args);
 		}
@@ -1706,6 +1815,25 @@ class CobrandedApplication extends AppModel {
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
+			
+			if ($mergeField['name'] == "Customer Service") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+			if ($mergeField['name'] == "Product Shipment") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
+			if ($mergeField['name'] == "Handling of Returns") {
+				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
+				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</merge_field>\n";
+			}
 		}
 
 		if ($subject == 'Axia Install Sheet - VAR') {
@@ -1762,26 +1890,113 @@ class CobrandedApplication extends AppModel {
  * 
  * @params
  *     $cobrandedApplication array
+ *     $source string
  *
  * @returns
  *     $response array
  */
-	public function validateCobrandedApplication($cobrandedApplication) {
+	public function validateCobrandedApplication($cobrandedApplication, $source = null) {
+		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+
 		$response['success'] = false;
 		$response['validationErrors'] = array();
 
 		$isNonProfit = false;
-		$owner1Equity = 0;
+
+		$methodofSalesPage;
+		$methodofSalesTotal = 0;
+		$methodofSalesCardNotPresentInternet = 0;
+ 		$methodofSalesCardNotPresentKeyed = 0;
+ 		$methodofSalesCardPresentImprint = 0;
+ 		$methodofSalesCardPresentSwiped = 0;
+
+ 		$productSoldDirectPage;
+		$productSoldDirectTotal = 0;
+ 		$productSoldDirectToGovernment = 0;
+ 		$productSoldDirectToCustomer = 0;
+ 		$productSoldDirectToBusiness = 0;
+
+ 		$percentOfPayPage;
+		$percentOfPayTotal = 0;
+ 		$percentFullPayUpFront = 0;
+ 		$percentPartialPayUpFront = 0;
+ 		$percentAndWithin = 0;
+ 		$percentPayReceivedAfter = 0;
+
+ 		$ownerEquityPage;
+ 		$ownerEquityTotal = 0;
+ 		$owner1Equity = 0;
+ 		$owner2Equity = 0;
 
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
 				$isNonProfit = true;
 			}
 
-			if ($tmpVal['name'] == 'Owner1Equity') {
+			if ($tmpVal['name'] == 'MethodofSales-CardNotPresent-Internet') {
+				$methodofSalesCardNotPresentInternet = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'MethodofSales-CardNotPresent-Keyed') {
+				$methodofSalesCardNotPresentKeyed = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'MethodofSales-CardPresentImprint') {
+				$methodofSalesCardPresentImprint = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'MethodofSales-CardPresentSwiped') {
+				$methodofSalesCardPresentSwiped = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == '%OfProductSoldDirectToGovernment') {
+				$productSoldDirectToGovernment = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == '%OfProductSoldDirectToCustomer') {
+				$productSoldDirectToCustomer = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == '%OfProductSoldDirectToBusiness') {
+				$productSoldDirectToBusiness = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentFullPayUpFront') {
+				$percentFullPayUpFront = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentPartialPayUpFront') {
+				$percentPartialPayUpFront = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentAndWithin') {
+				$percentAndWithin = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'PercentPayReceivedAfter') {
+				$percentPayReceivedAfter = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'Owner1Equity' || $tmpVal['name'] == 'OwnerEquity') {
 				$owner1Equity = $tmpVal['value'];
 			}
+
+			if ($tmpVal['name'] == 'Owner2Equity') {
+				$owner2Equity = $tmpVal['value'];
+			}
 		}
+
+		$methodofSalesTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed + $methodofSalesCardPresentImprint + $methodofSalesCardPresentSwiped;
+
+		$methodofSalesCardNotPresentTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed;
+
+		$productSoldDirectTotal = $productSoldDirectToGovernment + $productSoldDirectToCustomer + $productSoldDirectToBusiness;
+
+		$percentOfPayTotal =  $percentFullPayUpFront + $percentPartialPayUpFront + $percentPayReceivedAfter + $percentAndWithin;
+
+		$ownerEquityTotal = $owner1Equity + $owner2Equity;
+
+		$owner2FieldsNotComplete = false;
 
 		$template = $this->Template->find('first', array(
 			'conditions' => array('Template.id' => $cobrandedApplication['CobrandedApplication']['template_id']),
@@ -1789,7 +2004,7 @@ class CobrandedApplication extends AppModel {
 				'TemplatePages' => array(
 					'TemplateSections' => array(
 						'TemplateFields' => array(
-							'fields' => array('id', 'type', 'name', 'default_value', 'merge_field_name', 'order', 'width', 'required')
+							'fields' => array('id', 'type', 'name', 'default_value', 'merge_field_name', 'order', 'width', 'required', 'rep_only')
 						)
 					),
 				),
@@ -1803,8 +2018,24 @@ class CobrandedApplication extends AppModel {
 				foreach ($section['TemplateFields'] as $templateField) {
 					$fieldName = $templateField['name'];
 
-					// Owner2 information should be required if Owner1Equity < 40
-					if ($owner1Equity < 40) {
+					if ($templateField['merge_field_name'] == 'MethodofSales-') {
+						$methodofSalesPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == '%OfProductSold') {
+						$productSoldDirectPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == 'PercentFullPayUpFront') {
+						$percentOfPayPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == 'Owner1Equity') {
+						$ownerEquityPage = $pageOrder;
+					}
+
+					// Owner2 information should be required if Owner1Equity < owner_equity_threshold
+					if ($owner1Equity < $template['Template']['owner_equity_threshold']) {
 						if ($templateField['merge_field_name'] == 'Owner2Name' ||
 							$templateField['merge_field_name'] == 'Owner2Title' ||
 							$templateField['merge_field_name'] == 'Owner2Address' ||
@@ -1812,7 +2043,6 @@ class CobrandedApplication extends AppModel {
 							$templateField['merge_field_name'] == 'Owner2State' ||
 							$templateField['merge_field_name'] == 'Owner2Zip' ||
 							$templateField['merge_field_name'] == 'Owner2Phone' ||
-							$templateField['merge_field_name'] == 'Owner2Fax' ||
 							$templateField['merge_field_name'] == 'Owner2DOB' ||
 							$templateField['merge_field_name'] == 'Owner2SSN' ||
 							$templateField['merge_field_name'] == 'Owner2Email' ||
@@ -1822,36 +2052,222 @@ class CobrandedApplication extends AppModel {
 						}
 					}
 
-
 					if ($templateField['required'] == true) {
+						// don't validate MOTO/Internet Questionnaire section if
+						// methodOfSalesCardNotPresentKeyed + methodOfSalesCardNotPresentInternet < 30
+						if (preg_match('/MOTO\/Internet/', $section['name']) && $methodofSalesCardNotPresentTotal < 30) {
+							continue;
+						}
+
 						// SSN should not be required if Ownership Type is Non Profit
 						if (($templateField['merge_field_name'] == 'OwnerSSN' || $templateField['merge_field_name'] == 'Owner2SSN') && $isNonProfit) {
 							continue;
 						}
 
-						$found = false;
-
-						foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
-							if ($tmpVal['template_field_id'] == $templateField['id'] && empty($tmpVal['value']) == false) {
-								$found = true;
-							}
+						// WebAddress can be empty
+						if ($templateField['merge_field_name'] == 'WebAddress') {
+							continue;
 						}
 
-						if ($found == false) {
-							// update our validationErrors array
-							$response['validationErrors'] = Hash::insert($response['validationErrors'], $fieldName, 'required');
+						if ($templateField['type'] == 4) {
+							$found = false;
+							foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+								if ($tmpVal['template_field_id'] == $templateField['id']) {
+									if (empty($tmpVal['value']) == false) {
+										$found = true;
+									}
+								}
+							}
 
-							$errorArray = array();
-							$errorArray['fieldName'] = $fieldName;
-							$errorArray['mergeFieldName'] = $templateField['merge_field_name'];
-							$errorArray['msg'] = 'Required field is empty: '.$fieldName;
-							$errorArray['page'] = $pageOrder;
+							if ($found == false) {
+								$mergeFieldName = $templateField['merge_field_name'];
+
+								// update our validationErrors array
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
+
+								$errorArray = array();
+								$errorArray['fieldName'] = $fieldName;
+								$errorArray['mergeFieldName'] = $mergeFieldName;
+								$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+								$errorArray['page'] = $pageOrder;
+								$errorArray['rep_only'] = $templateField['rep_only'];
 							
-							$response['validationErrorsArray'][] = $errorArray;
+								$response['validationErrorsArray'][] = $errorArray;
+							}
+						} else {
+							foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
+								$found = true;
+
+								if ($tmpVal['template_field_id'] == $templateField['id']) {
+									$found = false;
+									if (empty($tmpVal['value']) == false || preg_match('/\d+/', $tmpVal['value'])) {
+										// is the value valid?
+										$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
+										if ($validValue == true) {
+											$found = true;
+
+											// federal tax id should be 12-3456789 or 123-45-6789
+											if ($templateField['merge_field_name'] == 'TaxID') {
+												if (!preg_match("/^\d{2}-?\d{7}$/", $tmpVal['value']) && !preg_match("/^\d{3}-?\d{2}-?\d{4}$/", $tmpVal['value'])) {
+													$found = false;
+												}
+											}
+
+											// existing SE# should not be longer than 10 digits
+											if ($templateField['merge_field_name'] == 'AmexNum') {
+												if (strlen($tmpVal['value']) > 10) {
+													$found = false;
+												}
+											}
+										}
+									}
+								}
+
+								if ($found == false) {
+									$mergeFieldName = $templateField['merge_field_name'];
+
+									if (empty($mergeFieldName)) {
+										$mergeFieldName = $tmpVal['name'];
+										$fieldName = $tmpVal['name'];
+									}
+
+									// update our validationErrors array
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
+
+									$errorArray = array();
+									$errorArray['fieldName'] = $fieldName;
+									$errorArray['mergeFieldName'] = $mergeFieldName;
+									$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+									$errorArray['page'] = $pageOrder;
+									$errorArray['rep_only'] = $templateField['rep_only'];
+							
+									$response['validationErrorsArray'][] = $errorArray;
+
+									if ($templateField['merge_field_name'] == 'Owner2Name' ||
+										$templateField['merge_field_name'] == 'Owner2Title' ||
+										$templateField['merge_field_name'] == 'Owner2Address' ||
+										$templateField['merge_field_name'] == 'Owner2City' ||
+										$templateField['merge_field_name'] == 'Owner2State' ||
+										$templateField['merge_field_name'] == 'Owner2Zip' ||
+										$templateField['merge_field_name'] == 'Owner2Phone' ||
+										$templateField['merge_field_name'] == 'Owner2DOB' ||
+										$templateField['merge_field_name'] == 'Owner2SSN' ||
+										$templateField['merge_field_name'] == 'Owner2Email' ||
+										$templateField['merge_field_name'] == 'Owner2Equity') {
+
+										$owner2FieldsNotComplete = true;
+									}
+								}
+							}
 						}
 					}
 				}
 			}
+		}
+
+		if ($methodofSalesTotal != 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'MethodofSales_Total', 'does not equal 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Method of Sales Total';
+			$errorArray['mergeFieldName'] = 'MethodofSales_Total';
+			$errorArray['msg'] = 'Method of Sales Total does not equal 100';
+			$errorArray['page'] = $methodofSalesPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($productSoldDirectTotal != 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'ofProductSold_Total', 'does not equal 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = '% of Product Sold';
+			$errorArray['mergeFieldName'] = 'ofProductSold_Total';
+			$errorArray['msg'] = '% of Product Sold Total does not equal 100';
+			$errorArray['page'] = $productSoldDirectPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($methodofSalesCardNotPresentTotal >= 30 && $percentOfPayTotal < 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentFullPayUpFront', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent Full Pay Up Front';
+			$errorArray['mergeFieldName'] = 'PercentFullPayUpFront';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentPartialPayUpFront', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent Partial Pay Up Front';
+			$errorArray['mergeFieldName'] = 'PercentPartialPayUpFront';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentAndWithin', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent And Within';
+			$errorArray['mergeFieldName'] = 'PercentAndWithin';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentPayReceivedAfter', 'less than 100');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Percent Pay Received After';
+			$errorArray['mergeFieldName'] = 'PercentPayReceivedAfter';
+			$errorArray['msg'] = '';
+			$errorArray['page'] = $percentOfPayPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($ownerEquityTotal > 100 && $source == 'ui') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'owner equity is greater than 100%');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Owner 1 Equity';
+			$errorArray['mergeFieldName'] = 'Owner1Equity';
+			$errorArray['msg'] = 'owner equity is greater than 100%';
+			$errorArray['page'] = $ownerEquityPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner2Equity', 'owner equity is greater than 100%');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Owner 2 Equity';
+			$errorArray['mergeFieldName'] = 'Owner2Equity';
+			$errorArray['msg'] = 'owner equity is greater than 100%';
+			$errorArray['page'] = $ownerEquityPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($owner1Equity < $template['Template']['owner_equity_threshold'] && $owner2FieldsNotComplete == true) {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Owner 1 Equity';
+			$errorArray['mergeFieldName'] = 'Owner1Equity';
+			$errorArray['msg'] = 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%';
+			$errorArray['page'] = $ownerEquityPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
 		}
 
 		if (count($response['validationErrors']) == 0) {
@@ -1950,6 +2366,39 @@ class CobrandedApplication extends AppModel {
 		return $results;
 	}
 
+/**
+ * Function to determine whether a given Application should be displayed
+ * to a non logged in user.
+ * This function will take a single argument, the uuid for the application
+ * in question.  If the Application has not been modified in the last 30 days
+ * or if it has been signed it will be considered expired and visible only to
+ * logged in users.
+ *
+ * @param string $uuid
+ * @return bool
+ */
+
+	public function isExpired($uuid) {
+		$application = $this->find('first',
+			array(
+				'conditions' => array(
+					$this->alias . '.uuid' => $uuid
+				),
+				'fields' => array(
+					'CobrandedApplication.status',
+					'CobrandedApplication.modified'
+				),
+				'recursive' => -1
+			)
+		);
+		if ((CakeTime::wasWithinLast('30 days', 
+			$application['CobrandedApplication']['modified'])) &&
+			$application['CobrandedApplication']['status'] !== 'signed') {
+		
+			return false;
+		}
+		return true;
+	}
 /**
  * Array of Arguments to be used by the search plugin
  */

@@ -61,8 +61,12 @@ jQuery.validator.addMethod("integer", function(value, element) {
 	return this.optional(element) || /^-?\d+$/.test(value);
 }, "A positive or negative non-decimal number please");
 
-jQuery.validator.addMethod("ssn", function(value, element) {
+/*jQuery.validator.addMethod("ssn", function(value, element) {
 	return this.optional(element) || /^\d{3}-\d{2}-\d{4}$/.test(value);
+}, "The specified social security number is invalid");*/
+
+jQuery.validator.addMethod("ssn", function(value, element) {
+	return this.optional(element) || /^\d{3}-?\d{2}-?\d{4}$/.test(value);
 }, "The specified social security number is invalid");
 
 jQuery.validator.addMethod("money", function(value, element) {

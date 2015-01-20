@@ -7,7 +7,7 @@ echo $this->Session->flash('auth');
 /*echo $this->Form->create('BoostCake', array(
 	'inputDefaults' => array(
 		'div' => 'form-group',
-		'labal' => false, 
+		'labal' => false,
 		'wrapInput' => false,
 		'class' => 'control-label'
 	),
@@ -30,11 +30,11 @@ echo $this->Form->create('BoostCake', array(
 		'class' => 'form-control'
 	),
 	'class' => 'well form-horizontal'
-)); 
+));
 echo $this->Form->input('User.email', array(
 		'placeholder' => 'Email',
 		'autofocus' => 'autofocus'
-	)); 
+	));
 	echo $this->Form->input('User.password', array(
 		'placeholder' => 'Password'
 	)); ?>
