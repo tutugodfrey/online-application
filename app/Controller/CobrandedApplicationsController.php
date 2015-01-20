@@ -449,6 +449,9 @@ class CobrandedApplicationsController extends AppController {
 				$this->request->data['CobrandedApplication'][$i]= '';
 			}
 		}
+
+		$userIds = $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'));
+
 		//paginate the applications
 		$this->Prg->commonProcess();
 		//grab results from the custom finder _findIndex and pass them to the paginator
@@ -463,17 +466,19 @@ class CobrandedApplicationsController extends AppController {
 		// Admins can see everything
 		switch($this->Auth->user('group_id')) {
 			case User::REPRESENTATIVE_GROUP_ID:
-				$this->Paginator->settings['conditions'] = array(
-                                	'CobrandedApplication.user_id' => $this->Auth->user('id')
-				);
+				$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $this->Auth->user('id');
 				break;
 			case User::MANAGER_GROUP_ID:
-				if(!in_array($this->passedArgs['user_id'], $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id')))) {
-					$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $this->CobrandedApplication->User->getAssignedUserIds($this->Auth->user('id'));
+				if (array_key_exists('search', $this->passedArgs)) {
+					if (in_array($this->passedArgs['user_id'], $userIds)) {
+						$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
+					} else if (!in_array($this->passedArgs['user_id'], $userIds)) {
+						$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $userIds;
+					}
 				} else {
 					$this->Paginator->settings['conditions'] = array(
                                         	'CobrandedApplication.user_id' => $this->Auth->user('id')
-                                	);
+					);
 				}
 				break;
 		}
