@@ -1949,15 +1949,15 @@ class CobrandedApplication extends AppModel {
 				$methodofSalesCardPresentSwiped = $tmpVal['value'];
 			}
 
-			if ($tmpVal['name'] == '%OfProductSoldDirectToGovernment') {
+			if ($tmpVal['name'] == '%OfProductSold-DirectToGovernment') {
 				$productSoldDirectToGovernment = $tmpVal['value'];
 			}
 
-			if ($tmpVal['name'] == '%OfProductSoldDirectToCustomer') {
+			if ($tmpVal['name'] == '%OfProductSold-DirectToCustomer') {
 				$productSoldDirectToCustomer = $tmpVal['value'];
 			}
 
-			if ($tmpVal['name'] == '%OfProductSoldDirectToBusiness') {
+			if ($tmpVal['name'] == '%OfProductSold-DirectToBusiness') {
 				$productSoldDirectToBusiness = $tmpVal['value'];
 			}
 
@@ -2022,7 +2022,7 @@ class CobrandedApplication extends AppModel {
 						$methodofSalesPage = $pageOrder;
 					}
 
-					if ($templateField['merge_field_name'] == '%OfProductSold') {
+					if ($templateField['merge_field_name'] == '%OfProductSold-') {
 						$productSoldDirectPage = $pageOrder;
 					}
 
