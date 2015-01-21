@@ -153,7 +153,7 @@ $fieldId = $FP->createIfMissing('Average Ticket', $sectionId, 4, 10, true, 2, ''
 $fieldId = $FP->createIfMissing('Highest Ticket', $sectionId, 4, 10, true, 2, '', 'MaxSalesAmt', '', null);
 $fieldId = $FP->createIfMissing('Current Processor', $sectionId, 12, 0, true, 2, 'Merchant Warehouse', 'Current Processor', '', null);
 $fieldId = $FP->createIfMissing('Method of Sales', $sectionId, 6, 5, true, 2, 'Card Present Swiped::CardPresentSwiped{0},Card Present Imprint::CardPresentImprint{0},Card Not Present (Keyed)::CardNotPresent-Keyed{0},Card Not Present (Internet)::CardNotPresent-Internet{0}', 'MethodofSales-', '', null);
-$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{0},Direct To Business::DirectToBusiness{0},Direct To Government::DirectToGovernment{0}', '%OfProductSold', '', null);
+$fieldId = $FP->createIfMissing('% of Product Sold', $sectionId, 6, 5, true, 2, 'Direct To Customer::DirectToCustomer{0},Direct To Business::DirectToBusiness{0},Direct To Government::DirectToGovernment{0}', '%OfProductSold-', '', null);
 
 // go to the sections for this page
 $I->amOnPage('/admin/templatepages/'.$pageId.'/templatesections');
