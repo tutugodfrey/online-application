@@ -157,8 +157,7 @@ class CoversheetsController extends AppController {
                         $this->Session->setFlash(__('The coversheet has been validated and will be sent to underwriting once the application is signed'));
                         $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                     }
-                                
-				    //$this->redirect(array('controller' => 'applications', 'action' => 'index', 'admin' => true));
+				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                 } else {
 				    $this->Session->setFlash(__('The coversheet could not be validated. Please, try again.'));
                     $errors = $this->Coversheet->validationErrors;
@@ -200,7 +199,6 @@ class CoversheetsController extends AppController {
     public function email_coversheet($id) {
         if ($id && $this->Coversheet->sendCoversheet($id)){          
             unlink(WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
-            $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));    
         }
     }
 
