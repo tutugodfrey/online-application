@@ -5,7 +5,8 @@ class UsersController extends AppController {
 
 	public $permissions = array(
 		'login' => '*',
-		'logout' => '*'
+		'logout' => '*',
+		'get_user_templates' => '*'
 	);
 
 	public $components = array('Search.Prg');
