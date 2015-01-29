@@ -560,6 +560,12 @@
 		$newDate = sprintf("%04s-%02s-%02s", $year, $month, $day);
 	}
 
+	// starts with either 19 or 20 and is 4 digits long
+	if (preg_match('/^((19|20)\d{2})$/', $date, $matches)) {
+		$year = $matches[1];
+		$newDate = sprintf("%04s-%02s-%02s", $year, '01', '01');
+	}
+
 	$message .= "to $newDate\n";
 
     	return $newDate;
