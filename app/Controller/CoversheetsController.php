@@ -5,17 +5,22 @@ App::uses('CakeEmail', 'Network/Email');
 
 class CoversheetsController extends AppController {
 
-    public $components = array('Security','Search.Prg');
+    public $components = array('Security', 'Search.Prg');
     public $helpers = array('Js'); 
     public $permissions = array(
-        'admin_index' => array('rep','admin','manager'),
-        'admin_search' => array('rep','admin','manager'),
-        'add' => array('rep','admin','manager'),
-        'edit' => array('rep','admin','manager'),
-        'pdf_gen' => array('rep','admin','manager'),
-        'email_coversheet' => array('rep','admin','manager'),
-        'admin_delete' => array('rep','admin','manager')
+        'admin_index' => array('rep', 'admin', 'manager'),
+        'admin_search' => array('rep', 'admin', 'manager'),
+        'add' => array('rep', 'admin', 'manager'),
+        'edit' => array('rep', 'admin', 'manager'),
+        'pdf_gen' => array('rep', 'admin', 'manager'),
+        'email_coversheet' => array('rep', 'admin', 'manager'),
+        'admin_delete' => array('rep', 'admin', 'manager')
     );
+
+    function beforeFilter() {
+        parent::beforeFilter();
+        
+    }
 
 	public function view($id = null) {
 		if (!$id) {
@@ -72,7 +77,7 @@ class CoversheetsController extends AppController {
             $data['CobrandedApplication'][$key] = $val;
         }
 
-        $this->set(compact('id','data'));
+        $this->set(compact('id', 'data'));
         $moto = false;
         $result = '';  
 
@@ -142,7 +147,7 @@ class CoversheetsController extends AppController {
                     $businessType = 'BusinessType-Grocery';
                 }
 
-                $this->Coversheet->set(array('status' => 'validated','debit' => $term1AcceptDebit,'moto' => $businessType));
+                $this->Coversheet->set(array('status' => 'validated', 'debit' => $term1AcceptDebit, 'moto' => $businessType));
 
                 if ($this->request->data['Coversheet']['gateway_package'] != 'gold') {
                     $this->request->data['Coversheet']['gateway_gold_subpackage'] = '';
@@ -152,13 +157,12 @@ class CoversheetsController extends AppController {
                     if ($data['CobrandedApplication']['status'] == 'signed') {
                         $this->pdf_gen($id);
                         $this->Session->setFlash(__('The coversheet has been submitted to underwriting'));
-                        $this->Coversheet->saveField('status','sent');
+                        $this->Coversheet->saveField('status', 'sent');
                     } else {
                         $this->Session->setFlash(__('The coversheet has been validated and will be sent to underwriting once the application is signed'));
                         $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                     }
-                                
-				    //$this->redirect(array('controller' => 'applications', 'action' => 'index', 'admin' => true));
+				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                 } else {
 				    $this->Session->setFlash(__('The coversheet could not be validated. Please, try again.'));
                     $errors = $this->Coversheet->validationErrors;
@@ -200,7 +204,6 @@ class CoversheetsController extends AppController {
     public function email_coversheet($id) {
         if ($id && $this->Coversheet->sendCoversheet($id)){          
             unlink(WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
-            $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));    
         }
     }
 
@@ -480,7 +483,7 @@ class CoversheetsController extends AppController {
                         $this->request->data = $data;
 		}
 		$Applications = $this->Coversheet->CobrandedApplication->find('list');
-		$Users = $this->Coversheet->User->find('list', array('order' => 'User.firstname ASC','fields' => array('User.id','User.fullname')));
+		$Users = $this->Coversheet->User->find('list', array('order' => 'User.firstname ASC', 'fields' => array('User.id', 'User.fullname')));
 		$this->set(compact('Applications', 'Users', 'data'));
 	}
 

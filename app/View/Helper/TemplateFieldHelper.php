@@ -105,14 +105,14 @@ class TemplateFieldHelper extends Helper {
 				$month = null;
 				$day = null;
 
-				if (preg_match('/(\d{4})\/(\d{2})\/(\d{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
+				if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
 					$year = $matches[1];
 					$month = $matches[2];
 					$day = $matches[3];
 				}
 
 				if ($year != null && $month != null && $day != null) {
-					$fieldOptions = Hash::insert($fieldOptions, 'value', $month.'/'.$day.'/'.$year);
+					$fieldOptions = Hash::insert($fieldOptions, 'value', $month.'-'.$day.'-'.$year);
 				}
 
 				if ($field['name'] == 'Date of Birth') {

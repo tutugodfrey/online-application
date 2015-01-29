@@ -132,6 +132,14 @@ class CobrandedApplicationValue extends AppModel {
 						$data, 'cbc', Configure::read('Cryptable.iv')));
 				}
 			}
+
+			// if field type is money, remove commas if they exist
+			if ($field['TemplateField']['type'] == 10) {
+				$data = $this->data[$this->alias]['value'];
+				$data = str_replace(',', '', $data);
+				$this->data[$this->alias]['value'] = $data;
+			}
+
 		}
 		return $retVal;
 	}
