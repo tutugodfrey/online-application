@@ -43,7 +43,7 @@ class CobrandedApplicationsController extends AppController {
 		'create_rightsignature_document' => array('*'),
 		'sign_rightsignature_document' => array('*'),
 		'document_callback' => array('*'),
-		'install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
 		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
 		'submit_for_review' => array('*')
 	);
@@ -1058,7 +1058,7 @@ class CobrandedApplicationsController extends AppController {
  * @params
  *     $applicationId int
  */
-	public function install_sheet_var($applicationId) {
+	public function admin_install_sheet_var($applicationId) {
 		$this->CobrandedApplication->id = $applicationId;
 
 		if (!$this->CobrandedApplication->exists()) {
