@@ -517,12 +517,12 @@
     }
 
     function reformatDate($date) {
-	$message = "reformat date: from $date ";
-
     	$newDate = $date;
 		
-    	// \d+.\d+.\d+
-    	if (preg_match('/(\d+)\.(\d+)\.(\d+)/', $date, $matches)) {
+	if (preg_match('/[A-Za-z]+/', $date)) {
+		$newDate = '';
+	}
+    	else if (preg_match('/(\d+)\.(\d+)\.(\d+)/', $date, $matches)) {
     		$month = $matches[1];
     		$day = $matches[2];
     		$year = $matches[3];
@@ -533,9 +533,17 @@
 
 		$newDate = sprintf("%04s-%02s-%02s", $year, $month, $day);
     	}
+    	else if (preg_match('/(\d+)\.(\d+)/', $date, $matches)) {
+    		$month = $matches[1];
+    		$year = $matches[2];
 
-	// \d+/\d+/\d+
-	if (preg_match('/(\d+)\/(\d+)\/(\d+)/', $date, $matches)) {
+    		if ($year < 100) {
+    			$year += 1900;
+    		}
+
+		$newDate = sprintf("%04s-%02s-%02s", $year, $month, '01');
+    	}
+	else if (preg_match('/(\d+)\/(\d+)\/(\d+)/', $date, $matches)) {
 		$month = $matches[1];
 		$day = $matches[2];
 		$year = $matches[3];
@@ -546,9 +554,7 @@
 
 		$newDate = sprintf("%04s-%02s-%02s", $year, $month, $day);
 	}
-
-	// \d+-\d+-\d+
-	if (preg_match('/(\d+)-(\d+)-(\d+)/', $date, $matches)) {
+	else if (preg_match('/(\d+)-(\d+)-(\d+)/', $date, $matches)) {
 		$month = $matches[1];
 		$day = $matches[2];
 		$year = $matches[3];
@@ -559,14 +565,20 @@
 
 		$newDate = sprintf("%04s-%02s-%02s", $year, $month, $day);
 	}
-
-	// starts with either 19 or 20 and is 4 digits long
-	if (preg_match('/^((19|20)\d{2})$/', $date, $matches)) {
+	else if (preg_match('/^((19|20)\d{2})$/', $date, $matches)) {
 		$year = $matches[1];
 		$newDate = sprintf("%04s-%02s-%02s", $year, '01', '01');
 	}
+	else if (preg_match('/(\d+)\/(\d+)/', $date, $matches)) {
+		$month = $matches[1];
+		$year = $matches[2];
 
-	$message .= "to $newDate\n";
+		if ($year < 100) {
+			$year += 1900;
+		}
+
+		$newDate = sprintf("%04s-%02s-%02s", $year, $month, '01');
+	}
 
     	return $newDate;
     }
