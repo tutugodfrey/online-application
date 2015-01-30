@@ -144,6 +144,19 @@ class CobrandedApplicationValue extends AppModel {
 		return $retVal;
 	}
 
+	public function save($data = null, $validate = true, $fieldList = array()) {
+        // clear modified field value before each save
+        $this->set($data);
+        if (isset($this->data[$this->alias]['modified'])) {
+            unset($this->data[$this->alias]['modified']);
+        }
+
+        $this->CobrandedApplication->id = $this->data[$this->alias]['cobranded_application_id'];
+        $this->CobrandedApplication->saveField('modified', DboSource::expression('LOCALTIMESTAMP(0)'));
+
+        return parent::save($this->data, $validate, $fieldList);
+    }
+
 	public function validApplicationValue($data, $fieldType, $templateField = null) {
 		$retVal = false;
 		$trimmedDataValue = trim($data['value']);
