@@ -426,6 +426,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// We need an application
 		$actual = $this->CobrandedApplication->getTemplateAndAssociatedValues(1);
+		$expected['CobrandedApplication']['modified'] = $actual['CobrandedApplication']['modified'];
 		$this->assertEquals($expected, $actual, 'getTemplateAndAssociatedValues test failed');
 
 		// we should get rep_only pages, sections, and fields, if we're logged in
@@ -529,6 +530,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			),
 		);
 		$actual = $this->CobrandedApplication->getApplicationValue(1);
+		$expected['CobrandedApplication']['modified'] = $actual['CobrandedApplication']['modified'];
 		$this->assertEquals($expected, $actual, 'expected to find application value with id of 1...');
 
 		// change the value
@@ -592,6 +594,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			),
 		);
 		$actual = $this->CobrandedApplication->getApplicationValue(2);
+		$expected['CobrandedApplication']['modified'] = $actual['CobrandedApplication']['modified'];
 		$this->assertEquals($expected, $actual, 'expected to find application value with id of 4...');
 
 		$expectedNewValue = true;
@@ -1434,6 +1437,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		
 
 		$response = $this->CobrandedApplication->find('index');
+		$expectedResponse[0]['CobrandedApplication']['modified'] = $response[0]['CobrandedApplication']['modified'];
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
