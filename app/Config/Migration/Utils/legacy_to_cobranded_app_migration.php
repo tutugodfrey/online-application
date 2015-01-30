@@ -383,7 +383,7 @@
                     }
 
                     if (preg_match('/^%OfProductSold-/', $mergeFieldName, $matches)) {
-                        $tmpMergeFieldName = '%OfProductSold';
+                        $tmpMergeFieldName = '%OfProductSold-';
                     }
 
                     if (preg_match('/^Rate Structure-/', $mergeFieldName, $matches)) {
