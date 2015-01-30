@@ -75,7 +75,7 @@
 	'moto_outsourced_customer_service'              =>		'Customer Service',
 	'moto_outsourced_shipment'                      =>		'Product Shipment',
 	'moto_outsourced_returns'                       =>		'Handling of Returns',
-	'moto_sales_methods'                            =>		'By what methods to sales take place ie Internet trade shows etc',
+	'moto_sales_methods'                            =>		'By what methods do sales take place ie Internet trade shows etc',
 	'moto_billing_monthly'                          =>		'Monthly Recurring',
 	'moto_billing_quarterly'                        =>		'QUARTERLY',
 	'moto_billing_semiannually'                     =>		'SEMIANNUALLY',
@@ -383,7 +383,7 @@
                     }
 
                     if (preg_match('/^%OfProductSold-/', $mergeFieldName, $matches)) {
-                        $tmpMergeFieldName = '%OfProductSold';
+                        $tmpMergeFieldName = '%OfProductSold-';
                     }
 
                     if (preg_match('/^Rate Structure-/', $mergeFieldName, $matches)) {
