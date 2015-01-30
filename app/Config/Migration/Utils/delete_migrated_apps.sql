@@ -1,5 +1,9 @@
 BEGIN;
 
+UPDATE onlineapp_template_fields
+   SET merge_field_name = 'OwnInventory-'
+ WHERE merge_field_name ilike 'OwnInventory-%';
+
 UPDATE onlineapp_coversheets
    SET cobranded_application_id = null
  WHERE onlineapp_application_id < 5000;
