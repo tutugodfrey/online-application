@@ -63,6 +63,8 @@
 		array('controller' => 'cobranded_applications', 'admin' => true));
 	Router::connect('/admin/applications',
 		array('controller' => 'cobranded_applications', 'admin' => true));
+	Router::connect('/applications/document_callback',
+		array('controller' => 'cobranded_applications', 'action' => 'document_callback', 'admin' => false));
 
 
 /**
