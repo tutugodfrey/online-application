@@ -907,18 +907,24 @@ class CobrandedApplication extends AppModel {
 
 		if ($this->save()) {
 			$newApp = $this->read();
-
+			
 			// copy each value over
 			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 				if ($app['CobrandedApplicationValues'][$key]['name'] == 'Unknown Type for testing') {
 					// skip it
 				} else {
+					$found = false;
 					foreach ($newApp['CobrandedApplicationValues'] as $newKey => $newVal) {
+						if ($found == true) {
+							continue;
+						}
+
 						if ($newApp['CobrandedApplicationValues'][$newKey]['name'] == $app['CobrandedApplicationValues'][$key]['name']) {
 							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $app['CobrandedApplicationValues'][$key]['value'];
 
-							if (isset($newApp['CobrandedApplicationValues'][$key])) {
-								$this->CobrandedApplicationValues->save($newApp['CobrandedApplicationValues'][$key]);
+							if (isset($newApp['CobrandedApplicationValues'][$newKey])) {
+								$this->CobrandedApplicationValues->save($newApp['CobrandedApplicationValues'][$newKey]);
+								$found = true;
 							}
 						}
 					}
