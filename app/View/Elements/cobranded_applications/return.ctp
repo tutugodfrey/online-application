@@ -9,6 +9,6 @@
 			array(
 				'style' => 'display: block; float: right;'
 			)
-		);
+		) . '<br/>';
 	}
 // Last Line
