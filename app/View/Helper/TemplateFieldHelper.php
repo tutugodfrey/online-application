@@ -374,6 +374,9 @@ class TemplateFieldHelper extends Helper {
 		$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 		$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
 		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-9');
+
+		$fieldId = preg_replace('/\{.*\}$/', '', $fieldId);
+		
 		$retVal = $this->Html->tag('label', $label, array('for' => $fieldId)).
 		$this->Html->tag(
 			'div',

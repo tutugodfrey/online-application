@@ -49,20 +49,20 @@
 					<?php
 
 						if ($methodName == 'create_rightsignature_document') {
+							$validationErrorsArray = $this->Session->read('validationErrorsArray');
 
 							echo "<script>";
 							echo "var methodName = 'create_rightsignature_document';";
 						
 							echo "var allLabels = document.getElementsByTagName('label');";
 
-							$validationErrorsArray = $this->Session->read('validationErrorsArray');
-
 							$repOnlyField = false;
 
 							foreach ($validationErrorsArray as $arr) {
 								echo "
+									var pattern = /^".$arr['mergeFieldName']."/;
 									for (l in allLabels) {
-										if (allLabels[l]['htmlFor'] == '".$arr['mergeFieldName']."') {
+										if (pattern.test(allLabels[l]['htmlFor'])) {
 											allLabels[l].style.backgroundColor = '#FFFF00';
 										}
 									}
