@@ -937,25 +937,46 @@ class CobrandedApplicationsController extends AppController {
 				$data['CobrandedApplication']['status'] != 'signed') {
 
 				if ($data['Coversheet']['status'] == 'validated') {
-					$this->Session->write('CobrandedApplication.coversheet', 'pdf');
-					$this->pdf($data['Coversheet']['id']);
-					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
-					$Coversheet = ClassRegistry::init('Coversheet');
-					$Coversheet->sendCoversheet($data['Coversheet']['id']);
-					$this->Session->delete('CobrandedApplication.coversheet');
-				}
+					$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
 
-				$send_email = 'true';
+                    $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
+                    foreach ($valuesMap as $key => $val) {
+                        $coversheetData['CobrandedApplication'][$key] = $val;
+                    }
 
-				foreach ($data['EmailTimeline'] as $emails) {
-					if ($emails['email_timeline_subject_id'] == 2) {
-						$send_email = 'false';
+                    $View = new View($this, false);
+
+                    if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
+                        $View->set('cp',false);
+                    } else {
+                        $View->set('cp',true);
+                    }
+
+                    $View->set('data', $coversheetData);
+                    $View->viewPath = 'Elements';
+                    $View->layout = false;
+                    $viewData = $View->render('/Elements/coversheets/pdf_export');
+
+					if ($this->CobrandedApplication->Coversheet->pdfGen($data['Coversheet']['id'], $viewData)) {
+						if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
+ 							if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
+								$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
+
+								$send_email = 'true';
+
+								foreach ($data['EmailTimeline'] as $emails) {
+									if ($emails['email_timeline_subject_id'] == 2) {
+										$send_email = 'false';
+									}
+								}
+
+								if ($send_email != 'false') {
+									$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+								}
+							}
+						}
 					}
 				}
-
-				if ($send_email != 'false') {
-					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
-				}	
 			}          
 		}
 
@@ -1004,24 +1025,45 @@ class CobrandedApplicationsController extends AppController {
 			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
 			$this->set('data', $data);
 
-			$send_email = true;
+			if ($data['Coversheet']['status'] == 'validated') {
+				$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
 
-			foreach ($data['EmailTimeline'] as $emails) {
-				if ($emails['email_timeline_subject_id'] == 2) {
-					$send_email = false;
-				}
-			}
+                $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
+                foreach ($valuesMap as $key => $val) {
+                    $coversheetData['CobrandedApplication'][$key] = $val;
+                }
 
-			if ($send_email != false) {
-				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+                $View = new View($this, false);
 
-				if ($data['Coversheet']['status'] == 'validated') {
-					$this->Session->write('CobrandedApplication.coversheet', 'pdf');
-					$this->pdf($data['Coversheet']['id']);
-					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
-					$Coversheet = ClassRegistry::init('Coversheet');
-					$Coversheet->sendCoversheet($data['Coversheet']['id']);
-					$this->Session->delete('CobrandedApplication.coversheet');
+                if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
+                    $View->set('cp',false);
+                } else {
+                    $View->set('cp',true);
+                }
+
+                $View->set('data', $coversheetData);
+                $View->viewPath = 'Elements';
+                $View->layout = false;
+                $viewData = $View->render('/Elements/coversheets/pdf_export');
+
+				if ($this->CobrandedApplication->Coversheet->pdfGen($data['Coversheet']['id'], $viewData)) {
+					if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
+ 						if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
+							$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
+
+							$send_email = true;
+
+							foreach ($data['EmailTimeline'] as $emails) {
+								if ($emails['email_timeline_subject_id'] == 2) {
+									$send_email = false;
+								}
+							}
+
+							if ($send_email != false) {
+								$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+							}
+						}
+					}
 				}
 			}
 
@@ -1246,19 +1288,43 @@ class CobrandedApplicationsController extends AppController {
 		$this->render('end');
 	}
 
-/**
- * pdf
+/*
+ * getCobrandedApplicationValues
  *
- * @params
- *     $id int
+ * @param $applicationId integer
+ * @param $valueConditions array
+ * @param $recursive integer
+ * @return $valuesMap array
  */
-	public function pdf($id) {
-		if ($id) {
-			$this->set('id', $id);
-			header('Content-type: application/pdf');
-			header('Content-Disposition: attachment; filename="axia_' . $id . '_final.pdf"');
-			readfile(WWW_ROOT . 'files/axia_' . $id . '_final.pdf');
-			unlink(WWW_ROOT . '/files/axia_' . $id . '_final.pdf');
-		}
-	}
+    public function getCobrandedApplicationValues($applicationId, $valueConditions = array(), $recursive = null) {
+        $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+	
+        if (!isset($recursive)) {
+            $recursive = 1;
+        }
+	
+        $conditions = array(
+            'conditions' => array(
+                'cobranded_application_id' => $applicationId,
+            ),
+            'recursive' => $recursive
+        );
+	
+        if (!empty($valueConditions)) {
+            $conditions['conditions'][] = $valueConditions;
+        }
+        
+        $appValues = $CobrandedApplicationValue->find(
+            'all',
+            $conditions  	
+        );
+	
+        $appValueArray = array();
+        foreach ($appValues as $arr) {
+            $appValueArray[] = $arr['CobrandedApplicationValue'];
+        }
+
+        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
+        return $valuesMap;
+    }
 }

@@ -75,7 +75,7 @@
 	'moto_outsourced_customer_service'              =>		'Customer Service',
 	'moto_outsourced_shipment'                      =>		'Product Shipment',
 	'moto_outsourced_returns'                       =>		'Handling of Returns',
-	'moto_sales_methods'                            =>		'By what methods to sales take place ie Internet trade shows etc',
+	'moto_sales_methods'                            =>		'By what methods do sales take place ie internet trade shows etc',
 	'moto_billing_monthly'                          =>		'Monthly Recurring',
 	'moto_billing_quarterly'                        =>		'QUARTERLY',
 	'moto_billing_semiannually'                     =>		'SEMIANNUALLY',
@@ -165,8 +165,8 @@
 	'owner2_dob'                            	=> 		'Owner2DOB',
 	'rep_contractor_name'                   	=> 		'ContractorID',
 	'fees_rate_discount'                    	=> 		'DiscRate1',
-	'fees_rate_structure'                   	=> 		'Rate Structure-:Interchange Pass Thru,Downgrades At Cost,Cost Plus,Bucketed,Bucketed (Rewards),Simply Swipe It Rates',
-	'fees_qualification_exemptions'         	=> 		'Downgrades-:Visa/MC Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MC Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Qualified Consumer Cards,Non-Qualified Transactions at Additional Visa/MC Cost Based on Non-Regulated Qualified Check Cards,Visa/MC Cost Plus 0.05%,Visa/MC Cost Plus 0.10%,Visa/MC Cost Plus 0.15%,Visa/MC Cost Plus 0.20%,Visa/MC Cost Plus 0.25%,Visa/MC Cost Plus 0.30%,Visa/MC Cost Plus 0.35%,Visa/MC Cost Plus 0.40%,Visa/MC Cost Plus 0.45%,Visa/MC Cost Plus 0.50%,Visa/MC Cost Plus 0.55%,Visa/MC Cost Plus 0.60%,Visa/MC Cost Plus 0.65%,Visa/MC Cost Plus 0.70%,Visa/MC Cost Plus 0.75%,      (SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10::RATE 2:  0.45%            RATE 3:  1.15% + $0.10             BUS 1:  1.05% + $0.10            BUS 2:  1.95% + $0.10,RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10::RATE 2:  0.85%            RATE 3:  1.79% + $0.10             BUS 1:  1.15% + $0.10            BUS 2:  1.75% + $0.10,REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10         ::REWARDS:  0.36%            MID:  0.85%             BUS 1:  1.15% + $0.10               NON:  1.79% + $0.10',
+	'fees_rate_structure'                   	=> 		'Rate Structure',
+	'fees_qualification_exemptions'         	=> 		'Downgrades',
 	'fees_startup_application'              	=> 		'CreditAppFee',
 	'fees_auth_transaction'                 	=> 		'TranFee',
 	'fees_monthly_statement'                	=> 		'StatementFee',
@@ -191,7 +191,7 @@
 	'fees_ebt_discount'                     	=> 		'EBTDiscRate',
 	'fees_pin_debit_discount'               	=> 		'DebitDiscountRate',
 	'fees_ebt_auth'                         	=> 		'EBTTranFee',
-	'rep_discount_paid'                     	=> 		'',
+	'rep_discount_paid'                     	=> 		'Discount Paid:Monthly,Daily',
 	'rep_amex_discount_rate'                	=> 		'Amex Discount Rate',
 	'rep_business_legitimate'               	=> 		'BusinessAppearLegit-:Yes,No',
 	'rep_photo_included'                    	=> 		'SitePhotoInc-:Yes,No',
@@ -340,7 +340,7 @@
 
 		// is this a multi-option field
                 $multi = false;
-		if (preg_match('/(.+?-):(.*)/', $val, $matches)) {
+		if (preg_match('/(.+?):(.*)/', $val, $matches)) {
 		    $multi = true;
                     $mergeFieldName = $matches[1];
 		    $optionList = $matches[2];
@@ -383,7 +383,7 @@
                     }
 
                     if (preg_match('/^%OfProductSold-/', $mergeFieldName, $matches)) {
-                        $tmpMergeFieldName = '%OfProductSold';
+                        $tmpMergeFieldName = '%OfProductSold-';
                     }
 
                     if (preg_match('/^Rate Structure-/', $mergeFieldName, $matches)) {
@@ -465,6 +465,10 @@
 		        }
 		    }
 		    else {
+			if ($key == 'owner1_dob' || $key == 'owner2_dob' || $key == 'bus_open_date') {
+				$value = reformatDate($value);
+			}
+
                         if ($value == 't') { $value = 'true'; }
                         if ($value == 'f') { $value = ''; }
 
@@ -510,6 +514,73 @@
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    function reformatDate($date) {
+    	$newDate = $date;
+		
+	if (preg_match('/[A-Za-z]+/', $date)) {
+		$newDate = '';
+	}
+    	else if (preg_match('/(\d+)\.(\d+)\.(\d+)/', $date, $matches)) {
+    		$month = $matches[1];
+    		$day = $matches[2];
+    		$year = $matches[3];
+
+    		if ($year < 100) {
+    			$year += 1900;
+    		}
+
+		$newDate = sprintf("%04s-%02s-%02s", $year, $month, $day);
+    	}
+    	else if (preg_match('/(\d+)\.(\d+)/', $date, $matches)) {
+    		$month = $matches[1];
+    		$year = $matches[2];
+
+    		if ($year < 100) {
+    			$year += 1900;
+    		}
+
+		$newDate = sprintf("%04s-%02s-%02s", $year, $month, '01');
+    	}
+	else if (preg_match('/(\d+)\/(\d+)\/(\d+)/', $date, $matches)) {
+		$month = $matches[1];
+		$day = $matches[2];
+		$year = $matches[3];
+
+		if ($year < 100) {
+			$year += 1900;
+		}
+
+		$newDate = sprintf("%04s-%02s-%02s", $year, $month, $day);
+	}
+	else if (preg_match('/(\d+)-(\d+)-(\d+)/', $date, $matches)) {
+		$month = $matches[1];
+		$day = $matches[2];
+		$year = $matches[3];
+
+		if ($year < 100) {
+			$year += 1900;
+		}
+
+		$newDate = sprintf("%04s-%02s-%02s", $year, $month, $day);
+	}
+	else if (preg_match('/^((19|20)\d{2})$/', $date, $matches)) {
+		$year = $matches[1];
+		$newDate = sprintf("%04s-%02s-%02s", $year, '01', '01');
+	}
+	else if (preg_match('/(\d+)\/(\d+)/', $date, $matches)) {
+		$month = $matches[1];
+		$year = $matches[2];
+
+		if ($year < 100) {
+			$year += 1900;
+		}
+
+		$newDate = sprintf("%04s-%02s-%02s", $year, $month, '01');
+	}
+
+    	return $newDate;
     }
 
 ?>

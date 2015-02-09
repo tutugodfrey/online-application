@@ -904,16 +904,30 @@ class CobrandedApplication extends AppModel {
 				'status' => 'saved'
 			)
 		);
+
 		if ($this->save()) {
 			$newApp = $this->read();
-
+			
 			// copy each value over
 			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 				if ($app['CobrandedApplicationValues'][$key]['name'] == 'Unknown Type for testing') {
 					// skip it
 				} else {
-					$newApp['CobrandedApplicationValues'][$key]['value'] = $app['CobrandedApplicationValues'][$key]['value'];
-					$this->CobrandedApplicationValues->save($newApp['CobrandedApplicationValues'][$key]);
+					$found = false;
+					foreach ($newApp['CobrandedApplicationValues'] as $newKey => $newVal) {
+						if ($found == true) {
+							continue;
+						}
+
+						if ($newApp['CobrandedApplicationValues'][$newKey]['name'] == $app['CobrandedApplicationValues'][$key]['name']) {
+							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $app['CobrandedApplicationValues'][$key]['value'];
+
+							if (isset($newApp['CobrandedApplicationValues'][$newKey])) {
+								$this->CobrandedApplicationValues->save($newApp['CobrandedApplicationValues'][$newKey]);
+								$found = true;
+							}
+						}
+					}
 				}
 			}
 			return true;
@@ -1949,15 +1963,15 @@ class CobrandedApplication extends AppModel {
 				$methodofSalesCardPresentSwiped = $tmpVal['value'];
 			}
 
-			if ($tmpVal['name'] == '%OfProductSoldDirectToGovernment') {
+			if ($tmpVal['name'] == '%OfProductSold-DirectToGovernment') {
 				$productSoldDirectToGovernment = $tmpVal['value'];
 			}
 
-			if ($tmpVal['name'] == '%OfProductSoldDirectToCustomer') {
+			if ($tmpVal['name'] == '%OfProductSold-DirectToCustomer') {
 				$productSoldDirectToCustomer = $tmpVal['value'];
 			}
 
-			if ($tmpVal['name'] == '%OfProductSoldDirectToBusiness') {
+			if ($tmpVal['name'] == '%OfProductSold-DirectToBusiness') {
 				$productSoldDirectToBusiness = $tmpVal['value'];
 			}
 
@@ -2022,7 +2036,7 @@ class CobrandedApplication extends AppModel {
 						$methodofSalesPage = $pageOrder;
 					}
 
-					if ($templateField['merge_field_name'] == '%OfProductSold') {
+					if ($templateField['merge_field_name'] == '%OfProductSold-') {
 						$productSoldDirectPage = $pageOrder;
 					}
 

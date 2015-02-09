@@ -50,10 +50,11 @@
 				var remainingMins;
 
                 function sessionCount(){
-                remainingMins = Math.round((" . Security::inactiveMins() * Configure::read('Session.timeout') . " - c) / 60);
+				//Substract 15 minutes to compensate for potential timeout de-synchronization with the server-side
+                remainingMins = Math.floor((" . Security::inactiveMins() * Configure::read('Session.timeout') . " - c) / 60) - 15;
                 document.getElementById('sessCountDn').innerHTML= remainingMins + ' minutes';
                 /*If half the total session timeout is reached*/
-                    if(remainingMins <= 10){
+                    if(remainingMins <= 5){
                         document.getElementById('sessCountDn').innerHTML= '<b>' + remainingMins + ((remainingMins > 1) ? ' minutes.</b>' : ' minute.</b>');
                         document.getElementById('msg_fader').style.display = 'block';
                         document.getElementById('session_box').style.display = 'block';
@@ -64,7 +65,7 @@
                      return
                     }
                 c=c+1;
-				t=setTimeout(\"sessionCount()\",1000);
+				t=setTimeout(\"sessionCount()\",990);//count down every 990 ms instead of 1000ms to compensate for potential client processor lag
                 }
 
                 function doTimer(){
@@ -75,7 +76,7 @@
                 }
 
 				function resetTimer(){
-					if(remainingMins < 12){
+					if(remainingMins < 10){
 							$.ajax({
 								type: 'POST',
 								url: '/Pages/refreshSession',
@@ -115,7 +116,6 @@
            <br />All unsaved work will be lost upon session expiration.
 		   <br /><br /><span class="label label-success" style="font-size: 10pt">Click or hit any key continue.</span>
 	</p>
-        <img src="/img/refreshing.gif" id="refreshIMG" style="display:none;float:right; margin-right: 25px" />
    </div>
     <!-- End Session notification Dialog Box -->
     <!--  span id="loginBtn" class="btn">Need to login?</span -->

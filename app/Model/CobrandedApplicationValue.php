@@ -132,9 +132,30 @@ class CobrandedApplicationValue extends AppModel {
 						$data, 'cbc', Configure::read('Cryptable.iv')));
 				}
 			}
+
+			// if field type is money, remove commas if they exist
+			if ($field['TemplateField']['type'] == 10) {
+				$data = $this->data[$this->alias]['value'];
+				$data = str_replace(',', '', $data);
+				$this->data[$this->alias]['value'] = $data;
+			}
+
 		}
 		return $retVal;
 	}
+
+	public function save($data = null, $validate = true, $fieldList = array()) {
+        // clear modified field value before each save
+        $this->set($data);
+        if (isset($this->data[$this->alias]['modified'])) {
+            unset($this->data[$this->alias]['modified']);
+        }
+
+        $this->CobrandedApplication->id = $this->data[$this->alias]['cobranded_application_id'];
+        $this->CobrandedApplication->saveField('modified', DboSource::expression('LOCALTIMESTAMP(0)'));
+
+        return parent::save($this->data, $validate, $fieldList);
+    }
 
 	public function validApplicationValue($data, $fieldType, $templateField = null) {
 		$retVal = false;

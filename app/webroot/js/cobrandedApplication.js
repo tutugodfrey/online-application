@@ -50,7 +50,7 @@ var quickAdd = function(e) {
 				m += 1;  // JavaScript months are 0-11
 				m = ("0" + m).slice(-2);
 				var y = newDate.getFullYear();
-				data['value'] = y+'/'+m+'/'+d;
+				data['value'] = y+'-'+m+'-'+d;
 			}
 
 			persist(data);
