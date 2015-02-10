@@ -937,45 +937,7 @@ class CobrandedApplicationsController extends AppController {
 				$data['CobrandedApplication']['status'] != 'signed') {
 
 				if ($data['Coversheet']['status'] == 'validated') {
-					$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
-
-                    $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
-                    foreach ($valuesMap as $key => $val) {
-                        $coversheetData['CobrandedApplication'][$key] = $val;
-                    }
-
-                    $View = new View($this, false);
-
-                    if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
-                        $View->set('cp',false);
-                    } else {
-                        $View->set('cp',true);
-                    }
-
-                    $View->set('data', $coversheetData);
-                    $View->viewPath = 'Elements';
-                    $View->layout = false;
-                    $viewData = $View->render('/Elements/coversheets/pdf_export');
-
-					if ($this->CobrandedApplication->Coversheet->pdfGen($data['Coversheet']['id'], $viewData)) {
-						if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
- 							if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
-								$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
-
-								$send_email = 'true';
-
-								foreach ($data['EmailTimeline'] as $emails) {
-									if ($emails['email_timeline_subject_id'] == 2) {
-										$send_email = 'false';
-									}
-								}
-
-								if ($send_email != 'false') {
-									$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
-								}
-							}
-						}
-					}
+					$this->sendCoversheet($data);
 				}
 			}          
 		}
@@ -1026,45 +988,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('data', $data);
 
 			if ($data['Coversheet']['status'] == 'validated') {
-				$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
-
-                $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
-                foreach ($valuesMap as $key => $val) {
-                    $coversheetData['CobrandedApplication'][$key] = $val;
-                }
-
-                $View = new View($this, false);
-
-                if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
-                    $View->set('cp',false);
-                } else {
-                    $View->set('cp',true);
-                }
-
-                $View->set('data', $coversheetData);
-                $View->viewPath = 'Elements';
-                $View->layout = false;
-                $viewData = $View->render('/Elements/coversheets/pdf_export');
-
-				if ($this->CobrandedApplication->Coversheet->pdfGen($data['Coversheet']['id'], $viewData)) {
-					if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
- 						if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
-							$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
-
-							$send_email = true;
-
-							foreach ($data['EmailTimeline'] as $emails) {
-								if ($emails['email_timeline_subject_id'] == 2) {
-									$send_email = false;
-								}
-							}
-
-							if ($send_email != false) {
-								$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
-							}
-						}
-					}
-				}
+				$this->sendCoversheet($data);
 			}
 
 			if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
@@ -1327,4 +1251,41 @@ class CobrandedApplicationsController extends AppController {
         $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
         return $valuesMap;
     }
+
+/**
+ * sendCoversheet
+ *
+ * @params
+ *     $data array
+ */
+    public function sendCoversheet($data) {
+		$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
+
+        $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
+        foreach ($valuesMap as $key => $val) {
+            $coversheetData['CobrandedApplication'][$key] = $val;
+        }
+
+        $View = new View($this, false);
+
+        if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
+            $View->set('cp',false);
+        } else {
+            $View->set('cp',true);
+        }
+
+        $View->set('data', $coversheetData);
+        $View->viewPath = 'Elements';
+        $View->layout = false;
+        $viewData = $View->render('/Elements/coversheets/pdf_export');
+
+		if ($this->CobrandedApplication->Coversheet->pdfGen($data['Coversheet']['id'], $viewData)) {
+			if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
+ 				if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
+					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
+					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+				}
+			}
+		}
+	}
 }

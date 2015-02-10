@@ -321,7 +321,7 @@ class Coversheet extends AppModel {
 
     public function pdfGen($id = null, $data = null) {
         if ($id && $data) {
-            $path = WWW_ROOT . 'files/';
+            $path = WWW_ROOT . 'files' . DS;
             $fp = (fopen($path . 'axia_coversheet.xfdf', 'w'));
             fwrite($fp, $data);
             fclose($fp);
@@ -379,7 +379,7 @@ class Coversheet extends AppModel {
             $viewVars = array();
             $viewVars['business_name'] = $corpName;
             $viewVars['dba'] = $dbaBusinessName;
-            $attachments = array($dbaBusinessName . ' coversheet.pdf' => WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
+            $attachments = array($dbaBusinessName . ' coversheet.pdf' => WWW_ROOT . DS . 'files' . DS . 'axia_' . $id . '_coversheet.pdf');
 
             $args = array(
                 'from' => $from,
@@ -416,7 +416,7 @@ class Coversheet extends AppModel {
 
     public function unlinkCoversheet($id = null) {
         if ($id) {
-            $result = unlink(WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
+            $result = unlink(WWW_ROOT . DS . 'files' . DS . 'axia_' . $id . '_coversheet.pdf');
             return $result;
         } else {
             return false;
