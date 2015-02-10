@@ -59,6 +59,8 @@
 							$repOnlyField = false;
 
 							foreach ($validationErrorsArray as $arr) {
+								$arr['mergeFieldName'] = preg_replace('/\//', '\/', $arr['mergeFieldName']);
+
 								echo "
 									var pattern = /^".$arr['mergeFieldName']."/;
 									for (l in allLabels) {
