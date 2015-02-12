@@ -1184,6 +1184,7 @@ class CobrandedApplicationsController extends AppController {
 			if (!empty($data)) {
 				$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
 				$this->CobrandedApplication->saveField('status', 'signed');
+				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
 			}
 		}
 		
@@ -1283,7 +1284,6 @@ class CobrandedApplicationsController extends AppController {
 			if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
  				if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
 					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
-					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
 				}
 			}
 		}
