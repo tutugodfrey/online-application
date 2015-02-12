@@ -35,8 +35,16 @@ class TemplateFieldsController extends NestedResourceController {
 
 	public function admin_edit($idToEdit) {
 		$this->TemplateField->id = $idToEdit;
+
 		if (empty($this->request->data)) {
-			$this->request->data = $this->TemplateField->read();
+			$templateField = $this->TemplateField->find(
+				'first',
+				array(
+					'conditions' => array('TemplateField.id' => $idToEdit),
+					'recursive' => -1
+				)
+			);
+			$this->request->data = $templateField;
 		} else {
 			$data = $this->request->data;
 			// we know the page_id from the uri
