@@ -266,7 +266,7 @@ class CoversheetsController extends AppController {
 /*
  * Display a list of coversheets
  */        
-        
+       /* 
 	public function admin_index() {
 		//$this->Prg->commonProcess();
 		if ($this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
@@ -294,8 +294,70 @@ class CoversheetsController extends AppController {
                 } 
 		$Coversheets = $this->Paginator->paginate();
 		$this->set(compact('users', 'Coversheets', 'user_id'));
-	}
-        
+	}*/
+        	public function admin_index() {
+		//reset all of the search parameters
+		if(isset($this->request->data['reset'])) {
+			foreach($this->request->data['Coversheet'] as $i => $value){
+				$this->request->data['Coversheet'][$i]= '';
+			}
+		}
+		//paginate the applications
+		$this->Prg->commonProcess();
+		//grab results from the custom finder _findIndex and pass them to the paginator
+		$this->paginate = array('index');
+		$this->Paginator->settings = $this->paginate;
+		$this->Paginator->settings['conditions'] = $this->Coversheet->parseCriteria($this->passedArgs);
+		$this->Paginator->settings['order'] = array('Coversheet.modified' => ' DESC');
+
+		$users = $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+		$userIds = $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'));
+
+		if (empty($users)) {
+			$users = $this->Coversheet->User->find(
+				'list', 
+				array(
+					'conditions' => array('User.id' => $this->Auth->user('id')),
+				)
+			);
+		}
+		// default to only show logged in user unless user is admin
+		// perform some permissions checks
+		// Reps can see only their own apps
+		// Managers can see their own plus reps assigned to them
+		// Admins can see everything
+		switch($this->Auth->user('group_id')) {
+			case User::REPRESENTATIVE_GROUP_ID:
+				$this->Paginator->settings['conditions']['Coversheet.user_id'] = $this->Auth->user('id');
+				break;
+			case User::MANAGER_GROUP_ID:
+				if(array_key_exists('search', $this->passedArgs)) {
+					if(in_array($this->passedArgs['user_id'], $userIds)) {
+						$this->Paginator->settings['conditions'] = $this->Coversheet->parseCriteria($this->passedArgs);
+					} else if (!in_array($this->passedArgs['user_id'], $userIds)) {
+						$this->Paginator->settings['conditions']['Coversheet.user_id'] = $userIds;
+					}
+				} else {
+					$this->Paginator->settings['conditions'] = array(
+                                        	'Coversheet.user_id' => $this->Auth->user('id')
+                                	);
+				}
+				break;
+		}
+		$this->set('coversheets',  $this->Paginator->paginate());
+
+		$userTemplate = $this->User->Template->find(
+			'first',
+			array(
+				'conditions' => array('Template.id' => $this->Auth->user('template_id')),
+			)
+		);
+
+
+		$this->set('users', $users);
+		$this->set('user_id', $this->Auth->user('id'));
+		}
+	
 /*
  * Search for a coversheet, criteria available is determined by user rights
  */        

@@ -20,11 +20,5 @@
 <?php endforeach; ?>
 </table>
 <?php
-    if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-        echo $this->Html->link(
-            'Return to Applications Admin',
-            '/admin/cobranded_applications/',
-            array('style' => 'display: block; float: right;')
-        );
-    }
+	echo $this->Element('cobranded_applications/return');
 ?>
