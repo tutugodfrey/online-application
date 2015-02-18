@@ -15,7 +15,7 @@
 		<?php foreach ($cobrandedApplications as $cobrandedApplication): ?>
 		<tr>
 		<td><div class="btn-group"><?php
-				echo $this->Html->link(' ', 
+				echo $this->Html->link(' ',
 					array(
 						'controller' => 'cobrandedApplications',
 						'action' => 'edit',
@@ -38,37 +38,38 @@
 			<td><?php echo $cobrandedApplication['CorpName']['value']; ?>&nbsp;</td>
 			<td><?php echo $cobrandedApplication['CorpContact']['value']; ?>&nbsp;</td>
 			<td>
-				<?php if($cobrandedApplication['CobrandedApplication']['status'] == 'completed' 
-					|| $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
-                    			echo $this->Html->link(
-						$cobrandedApplication['CobrandedApplication']['status'], 
-						array(
-							'controller' => 'cobrandedApplications', 
-							'action' => 'app_status', 
-							$cobrandedApplication['CobrandedApplication']['id'], 
-							'admin' => true
-						)
-					) . "\n\t\t\n";
-                         		} else {
-					echo $cobrandedApplication['CobrandedApplication']['status'];
-                                	}	
-				?>&nbsp;
+	<?php 
+		if ($cobrandedApplication['CobrandedApplication']['status'] == 'completed'
+		|| $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
+			echo $this->Html->link(
+				$cobrandedApplication['CobrandedApplication']['status'],
+				array(
+					'controller' => 'cobrandedApplications',
+					'action' => 'app_status',
+					$cobrandedApplication['CobrandedApplication']['id'],
+					'admin' => true
+				)
+			) . "\n\t\t\n";
+		} else {
+			echo $cobrandedApplication['CobrandedApplication']['status'];
+		}
+	?>&nbsp;
 			</td>
-			<td><?php echo $this->Time->format('m/d/y h:i A',$cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
+			<td><?php echo $this->Time->format('m/d/y h:i A', $cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td><div class="btn-group"><?php
-				if(in_array($this->Session->read('Auth.User.group'), array('admin'))) {
-				echo $this->Html->link(' ', 
+				if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
+				echo $this->Html->link(' ',
 					array(
-						'action' => 'export', 
+						'action' => 'export',
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
 						'class' => 'btn btn-default btn-sm glyphicon glyphicon-export',
 						'title' => __('Export')
 					)
-				); 
+				);
 				}
-				echo $this->Html->link(' ', 
+				echo $this->Html->link(' ',
 					array(
 						'action' => 'copy',
 						$cobrandedApplication['CobrandedApplication']['id']
@@ -78,9 +79,9 @@
 						'title' => __('Copy')
 					)
 				);
-				echo $this->Html->link(' ', 
+				echo $this->Html->link(' ',
 					array(
-						'action' => 'email_timeline', 
+						'action' => 'email_timeline',
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
@@ -88,27 +89,25 @@
 						'title' => __('Timeline for Emails')
 					)
 				);
-				echo $this->Html->link(' ', 
+				echo $this->Html->link(' ',
 					array(
-						'action' => 'complete_fields', 
+						'action' => 'complete_fields',
 						$cobrandedApplication['CobrandedApplication']['id'],
 						'admin' => false
 					),
 					array(
-						'class' => 'btn btn-info btn-sm glyphicon glyphicon-send', 
+						'class' => 'btn btn-info btn-sm glyphicon glyphicon-send',
 						'title' => __('Email App For Field Completion')
 					)
 				);
-				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && 
-					$cobrandedApplication['CobrandedApplication']['status'] === 'signed') {
-				echo $this->Html->link(' ', 
+				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed') {
+				echo $this->Html->link(' ',
 					array(
-						'action' => 'install_sheet_var', 
-						'admin' => 'false', 
+						'action' => 'install_sheet_var',
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
-						'class' => 'btn btn-default btn-sm glyphicon glyphicon-file', 
+						'class' => 'btn btn-default btn-sm glyphicon glyphicon-file',
 						'title' => __('Install Sheet')
 					)
 				);
@@ -125,23 +124,23 @@
 							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
 							'title' => __('Edit Cover Sheet')
 						)
-					); 
+					);
 				} else {
-					echo $this->Html->link(' ', 
+					echo $this->Html->link(' ',
 						array(
-							'controller' => 'Coversheets', 
-							'action' => 'add', 
-							$cobrandedApplication['CobrandedApplication']['id'], 
-							$cobrandedApplication['User']['id'], 
+							'controller' => 'Coversheets',
+							'action' => 'add',
+							$cobrandedApplication['CobrandedApplication']['id'],
+							$cobrandedApplication['User']['id'],
 							'admin' => false
 						),
 						array(
 							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
 							'title' => __('Create Cover Sheet')
 						)
-					); 
+					);
 				}
-				if(in_array($this->Session->read('Auth.User.group'), array('admin'))) {
+				if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
 				echo $this->Html->link(' ',
 					array(
 						'action' => 'edit',
@@ -154,21 +153,21 @@
 				);
 				}
 				if (!isset($cobrandedApplication['Coversheet']['id'])) {
-					echo $this->Form->postLink(' ', 
+					echo $this->Form->postLink(' ',
 						array(
-							'action' => 'delete', 
+							'action' => 'delete',
 							$cobrandedApplication['CobrandedApplication']['id']
-						), 
+						),
 						array(
 							'class' => 'btn btn-warning btn-sm glyphicon glyphicon-trash',
 							'title' => __('Delete'),
-						), 
-						__('Are you sure you want to delete # %s?', 
-						$cobrandedApplication['CobrandedApplication']['id'])				
+						),
+						__('Are you sure you want to delete # %s?',
+						$cobrandedApplication['CobrandedApplication']['id'])
 					);
 
 				}
-?>
+	?>
 		</div>
 		</td>
 		</tr>
