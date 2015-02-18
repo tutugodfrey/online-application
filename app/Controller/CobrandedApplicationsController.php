@@ -381,6 +381,12 @@ class CobrandedApplicationsController extends AppController {
 			}
 		}
 
+		if ($this->RequestHandler->isAjax()) {
+			if ($error != '') {
+				throw new BadRequestException(__($error));
+			}
+		}
+
 		$this->set('error', $error);
 	}
 

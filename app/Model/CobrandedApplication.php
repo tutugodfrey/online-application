@@ -982,10 +982,10 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function sendFieldCompletionEmail($email, $id = null) {
-			$response = array(
-				'success' => false,
-				'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
-			);
+		$response = array(
+			'success' => false,
+			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
+		);
 
 		$apps = $this->findAppsByEmail($email, $id);
 
@@ -1005,7 +1005,6 @@ class CobrandedApplication extends AppModel {
 				$appValue = $this->getApplicationValue($cav['CobrandedApplicationValue']['id']);
 				$appValue['CobrandedApplicationValue']['value'] = $email;
 				if ($this->CobrandedApplicationValue->save($appValue)) {
-
 					return $this->sendFieldCompletionEmail($email);
 				}
 			} else {
@@ -1248,7 +1247,6 @@ class CobrandedApplication extends AppModel {
 		$viewVars['hash'] = $hash;
 		$viewVars['link'] = "https://".$hostname."/cobranded_applications/edit/".$hash;
 		$viewVars['ownerName'] = $ownerName;
-
 
 		$args = array(
 			'from' => $from,

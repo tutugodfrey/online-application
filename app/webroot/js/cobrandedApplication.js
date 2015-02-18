@@ -33,6 +33,10 @@ var quickAdd = function(e) {
 		data['field_id'] = target.attr('id');
 		persist(data);
 	} else {
+		if (target.attr('id') == 'CobrandedApplicationEmail') {
+			return true;
+		}
+
 		var id = target.attr('id');
 		var name = target.attr('name');
 
@@ -231,4 +235,34 @@ $(document).ready(function() {
 	$('#MethodofSales-CardNotPresent-Internet').on('change', motoQuestionnaireCheck);
 
 	$(":input").inputmask();
+
+	$('#myFormSubmit').click(function(e){
+		e.preventDefault();
+
+		$.ajax({
+			method: 'post',
+			url: '/cobranded_applications/retrieve/',
+			data: $(this).closest("form").serialize(),
+			success: function(response){
+				$('#myModal').modal('hide');
+				$("body").html(response);
+			},
+			error: function(xmlhttp, textStatus) {
+				alert('request failed');
+			},
+			cache: false
+		})
+	});
 });
+
+
+
+
+
+
+
+
+
+
+
+
