@@ -10,7 +10,7 @@ class GroupFixture extends CakeTestFixture {
  *
  * @var string
  */
-	public $table = 'group';
+	public $table = 'onlineapp_groups';
 
 /**
  * Fields
@@ -18,11 +18,12 @@ class GroupFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'group_id' => array('type' => 'string', 'null' => false, 'length' => 10),
-		'group_description' => array('type' => 'string', 'null' => true, 'length' => 50),
-		'active' => array('type' => 'boolean', 'null' => false, 'default' => true),
+		'id' => array('type' => 'integer', 'null' => false),
+		'name' => array('type' => 'string', 'null' => true, 'length' => 50),
+		'created' => array('type' => 'datetime', 'null' => false),
+		'modified' => array('type' => 'datetime', 'null' => false),
 		'indexes' => array(
-			'PRIMARY' => array('unique' => true, 'column' => 'group_id')
+			'PRIMARY' => array('unique' => true, 'column' => 'id')
 		),
 		'tableParameters' => array()
 	);
@@ -34,55 +35,8 @@ class GroupFixture extends CakeTestFixture {
  */
 	public $records = array(
 		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
-		),
-		array(
-			'group_id' => 'Lorem ip',
-			'group_description' => 'Lorem ipsum dolor sit amet',
-			'active' => 1
+			'id' => 1,
+			'name' => 'Lorem ipsum dolor sit amet 1'
 		),
 	);
-
 }

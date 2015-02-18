@@ -17,6 +17,8 @@ class CobrandedApplicationValueTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.group',
+//		'app.onlineappUser',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -36,6 +38,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->Group = ClassRegistry::init('Group');
 		$this->User = ClassRegistry::init('OnlineappUser');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
@@ -46,11 +49,13 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
+		$this->loadFixtures('Group');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
+//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 
@@ -62,6 +67,10 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 				)
 			)
 		);
+
+//		$this->User->id = $this->User->find('first', array('fields' => 'id'));
+//		$this->User->saveField('template_id', $this->__template['Template']['id']);
+//		$this->__user = $this->User->find('first');
 
 		$this->User->create(
 			array(
@@ -85,7 +94,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			)
 		);
 		$this->__user = $this->User->save();
-	}
+ 	}
 
 /**
  * tearDown method
@@ -96,19 +105,12 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
+		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-			DROP CONSTRAINT onlineapp_users_cobrand_fk;
-			UPDATE onlineapp_users SET cobrand_id = null;';
-		$this->Cobrand->query($query);
 		$this->Cobrand->deleteAll(true, false);
-		$query = 'ALTER TABLE onlineapp_users
-				ADD CONSTRAINT onlineapp_users_cobrand_fk FOREIGN KEY (cobrand_id) REFERENCES onlineapp_cobrands (id);';
-		$this->Cobrand->query($query);
-
 		unset($this->CobrandedApplication);
 		unset($this->CobrandedApplicationValue);
 		unset($this->TemplateField);
@@ -117,6 +119,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		unset($this->Template);
 		unset($this->Cobrand);
 		unset($this->User);
+		unset($this->Group);
 
 		parent::tearDown();
 	}
@@ -166,13 +169,13 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 	public function testBeforeSaveValidation() {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
-		$applictionData = array(
+		$applicationData = array(
 			'user_id' => $this->__user['OnlineappUser']['id'],
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
-
-		$this->CobrandedApplication->create($applictionData);
+debug($applicationData);
+		$this->CobrandedApplication->create($applicationData);
 		$cobrandedApplication = $this->CobrandedApplication->save();
 		$applicationAndValues = $this->CobrandedApplicationValue->find(
 			'all',
@@ -214,7 +217,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 					break;
 
 				case 10: // money     - $(#(1-3),)?(#(1-3)).## << needs work
-					$this->__testInvalidAndValidAppValues('money', $appValue, 'leters are not a valid money', '$123,000.00');
+					$this->__testInvalidAndValidAppValues('money', $appValue, 'leters are not a valid money', '$123000.00');
 					break;
 				case 12: // ssn       - ###-##-####
 					$this->__testInvalidAndValidAppValues('ssn', $appValue, 'leters are not a valid ssn', '123-45-6789');
@@ -402,6 +405,23 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 
 		$this->assertEquals('XXXXXXXXXXXXXXting', $applicationValue['CobrandedApplicationValue']['value'],
 			'verify value is decrypted and masked as expected');
+	}
+
+	public function testCheckRoutingNumber() {
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber();
+		$this->assertFalse($response, 'check routing number without passing a number should fail.');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('321-174-851');
+		$this->assertTrue($response, 'check routing number containing non-numerical characters should still succeed');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('321174851');
+		$this->assertTrue($response, 'check routing number with good number should succeed.');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('000000001');
+		$this->assertFalse($response, 'check routing number with bad number should fail.');
+
+		$response = $this->CobrandedApplicationValue->checkRoutingNumber('001');
+		$this->assertFalse($response, 'check routing number with number that is not 9 digits long should fail.');
 	}
 
 	private function __testInvalidAndValidAppValues($typeString, $appValue, $invalid, $valid) {

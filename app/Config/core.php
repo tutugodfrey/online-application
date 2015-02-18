@@ -178,6 +178,9 @@
 		'defaults' => 'php'
 	));
 
+	Configure::write('Session.timeout', '180');
+	Configure::write('Session.cookieTimeout', '180');
+
 /**
  * The level of CakePHP security.
  */

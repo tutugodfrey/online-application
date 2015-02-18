@@ -24,7 +24,7 @@ $this->Html->addCrumb(
 ?>
 
 <div class="templateFields form container">
-<?php echo $this->Form->create('TemplateField'); ?>
+<?php echo $this->Form->create('TemplateField', array('novalidate' => true)); ?>
 	<fieldset>
 		<legend><?php echo String::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?></legend>
 	<?php
@@ -42,7 +42,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input('required', array('div' => 'col-md-6'));
 		echo '</div>';
 		echo '<div class="row">';
-		echo $this->Form->input('default_value', array('div' => 'col-md-12'));
+		echo $this->Form->input('default_value', array('type' => 'textarea', 'escape' => false, 'div' => 'col-md-12'));
 		echo $this->Form->input('merge_field_name', array('div' => 'col-md-12'));
 		echo $this->Form->input('description', array('div' => 'col-md-12'));
 		echo $this->Form->input('encrypt', array('div' => 'col-md-6'));

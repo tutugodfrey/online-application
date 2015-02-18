@@ -1,3 +1,82 @@
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        var cobrandPattern = /Cobrand/;
+        var templatePattern = /Template/;
+
+        $('input[type=checkbox]').each(function () {
+            var id = $(this).attr('id');
+            if (templatePattern.test(id)) {
+                $('label[for="'+id+'"]').hide();
+            }
+        });
+
+        $('input[type=checkbox]').each(function() {
+            value = $(this).attr('value');
+            id = $(this).attr('id');
+            checked = $(this).is(":checked");
+
+            if (cobrandPattern.test(id)) {
+                if (checked) {
+                    $.ajax({
+                        url: "/cobrands/get_template_ids/"+value,
+                        data: value,
+                        success: function(response){
+                            if (response.length != 0) {
+                                response = $.parseJSON(response)
+                                $.each(response, function(key, val) {
+                                    $('label[for="TemplateTemplate'+val+'"]').show();
+                                });
+                            }
+                        },
+                        cache: false
+                    });
+                }
+            }
+        });
+
+        $(document).on("click", "input[type='checkbox']", function(){
+            value = $(this).attr('value');
+            id = $(this).attr('id');
+            checked = $(this).is(":checked");
+
+            if (cobrandPattern.test(id)) {
+                $.ajax({
+                    url: "/cobrands/get_template_ids/"+value,
+                    data: value,
+                    success: function(response){
+                        if (response.length != 0) {
+                            response = $.parseJSON(response)
+                            $.each(response, function(key, val) {
+                                if (checked) {
+                                    $('label[for="TemplateTemplate'+val+'"]').show();
+                                } else {
+                                    $('#TemplateTemplate'+val).prop('checked', false);
+                                    $('label[for="TemplateTemplate'+val+'"]').hide();
+                                    $('#UserTemplateId option[value="'+val+'"]').remove();
+                                }
+                            });
+                        }
+                    },
+                    cache: false
+                });
+            }
+
+            if (templatePattern.test(id)) {
+                var labelText = $('label[for="TemplateTemplate'+value+'"]').text();
+                if (checked) {
+                    $('#UserTemplateId').append('<option value="'+value+'">'+labelText+'</option>');
+                } else {
+                    $('#UserTemplateId option[value="'+value+'"]').remove();
+                }
+                
+            }
+        });
+    });
+
+</script>
+
 <h1>Edit User</h1>
 <div class="users form">
     <table cellpadding="0" cellspacing="0">
@@ -31,8 +110,20 @@ echo $this->Form->input('token_used');
 echo $this->Form->input('token_uses');
 }
 
-echo $this->Form->input('cobrand_id');
-echo $this->Form->input('template_id');
+echo "<br>";
+echo $this->Form->input('Cobrand', array('label' => 'Select Cobrand(s)', 'multiple' => 'checkbox'));
+echo "<br>";
+echo $this->Form->input('Template', array('label' => 'Select Template(s)', 'multiple' => 'checkbox'));
+echo "<br>";
+echo $this->Form->input(
+    'User.template_id',
+    array(
+        'options' => $userTemplates,
+        'label' => 'Select Default Template',
+        'type' => 'select'
+    )
+);
+echo "<br>";
 
 echo $this->Form->end('Save User');
 ?>

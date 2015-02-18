@@ -1,5 +1,4 @@
 <?php
-App::uses('Sanitize', 'Utility');
 App::uses('NestedResourceController', 'Controller');
 /**
  * TemplateSections Controller
@@ -20,7 +19,7 @@ class TemplateSectionsController extends NestedResourceController {
 
 	public function admin_add() {
 		if ($this->request->is('post')) {
-			$data = Sanitize::clean($this->request->data);
+			$data = $this->request->data;
 			// we know the page_id from the uri
 			$data['TemplateSection']['page_id'] = $this->_getParentControllerId();
 			$this->TemplateSection->create();
@@ -39,10 +38,10 @@ class TemplateSectionsController extends NestedResourceController {
 		if (empty($this->request->data)) {
 			$this->request->data = $this->TemplateSection->read();
 		} else {
-			$data = Sanitize::clean($this->request->data);
+			$data = $this->request->data;
 			// we know the page_id from the uri
 			$data['TemplateSection']['page_id'] = $this->_getParentControllerId();
-			if ($this->TemplateSection->save(Sanitize::clean($data))) {
+			if ($this->TemplateSection->save($data)) {
 				$this->Session->setFlash("Template Section Saved!");
 				return $this->redirect($this->_getListUrl());
 			}

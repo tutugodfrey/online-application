@@ -38,4 +38,9 @@
 			<directory suffix=".php">lib</directory>
 		</blacklist>
 	</filter>
+
+	<php>
+		<server name='HTTP_HOST' value='http://localhost' />
+	</php>
+
 </phpunit>

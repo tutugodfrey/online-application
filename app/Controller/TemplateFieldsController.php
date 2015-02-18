@@ -1,5 +1,4 @@
 <?php
-App::uses('Sanitize', 'Utility');
 App::uses('NestedResourceController', 'Controller');
 /**
  * TemplateFields Controller
@@ -20,7 +19,7 @@ class TemplateFieldsController extends NestedResourceController {
 	
 	public function admin_add() {
 		if ($this->request->is('post')) {
-			$data = Sanitize::clean($this->request->data);
+			$data = $this->request->data;
 			// we know the page_id from the uri
 			$data['TemplateField']['section_id'] = $this->_getParentControllerId();
 			$this->TemplateField->create();
@@ -36,13 +35,21 @@ class TemplateFieldsController extends NestedResourceController {
 
 	public function admin_edit($idToEdit) {
 		$this->TemplateField->id = $idToEdit;
+
 		if (empty($this->request->data)) {
-			$this->request->data = $this->TemplateField->read();
+			$templateField = $this->TemplateField->find(
+				'first',
+				array(
+					'conditions' => array('TemplateField.id' => $idToEdit),
+					'recursive' => -1
+				)
+			);
+			$this->request->data = $templateField;
 		} else {
-			$data = Sanitize::clean($this->request->data);
+			$data = $this->request->data;
 			// we know the page_id from the uri
 			$data['TemplateField']['section_id'] = $this->_getParentControllerId();
-			if ($this->TemplateField->save(Sanitize::clean($data))) {
+			if ($this->TemplateField->save($data)) {
 				$this->Session->setFlash("Template Field Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
@@ -55,6 +62,7 @@ class TemplateFieldsController extends NestedResourceController {
 	public function admin_index() {
 		$this->paginate = array(
 			'limit' => 25,
+			'recursive' => -1,
 			'order' => array('TemplateField.order' => 'ASC'),
 			'conditions' => array('TemplateField.section_id' => $this->_getParentControllerId())
 		);

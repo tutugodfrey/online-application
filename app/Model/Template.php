@@ -53,13 +53,24 @@ class Template extends AppModel {
 		)
 	);
 
-	public function getList($cobrandId = 2) {
-		return $this->find('list',
+	public function getList($cobrandId = null) {
+		$conditions = array();
+
+		if ($cobrandId != null) {
+			$conditions = array('Template.cobrand_id' => $cobrandId);
+		}
+
+		$templates = $this->find('all', 
 			array(
-				'order' => array('Template.name' => 'asc'),
-				'conditions' => array('Template.cobrand_id' => $cobrandId),
+				'contain' => array('Cobrand.partner_name'),
+				'fields' => array('Template.id', 'Template.name'),
+				'order' => array('Cobrand.partner_name' => 'ASC'),
+				'conditions' => $conditions,
 			)
 		);
+
+		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
+		return $templates;
 	}
 
 	public function getCobrand($cobrandId) {
@@ -221,6 +232,8 @@ class Template extends AppModel {
 				)
 			);
 
+            $partnerName = $this->data['Cobrand']['partner_name'];
+
 			$TemplateSection = ClassRegistry::init('TemplateSection');
 			$TemplateField = ClassRegistry::init('TemplateField');
 
@@ -269,6 +282,18 @@ class Template extends AppModel {
 										$merge_field_name = $this->__buildMergeFieldName($page['name'], $section['name'], $field['name']);
 									}
 									break;
+							}
+
+							if ($merge_field_name == 'Rate Structure' && ($partnerName == 'FireSpring' || $partnerName == 'Shortcuts' || $partnerName == 'Inspire Commerce')) {
+								if (array_key_exists('default_value', $field)) {
+									$field['default_value'] .= ',Flat Rate::Flat Rate';
+								}
+							}
+
+							if ($merge_field_name == 'Downgrades' && ($partnerName == 'FireSpring' || $partnerName == 'Shortcuts' || $partnerName == 'Inspire Commerce')) {
+								if (array_key_exists('default_value', $field)) {
+									$field['default_value'] .= ',Flat Rate::Flat Rate';
+								}
 							}
 
 							$TemplateField->create();
@@ -343,7 +368,16 @@ class Template extends AppModel {
 							'source' => 1,
 							'width' => 12,
 							'rep_only' => true,
-							'merge_field_name' => 'ContracotrID',
+							'merge_field_name' => 'ContractorID',
+						),
+						array(
+							'name' => 'Allow Merchant to Sign Application',
+							'type' => 3,
+							'required' => false,
+							'source' => 1,
+							'width' => 12,
+							'rep_only' => true,
+							'merge_field_name' => 'AllowMerchantToSignApplication',
 						)
 					)
 				),
@@ -389,17 +423,17 @@ class Template extends AppModel {
 						array(
 							'name' => 'Start Up Fees',
 							'type' => 7,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'width' => 3,
-							'default_value' => 'Application::CreditAppFee,Equipment::CreditEquipmentFee,Expedite::CreditExpediteFee,Reprogramming::CreditReprogramFee,Training::CreditVirtualTrainingFee,Wireless Activation::CreditMobileSetupFee,Tax (CA only)::Tax,Total::Total',
+							'default_value' => 'Application::CreditAppFee,Equipment::CreditEquipmentFee,Expedite::CreditExpediteFee,Reprogramming::CreditReprogramFee,Training::CreditVirtualTrainingFee,Wireless Activation::CreditMobileSetupFee,Total::Total',
 							'rep_only' => true,
 							'merge_field_name' => '',
 						),
 						array(
 							'name' => 'Authorization Fees',
 							'type' => 7,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'width' => 3,
 							'default_value' => 'Visa/MC/JCB/DISC & Batch::TranFee,American Express::AmexPerItem,ARU & Voice Authorization::VoiceAuth,Wireless::MobileTran',
@@ -409,7 +443,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Monthly Fees',
 							'type' => 7,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'width' => 3,
 							'default_value' => 'Statement::StatementFee,Monthly Minimum::MinimumFee,Debit Access::DebitMonthlyAccessFee,EBT Access::EBTStmtFee,Gateway Access::GatewayFee,Wireless Access::MobileFee',
@@ -419,7 +453,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Miscellaneous Fees',
 							'type' => 7,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'width' => 3,
 							'default_value' => 'Annual File Fee::AnnualFee,Chargeback::ChargebackFee',
@@ -436,7 +470,7 @@ class Template extends AppModel {
 							'name' => 'PIN Debit Authorization',
 							'type' => 10,
 							'width' => 6,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'rep_only' => true,
 							'merge_field_name' => 'DebitTranFee',
@@ -445,7 +479,7 @@ class Template extends AppModel {
 							'name' => 'PIN Debit Discount',
 							'type' => 11,
 							'width' => 6,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'rep_only' => true,
 							'merge_field_name' => 'DebitDiscountRate',
@@ -460,7 +494,7 @@ class Template extends AppModel {
 							'name' => 'EBT Authorization',
 							'type' => 10,
 							'width' => 6,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'rep_only' => true,
 							'merge_field_name' => 'EBTTranFee',
@@ -469,31 +503,30 @@ class Template extends AppModel {
 							'name' => 'EBT Discount',
 							'type' => 11,
 							'width' => 6,
-							'required' => false,
+							'required' => true,
 							'source' => 1,
 							'rep_only' => true,
 							'merge_field_name' => 'EBTDiscRate'
 						),
 						array(
-							'name' => 'Amex Discount Rate',
-							'type' => 18,
-							'width' => 12,
-							'source' => 1,
-							'default_value' => '2.89',
-							'rep_only' => true,
-							'merge_field_name' => 'Amex Discount Rate',
-						),
-						/*
-						array(
 							'name' => 'Discount Paid',
 							'type' => 4,
 							'width' => 12,
+							'required' => true,
 							'source' => 1,
 							'default_value' => 'Monthly::Monthly,Daily::Daily',
 							'rep_only' => true,
 							'merge_field_name' => 'Discount Paid',
 						),
-						*/
+						array(
+							'name' => 'Amex Discount Rate',
+							'type' => 18,
+							'width' => 12,
+							'required' => true,
+							'source' => 1,
+							'rep_only' => true,
+							'merge_field_name' => 'Amex Discount Rate',
+						),
 					),
 				),
 				array(
@@ -503,7 +536,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Does business appear legitimate?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -513,7 +546,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Is site photo included with this application?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -523,7 +556,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Is inventory sufficient for Business Type?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -533,7 +566,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Are goods and services delivered at time of sale?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -543,7 +576,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Is business open and operating?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -553,7 +586,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Are Visa and MasterCard decals visible?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -563,7 +596,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'Any mail/telephone order sales activity?',
 							'type' => 4,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => 'Yes::Yes,No::No',
 							'width' => 12,
@@ -573,7 +606,7 @@ class Template extends AppModel {
 						array(
 							'name' => 'hr',
 							'type' => 8,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'default_value' => '',
 							'width' => 12,
@@ -584,7 +617,7 @@ class Template extends AppModel {
 							'name' => 'Please type name to confirm if you visted the site',
 							'type' => 0,
 							'width' => 12,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'rep_only' => true,
 							'merge_field_name' => 'site_survey_signature'
@@ -593,7 +626,7 @@ class Template extends AppModel {
 							'name' => 'Site survey date',
 							'type' => 1,
 							'width' => 12,
-							'required' => true,
+							'required' => false,
 							'source' => 1,
 							'rep_only' => true,
 						),

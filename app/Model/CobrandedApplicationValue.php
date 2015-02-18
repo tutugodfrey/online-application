@@ -86,6 +86,12 @@ class CobrandedApplicationValue extends AppModel {
 
 	public function beforeSave($options = array()) {
 		$retVal = true;
+
+		// need to be able to clear values in the db
+		if (empty($this->data[$this->alias]['value'])) {
+			return true;
+		}
+
 		// only validate in the update case, ignore during create; null will not be valid in all cases
 		if (key_exists('id', $this->data[$this->alias])) {
 			// look up the value's template field
@@ -94,9 +100,20 @@ class CobrandedApplicationValue extends AppModel {
 				array(
 					'conditions' => array(
 						'TemplateField.id' => $this->data[$this->alias]['template_field_id']
-					)
+					),
+					'recursive' => -1
 				)
 			);
+
+			// if WebAddress field is not empty, check if protocol exists
+			// if it doesn't, add it in
+			if ($field['TemplateField']['merge_field_name'] == 'WebAddress') {
+				if (!empty($this->data[$this->alias]['value'])) {
+					if (!preg_match('/^http:\/\//i', $this->data[$this->alias]['value'])) {
+						$this->data[$this->alias]['value'] = 'http://'.$this->data[$this->alias]['value'];
+					}
+				}
+			}
 
 			// if field is set to encrypt, check for masking
 			// if it's masked, do not update value, otherwise value in db will be masked
@@ -104,7 +121,7 @@ class CobrandedApplicationValue extends AppModel {
 				return false;
 			}
 
-			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type']);
+			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type'], $field['TemplateField']);
 
 			// check if field is set to encrypt
 			// if it is, encrypt and store data
@@ -115,11 +132,32 @@ class CobrandedApplicationValue extends AppModel {
 						$data, 'cbc', Configure::read('Cryptable.iv')));
 				}
 			}
+
+			// if field type is money, remove commas if they exist
+			if ($field['TemplateField']['type'] == 10) {
+				$data = $this->data[$this->alias]['value'];
+				$data = str_replace(',', '', $data);
+				$this->data[$this->alias]['value'] = $data;
+			}
+
 		}
 		return $retVal;
 	}
 
-	public function validApplicationValue($data, $fieldType) {
+	public function save($data = null, $validate = true, $fieldList = array()) {
+        // clear modified field value before each save
+        $this->set($data);
+        if (isset($this->data[$this->alias]['modified'])) {
+            unset($this->data[$this->alias]['modified']);
+        }
+
+        $this->CobrandedApplication->id = $this->data[$this->alias]['cobranded_application_id'];
+        $this->CobrandedApplication->saveField('modified', DboSource::expression('LOCALTIMESTAMP(0)'));
+
+        return parent::save($this->data, $validate, $fieldList);
+    }
+
+	public function validApplicationValue($data, $fieldType, $templateField = null) {
 		$retVal = false;
 		$trimmedDataValue = trim($data['value']);
 
@@ -130,7 +168,6 @@ class CobrandedApplicationValue extends AppModel {
 			case 6:  // label    	 	- no validation
 			case 7:  // fees     	 	- (group of money?)
 			case 8:  // hr       	 	- no validation
-			case 20: // select 			- no validation
 			case 21: // textArea		- no validation
 			case 22: // multirecord		- no validation here, will happen in the multirecord Model
 				// always valid
@@ -164,7 +201,9 @@ class CobrandedApplicationValue extends AppModel {
 				break;
 
 			case 12: // ssn       - ###-##-####
-				$retVal = Validation::ssn($trimmedDataValue, null, 'us');
+				if (preg_match('/^\d{3}-?\d{2}-?\d{4}$/', $trimmedDataValue)) {
+					$retVal = true;
+				}
 				break;
 
 			case 13: // zipcodeUS - #####[-####]
@@ -190,6 +229,19 @@ class CobrandedApplicationValue extends AppModel {
 			case 19: // digits    - (#)+
 				$retVal = (preg_match("/\d+/", $trimmedDataValue) > 0);
 				break;
+				
+			case 20: // select - one of the options should be selected
+				if (!empty($templateField['default_value'])) {
+					foreach (split(',', $templateField['default_value']) as $keyValuePairStr) {
+						$keyValuePair = split('::', $keyValuePairStr);
+						if ($trimmedDataValue == $keyValuePair[0] || $trimmedDataValue == $keyValuePair[1]) {
+							$retVal = true;
+							break;
+						}
+					}
+				}
+
+				break;
 
 			case 23: // luhn - luhn validation
 				$retVal = $this->checkRoutingNumber($trimmedDataValue);
@@ -212,6 +264,7 @@ class CobrandedApplicationValue extends AppModel {
  */
 	public function afterFind($results, $primary = false) {
 		parent::afterFind($results, $primary);
+		$session = new CakeSession();
 
 		if (!empty($results) && is_array($results)) {
 			foreach ($results as $resultKey => $resultValue) {
@@ -241,27 +294,33 @@ class CobrandedApplicationValue extends AppModel {
 							$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 										base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
 
-							$maskValue = true;
+							if (!in_array($session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+								$maskValue = true;
 
-							$e = new Exception;
+								$e = new Exception;
+								$stackTrace = $e->getTraceAsString();
 
-							if (strpos($e->getTraceAsString(), 'createRightSignatureApplicationXml') !== false ||
-								strpos($e->getTraceAsString(), 'CoversheetsController->getCobrandedApplicationValues') !== false) {
-								$maskValue = false;
-							}
+								if (strpos($stackTrace, 'createRightSignatureApplicationXml') !== false ||
+									strpos($stackTrace, 'CoversheetsController->getCobrandedApplicationValues') !== false ||
+									strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false ||
+									strpos($stackTrace, 'CobrandedApplicationsController->create_rightsignature_document') !== false ||
+									strpos($stackTrace, 'CobrandedApplicationsController->api_add()') !== false) {
+									$maskValue = false;
+								}
 
-							if ($maskValue) {
-								// mask all but last 4 values
-    							$dataArray = str_split($data);
-								$dataLength = count($dataArray);
-								$data = '';
-								for ($x = 0; $x < $dataLength; $x++) {
-									if ($x < ($dataLength - 4)) {                   
-										$data .= 'X';                                   
-									}                                               
-									else {                                          
-										$data .= $dataArray[$x];                        
-									}                                               
+								if ($maskValue) {
+									// mask all but last 4 values
+    								$dataArray = str_split($data);
+									$dataLength = count($dataArray);
+									$data = '';
+									for ($x = 0; $x < $dataLength; $x++) {
+										if ($x < ($dataLength - 4)) {                   
+											$data .= 'X';                                   
+										}                                               
+										else {                                          
+											$data .= $dataArray[$x];                        
+										}                                               
+									}
 								}
 							}
 

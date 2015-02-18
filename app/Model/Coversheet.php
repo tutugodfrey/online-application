@@ -112,6 +112,8 @@ class Coversheet extends AppModel {
             'message' => 'Internet Merchants: Does the merchant store credit card numbers online?'
         )
     );
+	
+	public $findMethods = array('index' => true);
 
 	public $belongsTo = array(
 		'CobrandedApplication' => array(
@@ -129,240 +131,405 @@ class Coversheet extends AppModel {
 			'order' => ''
 		)
 	);
-    
-        function equipment() {
-            if ($this->data['Coversheet']['setup_equipment_terminal'] != '1' && $this->data['Coversheet']['setup_equipment_gateway'] != '1') {
+
+    function equipment() {
+        if ($this->data['Coversheet']['setup_equipment_terminal'] != '1' && $this->data['Coversheet']['setup_equipment_gateway'] != '1') {
+            return false;
+        }
+        return true;
+    }
+
+    function tier3() {
+        if (($this->data['Coversheet']['setup_tier_select'] == '3')) {
+            if ($this->data['Coversheet']['setup_tier3'] != '1') {
                 return false;
-            }   return true;
-        }
-
-        function tier3() {
-            if (($this->data['Coversheet']['setup_tier_select'] == '3')) 
-            {
-                if($this->data['Coversheet']['setup_tier3'] != '1'){
-                    return false;
-                }
-                    return true;
             }
             return true;
-            
         }
+        return true;
+    }
         
-        function tier4() {
-            if (($this->data['Coversheet']['setup_tier_select'] == '4')) 
-            {
-                if($this->data['Coversheet']['setup_tier4'] != '1'){
-                    return false;
-                }
-                    return true;
+    function tier4() {
+        if (($this->data['Coversheet']['setup_tier_select'] == '4')) {
+            if ($this->data['Coversheet']['setup_tier4'] != '1') {
+                return false;
             }
             return true;
-            
         }
+        return true;     
+    }
         
-        function setup_tier5_financials() {
-            if (($this->data['Coversheet']['setup_tier_select'] == '5')) 
-            {
-                if($this->data['Coversheet']['setup_tier5_financials'] != '1'){
-                    return false;
-                }
-                    return true;
-            }
-            return true;
-            
-        }
-        function setup_tier5_processing_statements() {
-            if (($this->data['Coversheet']['setup_tier_select'] == '5')) 
-            {
-                if($this->data['Coversheet']['setup_tier5_processing_statements'] != '1'){
-                    return false;
-                }
-                    return true;
-            }
-            return true;
-            
-        }
-        function setup_tier5_bank_statements() {
-            if (($this->data['Coversheet']['setup_tier_select'] == '5')) 
-            {
-                if($this->data['Coversheet']['setup_tier5_bank_statements'] != '1'){
-                    return false;
-                }
-                    return true;
-            }
-            return true;
-            
-        }
-        function setup_starterkit() {
-            if ($this->data['Coversheet']['setup_equipment_terminal'] == '1') {
-                if($this->data['Coversheet']['setup_starterkit'] == ''){
-                    return false;
-                }
-                return true;
+    function setup_tier5_financials() {
+        if (($this->data['Coversheet']['setup_tier_select'] == '5')) {
+            if ($this->data['Coversheet']['setup_tier5_financials'] != '1') {
+                return false;
             }
             return true;
         }
-        function equipment_payment() {
-            if ($this->data['Coversheet']['setup_equipment_payment'] == 'lease') {
-                if ($this->data['Coversheet']['setup_lease_price'] == '' || $this->data['Coversheet']['setup_lease_months'] == '') {
-                    return false;
-                }   return true;
-            }   return true;
-        }
-        function referrer() {
-            if ($this->data['Coversheet']['setup_referrer'] != ''){
-                if ($this->data['Coversheet']['setup_referrer_type'] == '' || $this->data['Coversheet']['setup_referrer_pct'] == '') {
-                    return false;
-                }
-                    return true;
+        return true;
+    }
+
+    function setup_tier5_processing_statements() {
+        if (($this->data['Coversheet']['setup_tier_select'] == '5')) {
+            if ($this->data['Coversheet']['setup_tier5_processing_statements'] != '1') {
+                return false;
             }
             return true;
         }
-        function reseller() {
-            if ($this->data['Coversheet']['setup_reseller'] != ''){
-                if ($this->data['Coversheet']['setup_reseller_type'] == '' || $this->data['Coversheet']['setup_reseller_pct'] == '') {
-                    return false;
-                }
-                    return true;
+        return true; 
+    }
+
+    function setup_tier5_bank_statements() {
+        if (($this->data['Coversheet']['setup_tier_select'] == '5')) {
+            if ($this->data['Coversheet']['setup_tier5_bank_statements'] != '1') {
+                return false;
             }
             return true;
         }
+        return true;  
+    }
+
+    function setup_starterkit() {
+        if ($this->data['Coversheet']['setup_equipment_terminal'] == '1') {
+            if ($this->data['Coversheet']['setup_starterkit'] == '') {
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
+
+    function equipment_payment() {
+        if ($this->data['Coversheet']['setup_equipment_payment'] == 'lease') {
+            if ($this->data['Coversheet']['setup_lease_price'] == '' || $this->data['Coversheet']['setup_lease_months'] == '') {
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
+
+    function referrer() {
+        if ($this->data['Coversheet']['setup_referrer'] != '') {
+            if ($this->data['Coversheet']['setup_referrer_type'] == '' || $this->data['Coversheet']['setup_referrer_pct'] == '') {
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
+
+    function reseller() {
+        if ($this->data['Coversheet']['setup_reseller'] != '') {
+            if ($this->data['Coversheet']['setup_reseller_type'] == '' || $this->data['Coversheet']['setup_reseller_pct'] == '') {
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
         
-        function debit() {
-            if ($this->data['Coversheet']['debit'] == 'yes'){
-                if ($this->data['Coversheet']['cp_encrypted_sn'] == '' && $this->data['Coversheet']['cp_pinpad_ra_attached'] == '0') {
-                    return false;
-                }
-                return true;
+    function debit() {
+        if ($this->data['Coversheet']['debit'] == 'yes') {
+            if ($this->data['Coversheet']['cp_encrypted_sn'] == '' && $this->data['Coversheet']['cp_pinpad_ra_attached'] == '0') {
+                return false;
             }
             return true;
         }
-        function check_guarantee() {
-            if ($this->data['Coversheet']['cp_check_guarantee'] == 'yes') {
-                if ($this->data['Coversheet']['cp_check_guarantee_info'] == '') {
-                    return false;
-                }
-                return true;
+        return true;
+    }
+
+    function check_guarantee() {
+        if ($this->data['Coversheet']['cp_check_guarantee'] == 'yes') {
+            if ($this->data['Coversheet']['cp_check_guarantee_info'] == '') {
+                return false;
             }
             return true;
         }
-        function pos() {
-            if ($this->data['Coversheet']['cp_pos'] == 'yes') {
-                if ($this->data['Coversheet']['cp_pos_contact'] == '') {
-                    return false;
-                }
-                return true;
+        return true;
+    }
+
+    function pos() {
+        if ($this->data['Coversheet']['cp_pos'] == 'yes') {
+            if ($this->data['Coversheet']['cp_pos_contact'] == '') {
+                return false;
             }
             return true;
         }
-        function micros() {
-            if ($this->data['Coversheet']['micros'] != '') {
-                if ($this->data['Coversheet']['micros_billing'] == '') {
-                    return false;
-                }
-                return true;
+        return true;
+    }
+
+    function micros() {
+        if ($this->data['Coversheet']['micros'] != '') {
+            if ($this->data['Coversheet']['micros_billing'] == '') {
+                return false;
             }
             return true;
         }
-        function moto() {
-            if($this->data['Coversheet']['moto'] == 'internet') {
-                if ($this->data['Coversheet']['moto_online_chd'] == '') {
-                    return false;
-                }
-                return true;
+        return true;
+    }
+
+    function moto() {
+        if ($this->data['Coversheet']['moto'] == 'internet') {
+            if ($this->data['Coversheet']['moto_online_chd'] == '') {
+                return false;
             }
             return true;
         }
+        return true;
+    }
         
-        function gateway_package() {
-            if($this->data['Coversheet']['gateway_option'] != '') {
-                if($this->data['Coversheet']['gateway_package'] == ''){
-                    return false;
-                }
-                return true;
+    function gateway_package() {
+        if ($this->data['Coversheet']['gateway_option'] != '') {
+            if ($this->data['Coversheet']['gateway_package'] == '') {
+                return false;
             }
             return true;
         }
-        function gateway_gold_subpackage() {
-            if($this->data['Coversheet']['gateway_package'] == 'gold') {
-                if($this->data['Coversheet']['gateway_gold_subpackage'] == ''){
-                    return false;
-                }
-                return true;
+        return true;
+    }
+
+    function gateway_gold_subpackage() {
+        if ($this->data['Coversheet']['gateway_package'] == 'gold') {
+            if ($this->data['Coversheet']['gateway_gold_subpackage'] == '') {
+                return false;
             }
             return true;
         }
-        function gateway_epay() {
-            if ($this->data['Coversheet']['gateway_option'] != '') {
-                if ($this->data['Coversheet']['gateway_epay'] == '') {
-                    return false;
-                }
-                return true;
+        return true;
+    }
+
+    function gateway_epay() {
+        if ($this->data['Coversheet']['gateway_option'] != '') {
+            if ($this->data['Coversheet']['gateway_epay'] == '') {
+                return false;
             }
             return true;
         }
-        function gateway_billing() {
-            if ($this->data['Coversheet']['gateway_option'] != '') {
-                if ($this->data['Coversheet']['gateway_billing'] == '') {
-                    return false;
-                }
-                return true;
+        return true;
+    }
+
+    function gateway_billing() {
+        if ($this->data['Coversheet']['gateway_option'] != '') {
+            if ($this->data['Coversheet']['gateway_billing'] == '') {
+                return false;
             }
             return true;
         }
+        return true;
+    }
 
-    function sendCoversheet($id) {
-        $this->id = $id;
-        $data = $this->findById($id);
-
-        $dbaBusinessName = '';
-        $corpName = '';
-
-        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($data['CobrandedApplicationValues']);
-
-        if (!empty($valuesMap['DBA'])) {
-            $dbaBusinessName = $valuesMap['DBA'];
+    public function pdfGen($id = null, $data = null) {
+        if ($id && $data) {
+            $path = WWW_ROOT . 'files' . DS;
+            $fp = (fopen($path . 'axia_coversheet.xfdf', 'w'));
+            fwrite($fp, $data);
+            fclose($fp);
+            exec('pdftk ' . $path . 'axia_coversheet.pdf fill_form ' . $path . 'axia_coversheet.xfdf output ' . $path . 'axia_' . $id . '_coversheet.pdf flatten');
+            $result = unlink($path . 'axia_coversheet.xfdf');
+            return $result;
+        } else {
+            return false;
         }
-        if (!empty($valuesMap['CorpName'])) {
-            $corpName = $valuesMap['CorpName'];
-        }
+    }
 
-        $from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
-        $to = EmailTimeline::UNDERWRITING_EMAIL;
-        $subject = $dbaBusinessName.' - Coversheet';
-        $format = 'html';
-        $template = 'email_coversheet';
-        $viewVars = array();
-        $viewVars['business_name'] = $corpName;
-        $viewVars['dba'] = $dbaBusinessName;
-        $attachments = array($dbaBusinessName . ' coversheet.pdf' => WWW_ROOT . '/files/axia_' . $id . '_coversheet.pdf');
+    public function sendCoversheet($id = null) {
+        if ($id) {
+            $this->id = $id;
+            $data = $this->findById($id);
 
-        $args = array(
-            'from' => $from,
-            'to' => $to,
-            'subject' => $subject,
-            'format' => $format,
-            'template' => $template,
-            'viewVars' => $viewVars,
-            'attachments' => $attachments
-        );
+            $conditions = array(
+                'conditions' => array(
+                    'cobranded_application_id' => $data['CobrandedApplication']['id'],
+                ),
+                'recursive' => 1
+            );
+        
+            $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
-        $response = $this->CobrandedApplication->sendEmail($args);
+            $appValues = $CobrandedApplicationValue->find(
+                'all',
+                $conditions     
+            );
+    
+            $appValueArray = array();
+            foreach ($appValues as $arr) {
+                $appValueArray[] = $arr['CobrandedApplicationValue'];
+            }
 
-        unset($args);
+            $dbaBusinessName = '';
+            $corpName = '';
 
-        if ($response['success'] == true) {
-            $args['cobranded_application_id'] = $data['CobrandedApplication']['id'];
-            $args['email_timeline_subject_id'] = EmailTimeline::COVERSHEET_TO_UW;
-            $args['recipient'] = EmailTimeline::UNDERWRITING_EMAIL;
-            $response = $this->CobrandedApplication->createEmailTimelineEntry($args);
+            $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
+
+            if (!empty($valuesMap['DBA'])) {
+                $dbaBusinessName = $valuesMap['DBA'];
+            }
+
+            if (!empty($valuesMap['CorpName'])) {
+                $corpName = $valuesMap['CorpName'];
+            }
+
+            $from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+            $to = EmailTimeline::UNDERWRITING_EMAIL;
+
+            $subject = $dbaBusinessName.' - Coversheet';
+            $format = 'html';
+            $template = 'email_coversheet';
+            $viewVars = array();
+            $viewVars['business_name'] = $corpName;
+            $viewVars['dba'] = $dbaBusinessName;
+            $attachments = array($dbaBusinessName . ' coversheet.pdf' => WWW_ROOT . DS . 'files' . DS . 'axia_' . $id . '_coversheet.pdf');
+
+            $args = array(
+                'from' => $from,
+                'to' => $to,
+                'subject' => $subject,
+                'format' => $format,
+                'template' => $template,
+                'viewVars' => $viewVars,
+                'attachments' => $attachments
+            );
+
+            $response = $this->CobrandedApplication->sendEmail($args);
+
+            unset($args);
 
             if ($response['success'] == true) {
-                return true;
+                $args['cobranded_application_id'] = $data['CobrandedApplication']['id'];
+                $args['email_timeline_subject_id'] = EmailTimeline::COVERSHEET_TO_UW;
+                $args['recipient'] = EmailTimeline::UNDERWRITING_EMAIL;
+                $response = $this->CobrandedApplication->createEmailTimelineEntry($args);
+
+                if ($response['success'] == true) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
             }
+        } else {
+            return false;
         }
-        
-        return false;
-    }  
+	}
+
+    public function unlinkCoversheet($id = null) {
+        if ($id) {
+            $result = unlink(WWW_ROOT . DS . 'files' . DS . 'axia_' . $id . '_coversheet.pdf');
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+	protected function _findIndex($state, $query, $results = array()) {
+		if ($state === 'before') {
+			$query['fields'] = array(
+				'Coversheet.id',
+				'Dba.value',
+				'User.id',
+				'User.firstname',
+				'User.lastname',
+				'CobrandedApplication.id',
+				'CobrandedApplication.uuid',
+				'CobrandedApplication.status',
+				'Coversheet.status'
+			);
+			$query['recursive'] = -1;
+			$query['joins'] = array(
+				array(
+					'table' => 'onlineapp_cobranded_applications',
+					'alias' => 'CobrandedApplication',
+					'type' => 'LEFT', 
+					'conditions' => array(
+						'Coversheet.cobranded_application_id = CobrandedApplication.id'
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Dba',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Dba.cobranded_application_id and Dba.name =' . "'DBA'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpName',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpName.cobranded_application_id and CorpName.name =' . "'CorpName'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpCity',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpCity.cobranded_application_id and CorpCity.name =' . "'CorpCity'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'CorpContact',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner1Name',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner1Name.cobranded_application_id and Owner1Name.name =' . "'Owner1Name'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner2Name',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner2Name.cobranded_application_id and Owner2Name.name =' . "'Owner2Name'",
+					)
+				),
+				array(
+					'table' => 'onlineapp_users',
+					'alias' => 'User',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'Coversheet.user_id = User.id'
+					)
+				)
+			);
+			return $query;
+		}
+		return $results;
+	}
+
+	public $filterArgs = array(
+		'search' => array('type' => 'query', 'method' => 'orConditions'),
+		'user_id' => array('type' => 'value'),
+		'app_status' => array('type' => 'value', 'field' => 'CobrandedApplication.status'),
+		'coversheet_status' => array('type' => 'value', 'field' => 'Coversheet.status')
+	);
+
+	public function orConditions ($data = array()) {
+		$filter = $data['search'];
+			$conditions = array(
+				'OR' => array(
+					'Dba.value ILIKE' => '%' . $filter . '%',
+					'CorpName.value ILIKE' => '%' . $filter . '%',
+					'CorpCity.value ILIKE' => '%' . $filter . '%',
+					'CorpContact.value ILIKE' => '%' . $filter . '%',
+					'Owner1Name.value ILIKE' => '%' . $filter . '%',
+					'Owner2Name.value ILIKE' => '%' . $filter . '%',
+					'User.email ILIKE' => '%' . $filter . '%',
+				),
+			);
+		return $conditions;
+	}
+
 }
 ?>

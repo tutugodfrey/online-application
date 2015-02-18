@@ -1,66 +1,91 @@
 <?php
-App::uses('Sanitize', 'Utility');
 class UsersController extends AppController {
 
 	public $scaffold = 'admin';
 
 	public $permissions = array(
 		'login' => '*',
-		'logout' => '*'
+		'logout' => '*',
+		'get_user_templates' => '*'
 	);
 
 	public $components = array('Search.Prg');
-	function beforeFilter() {
+/**
+ * Logic to be applied before page load
+ *
+ * @return null
+ */
+
+	public function beforeFilter() {
 		parent::beforeFilter();
 
 		$this->Auth->allow(array('login', 'logout'));
-		if ($this->request->action != 'login' && $this->request->action != 'logout' && $this->request->action != 'admin_login' && $this->request->action != 'admin_logout') {
-			if (!$this->Auth->user('group_id') || $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))) != 'admin') {
-				header("HTTP/1.0 403 Forbidden");
-				exit;
-			}
-		}
 	}
+
+/**
+ * Create and Manage API Tokens
+ *
+ * @param integer $id Users.user_id
+ * @return null
+ */
 
 	public function admin_token($id) {
 		$this->User->id = $id;
 		$conditions = array('conditions' => array('User.id' => $id), 'recursive' => -1);
 		$data = $this->User->find('first', $conditions);
-		if($data['User']['api_enabled'] === true) {
+		if ($data['User']['api_enabled'] === true) {
 			$this->Session->setFlash('This User already has Valid API Credentials!');
 			$this->redirect('/admin/users');
 		} else {
-		$token = sha1(String::uuid());
-		$password = substr(sha1(String::uuid()),5,14);
+			$token = sha1(String::uuid());
+			$password = substr(sha1(String::uuid()), 5, 14);
 
-		$this->User->set(array('token' => $token, 'api_password' => $password, 'api_enabled' => true, 'api' => true));
-		if (!$this->User->save()) {
-			$token = null;
-			$this->Session->setFlash('There was an error generating this token');
-		}
-		$this->Session->setFlash('API access has been enabled for this user');
-		$this->set(compact('token', 'password','id'));
+			$this->User->set(array('token' => $token, 'api_password' => $password, 'api_enabled' => true, 'api' => true));
+			if (!$this->User->save()) {
+				$token = null;
+				$this->Session->setFlash('There was an error generating this token');
+			}
+			$this->Session->setFlash('API access has been enabled for this user');
+			$this->set(compact('token', 'password', 'id'));
 		}
 	}
 
-	function login() {
+/**
+ * Allow users to login
+ *
+ * @return null
+ */
 
-		if($this->request->is('post')){
-			if($this->Auth->login()) {
+	public function login() {
+		if ($this->request->is('post')) {
+			if ($this->Auth->login()) {
 				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
-				$this->redirect($this->Auth->redirect());   
+				$this->redirect($this->Auth->redirect());
 			} else {
 				$this->Session->setFlash(__('Invalid e-mail / password combination.  Please try again.'));
 			}
 		}
 	}
 
-	function logout() {
+/**
+ * Allow users to logout
+ *
+ * @return null
+ */
+
+	public function logout() {
 		$this->Session->setFlash('Good-Bye');
 		$this->redirect($this->Auth->logout());
 	}
-	
-	function admin_all() {
+
+/**
+ * Provide Paginated results for the admin index
+ *
+ * @todo this function should be removed
+ * @return null
+ */
+
+	public function admin_all() {
 		$this->paginate = array(
 			'limit' => 100,
 			'order' => array('User.active' => 'ASC'),
@@ -70,31 +95,49 @@ class UsersController extends AppController {
 		$this->set('users', $data);
 		$this->set('scaffoldFields', array_keys($this->User->schema()));
 		$this->render('admin_index');
-		
 	}
 
-	function admin_index($all = null) {
+/**
+ * Create Index for Managing Users
+ *
+ * @param integer $all What does this do?
+ * @todo this function should be refactored
+ * @return null
+ */
+
+	public function admin_index($all = null) {
 		$this->paginate = array(
 			'limit' => 25,
 			'order' => array('User.firstname' => 'ASC'),
 			'conditions' => array('User.active' => 't'),
 			'recursive' => 0
 		);
-		$data = $this->paginate('User');
-		$this->set('users', $data);
+		$groups = $this->User->Group->find('list');
+		$templates = $this->User->Template->getList();
+		$users = $this->paginate('User');
+		$this->set(compact('groups', 'templates', 'users'));
 		$this->set('scaffoldFields', array_keys($this->User->schema()));
-		
 	}
 
-	function admin_add() {
+/**
+ * Provides functionality to add users
+ *
+ * @return null
+ */
+
+	public function admin_add() {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
+		$this->set('cobrands', $this->Cobrand->getList());
+		$this->set('templates', $this->User->Template->getList());
 
 		if ($this->request->is('post')) {
 			$this->User->create();
-			if ($this->User->save(Sanitize::clean($this->request->data))) {
+			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('The User has been created'));
-				$this->redirect(array('action'=> 'index', 'admin' => true));
+				$this->redirect(array('action' => 'index', 'admin' => true));
 			} else {
 				unset($this->request->data['User']['pwd']);
 				unset($this->request->data['User']['password_confirm']);
@@ -104,52 +147,90 @@ class UsersController extends AppController {
 		$this->set(compact('users'));
 	}
 
-	function admin_bulk_edit() {
+/**
+ * Provides Bulk Edit functionality
+ *
+ * @return null
+ */
+
+	public function admin_bulk_edit() {
 		if (empty($this->request->data)) {
 			$this->paginate = array(
-				'limit' => 100,
+				'limit' => 150,
+				'contain' => array(
+					'Group',
+					'Template' => array('fields' => array('id')),
+					'Cobrand' => array('fields' => array('id')),
+				),
+				'recursive' => -1,
 				'order' => array('User.firstname' => 'ASC'),
 			);
 
 			$users = $this->paginate('User');
+			$cobrands = $this->User->Cobrand->getList();
+			$templates = $this->User->Template->getList();
 			$groups = $this->User->Group->find('list');
-			$this->set(compact('users','groups'));
-
-			//unset($this->request->data['User']['password']);
-			} else {
-			$this->User->arrayDiff($this->request->data);
-
-			if ($this->User->saveAll(Sanitize::clean($this->User->arrayDiff($this->request->data)))){
+			$this->set(compact('cobrands', 'users', 'groups', 'templates'));
+		} else {
+			$relatedData = Hash::extract($this->request->data, 'User');
+			$userData = Hash::remove($this->request->data, 'User');
+			$mergeData = Hash::merge($userData, $relatedData);
+			$changedUsers = $this->User->arrayDiff($mergeData);
+			if ($this->User->saveAll($changedUsers, array('deep' => true))) {
 				$this->Session->setFlash("Users Saved!");
 				$this->redirect('/admin/users');
 			}
 		}
 	}
 
-	function admin_edit($id) {
+/**
+ * Provides functionality for editing users
+ *
+ * @param integer $id the user id to be edited
+ * @return null
+ */
+
+	public function admin_edit($id) {
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
 		$this->User->id = $id;
 		$this->User->read();
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('assigned_managers', $this->User->getAssignedManagerIds($id));
 		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
-		$this->set('cobrands', $this->User->Cobrand->getList());
+
 		$user = $this->User->read();
-		$this->set('templates', $this->User->Template->getList($user['User']['cobrand_id']));
+
+		$this->set('cobrands', $this->Cobrand->getList());
+		$this->set('templates', $this->User->Template->getList());
+
+		$userTemplates = $this->User->getTemplates($id);
+
+		$this->set('userTemplates', $userTemplates);
+		$this->set('defaultTemplateId', $user['User']['template_id']);
+
 		// TODO: add templates
-		if (empty($this->request->data)){
+		if (empty($this->request->data)) {
 			$this->request->data = $this->User->read();
 		} else {
-			if(empty($this->request->data['User']['pwd']) && empty($this->request->data['User']['password_confirm'])) {
+			if (empty($this->request->data['User']['pwd']) && empty($this->request->data['User']['password_confirm'])) {
 				unset($this->request->data['User']['pwd']);
 				unset($this->request->data['User']['password_confirm']);
 			}
-			if ($this->User->saveAll(Sanitize::clean($this->request->data))) {
+			if ($this->User->saveAll($this->request->data)) {
 				$this->Session->setFlash("User Saved!");
 				$this->redirect('/admin/users');
 			}
 		}
 	}
+
+/**
+ * Search functionality for the Users Index
+ *
+ * @todo this can be refactored along with the users index
+ * @return null
+ */
 
 	public function admin_search() {
 		$this->Prg->commonProcess();
@@ -176,12 +257,49 @@ class UsersController extends AppController {
 		$this->render('admin_index');
 	}
 
-	function admin_login() {
+/**
+ * There is no action for /admin/users/login
+ * In the event that someone tries to go there
+ * redirect they to the regular login page
+ *
+ * @return null
+ */
+
+	public function admin_login() {
 		$this->redirect('/users/login');
 	}
 
-	function admin_logout() {
+/**
+ * There is no action for /admin/users/logout
+ * In the event that someone tries to go there
+ * redirect they to the regular login page
+ *
+ * @return null
+ */
+
+	public function admin_logout() {
 		$this->redirect('/users/logout');
 	}
+
+/**
+ * Function used by AJAX calls to get data about user templates
+ *
+ * @param integer $id the user id belonging to the templates
+ * @return null
+ */
+
+	public function get_user_templates($id) {
+		$this->autoRender = false;
+
+		$userTemplates = $this->User->getTemplates($id);
+
+		if (!empty($userTemplates) && is_array($userTemplates)) {
+			foreach ($userTemplates as $key => $val) {
+				echo '<option value="' . $key . '">' . $val . '</option>';
+			}
+		} else {
+			echo '<option value="">NO TEMPLATES FOR USER</option>';
+		}
+	}
 }
-?>
+// Last Line

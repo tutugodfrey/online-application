@@ -76,10 +76,10 @@
 	</target>
 
 	<target name="migrate">
-		<exec executable="${basedir}/app/Console/cake" failonerror="false">
-			<arg line="Migrations.migration status"/>
+		<exec executable="${basedir}/app/Console/cake" failonerror="true">
+			<arg line="Migrations.migration status -c test -i test"/>
 		</exec>
-		<exec executable="${basedir}/app/Console/cake" failonerror="false">
+		<exec executable="${basedir}/app/Console/cake" failonerror="true">
 			<arg line="Migrations.migration run all -c test -i test"/>
 		</exec>
 	</target>

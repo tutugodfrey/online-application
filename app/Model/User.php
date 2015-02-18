@@ -1,4 +1,5 @@
 <?php
+App::uses('AppModel', 'Model');
 class User extends AppModel {
 	public $actsAs = array('Search.Searchable', 'Containable');
 
@@ -7,6 +8,11 @@ class User extends AppModel {
 	const REPRESENTATIVE_GROUP_ID = 2;
 	const API_GROUP_ID = 3;    
 	const MANAGER_GROUP_ID = 4;
+	
+	const ADMIN = 'admin';
+	const REP = 'rep';
+	const API = 'api';
+	const MANAGER = 'manager';
 
 	//User Constants
 	const HOOZA = 59;
@@ -60,8 +66,7 @@ class User extends AppModel {
 
 	public $displayField = 'fullname';
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
+	// The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $belongsTo = array(
 		'Group' => array(
 			'className' => 'Group',
@@ -70,20 +75,6 @@ class User extends AppModel {
 			'fields' => '',
 			'order' => ''
 		),
-		'Cobrand' => array(
-			'className' => 'Cobrand',
-			'foreignKey' => 'cobrand_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
-		'Template' => array(
-			'className' => 'Template',
-			'foreignKey' => 'template_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		)
 	);
 
 	public $hasMany = array(
@@ -168,7 +159,21 @@ class User extends AppModel {
 				'joinTable' => 'onlineapp_users_managers',
 				'foreignKey' => 'manager_id',
 				'associationForeignKey' => 'user_id',
-		)
+		),
+		'Cobrand' => array(
+				'with' => 'UserCobrand',
+				'className' => 'Cobrand',
+				'joinTable' => 'onlineapp_users_onlineapp_cobrands',
+				'foreignKey' => 'user_id',
+				'associationForeignKey' => 'cobrand_id',
+		),
+		'Template' => array(
+				'with' => 'UserTemplate',
+				'className' => 'Template',
+				'joinTable' => 'onlineapp_users_onlineapp_templates',
+				'foreignKey' => 'user_id',
+				'associationForeignKey' => 'template_id',
+		),
 	);
 
 	function bindNode($user) {
@@ -304,28 +309,176 @@ class User extends AppModel {
 		return $id;
 	}
 
-public function beforeSave($options = array()) {
-	parent::beforeSave($options);
-	if (!empty($this->data[$this->alias]['pwd'])) {
-		$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['pwd']);
-	}
+	public function beforeSave($options = array()) {
+		parent::beforeSave($options);
+		if (!empty($this->data[$this->alias]['pwd'])) {
+			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['pwd']);
+		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
-		$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
+			$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
+		}
+		return true;
 	}
-	return true;
-}
 
-public function arrayDiff($change) {
-	$new = Set::sort($change['User'], '{n}.id', 'asc');
-	$original = Set::sort(Set::combine($this->find('all', array('fields' => array('id','firstname','lastname','email','group_id','active'),'order' => array('firstname' => 'ASC'),'recursive' => -1)),'{n}.User.id','{n}.User'), '{n}.id', 'asc');
-	$delta = set::diff($new,$original);
-	return $delta;
-}
-//public function beforeValidate($options = array()) {
-//    parent::beforeValidate($options);
-//    if(empty($this->data[$this->alias['pwd']]) && empty($this->data[$this->alias]['password_confirm'])) {
-//        unset($this->data[$this->alias]['password_confirm']);
-//    }
-//}
+	public function afterSave($created, $options = array()) {
+		// make sure all templates selected have associated
+		// cobrands selected, otherwise delete those user template records
+
+		if (!empty($this->data['Template']['Template'])) {
+    		$this->Template = ClassRegistry::init('Template');
+    	
+    		$templates = $this->Template->find(
+				'all',
+				array(
+					'fields' => array(
+						'id',
+						'cobrand_id'
+					)
+				)
+			);
+
+			$templateToCobrandMap = array();
+
+			foreach ($templates as $template) {
+				$templateToCobrandMap[$template['Template']['id']] = $template['Template']['cobrand_id'];
+			}
+
+			$usersCobrands = $this->data['Cobrand']['Cobrand'];
+    		$usersTemplates = $this->data['Template']['Template'];
+
+    		foreach ($usersTemplates as $userTemplateId) {
+    			$assocCobrandId = $templateToCobrandMap[$userTemplateId];
+    			$flag = false;
+    			if (!empty($usersCobrands)) {
+    				foreach ($usersCobrands as $userCobrandId) {
+    					if ($userCobrandId == $assocCobrandId) {
+    						$flag = true;
+    					}
+    				}
+    			}
+    			if ($flag == false) {
+    				// get rid of the onlineapp_users_onlineapp_templates record
+    				// we don't have an associated cobrand selected by the user
+    				$this->UserTemplate->deleteAll(array(
+    					'UserTemplate.user_id' => $this->data['User']['id'],
+    					'UserTemplate.template_id' => $userTemplateId
+    				), false);
+    			}
+    		}
+    	}
+	}
+
+	public function afterFind($results, $primary = false) {
+		parent::afterFind($results, $primary);
+
+		if (!empty($results) && is_array($results)) {
+			foreach ($results as $key => $val) {
+				if (isset($val['User']['template_id'])) {
+					$template = $this->Template->find(
+						'first',
+						array(
+							'conditions' => array(
+								'Template.id' => $val['User']['template_id']
+							),
+							'fields' => array('Template.name')
+						)
+					);
+
+					$results[$key]['Template']['name'] = $template['Template']['name'];
+				}
+			}
+		}
+
+		return $results;
+	}
+
+
+	public function arrayDiff($change) {
+		$original = 
+			$this->find('all', 
+				array(
+					'contain' => array(
+						'Template' => array(
+							'fields' => array('Template.id')
+						),
+						'Cobrand' => array(
+							'fields' => array('Cobrand.id')
+						)
+					),
+					'fields' => array(
+						'User.id',
+						'User.firstname',
+						'User.lastname',
+						'User.email',
+						'User.group_id',
+						'User.template_id',
+						'User.active'
+					),
+					'recursive' => -1,
+					'order' => array('User.firstname' => 'ASC'),
+					'limit' => 150
+				)
+		);
+		$user = Hash::remove($original, '{n}.Cobrand.{n}.UserCobrand');
+		$user = Hash::remove($user, '{n}.Template.{n}.UserTemplate');
+		$user = Hash::remove($user, '{n}.Template.name');
+		$user = Hash::flatten($user);
+		foreach ($user as $key => $value) {
+			if(preg_match("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", $key)) {
+			$newKey = preg_replace("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", "$1.$2.$2.$3", $key);
+			unset($user[$key]);
+			$user[$newKey] = $value;
+		}
+		}
+		$user = Hash::expand($user);	
+		$changedUsers = Hash::diff($change, $user);
+		
+		return $changedUsers;
+	}
+
+	public function getCobrandIds($userId){
+		$cobrandIds = $this->UserCobrand->find(
+			'all',
+			array(
+				'conditions' => array('user_id' => $userId),
+				'fields' => array('cobrand_id')
+			)
+		);
+
+		$ids = Set::classicExtract($cobrandIds, '{n}.UserCobrand.cobrand_id');
+		return $ids;
+	}
+
+	public function getTemplates($userId){
+		$templateIds = $this->UserTemplate->find(
+			'list',
+			array(
+				'conditions' => array(
+					'user_id' => $userId
+				),
+				'fields' => array(
+					'template_id'
+				),
+			)
+		);
+
+		$ids = array();
+		
+		foreach ($templateIds as $key => $val) {
+			$ids[] = $val;
+		}
+		
+		$templates = $this->Template->find('all', 
+			array(
+				'contain' => array('Cobrand.partner_name'),
+				'fields' => array('Template.id', 'Template.name'),
+				'order' => array('Cobrand.partner_name' => 'ASC'),
+				'conditions' => array('Template.id' => $ids),
+			)
+		);
+
+		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
+		return $templates;
+	}
 }
 ?>

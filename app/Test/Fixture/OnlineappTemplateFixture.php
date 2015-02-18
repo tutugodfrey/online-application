@@ -15,6 +15,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 		'cobrand_id' => array('type' => 'integer', 'null' => true),
 		'created' => array('type' => 'datetime', 'null' => false),
 		'modified' => array('type' => 'datetime', 'null' => false),
+		'owner_equity_threshold' => array('type' => 'integer', 'null' => true),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id')
 		),
@@ -33,7 +34,8 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'cobrand_id' => 1,
 			'logo_position' => 0,
 			'created' => '2007-03-18 10:41:31',
-			'modified' => '2007-03-18 10:41:31'
+			'modified' => '2007-03-18 10:41:31',
+			'owner_equity_threshold' => 50
 		),
 		array(
 			'name' => 'Template 2 for PN1',
@@ -41,7 +43,8 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'cobrand_id' => 1,
 			'logo_position' => 0,
 			'created' => '2007-03-18 10:41:31',
-			'modified' => '2007-03-18 10:41:31'
+			'modified' => '2007-03-18 10:41:31',
+			'owner_equity_threshold' => 50
 		),
 		array(
 			'name' => 'Template 1 for PN2',
@@ -49,7 +52,8 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'cobrand_id' => 2,
 			'logo_position' => 0,
 			'created' => '2007-03-18 10:41:31',
-			'modified' => '2007-03-18 10:41:31'
+			'modified' => '2007-03-18 10:41:31',
+			'owner_equity_threshold' => 50
 		),
 		array(
 			'name' => 'Template used to test afterSave of app values',
@@ -57,7 +61,8 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'cobrand_id' => 2,
 			'logo_position' => 0,
 			'created' => '2007-03-18 10:41:31',
-			'modified' => '2007-03-18 10:41:31'
+			'modified' => '2007-03-18 10:41:31',
+			'owner_equity_threshold' => 50
 		),
 		array(
 			'name' => 'Template used to test getFields',
@@ -65,7 +70,8 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'cobrand_id' => 2,
 			'logo_position' => 0,
 			'created' => '2007-03-18 10:41:31',
-			'modified' => '2007-03-18 10:41:31'
+			'modified' => '2007-03-18 10:41:31',
+			'owner_equity_threshold' => 50
 		),
 	);
 }
