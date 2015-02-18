@@ -10,7 +10,7 @@
 			<th><?php echo __('Actions');?></th>
 	</tr>
 	<?php
-	foreach ($Coversheets as $Coversheet):
+	foreach ($coversheets as $coversheet):
 	?>
 	<tr>
 		<td><div class="btn-group"><?php 
@@ -18,31 +18,31 @@
 				array(
 					'controller' => 'coversheets',
 					'action' => 'edit',
-					$Coversheet['Coversheet']['id'],
+					$coversheet['Coversheet']['id'],
 					'admin' => false
 				),
 				array(
 					'class' => 'btn btn-primary btn-sm glyphicon glyphicon-edit',
-					'title' => __('Edit ' . $Coversheet['Coversheet']['id'])
+					'title' => __('Edit ' . $coversheet['Coversheet']['id'])
 				)
 			); ?>&nbsp;
 		</div>
 		</td>
 		<td>
-			<?php echo $this->Html->link($Coversheet['Dba']['value'], array('controller' => 'cobranded_applications', 'action' => 'edit', $Coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
+			<?php echo $this->Html->link($coversheet['Dba']['value'], array('controller' => 'cobranded_applications', 'action' => 'edit', $coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
 		</td>
 		<td>
-			<?php echo $Coversheet['User']['firstname'] . ' ' . $Coversheet['User']['lastname']; ?>
+			<?php echo $coversheet['User']['firstname'] . ' ' . $coversheet['User']['lastname']; ?>
 		</td>
-		<td><?php echo $Coversheet['Coversheet']['status']; ?>&nbsp;</td>
-                <td><?php echo $Coversheet['CobrandedApplication']['status']; ?>&nbsp;</td>
+		<td><?php echo $coversheet['Coversheet']['status']; ?>&nbsp;</td>
+                <td><?php echo $coversheet['CobrandedApplication']['status']; ?>&nbsp;</td>
 
 		<td class="actions">
                     <?php if ($this->Session->read('Auth.User.group') == 'admin'): ?>
 			<?php echo $this->Html->link(__(' '), 
 				array(
 					'action' => 'override', 
-					$Coversheet['Coversheet']['id']
+					$coversheet['Coversheet']['id']
 				),
 				array(
 					'class' => 'btn btn-danger btn-sm glyphicon glyphicon-cog',
@@ -53,13 +53,13 @@
 			<?php echo $this->Form->postLink(__(' '), 
 				array(
 					'action' => 'delete',
-					$Coversheet['Coversheet']['id']
+					$coversheet['Coversheet']['id']
 				), 
 				array(
 					'class' => 'btn btn-warning btn-sm glyphicon glyphicon-trash',
 					'title' => __('Delete'),
 				), 
-				__('Are you sure you want to delete %s Cover Sheet?', $Coversheet['Dba']['value'])); ?>
+				__('Are you sure you want to delete %s Cover Sheet?', $coversheet['Dba']['value'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
