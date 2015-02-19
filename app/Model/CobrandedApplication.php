@@ -2318,6 +2318,10 @@ class CobrandedApplication extends AppModel {
 				'Dba.value',
 				'CorpName.value',
 				'CorpContact.value',
+				'Owner1Email.value',
+				'Owner2Email.value',
+				'EMail.value',
+				'LocEMail.value'
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
@@ -2340,6 +2344,34 @@ class CobrandedApplication extends AppModel {
 					'type' => 'LEFT',
 					'conditions' => array(
 						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner1Email',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner1Email.cobranded_application_id and Owner1Email.name =' . "'Owner1Email'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner2Email',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner2Email.cobranded_application_id and Owner2Email.name =' . "'Owner2Email'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'EMail',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = EMail.cobranded_application_id and EMail.name =' . "'EMail'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'LocEMail',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = LocEMail.cobranded_application_id and LocEMail.name =' . "'LocEMail'",
 					),
 				),
 				array('table' => 'onlineapp_templates',

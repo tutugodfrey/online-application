@@ -235,24 +235,6 @@ $(document).ready(function() {
 	$('#MethodofSales-CardNotPresent-Internet').on('change', motoQuestionnaireCheck);
 
 	$(":input").inputmask();
-
-	$('#myFormSubmit').click(function(e){
-		e.preventDefault();
-
-		$.ajax({
-			method: 'post',
-			url: '/cobranded_applications/retrieve/',
-			data: $(this).closest("form").serialize(),
-			success: function(response){
-				$('#myModal').modal('hide');
-				$("body").html(response);
-			},
-			error: function(xmlhttp, textStatus) {
-				alert('request failed');
-			},
-			cache: false
-		})
-	});
 });
 
 

@@ -97,9 +97,13 @@
 					<div id="actionButtons" align="right">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo $this->element('cobranded_applications/email_select_modal');
+								echo $this->element('cobranded_applications/email_select_modal',
+									array(
+										'cobranded_application_id' => $this->request->data['CobrandedApplication']['id']
+									)
+								);
 
-								echo "<input type='button' data-toggle='modal' data-target='#myModal' value='Email For Field Completion'><br/>";
+								echo "<input type='button' data-toggle='modal' data-target='#myModal_".$this->request->data['CobrandedApplication']['id']."' value='Email For Field Completion'><br/>";
 								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'><br/>";
 
 								$completeFieldsUrl = Router::url(array(
