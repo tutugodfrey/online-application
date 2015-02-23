@@ -1800,10 +1800,12 @@ class CobrandedApplication extends AppModel {
 				// type 3 is checkbox, 4 is radio
 				// we send different elements for multi option types
 				if ($fieldType == 3 || $fieldType == 4) {
-					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-					$xml .= "				<value>X</value>\n";
-					$xml .= "				<locked>true</locked>\n";
-					$xml .= "			</merge_field>\n";
+					if ($appValue['CobrandedApplicationValues']['value'] == 'true') {
+						$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+						$xml .= "				<value>X</value>\n";
+						$xml .= "				<locked>true</locked>\n";
+						$xml .= "			</merge_field>\n";
+					}
 				} else {
 					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
 					$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
