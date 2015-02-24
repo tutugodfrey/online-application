@@ -89,17 +89,30 @@
 						'title' => __('Timeline for Emails')
 					)
 				);
-				echo $this->Html->link(' ',
+
+				$values_map = array();
+				$values_map['Owner1Email'] = $cobrandedApplication['Owner1Email']['value'];
+				$values_map['Owner2Email'] = $cobrandedApplication['Owner2Email']['value'];
+				$values_map['EMail'] = $cobrandedApplication['EMail']['value'];
+				$values_map['LocEMail'] = $cobrandedApplication['LocEMail']['value'];
+
+				echo $this->element('cobranded_applications/email_select_modal',
 					array(
-						'action' => 'complete_fields',
-						$cobrandedApplication['CobrandedApplication']['id'],
-						'admin' => false
-					),
+						'cobranded_application_id' => $cobrandedApplication['CobrandedApplication']['id'],
+						'values_map' => $values_map
+					)
+				);
+
+				echo $this->Form->button(' ',
 					array(
+						'type' => 'button',
+						'data-toggle' => 'modal',
+						'data-target' => '#myModal_'.$cobrandedApplication['CobrandedApplication']['id'],
 						'class' => 'btn btn-info btn-sm glyphicon glyphicon-send',
 						'title' => __('Email App For Field Completion')
 					)
 				);
+
 				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed') {
 				echo $this->Html->link(' ',
 					array(

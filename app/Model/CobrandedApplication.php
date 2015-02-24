@@ -1800,10 +1800,12 @@ class CobrandedApplication extends AppModel {
 				// type 3 is checkbox, 4 is radio
 				// we send different elements for multi option types
 				if ($fieldType == 3 || $fieldType == 4) {
-					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-					$xml .= "				<value>X</value>\n";
-					$xml .= "				<locked>true</locked>\n";
-					$xml .= "			</merge_field>\n";
+					if ($appValue['CobrandedApplicationValues']['value'] == 'true') {
+						$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+						$xml .= "				<value>X</value>\n";
+						$xml .= "				<locked>true</locked>\n";
+						$xml .= "			</merge_field>\n";
+					}
 				} else {
 					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
 					$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
@@ -2318,6 +2320,10 @@ class CobrandedApplication extends AppModel {
 				'Dba.value',
 				'CorpName.value',
 				'CorpContact.value',
+				'Owner1Email.value',
+				'Owner2Email.value',
+				'EMail.value',
+				'LocEMail.value'
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
@@ -2340,6 +2346,34 @@ class CobrandedApplication extends AppModel {
 					'type' => 'LEFT',
 					'conditions' => array(
 						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner1Email',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner1Email.cobranded_application_id and Owner1Email.name =' . "'Owner1Email'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner2Email',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner2Email.cobranded_application_id and Owner2Email.name =' . "'Owner2Email'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'EMail',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = EMail.cobranded_application_id and EMail.name =' . "'EMail'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'LocEMail',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = LocEMail.cobranded_application_id and LocEMail.name =' . "'LocEMail'",
 					),
 				),
 				array('table' => 'onlineapp_templates',
