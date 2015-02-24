@@ -212,14 +212,14 @@
     $file = "/tmp/legacy_to_cobranded_app_migration.txt"; 
     $filehandle = fopen($file, 'w');
 
-    $conn_string = "host=localhost port=5432 dbname=axia_legacy user=axia password=ax!a";
+    $conn_string = "host=localhost port=5432 dbname=axia user=axia password=ax!a";
     $conn = pg_connect($conn_string);
 
     if ($conn) {
         fwrite($filehandle, "successfully connected to db: $conn_string\n");
     }
 
-    $appResult = pg_query($conn, "SELECT * FROM onlineapp_applications");
+    $appResult = pg_query($conn, "SELECT * FROM onlineapp_applications where user_id = '18'");
 
     while ($row = pg_fetch_assoc($appResult)) {
         createNewApp($row);
