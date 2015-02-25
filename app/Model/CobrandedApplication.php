@@ -946,15 +946,32 @@ class CobrandedApplication extends AppModel {
  */
 	public function findAppsByEmail($email, $id = null) {
 		$conditions[] = array('CobrandedApplicationValue.value' => $email);
-				// should probably check the state too
 		
+		// should probably check the state too
 		if (isset($id)) {
 			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
 			$conditions[]['CobrandedApplicationValue.name'] = 'Owner1Email';
 		}
+
 		$apps = $this->find(
 			'all',
 			array(
+				'fields' => array(
+					'CobrandedApplication.id',
+					'CobrandedApplication.user_id',
+					'CobrandedApplication.template_id',
+					'CobrandedApplication.uuid',
+					'CobrandedApplication.created',
+					'CobrandedApplication.modified',
+					'CobrandedApplication.rightsignature_document_guid',
+					'CobrandedApplication.status',
+					'CobrandedApplication.rightsignature_install_document_guid',
+					'CobrandedApplication.rightsignature_install_status',
+					'User.id',
+					'Template.id',
+					'Merchant.merchant_id',
+					'Coversheet.id'
+				),
 				'joins' => array(
 					array(
 						'alias' => 'CobrandedApplicationValue',
@@ -964,7 +981,22 @@ class CobrandedApplication extends AppModel {
 					)
 				),
 				'conditions' => $conditions,
-				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'), 
+				'group' => array(
+					'CobrandedApplication.id',
+					'CobrandedApplication.user_id',
+					'CobrandedApplication.template_id',
+					'CobrandedApplication.uuid',
+					'CobrandedApplication.created',
+					'CobrandedApplication.modified',
+					'CobrandedApplication.rightsignature_document_guid',
+					'CobrandedApplication.status',
+					'CobrandedApplication.rightsignature_install_document_guid',
+					'CobrandedApplication.rightsignature_install_status',
+					'User.id',
+					'Template.id',
+					'Merchant.merchant_id',
+					'Coversheet.id'
+				), 
 				'order' => 'CobrandedApplication.created desc'
 			)
 		);
@@ -1054,6 +1086,7 @@ class CobrandedApplication extends AppModel {
 			$response['email'] = $ownerEmail;
 			$response['fullname'] = $ownerName;
 		}
+
 		return $response;
 	}
 
