@@ -90,7 +90,7 @@ if (!empty($template) && $template) {
                 );
                 echo $this->Form->input('include_axia_logo',
                     array(
-                        'label' => 'rep only',
+                        'label' => 'Include Axia Logo',
                         'type' => 'checkbox'
                     )
                 );
