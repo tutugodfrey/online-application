@@ -69,6 +69,30 @@ var persist = function(data) {
 		data: data,
 		context: document.body
 	}).done(function(response) {
+		if (data['field_id'] == 'EMail' ||
+			data['field_id'] == 'LocEMail' ||
+			data['field_id'] == 'Owner1Email' ||
+			data['field_id'] == 'Owner2Email') {
+
+				$('#CobrandedApplicationEmail').empty();
+
+				if ($('#EMail').val()) {
+					$('#CobrandedApplicationEmail').append('<option value="'+$('#EMail').val()+'">'+$('#EMail').val()+'</option>');
+				}
+
+				if ($('#LocEMail').val()) {
+					$('#CobrandedApplicationEmail').append('<option value="'+$('#LocEMail').val()+'">'+$('#LocEMail').val()+'</option>');
+				}
+
+				if ($('#Owner1Email').val()) {
+					$('#CobrandedApplicationEmail').append('<option value="'+$('#Owner1Email').val()+'">'+$('#Owner1Email').val()+'</option>');
+				}
+
+				if ($('#Owner2Email').val()) {
+					$('#CobrandedApplicationEmail').append('<option value="'+$('#Owner2Email').val()+'">'+$('#Owner2Email').val()+'</option>');
+				}
+		}
+
 		document.getElementById(data['field_id']).removeAttribute("style");
 	}).error(function() {
 		alert('failed to update application value');
