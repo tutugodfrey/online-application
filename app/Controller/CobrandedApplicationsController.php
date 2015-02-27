@@ -360,12 +360,22 @@ class CobrandedApplicationsController extends AppController {
 		$error = '';
 		if ($this->request->is('post')) {
 			// did we get a valid email?
-			$email = $this->request->data['CobrandedApplication']['email'];
+			$email = '';
+
+			if ($this->request->data['CobrandedApplication']['emailText']) {
+				$email = $this->request->data['CobrandedApplication']['emailText'];
+			}
+			else if ($this->request->data['CobrandedApplication']['emailList']) {
+				$email = $this->request->data['CobrandedApplication']['emailList'];
+			}
+
+
 			if (isset($this->request->data['CobrandedApplication']['id'])) {
 				$id = $this->request->data['CobrandedApplication']['id'];
 			} else {
 				$id = null;
 			}
+
 			if (Validation::email($email)) {
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email, $id);
 				if ($response['success'] == true) {
