@@ -41,25 +41,36 @@
                   'default' => $cobranded_application_id
                 )
               );
-      											
+
+              $emailListDiv;
+              $emailTextDiv;
+
       				if (count($emailList) > 0) {
-      					echo $this->Form->input(
-    							'email',
-    							array(
-        						'options' => $emailList,
-        						'label' => 'Select Email Address',
-        						'type' => 'select'
-    							)
-								);
+      				  $emailListDiv = array('id' => 'emailListDiv', 'style' => 'display:inline-block;');
+                $emailTextDiv = array('id' => 'emailTextDiv', 'style' => 'display:none;');
 							} else {
-								echo $this->Form->input(
-    							'email',
-    							array(
-        						'label' => 'Please enter an email address:',
-        						'type' => 'text'
-    							)
-								);
+								$emailListDiv = array('id' => 'emailListDiv', 'style' => 'display:none;');
+                $emailTextDiv = array('id' => 'emailTextDiv', 'style' => 'display:inline-block;');
 							}
+
+              echo $this->Form->input(
+                  'emailList',
+                  array(
+                    'options' => $emailList,
+                    'label' => 'Select Email Address',
+                    'type' => 'select',
+                    'div' => $emailListDiv
+                  )
+              );
+
+              echo $this->Form->input(
+                  'emailText',
+                  array(
+                    'label' => 'Please enter an email address:',
+                    'type' => 'text',
+                    'div' => $emailTextDiv
+                  )
+              );
 
 							echo "
 								<div class='modal-footer'>
