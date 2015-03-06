@@ -1749,6 +1749,9 @@ class CobrandedApplication extends AppModel {
 		$owner2Fullname = '';
 		$dbaBusinessName = '';
 
+		$owner1Email= '';
+		$owner2Email = '';
+
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
 
 		if (!empty($valuesMap['DBA'])) {
@@ -1759,6 +1762,12 @@ class CobrandedApplication extends AppModel {
 		}
 		if (!empty($valuesMap['Owner2Name'])) {
 			$owner2Fullname = $valuesMap['Owner2Name'];
+		}
+		if (!empty($valuesMap['Owner1Email'])) {
+			$owner1Email = $valuesMap['Owner1Email'];
+		}
+		if (!empty($valuesMap['Owner2Email'])) {
+			$owner2Email = $valuesMap['Owner2Email'];
 		}
 
 		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
@@ -1785,7 +1794,7 @@ class CobrandedApplication extends AppModel {
         		$xml .= "			</role>\n";
         	}
         } else {
-			if (!empty($owner1Fullname)) {
+			if (!empty($owner1Fullname) && !empty($owner1Email)) {
 				$xml .= "			<role role_name='Owner/Officer 1 PG'>\n";
         		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
         		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
@@ -1798,7 +1807,7 @@ class CobrandedApplication extends AppModel {
 				$xml .= "			</role>\n";
 			}
 
-	        if (!empty($owner2Fullname)) {
+	        if (!empty($owner2Fullname) && !empty($owner2Email)) {
 				$xml .= "			<role role_name='Owner/Officer 2 PG'>\n";
 				$xml .= "				<name>".htmlspecialchars($owner2Fullname)."</name>\n";
 				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";

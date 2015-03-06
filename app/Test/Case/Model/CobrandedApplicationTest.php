@@ -1432,9 +1432,20 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'CorpContact' => array(
 						'value' => 'Corporate Contact',
 					),
+					'Owner1Email' => array(
+						'value' => 'testing@axiapayments.com',
+					),
+					'Owner2Email' => array(
+						'value' => null,
+					),
+					'EMail' => array(
+						'value' => null,
+					),
+					'LocEMail' => array(
+						'value' => null,
+					)
 			),
 		);
-		
 
 		$response = $this->CobrandedApplication->find('index');
 		$expectedResponse[0]['CobrandedApplication']['modified'] = $response[0]['CobrandedApplication']['modified'];
