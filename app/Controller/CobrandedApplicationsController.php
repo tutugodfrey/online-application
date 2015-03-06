@@ -819,6 +819,14 @@ class CobrandedApplicationsController extends AppController {
 
 		$cobrandedApplication = $this->CobrandedApplication->read();
 
+		$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+	
+		if (empty($valuesMap['Owner1Email']) && empty($valuesMap['Owner2Email'])) {
+			$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+			$this->Session->setFlash(__('error! owner email does not exist'));
+			$this->redirect(array('action' => $url));
+		}
+
 		// Perform validation
 		if (!in_array($cobrandedApplication['CobrandedApplication']['status'], array('completed', 'signed'))) {
 			$response = $this->CobrandedApplication->validateCobrandedApplication($cobrandedApplication, 'ui');
