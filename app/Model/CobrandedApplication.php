@@ -1191,38 +1191,47 @@ class CobrandedApplication extends AppModel {
 		foreach ($owners as $key => $val) {
 			$response['msg'] = '';
 			
-			$ownerEmail = $owners[$key]['email'];
-			$ownerFullname = $owners[$key]['fullname'];
+			$ownerEmail = '';
+			if (isset($owners[$key]['email'])) {
+				$ownerEmail = $owners[$key]['email'];
+			}
 
-			$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
-			$to = $ownerEmail;
-			$subject = $dbaBusinessName.' - Merchant Application';
-			$format = 'both';
-			$template = 'email_app';
-			$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
-			$viewVars = array();
-			$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
-			$viewVars['ownerName'] = $ownerFullname;
-			$viewVars['merchant'] = $dbaBusinessName;
+			$ownerFullname = '';
+			if (isset($owners[$key]['fullname'])) {
+				$ownerFullname = $owners[$key]['fullname'];
+			}
 
-			$args = array(
-				'from' => $from,
-				'to' => $to,
-				'subject' => $subject,
-				'format' => $format,
-				'template' => $template,
-				'viewVars' => $viewVars
-			);
+			if (!empty($ownerEmail)) {
+				$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+				$to = $ownerEmail;
+				$subject = $dbaBusinessName.' - Merchant Application';
+				$format = 'both';
+				$template = 'email_app';
+				$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+				$viewVars = array();
+				$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+				$viewVars['ownerName'] = $ownerFullname;
+				$viewVars['merchant'] = $dbaBusinessName;
 
-			$response = $this->sendEmail($args);
-			unset($args);
+				$args = array(
+					'from' => $from,
+					'to' => $to,
+					'subject' => $subject,
+					'format' => $format,
+					'template' => $template,
+					'viewVars' => $viewVars
+				);
 
-			if ($response['success'] == true) {
-				$args['cobranded_application_id'] = $applicationId;
-				$args['email_timeline_subject_id'] = EmailTimeline::SENT_FOR_SIGNING;
-				$args['recipient'] = $ownerEmail;
-				$response = $this->createEmailTimelineEntry($args);
+				$response = $this->sendEmail($args);
 				unset($args);
+
+				if ($response['success'] == true) {
+					$args['cobranded_application_id'] = $applicationId;
+					$args['email_timeline_subject_id'] = EmailTimeline::SENT_FOR_SIGNING;
+					$args['recipient'] = $ownerEmail;
+					$response = $this->createEmailTimelineEntry($args);
+					unset($args);
+				}
 			}
 		}
 
