@@ -1166,10 +1166,10 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
- * var_success
+ * admin_var_success
  *
  */
-	public function var_success() {
+	public function admin_var_success() {
 		$email = $this->Session->read('CobrandedApplication.email');
 		$this->Session->setFlash('Install sheet Successfully sent to: '.$email);
 	}
