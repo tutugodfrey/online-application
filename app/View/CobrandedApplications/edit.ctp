@@ -140,7 +140,7 @@
 											if (!answer) return null
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['rightsignature_document_guid'] ? '1' : '0') . ") {
-											answer = confirm('This application has already been sent for signature. Do you really want to send it again?');
+											answer = confirm('Send a reminder email to all signers, that they need to sign the application?');
 											if (!answer) return null
 										}
 										window.location = '".$submitForSigUrl."';
