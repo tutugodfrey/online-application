@@ -136,11 +136,11 @@
 											return null;
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['status'] == 'signed' ? '1' : '0') . ") {
-											answer = confirm('This application has aleady been signed. Do you really want to resend?');
+											answer = confirm('This application has already been signed. Do you really want to resend?');
 											if (!answer) return null
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['rightsignature_document_guid'] ? '1' : '0') . ") {
-											answer = confirm('This application has aleady been sent for signature. Do you really want to send it again?');
+											answer = confirm('This application has already been sent for signature. Do you really want to send it again?');
 											if (!answer) return null
 										}
 										window.location = '".$submitForSigUrl."';
