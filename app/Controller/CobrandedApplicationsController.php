@@ -855,7 +855,7 @@ class CobrandedApplicationsController extends AppController {
 					}
 				} else {
 					$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
-					$this->Session->setFlash(__('error! could not find template guid'));
+					$this->Session->setFlash(__(CobrandedApplication::RIGHTSIGNATURE_NO_TEMPLATE_ERROR));
 					$this->redirect(array('action' => $url));
 				}
 
