@@ -1,7 +1,7 @@
 Axia Online Merchant Application
 =======
 
-[![Axia][http://www.axiapayments.com/wp-content/themes/axiapayments/images/axia-logo.svg](http://www.axiapayments.com)
+![Axia][http://www.axiapayments.com/wp-content/themes/axiapayments/images/axia-logo.svg](http://www.axiapayments.com)
 
 The Axia Online Merchant Application, is a web based version of our standard
 merchant application.  It is built to be flexible and customizable with the
