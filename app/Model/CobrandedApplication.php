@@ -13,6 +13,8 @@ App::uses('HttpSocket', 'Network/Http');
  */
 class CobrandedApplication extends AppModel {
 
+	const RIGHTSIGNATURE_NO_TEMPLATE_ERROR = "error! The signature template has not been configured";
+
 /**
  * Table to use
  *
