@@ -97,8 +97,14 @@
 					<div id="actionButtons" align="right">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo "<input type='button' onclick='fieldCompletion();' value='Email For Field Completion'>"."<br/>";
-								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'>"."<br/>";
+								echo $this->element('cobranded_applications/email_select_modal',
+									array(
+										'cobranded_application_id' => $this->request->data['CobrandedApplication']['id']
+									)
+								);
+
+								echo "<input type='button' data-toggle='modal' data-target='#myModal_".$this->request->data['CobrandedApplication']['id']."' value='Email For Field Completion'><br/>";
+								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'><br/>";
 
 								$completeFieldsUrl = Router::url(array(
 									'controller' => 'cobranded_applications',
@@ -130,11 +136,11 @@
 											return null;
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['status'] == 'signed' ? '1' : '0') . ") {
-											answer = confirm('This application has aleady been signed. Do you really want to resend?');
+											answer = confirm('This application has already been signed. Do you really want to resend?');
 											if (!answer) return null
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['rightsignature_document_guid'] ? '1' : '0') . ") {
-											answer = confirm('This application has aleady been sent for signature. Do you really want to send it again?');
+											answer = confirm('Send a reminder email to all signers, that they need to sign the application?');
 											if (!answer) return null
 										}
 										window.location = '".$submitForSigUrl."';

@@ -360,12 +360,22 @@ class CobrandedApplicationsController extends AppController {
 		$error = '';
 		if ($this->request->is('post')) {
 			// did we get a valid email?
-			$email = $this->request->data['CobrandedApplication']['email'];
+			$email = '';
+
+			if ($this->request->data['CobrandedApplication']['emailText']) {
+				$email = $this->request->data['CobrandedApplication']['emailText'];
+			}
+			else if ($this->request->data['CobrandedApplication']['emailList']) {
+				$email = $this->request->data['CobrandedApplication']['emailList'];
+			}
+
+
 			if (isset($this->request->data['CobrandedApplication']['id'])) {
 				$id = $this->request->data['CobrandedApplication']['id'];
 			} else {
 				$id = null;
 			}
+
 			if (Validation::email($email)) {
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email, $id);
 				if ($response['success'] == true) {
@@ -378,6 +388,12 @@ class CobrandedApplicationsController extends AppController {
 				}
 			} else {
 				$error = 'Invalid email address submitted.';
+			}
+		}
+
+		if ($this->RequestHandler->isAjax()) {
+			if ($error != '') {
+				throw new BadRequestException(__($error));
 			}
 		}
 
@@ -803,6 +819,8 @@ class CobrandedApplicationsController extends AppController {
 
 		$cobrandedApplication = $this->CobrandedApplication->read();
 
+		$response = null;
+
 		// Perform validation
 		if (!in_array($cobrandedApplication['CobrandedApplication']['status'], array('completed', 'signed'))) {
 			$response = $this->CobrandedApplication->validateCobrandedApplication($cobrandedApplication, 'ui');
@@ -818,29 +836,34 @@ class CobrandedApplicationsController extends AppController {
 		if (!empty($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) && $signNow == true) {
 			$this->redirect(array('action' => '/sign_rightsignature_document?guid='.$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']));
 		} else {
-			$client = $this->CobrandedApplication->createRightSignatureClient();
-			$templateGuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
-			$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
-			$response = json_decode($response, true);
+			if (empty($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'])) {
+				$client = $this->CobrandedApplication->createRightSignatureClient();
+				$templateGuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
+				$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
+				$response = json_decode($response, true);
 
-			if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
-				$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
-					$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
-				$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
-				$tmpResponse = json_decode($response, true);
+				if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
+					$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
+						$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
+					$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+					$tmpResponse = json_decode($response, true);
 
-				if ($tmpResponse && key_exists('error', $tmpResponse)) {
+					if ($tmpResponse && key_exists('error', $tmpResponse)) {
+						$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+						$this->Session->setFlash(__('error! '.$tmpResponse['error']['message']));
+						$this->redirect(array('action' => $url));
+					}
+				} else {
 					$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
-					$this->Session->setFlash(__('error! '.$tmpResponse['error']['message']));
+					$this->Session->setFlash(__(CobrandedApplication::RIGHTSIGNATURE_NO_TEMPLATE_ERROR));
 					$this->redirect(array('action' => $url));
 				}
-			} else {
-				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
-				$this->Session->setFlash(__('error! could not find template guid'));
-				$this->redirect(array('action' => $url));
-			}
 
-			$response = json_decode($response, true);
+				$response = json_decode($response, true);
+			} else {
+				$response['document']['status'] = 'sent';
+				$response['document']['guid'] = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+			}
 	
 			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
 				// save the guid
@@ -1150,10 +1173,10 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
- * var_success
+ * admin_var_success
  *
  */
-	public function var_success() {
+	public function admin_var_success() {
 		$email = $this->Session->read('CobrandedApplication.email');
 		$this->Session->setFlash('Install sheet Successfully sent to: '.$email);
 	}

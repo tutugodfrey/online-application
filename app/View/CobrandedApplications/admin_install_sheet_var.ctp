@@ -54,7 +54,7 @@
 		if (is_array($errors)) {
 			echo $this->Html->scriptBlock("var errors = " . json_encode($errors) . ";", array('inline' => false));
 		}
-		echo $this->Form->create('CobrandedApplication', array('url' => '/cobranded_applications/install_sheet_var/' . $data['CobrandedApplication']['id']));
+		echo $this->Form->create('CobrandedApplication', array('url' => '/admin/cobranded_applications/install_sheet_var/' . $data['CobrandedApplication']['id']));
 		echo '<table width="800">';
 		echo '<tr>';
 		echo '<td><strong>Rep:</strong> ' . $contractorId . '</td>';

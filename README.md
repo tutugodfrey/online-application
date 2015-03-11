@@ -1,12 +1,32 @@
-CakePHP
+Axia Online Merchant Application
 =======
 
-[![CakePHP](http://cakephp.org/img/cake-logo.png)](http://www.cakephp.org)
+![Axia](http://www.axiapayments.com/wp-content/themes/axiapayments/images/axia-logo.svg)
 
-CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.
-Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.
+The Axia Online Merchant Application, is a web based version of our standard
+merchant application.  It is built to be flexible and customizable with the
+ability to easily add "Cobrands" Partner Branded application "Templates."
+The templates correspond to PDF signature templates that are integrated with 
+[RightSignature](https://rightsignature.com).  This application also provides a
+basic [RestAPI](https://redmine.axiapayments.com/projects/onlineapp/wiki/Application_Programming_Interface) to allow merchants to programmatically create new applications
 
-Some Handy Links
+
+Building the Application
+----------------
+
+```
+git clone git@git.axiapayments.com:axia/online-application.git
+cd online-application
+git submodule update --init --recursive
+app/Console/cake Migrations.migration run all
+```
+
+At this point you should be up and running
+
+This Application is built using the [CakePHP](http://www.cakephp.org) rapid
+development framework.
+
+Some Handy Links relating to the framework
 ----------------
 
 [CakePHP](http://www.cakephp.org) - The rapid development PHP framework
@@ -23,7 +43,7 @@ Some Handy Links
 
 [The Cake Software Foundation](http://cakefoundation.org/) - promoting development related to CakePHP
 
-Get Support!
+Framework Support
 ------------
 
 [Our Google Group](http://groups.google.com/group/cake-php) - community mailing list and forum
@@ -31,9 +51,3 @@ Get Support!
 [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 
 [Q & A](http://ask.cakephp.org/) - Ask questions here, all questions welcome
-
-[Lighthouse](http://cakephp.lighthouseapp.com/) - Got issues? Please tell us!
-
-[![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=master)](http://travis-ci.org/cakephp/cakephp)
-
-![Cake Power](https://raw.github.com/cakephp/cakephp/master/lib/Cake/Console/Templates/skel/webroot/img/cake.power.gif)

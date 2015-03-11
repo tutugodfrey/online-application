@@ -13,6 +13,8 @@ App::uses('HttpSocket', 'Network/Http');
  */
 class CobrandedApplication extends AppModel {
 
+	const RIGHTSIGNATURE_NO_TEMPLATE_ERROR = "error! The signature template has not been configured";
+
 /**
  * Table to use
  *
@@ -946,15 +948,32 @@ class CobrandedApplication extends AppModel {
  */
 	public function findAppsByEmail($email, $id = null) {
 		$conditions[] = array('CobrandedApplicationValue.value' => $email);
-				// should probably check the state too
 		
+		// should probably check the state too
 		if (isset($id)) {
 			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
 			$conditions[]['CobrandedApplicationValue.name'] = 'Owner1Email';
 		}
+
 		$apps = $this->find(
 			'all',
 			array(
+				'fields' => array(
+					'CobrandedApplication.id',
+					'CobrandedApplication.user_id',
+					'CobrandedApplication.template_id',
+					'CobrandedApplication.uuid',
+					'CobrandedApplication.created',
+					'CobrandedApplication.modified',
+					'CobrandedApplication.rightsignature_document_guid',
+					'CobrandedApplication.status',
+					'CobrandedApplication.rightsignature_install_document_guid',
+					'CobrandedApplication.rightsignature_install_status',
+					'User.id',
+					'Template.id',
+					'Merchant.merchant_id',
+					'Coversheet.id'
+				),
 				'joins' => array(
 					array(
 						'alias' => 'CobrandedApplicationValue',
@@ -964,7 +983,22 @@ class CobrandedApplication extends AppModel {
 					)
 				),
 				'conditions' => $conditions,
-				'group' => array('CobrandedApplication.id', 'User.id', 'Template.id', 'Merchant.merchant_id', 'Coversheet.id'), 
+				'group' => array(
+					'CobrandedApplication.id',
+					'CobrandedApplication.user_id',
+					'CobrandedApplication.template_id',
+					'CobrandedApplication.uuid',
+					'CobrandedApplication.created',
+					'CobrandedApplication.modified',
+					'CobrandedApplication.rightsignature_document_guid',
+					'CobrandedApplication.status',
+					'CobrandedApplication.rightsignature_install_document_guid',
+					'CobrandedApplication.rightsignature_install_status',
+					'User.id',
+					'Template.id',
+					'Merchant.merchant_id',
+					'Coversheet.id'
+				), 
 				'order' => 'CobrandedApplication.created desc'
 			)
 		);
@@ -982,10 +1016,10 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function sendFieldCompletionEmail($email, $id = null) {
-			$response = array(
-				'success' => false,
-				'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
-			);
+		$response = array(
+			'success' => false,
+			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
+		);
 
 		$apps = $this->findAppsByEmail($email, $id);
 
@@ -1005,7 +1039,6 @@ class CobrandedApplication extends AppModel {
 				$appValue = $this->getApplicationValue($cav['CobrandedApplicationValue']['id']);
 				$appValue['CobrandedApplicationValue']['value'] = $email;
 				if ($this->CobrandedApplicationValue->save($appValue)) {
-
 					return $this->sendFieldCompletionEmail($email);
 				}
 			} else {
@@ -1055,6 +1088,7 @@ class CobrandedApplication extends AppModel {
 			$response['email'] = $ownerEmail;
 			$response['fullname'] = $ownerName;
 		}
+
 		return $response;
 	}
 
@@ -1159,38 +1193,47 @@ class CobrandedApplication extends AppModel {
 		foreach ($owners as $key => $val) {
 			$response['msg'] = '';
 			
-			$ownerEmail = $owners[$key]['email'];
-			$ownerFullname = $owners[$key]['fullname'];
+			$ownerEmail = '';
+			if (isset($owners[$key]['email'])) {
+				$ownerEmail = $owners[$key]['email'];
+			}
 
-			$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
-			$to = $ownerEmail;
-			$subject = $dbaBusinessName.' - Merchant Application';
-			$format = 'both';
-			$template = 'email_app';
-			$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
-			$viewVars = array();
-			$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
-			$viewVars['ownerName'] = $ownerFullname;
-			$viewVars['merchant'] = $dbaBusinessName;
+			$ownerFullname = '';
+			if (isset($owners[$key]['fullname'])) {
+				$ownerFullname = $owners[$key]['fullname'];
+			}
 
-			$args = array(
-				'from' => $from,
-				'to' => $to,
-				'subject' => $subject,
-				'format' => $format,
-				'template' => $template,
-				'viewVars' => $viewVars
-			);
+			if (!empty($ownerEmail)) {
+				$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+				$to = $ownerEmail;
+				$subject = $dbaBusinessName.' - Merchant Application';
+				$format = 'both';
+				$template = 'email_app';
+				$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+				$viewVars = array();
+				$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+				$viewVars['ownerName'] = $ownerFullname;
+				$viewVars['merchant'] = $dbaBusinessName;
 
-			$response = $this->sendEmail($args);
-			unset($args);
+				$args = array(
+					'from' => $from,
+					'to' => $to,
+					'subject' => $subject,
+					'format' => $format,
+					'template' => $template,
+					'viewVars' => $viewVars
+				);
 
-			if ($response['success'] == true) {
-				$args['cobranded_application_id'] = $applicationId;
-				$args['email_timeline_subject_id'] = EmailTimeline::SENT_FOR_SIGNING;
-				$args['recipient'] = $ownerEmail;
-				$response = $this->createEmailTimelineEntry($args);
+				$response = $this->sendEmail($args);
 				unset($args);
+
+				if ($response['success'] == true) {
+					$args['cobranded_application_id'] = $applicationId;
+					$args['email_timeline_subject_id'] = EmailTimeline::SENT_FOR_SIGNING;
+					$args['recipient'] = $ownerEmail;
+					$response = $this->createEmailTimelineEntry($args);
+					unset($args);
+				}
 			}
 		}
 
@@ -1248,7 +1291,6 @@ class CobrandedApplication extends AppModel {
 		$viewVars['hash'] = $hash;
 		$viewVars['link'] = "https://".$hostname."/cobranded_applications/edit/".$hash;
 		$viewVars['ownerName'] = $ownerName;
-
 
 		$args = array(
 			'from' => $from,
@@ -1718,6 +1760,9 @@ class CobrandedApplication extends AppModel {
 		$owner2Fullname = '';
 		$dbaBusinessName = '';
 
+		$owner1Email= '';
+		$owner2Email = '';
+
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
 
 		if (!empty($valuesMap['DBA'])) {
@@ -1728,6 +1773,12 @@ class CobrandedApplication extends AppModel {
 		}
 		if (!empty($valuesMap['Owner2Name'])) {
 			$owner2Fullname = $valuesMap['Owner2Name'];
+		}
+		if (!empty($valuesMap['Owner1Email'])) {
+			$owner1Email = $valuesMap['Owner1Email'];
+		}
+		if (!empty($valuesMap['Owner2Email'])) {
+			$owner2Email = $valuesMap['Owner2Email'];
 		}
 
 		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
@@ -1754,7 +1805,7 @@ class CobrandedApplication extends AppModel {
         		$xml .= "			</role>\n";
         	}
         } else {
-			if (!empty($owner1Fullname)) {
+			if (!empty($owner1Fullname) && !empty($owner1Email)) {
 				$xml .= "			<role role_name='Owner/Officer 1 PG'>\n";
         		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
         		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
@@ -1767,7 +1818,7 @@ class CobrandedApplication extends AppModel {
 				$xml .= "			</role>\n";
 			}
 
-	        if (!empty($owner2Fullname)) {
+	        if (!empty($owner2Fullname) && !empty($owner2Email)) {
 				$xml .= "			<role role_name='Owner/Officer 2 PG'>\n";
 				$xml .= "				<name>".htmlspecialchars($owner2Fullname)."</name>\n";
 				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
@@ -1802,10 +1853,12 @@ class CobrandedApplication extends AppModel {
 				// type 3 is checkbox, 4 is radio
 				// we send different elements for multi option types
 				if ($fieldType == 3 || $fieldType == 4) {
-					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-					$xml .= "				<value>X</value>\n";
-					$xml .= "				<locked>true</locked>\n";
-					$xml .= "			</merge_field>\n";
+					if ($appValue['CobrandedApplicationValues']['value'] == 'true') {
+						$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+						$xml .= "				<value>X</value>\n";
+						$xml .= "				<locked>true</locked>\n";
+						$xml .= "			</merge_field>\n";
+					}
 				} else {
 					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
 					$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
@@ -2320,6 +2373,10 @@ class CobrandedApplication extends AppModel {
 				'Dba.value',
 				'CorpName.value',
 				'CorpContact.value',
+				'Owner1Email.value',
+				'Owner2Email.value',
+				'EMail.value',
+				'LocEMail.value'
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
@@ -2342,6 +2399,34 @@ class CobrandedApplication extends AppModel {
 					'type' => 'LEFT',
 					'conditions' => array(
 						'CobrandedApplication.id = CorpContact.cobranded_application_id and CorpContact.name =' . "'CorpContact'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner1Email',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner1Email.cobranded_application_id and Owner1Email.name =' . "'Owner1Email'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'Owner2Email',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Owner2Email.cobranded_application_id and Owner2Email.name =' . "'Owner2Email'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'EMail',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = EMail.cobranded_application_id and EMail.name =' . "'EMail'",
+					),
+				),
+				array('table' => 'onlineapp_cobranded_application_values',
+					'alias' => 'LocEMail',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = LocEMail.cobranded_application_id and LocEMail.name =' . "'LocEMail'",
 					),
 				),
 				array('table' => 'onlineapp_templates',
