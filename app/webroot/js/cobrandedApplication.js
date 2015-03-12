@@ -248,13 +248,6 @@ $(document).ready(function() {
 		}
 	});
 
-	var allSelects = document.getElementsByTagName('select');
-
-	for (var x = 0; x < allSelects.length; x++) {
-		var id = allSelects[x].id;
-		$("[id='"+id+"']").trigger('change');
-	}
-
 	motoQuestionnaireCheck();
 
 	$('#MethodofSales-CardNotPresent-Keyed').on('change', motoQuestionnaireCheck);
