@@ -40,7 +40,7 @@ class TemplateFieldHelper extends Helper {
 		}
 
 		// if application is signed or completed, make all fields read only
-		$applicationStatus = SessionHelper::read('applicationStatus');
+		$applicationStatus = CakeSession::read('applicationStatus');
 
 		if ($applicationStatus == 'signed' || $applicationStatus == 'completed') {
 			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');

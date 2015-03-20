@@ -10,7 +10,7 @@ class OrderableChildBehavior extends ModelBehavior {
 		$this->settings[$model->alias] = array_merge($this->settings[$model->alias], $settings);
 	}
 
-	public function beforeSave(Model $model/*, $options = array()*/) {
+	public function beforeSave(Model $model, $options = array()) {
 		$this->__neighbors = null;
 
 		// if the order field is not set, figure it out
@@ -54,7 +54,7 @@ class OrderableChildBehavior extends ModelBehavior {
 		return true;
 	}
 
-	public function afterSave(Model $model/*, $created, $options = array()*/) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		if ($this->__neighbors != null) {
 			if (count($this->__neighbors) > 0) {
 				foreach ($this->__neighbors as $neighbor) {
@@ -87,7 +87,7 @@ class OrderableChildBehavior extends ModelBehavior {
 		return Inflector::pluralize($this->settings[$model->alias]['children_model_name']);
 	}
 
-	public function beforeDelete(Model $model/*, $cascade = true*/) {
+	public function beforeDelete(Model $model, $cascade = true) {
 		if ($this->__hasChildren($model)) {
 			// delete children
 			$children = $this->__getChildren($model);
