@@ -106,21 +106,6 @@
 								echo "<input type='button' data-toggle='modal' data-target='#myModal_".$this->request->data['CobrandedApplication']['id']."' value='Email For Field Completion'><br/>";
 								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'><br/>";
 
-								$completeFieldsUrl = Router::url(array(
-									'controller' => 'cobranded_applications',
-									'action' => 'complete_fields',
-									$this->request->data['CobrandedApplication']['id'],
-									False
-								));
-
-								echo $this->Html->scriptBlock(
-									"function fieldCompletion() {
-										if (confirm('Send for completion to: ' + document.getElementById('Owner1Email').value)) {
-											window.location = '".$completeFieldsUrl."';
-										}
-									}"
-								);
-
 								$submitForSigUrl = Router::url(array(
 									'controller' => 'cobranded_applications',
 									'action' => 'create_rightsignature_document',
@@ -137,11 +122,21 @@
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['status'] == 'signed' ? '1' : '0') . ") {
 											answer = confirm('This application has already been signed. Do you really want to resend?');
-											if (!answer) return null
+											if (!answer) {
+												return null;
+											}
+											else {
+												$('input[value=\"Submit for Signature\"]').attr('disabled', 'disabled');
+											}
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['rightsignature_document_guid'] ? '1' : '0') . ") {
 											answer = confirm('Send a reminder email to all signers, that they need to sign the application?');
-											if (!answer) return null
+											if (!answer) {
+												return null;
+											}
+											else {
+												$('input[value=\"Submit for Signature\"]').attr('disabled', 'disabled');
+											}
 										}
 										window.location = '".$submitForSigUrl."';
 									}
@@ -168,6 +163,9 @@
 											answer = confirm('This application has aleady been signed.');
 											return null;
 										}
+
+										$('input[value=\"View and Sign Now\"]').attr('disabled', 'disabled');
+
 										window.location = '".$signNowUrl."';
 									}
 			 					");
@@ -193,6 +191,9 @@
 											answer = confirm('This application has already been signed.');
 											return null;
 										}
+
+										$('input[value=\"Submit for Review\"]').attr('disabled', 'disabled');
+
 										window.location = '".$submitForReviewUrl."';
 									}
 			 					");

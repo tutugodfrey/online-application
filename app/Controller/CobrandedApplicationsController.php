@@ -61,8 +61,8 @@ class CobrandedApplicationsController extends AppController {
 			'create_rightsignature_document',
 			'sign_rightsignature_document',
 			'submit_for_review');
-		$this->Security->validatePost = false;
-		$this->Security->csrfCheck = false;
+
+		$this->Security->unlockedActions= array('quickAdd', 'retrieve');
 
 		if (($this->params['ext'] == 'json' || $this->request->accepts('application/json'))) {
 			$this->Security->unlockedActions= array('api_add');

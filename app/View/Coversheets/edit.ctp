@@ -1,4 +1,23 @@
 <?php echo $this->Html->css('coversheet', null, array('inline' => false)); ?>
+
+<script type="text/javascript">
+    jQuery.noConflict();  
+
+    jQuery(document).ready(function () {
+        jQuery('input[type=submit]').click(function() {
+
+            var input = jQuery("<input>")
+               .attr("type", "hidden")
+               .attr("name", this.name).val(this.name);
+
+            var thisForm = jQuery(this).parents('form:first');
+            
+            jQuery(thisForm).append(jQuery(input));
+            jQuery(this).attr('disabled', 'disabled');
+        })
+    });
+</script>
+
 <?php if ($data['Coversheet']['status'] != 'saved') { ?>
 <script type="text/javascript">                                        
    $(document).ready(function () {
