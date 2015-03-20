@@ -16,8 +16,7 @@ class CoversheetsController extends AppController {
     );
 
     function beforeFilter() {
-        parent::beforeFilter();
-        
+        parent::beforeFilter(); 
     }
 
 	public function view($id = null) {

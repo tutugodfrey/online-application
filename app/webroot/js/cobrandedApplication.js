@@ -178,6 +178,28 @@ var motoQuestionnaireCheck = function(){
 	}
 };
 
+var totalStartUpFees = function() {
+	var creditAppFee = parseFloat($("[name=CreditAppFee]").val());
+	var creditEquipmentFee = parseFloat($("[name=CreditEquipmentFee]").val());
+	var creditExpediteFee = parseFloat($("[name=CreditExpediteFee]").val());
+	var creditReprogramFee = parseFloat($("[name=CreditReprogramFee]").val());
+	var creditVirtualTrainingFee = parseFloat($("[name=CreditVirtualTrainingFee]").val());
+	var creditMobileSetupFee = parseFloat($("[name=CreditMobileSetupFee]").val());
+
+	if (!creditAppFee) {creditAppFee = 0;}
+	if (!creditEquipmentFee) {creditEquipmentFee = 0;}
+	if (!creditExpediteFee) {creditExpediteFee = 0;}
+	if (!creditReprogramFee) {creditReprogramFee = 0;}
+	if (!creditVirtualTrainingFee) {creditVirtualTrainingFee = 0;}
+	if (!creditMobileSetupFee) {creditMobileSetupFee = 0;}
+
+	var newTotal = creditAppFee + creditEquipmentFee + creditExpediteFee + creditReprogramFee + creditVirtualTrainingFee + creditMobileSetupFee;
+
+	newTotal = newTotal.toFixed(2);
+	
+	$("[label='Start Up Fees'][name='Total']").val(newTotal);
+}
+
 $(document).ready(function() {
 	$(window).resize(onWindowResize);
 
@@ -237,7 +259,7 @@ $(document).ready(function() {
 
 	// look for percent group and find the first input and fire a blur event to update the total field
 	$('#wizard fieldset.percent').each(function(index, item) {
-		$(item).find('input:first').trigger('blur');
+		$(item).find('input:first').trigger('blur'); 
 	});
 
 	$('div.tab-pane.active').on('click', function(e) {
@@ -248,19 +270,22 @@ $(document).ready(function() {
 		}
 	});
 
-	var allSelects = document.getElementsByTagName('select');
-
-	for (var x = 0; x < allSelects.length; x++) {
-		var id = allSelects[x].id;
-		$("[id='"+id+"']").trigger('change');
-	}
-
 	motoQuestionnaireCheck();
 
 	$('#MethodofSales-CardNotPresent-Keyed').on('change', motoQuestionnaireCheck);
 	$('#MethodofSales-CardNotPresent-Internet').on('change', motoQuestionnaireCheck);
 
 	$(":input").inputmask();
+
+	totalStartUpFees();
+
+	// set up the onBlur handlers for the Start Up Fees
+	$("[name='CreditAppFee']").on('blur', totalStartUpFees);
+	$("[name='CreditEquipmentFee']").on('blur', totalStartUpFees);
+	$("[name='CreditExpediteFee']").on('blur', totalStartUpFees);
+	$("[name='CreditReprogramFee']").on('blur', totalStartUpFees);
+	$("[name='CreditVirtualTrainingFee']").on('blur', totalStartUpFees);
+	$("[name='CreditMobileSetupFee']").on('blur', totalStartUpFees);
 });
 
 
