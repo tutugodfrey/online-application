@@ -1,0 +1,16 @@
+{
+	"name": "online-application",
+	"require": {
+		"99designs/rightsignature-php": "dev-master",
+		"cakedc/migrations": "dev-master",
+		"cakedc/search": "dev-master",
+		"cakedc/utils": "dev-master",
+		"cakephp/cakephp": "2.6.*",
+		"cakephp/debug_kit": "2.2.*",
+		"phpunit/phpunit": "3.7.32",
+		"slywalker/boost_cake": "*"
+	},
+	"config": {
+		"vendor-dir": "Vendor/"
+	}
+}
