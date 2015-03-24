@@ -2196,9 +2196,10 @@ class CobrandedApplication extends AppModel {
 									$mergeFieldName = $templateField['merge_field_name'];
 
 									if (empty($mergeFieldName)) {
-										$mergeFieldName = $tmpVal['name'];
 										$fieldName = $tmpVal['name'];
 									}
+
+									$mergeFieldName = $tmpVal['name'];
 
 									// update our validationErrors array
 									$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
