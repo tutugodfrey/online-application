@@ -26,6 +26,9 @@
 
 // Setup a 'default' cache configuration for use in the application.
 Cache::config('default', array('engine' => 'Apc'));
+require APP . 'Vendor/autoload.php';
+spl_autoload_unregister(array('App', 'load'));
+spl_autoload_register(array('App', 'load'), true, true);
 
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
@@ -76,7 +79,6 @@ CakePlugin::load('DebugKit');
 CakePlugin::load('Migrations');
 CakePlugin::load('Utils');
 CakePlugin::load('BoostCake');
-CakePlugin::load('Phpunit');
 Configure::load('app_config');
 
 /**
@@ -122,6 +124,6 @@ Configure::write('API', array(
 
 //--New Code Added Stanner
 Configure::write('Cryptable.cipher', 'rijndael-192');
-Configure::write('Cryptable.key','5sd4qtNcsYKCLRTzWxmxHPuG');
+Configure::write('Cryptable.key', '5sd4qtNcsYKCLRTzWxmxHPuG');
 Configure::write('Cryptable.iv', base64_decode('eEYFL7oDTX9mUIhZ/AL5vX6oZc7136ky'));
 //-- End New code added 04/09/12
