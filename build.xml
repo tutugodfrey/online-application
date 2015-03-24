@@ -50,11 +50,11 @@
 		<mkdir dir="${basedir}/app/webroot/coverage"/>
 		<mkdir dir="${basedir}/app/webroot/code-browser"/>
 		<mkdir dir="${basedir}/app/webroot/api"/>
-		<exec executable="/usr/bin/php">
-			<arg line="${basedir}/app/composer.phar install"/>
+		<exec executable="/usr/bin/php ${basedir}/app/composer.phar">
+			<arg line="install"/>
 		</exec>
-		<exec executable="/usr/bin/php">
-			<arg line="${basedir}/app/composer.phar update"/>
+		<exec executable="/usr/bin/php ${basedir}/app/composer.phar">
+			<arg line="update"/>
 		</exec>
 	</target>
 
