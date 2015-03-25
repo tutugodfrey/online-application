@@ -14,6 +14,7 @@
             
             jQuery(thisForm).append(jQuery(input));
             jQuery(this).attr('disabled', 'disabled');
+            jQuery(thisForm).submit();
         })
     });
 </script>
