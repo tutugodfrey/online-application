@@ -62,7 +62,7 @@
 								$arr['mergeFieldName'] = preg_replace('/\//', '\/', $arr['mergeFieldName']);
 
 								echo "
-									var pattern = /^".$arr['mergeFieldName']."/;
+									var pattern = /^".$arr['mergeFieldName']."$/;
 									for (l in allLabels) {
 										if (pattern.test(allLabels[l]['htmlFor'])) {
 											allLabels[l].style.backgroundColor = '#FFFF00';
