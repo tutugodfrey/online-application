@@ -151,8 +151,10 @@ class CobrandedApplicationValue extends AppModel {
             unset($this->data[$this->alias]['modified']);
         }
 
+        $dboSource = $this->CobrandedApplication->getDataSource();
+
         $this->CobrandedApplication->id = $this->data[$this->alias]['cobranded_application_id'];
-        $this->CobrandedApplication->saveField('modified', DboSource::expression('LOCALTIMESTAMP(0)'));
+        $this->CobrandedApplication->saveField('modified', $dboSource->expression('LOCALTIMESTAMP(0)'));
 
         return parent::save($this->data, $validate, $fieldList);
     }

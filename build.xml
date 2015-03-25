@@ -50,11 +50,11 @@
 		<mkdir dir="${basedir}/app/webroot/coverage"/>
 		<mkdir dir="${basedir}/app/webroot/code-browser"/>
 		<mkdir dir="${basedir}/app/webroot/api"/>
-		<exec executable="/usr/bin/git">
-			<arg line="submodule update --init --recursive"/>
+		<exec executable="/usr/local/bin/composer" dir="${basedir}">
+			<arg line="install"/>
 		</exec>
-		<exec executable="/usr/bin/git">
-			<arg line="submodule foreach git pull origin master"/>
+		<exec executable="/usr/local/bin/composer" dir="${basedir}">
+			<arg line="update"/>
 		</exec>
 	</target>
 

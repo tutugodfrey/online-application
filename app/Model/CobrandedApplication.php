@@ -1619,11 +1619,13 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
+		$dboSource = $this->EmailTimeline->getDataSource();
+
 		$EmailTimeline->create();
 		$success = $EmailTimeline->save(
 			array(
 				'cobranded_application_id' => $args['cobranded_application_id'],
-				'date' => DboSource::expression('NOW()'),
+				'date' => $dboSource->expression('NOW()'),
 				'email_timeline_subject_id' => $args['email_timeline_subject_id'],
 				'recipient' => $args['recipient']
 			)
