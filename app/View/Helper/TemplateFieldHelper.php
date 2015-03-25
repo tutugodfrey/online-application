@@ -226,13 +226,13 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'name', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
-					$fieldOptions = Hash::insert($fieldOptions, 'label', $percentOption['name']);
+					//$fieldOptions = Hash::insert($fieldOptions, 'label', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'value', $percentOption['value']);
 					$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-xs-12 col-sm-12 col-md-9 percent');
 
-					$retVal = $retVal . $this->Html->tag('label', $label);
 					$retVal = $retVal . $this->Html->tag(
 						'div',
+						$this->Html->tag('label', $label, array('for' => $percentOption['name'])).
 						$this->Html->tag('input', '', $fieldOptions).
 						$this->Html->tag('span', '%', array('class' => 'input-group-addon col-md-1')),
 						array('class' => 'input-group col-md-12')

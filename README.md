@@ -16,9 +16,9 @@ Building the Application
                                                                                                                            
 ```                                                                                                                        
 git clone git@git.axiapayments.com:axia/online-application.git                                                             
-cd online-application/app                                                                                                      
+cd online-application                                                                                                      
 composer install && composer update
-Console/cake Migrations.migration run all                                                                              
+app/Console/cake Migrations.migration run all                                                                              
 ```                                                                                                                        
                                                                                                                            
 At this point you should be up and running                                                                                 
