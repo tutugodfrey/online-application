@@ -1758,6 +1758,19 @@ class CobrandedApplication extends AppModel {
 			)
 		);
 
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
+		$cobrand = $this->Cobrand->find(
+			'first',
+			array(
+				'conditions' => array(
+					'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+				)
+			)
+		);
+
+		$partnerName = $cobrand['Cobrand']['partner_name'];
+
 		$owner1Fullname = '';
 		$owner2Fullname = '';
 		$dbaBusinessName = '';
@@ -1838,15 +1851,37 @@ class CobrandedApplication extends AppModel {
 		$xml .= "		<merge_fields>\n";
 
 		foreach ($rightSignatureTemplate['merge_fields'] as $mergeField) {
-			$appValue = $this->CobrandedApplicationValues->find(
-				'first',
-				array(
-					'conditions' => array(
-						'cobranded_application_id' => $applicationId,
-						'CobrandedApplicationValues.name' => $mergeField['name']
-					),
-				)
-			);
+			$appValue = null;
+
+			if ($partnerName == 'Corral' && $mergeField['name'] == 'Terminal2-') {
+				$appValue = $this->CobrandedApplicationValues->find(
+					'first',
+					array(
+						'conditions' => array(
+							'cobranded_application_id' => $applicationId,
+							'CobrandedApplicationValues.name LIKE' => 'Terminal2-%',
+							'CobrandedApplicationValues.value' => 'true'
+						),
+					)
+				);
+
+				if (!empty($appValue)) {
+					$name = $appValue['CobrandedApplicationValues']['name'];
+					$name = preg_replace('/^Terminal2-/', '', $name);
+					$appValue['CobrandedApplicationValues']['value'] = $name;
+					$appValue['TemplateField']['type'] = 0;
+				}
+			} else {
+				$appValue = $this->CobrandedApplicationValues->find(
+					'first',
+					array(
+						'conditions' => array(
+							'cobranded_application_id' => $applicationId,
+							'CobrandedApplicationValues.name' => $mergeField['name']
+						),
+					)
+				);
+			}
 
 			// we don't want to send null or empty values
 			if (isset($appValue['CobrandedApplicationValues']['value'])) {
