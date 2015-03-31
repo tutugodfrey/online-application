@@ -20,7 +20,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.group',
 //		'app.onlineappUser',
 		'app.onlineappCobrand',
-		'app.onlineappApplication',
+//		'app.onlineappApplication',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
@@ -51,7 +51,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
-		$this->Application = ClassRegistry::init('Application');
+//		$this->Application = ClassRegistry::init('Application');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
@@ -108,7 +108,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['OnlineappUser']['id']);
 		//$this->__cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
 
-		$this->loadFixtures('OnlineappApplication');
+//		$this->loadFixtures('OnlineappApplication');
 		$this->loadFixtures('OnlineappCoversheet');
 	}
 
@@ -123,7 +123,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
-		$this->Application->deleteAll(true, false);
+//		$this->Application->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
@@ -134,7 +134,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
-		unset($this->Application);
+//		unset($this->Application);
 		unset($this->TemplateField);
 		unset($this->TemplateSection);
 		unset($this->TemplatePage);

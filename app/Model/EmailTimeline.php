@@ -46,13 +46,6 @@ class EmailTimeline extends AppModel {
     //The Associations below have been created with all possible keys, those that are not needed can be removed
 
     public $belongsTo = array(
-        'Application' => array(
-            'className' => 'Application',
-            'foreignKey' => 'app_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        ),
         'CobrandedApplication' => array(
             'className' => 'CobrandedApplication',
             'foreignKey' => 'cobranded_application_id',

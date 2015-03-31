@@ -174,7 +174,6 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
-debug($applicationData);
 		$this->CobrandedApplication->create($applicationData);
 		$cobrandedApplication = $this->CobrandedApplication->save();
 		$applicationAndValues = $this->CobrandedApplicationValue->find(

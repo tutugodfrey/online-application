@@ -1,5 +1,4 @@
 Axia Online Merchant Application                                                                                           
-=======                                                                                                                    
                                                                                                                            
 ![Axia](http://www.axiapayments.com/wp-content/themes/axiapayments/images/axia-logo.svg)                                   
                                                                                                                            
