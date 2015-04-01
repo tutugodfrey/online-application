@@ -14,7 +14,7 @@
 				'empty' => __('(choose one)')
 			)
 		);
-		echo $this->Form->input('include_axia_logo');
+		echo $this->Form->input('include_brand_logo');
 		echo $this->Form->input('description');
 		echo $this->Form->input('rightsignature_template_guid');
 		echo $this->Form->input('rightsignature_install_template_guid');

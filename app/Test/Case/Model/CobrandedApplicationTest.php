@@ -201,7 +201,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'id' => (int) 1,
 				'name' => 'Template 1 for PN1',
 				'logo_position' => (int) 0,
-				'include_axia_logo' => true,
+				'include_brand_logo' => true,
 				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 				'cobrand_id' => (int) 1,
 				'created' => '2007-03-18 10:41:31',
@@ -213,11 +213,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'id' => (int) 1,
 					'partner_name' => 'Partner Name 1',
 					'partner_name_short' => 'PN1',
-					'logo_url' => 'PN1 logo_url',
+					'cobrand_logo_url' => 'PN1 logo_url',
 					'description' => 'Cobrand "Partner Name 1" description goes here.',
 					'created' => '2007-03-18 10:41:31',
 					'modified' => '2007-03-18 10:41:31',
-					'response_url_type' => null
+					'response_url_type' => null,
+					'brand_logo_url' => 'PN1 logo_url',
 				),
 				'TemplatePages' => array(
 					(int) 0 => array(
