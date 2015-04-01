@@ -107,7 +107,7 @@ class Cobrand extends AppModel {
 
 	public function setLogoUrl($cobrand) {
 		if (!empty($cobrand['Cobrand']['logo']['name'])) {
-			$cobrand['Cobrand']['logo_url'] = DS . 'img' . DS . $cobrand['Cobrand']['logo']['name']; 
+			$cobrand['Cobrand']['cobrand_logo_url'] = DS . 'img' . DS . $cobrand['Cobrand']['logo']['name']; 
 			return $cobrand;
 		}
 		return $cobrand;
