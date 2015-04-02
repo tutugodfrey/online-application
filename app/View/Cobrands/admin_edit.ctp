@@ -16,6 +16,8 @@
 		echo $this->Form->input('delete_cobrand_logo', array('type' => 'checkbox'));
 		echo $this->Form->input('cobrand_logo_url');
 
+		echo "<br><br>";
+
 		if (!empty($this->request->data['Cobrand']['brand_logo_url'])) {
 			$label = 'Replace Brand Logo';
 			echo '<strong>Existing Brand Logo</strong><br/>' . $this->Html->image($this->request->data['Cobrand']['brand_logo_url'], array('height' => '50px'));
