@@ -54,7 +54,8 @@ class CobrandTest extends CakeTestCase {
 		// try to create a new cobrand with out a partner_name or partner_name_short
 		$this->Cobrand->create(array(
 			'partner_name' => '', 'partner_name_short' => '', 
-			'logo_url',
+			'cobrand_logo_url',
+			'brand_logo_url',
 		));
 		$this->assertFalse($this->Cobrand->validates());
 		$this->assertEquals($expected_missing_both, $this->Cobrand->validationErrors);

@@ -65,8 +65,9 @@ class TemplatePageTest extends CakeTestCase {
 			'description' => 'Cobrand "Partner Name 1" description goes here.',
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
-			'logo_url' => 'PN1 logo_url',
-			'response_url_type' => null
+			'cobrand_logo_url' => 'PN1 logo_url',
+			'response_url_type' => null,
+			'brand_logo_url' => 'PN1 logo_url',
 		);
 		$returned_cobrand = $this->TemplatePage->getCobrand($template_id);
 		$this->assertEquals($expected_cobrand, $returned_cobrand);
@@ -79,8 +80,9 @@ class TemplatePageTest extends CakeTestCase {
 			'description' => 'Cobrand "Partner Name 2" description goes here.',
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
-			'logo_url' => 'PN2 logo_url',
-			'response_url_type' => null
+			'cobrand_logo_url' => 'PN2 logo_url',
+			'response_url_type' => null,
+			'brand_logo_url' => 'PN2 logo_url',
 		);
 		$returned_cobrand = $this->TemplatePage->getCobrand($template_id);
 		$this->assertEquals($expected_cobrand, $returned_cobrand);
@@ -92,11 +94,12 @@ class TemplatePageTest extends CakeTestCase {
 			'id' => 1,
 			'partner_name' => 'Partner Name 1',
 			'partner_name_short' => 'PN1',
-			'logo_url' => 'PN1 logo_url',
+			'cobrand_logo_url' => 'PN1 logo_url',
 			'description' => 'Cobrand "Partner Name 1" description goes here.',
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
-			'response_url_type' => null
+			'response_url_type' => null,
+			'brand_logo_url' => 'PN1 logo_url',
 		);
 
 		$this->TemplatePage->id = 2;
@@ -114,7 +117,7 @@ class TemplatePageTest extends CakeTestCase {
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
-			'include_axia_logo' => true,
+			'include_brand_logo' => true,
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
 			'owner_equity_threshold' => 50
@@ -131,7 +134,7 @@ class TemplatePageTest extends CakeTestCase {
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
-			'include_axia_logo' => true,
+			'include_brand_logo' => true,
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
 			'owner_equity_threshold' => 50
@@ -148,7 +151,7 @@ class TemplatePageTest extends CakeTestCase {
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
 			'logo_position' => 0,
-			'include_axia_logo' => true,
+			'include_brand_logo' => true,
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
 			'owner_equity_threshold' => 50
@@ -184,7 +187,7 @@ class TemplatePageTest extends CakeTestCase {
 			'Template' => array(
 				'name' => 'testSaveNew_templateName',
 				'logo_position' => 0,
-				'include_axia_logo' => false,
+				'include_brand_logo' => false,
 				'cobrand_id' => 1
 			)
 		);

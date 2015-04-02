@@ -24,6 +24,9 @@ class OnlineappBrandCobrandLogoUrlColumns extends CakeMigration {
 				'onlineapp_cobrands' => array(
 					'logo_url' => 'cobrand_logo_url',
 				),
+				'onlineapp_templates' => array(
+					'include_axia_logo' => 'include_brand_logo',
+				),
 			),
 		),
 		'down' => array(
@@ -33,6 +36,9 @@ class OnlineappBrandCobrandLogoUrlColumns extends CakeMigration {
 			'rename_field' => array(
 				'onlineapp_cobrands' => array(
 					'cobrand_logo_url' => 'logo_url',
+				),
+				'onlineapp_templates' => array(
+					'include_brand_logo' => 'include_axia_logo',
 				),
 			),
 		),

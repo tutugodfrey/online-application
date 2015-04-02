@@ -44,8 +44,8 @@ class TemplatePage
 	static $templateLogoPositionField = 'TemplateLogoPosition';
 	static $templateLogoPositionLabel = 'Logo Position';
 
-	static $templateIncludeAxiaLogoField = 'TemplateIncludeAxiaLogo';
-	static $templateIncludeAxiaLogoLabel = 'Include Axia Logo';
+	static $templateIncludeBrandLogoField = 'TemplateIncludeBrandLogo';
+	static $templateIncludeBrandLogoLabel = 'Include Brand Logo';
 
 	static $descriptionField = 'TemplateDescription';
 	static $descriptionLabel = 'Description';
@@ -100,7 +100,7 @@ class TemplatePage
 	public function checkForm() {
 		$this->webGuy->see(static::$templateNameLabel);
 		$this->webGuy->see(static::$templateLogoPositionLabel);
-		$this->webGuy->see(static::$templateIncludeAxiaLogoLabel);
+		$this->webGuy->see(static::$templateIncludeBrandLogoLabel);
 		$this->webGuy->see(static::$descriptionLabel);
 		$this->webGuy->see(static::$templateRightsignatureTemplateGuidLabel);
 		$this->webGuy->see(static::$templateRightsignatureInstallTemplateGuidLabel);
@@ -108,14 +108,14 @@ class TemplatePage
 		$this->webGuy->see(static::$submitButtonLabel);
 	}
 
-	public function fillForm($templateName, $templateLogoPosition, $templateIncludeAxiaLogo, $description,
+	public function fillForm($templateName, $templateLogoPosition, $templateIncludeBrandLogo, $description,
 		$templateRightsignatureTemplateGuid, $templateRightsignatureInstallTemplateGuid, $templateOwnerEquityThreshold) {
 		$this->webGuy->fillField(static::$templateNameField, $templateName);
 		$this->webGuy->selectOption(static::$templateLogoPositionField, $templateLogoPosition);
-		if ($templateIncludeAxiaLogo == true) {
-			$this->webGuy->checkOption(static::$templateIncludeAxiaLogoField);
+		if ($templateIncludeBrandLogo == true) {
+			$this->webGuy->checkOption(static::$templateIncludeBrandLogoField);
 		} else {
-			$this->webGuy->uncheckOption(static::$templateIncludeAxiaLogoField);
+			$this->webGuy->uncheckOption(static::$templateIncludeBrandLogoField);
 		}
 		$this->webGuy->fillField(static::$descriptionField, $description);
 
@@ -124,7 +124,7 @@ class TemplatePage
 		$this->webGuy->fillField(static::$templateOwnerEquityThresholdField, $templateOwnerEquityThreshold);
 	}
 
-	public function createIfMissing($templateName, $parentId, $logoPosition = '3', $includeAxiaLogo = true, $description = '',
+	public function createIfMissing($templateName, $parentId, $logoPosition = '3', $includeBrandLogo = true, $description = '',
 		$templateRightsignatureTemplateGuid = '', $templateRightsignatureInstallTemplateGuid = '', $templateOwnerEquityThreshold = '') {
 		$templateId = $this->getTemplateId($templateName, $parentId);
 		if (strlen($templateId) == 0) {
@@ -132,7 +132,7 @@ class TemplatePage
 			$this->webGuy->seeCurrentUrlMatches(static::likeRoute('~^', '$~', '', ''));
 			$this->webGuy->click(static::$newButtonLabel);
 			//$this->checkForm();
-			$this->fillForm($templateName, $logoPosition, $includeAxiaLogo, $description,
+			$this->fillForm($templateName, $logoPosition, $includeBrandLogo, $description,
 				$templateRightsignatureTemplateGuid, $templateRightsignatureInstallTemplateGuid, $templateOwnerEquityThreshold);
 			$this->webGuy->click(static::$submitButtonLabel);
 			$this->webGuy->seeCurrentUrlMatches(static::likeRoute('~^', '$~', '', ''));

@@ -177,7 +177,7 @@
                           'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
                         )
                       );
-                    } elseif ($include_axia_logo == true) {
+                    } elseif ($include_brand_logo == true) {
                       // only one way to display this combination
                       if ($cobrand_logo_position < 3) {
                         echo String::insert(

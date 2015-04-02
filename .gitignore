@@ -17,6 +17,7 @@
 *~
 /app/Test/Case/Codeception/_data/
 /app/Test/Case/Codeception/_log/
+/cakephp
 
 # OS generated files #
 ######################

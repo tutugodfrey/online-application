@@ -36,9 +36,10 @@ $I->see('Short partner name cannot be empty');
 // add required fields and click submit
 $partner_name = 'cobrand_1';
 $partner_name_short = 'CB1';
-$logo_url = '/img/cobrand_1.png';
+$cobrand_logo_url = '/img/cobrand_1.png';
+$brand_logo_url = '/img/cobrand_1.png';
 $partner_description = 'Cobrand_1 description goes here';
-$CC->fillCobrandForm($partner_name, $partner_name_short, $logo_url, $partner_description);
+$CC->fillCobrandForm($partner_name, $partner_name_short, $cobrand_logo_url, $brand_logo_url, $partner_description);
 $I->click(CobrandPage::$submitButtonLabel);
 
 // should be redirected and see Cobrand Saved!
@@ -46,7 +47,8 @@ $I->seeCurrentUrlEquals(CobrandPage::$url);
 $I->see(CobrandPage::$savedMsg);
 $I->see($partner_name);
 $I->see($partner_name_short);
-$I->see($logo_url);
+$I->see($cobrand_logo_url);
+$I->see($brand_logo_url);
 $I->see($partner_description);
 
 // this time click cancel on the add form
@@ -102,9 +104,9 @@ $I->see('Logo position value not selected');
 // add required fields and click submit
 $templateName = 'template_1';
 $logoPosition = 'left';
-$includeAxiaLogo = true;
+$includeBrandLogo = true;
 $description = 'Template_1 description goes here';
-$TC->fillForm($templateName, $logoPosition, $includeAxiaLogo, $description);
+$TC->fillForm($templateName, $logoPosition, $includeBrandLogo, $description);
 $I->click(TemplatePage::$submitButtonLabel);
 
 // should be redirected and see Template Saved!
@@ -112,7 +114,7 @@ $I->seeCurrentUrlMatches(TemplatePage::$url);
 $I->see(TemplatePage::$savedMsg);
 $I->see($templateName);
 $I->see($logoPosition);
-//$I->see($includeAxiaLogo);
+//$I->see($includeBrandLogo);
 $I->see($description);
 
 // this time click cancel on the add form
