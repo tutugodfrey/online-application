@@ -20,8 +20,8 @@
 	<div class="row">
 		<div class="container">
 		<?php
-		$partner_logo = $this->Html->image($template['Cobrand']['logo_url']);
-		if (strlen($template['Cobrand']['logo_url']) == 0) {
+		$partner_logo = $this->Html->image($template['Cobrand']['cobrand_logo_url']);
+		if (strlen($template['Cobrand']['cobrand_logo_url']) == 0) {
 			// no logo specified... use axia logo on the left
 			echo String::insert(
 				'<div class="row">' .
@@ -31,7 +31,7 @@
 					'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
 				)
 			);
-		} elseif ($template['Template']['include_axia_logo'] == true) {
+		} elseif ($template['Template']['include_brand_logo'] == true) {
 			// only one way to display this combination
 			echo String::insert(
 				'<div class="row">' .
