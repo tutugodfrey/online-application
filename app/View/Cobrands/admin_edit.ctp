@@ -6,6 +6,9 @@
 		echo $this->Form->input('id');
 		echo $this->Form->input('partner_name');
 		echo $this->Form->input('partner_name_short');
+
+		echo "<br>";
+
 		if (!empty($this->request->data['Cobrand']['cobrand_logo_url'])) {
 			$label = 'Replace Cobrand Logo';
 			echo '<strong>Existing Cobrand Logo</strong><br/>' . $this->Html->image($this->request->data['Cobrand']['cobrand_logo_url'], array('height' => '50px'));
@@ -27,6 +30,8 @@
 		echo $this->Form->input('brand_logo', array('type' => 'file', 'label' => $label, 'novalidate' => true, 'required' => false));
 		echo $this->Form->input('delete_brand_logo', array('type' => 'checkbox'));
 		echo $this->Form->input('brand_logo_url');
+
+		echo "<br><br>";
 
 		echo $this->Form->input('description');
 		echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));

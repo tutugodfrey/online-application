@@ -165,16 +165,19 @@
             <?php else: ?>
                 <div style="margin-top: 25px;">
                 <?php
-                  if (!empty($cobrand_logo_url)) {
-                    $partner_logo = $this->Html->image($cobrand_logo_url, array('height' => '50px'));
+                  if (!empty($brand_logo_url) && !empty($cobrand_logo_url)) {
+
+                    $brand_logo = $this->Html->image($brand_logo_url, array('class' => 'pull-right'));
+                    $cobrand_logo = $this->Html->image($cobrand_logo_url, array('height' => '50px'));
+
                     if (strlen($cobrand_logo_url) == 0) {
-                      // no logo specified... use axia logo on the left
+                      // no logo specified... use brand logo on the left
                       echo String::insert(
                         '<div class="row">' .
-                        '<div class="col-md-12">:axia_logo</div>' .
+                        '<div class="col-md-12">:brand_logo</div>' .
                         '</div>',
                         array(
-                          'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                          'brand_logo' => $brand_logo
                         )
                       );
                     } elseif ($include_brand_logo == true) {
@@ -182,22 +185,22 @@
                       if ($cobrand_logo_position < 3) {
                         echo String::insert(
                           '<div class="row">' .
-                          '<div class="col-md-6">:partner_logo</div>' .
-                          '<div class="col-md-6">:axia_logo</div>' .
+                          '<div class="col-md-6">:cobrand_logo</div>' .
+                          '<div class="col-md-6">:brand_logo</div>' .
                           '</div>',
                           array(
-                            'partner_logo' => $partner_logo,
-                            'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                            'cobrand_logo' => $cobrand_logo,
+                            'brand_logo' => $brand_logo
                           )
                         );
                       }
                       else {
                         echo String::insert(
                           '<div class="row">' .
-                          '<div class="col-md-6">:axia_logo</div>' .
+                          '<div class="col-md-6">:brand_logo</div>' .
                           '</div>',
                           array(
-                            'axia_logo' => $this->Html->image('/img/axia_logo.png', array('class' => 'pull-right'))
+                            'brand_logo' => $brand_logo
                           )
                         );
                       }
@@ -207,10 +210,10 @@
                       if ($logo_position < 3) {
                         echo String::insert(
                           '<div class="row">' .
-                          '<div class="col-md-12 text-:position">:partner_logo</div>' .
+                          '<div class="col-md-12 text-:position">:cobrand_logo</div>' .
                           '</div>',
                           array(
-                            'partner_logo' => $partner_logo,
+                            'cobrand_logo' => $cobrand_logo,
                             'position' => $logoPositionTypes[$logo_position]
                           )
                         );

@@ -108,6 +108,7 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
 		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
@@ -145,6 +146,7 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
 		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
@@ -433,6 +435,7 @@ class CobrandedApplicationsController extends AppController {
 
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 
+			$this->set('brand_logo_url', $template['Template']['Cobrand']['brand_logo_url']);
 			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['cobrand_logo_url']);
 			$this->set('include_brand_logo', $template['Template']['include_brand_logo']);
 			$this->set('cobrand_logo_position', $template['Template']['logo_position']);
@@ -995,6 +998,8 @@ class CobrandedApplicationsController extends AppController {
 				'conditions' => array('Template.id' => $appTemplateId),
 			)
 		);
+
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
 		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
