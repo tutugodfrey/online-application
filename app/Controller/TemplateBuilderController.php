@@ -127,7 +127,7 @@ class TemplateBuilderController extends AppController {
     			'cobrand_id' => $requestData['new_template_cobrand_id'],
     			'name' => $requestData['name'],
     			'logo_position' => $requestData['logo_position'],
-    			'include_axia_logo' => $requestData['include_axia_logo'],
+    			'include_brand_logo' => $requestData['include_brand_logo'],
     			'description' => $requestData['description'],
     			'rightsignature_template_guid' => $requestData['rightsignature_template_guid'],
     			'rightsignature_install_template_guid' => $requestData['rightsignature_install_template_guid'],

@@ -5,7 +5,8 @@
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('partner_name'); ?></th>
 			<th><?php echo $this->Paginator->sort('partner_name_short'); ?></th>
-			<th><?php echo $this->Paginator->sort('logo_url'); ?></th>
+			<th><?php echo $this->Paginator->sort('cobrand_logo_url'); ?></th>
+			<th><?php echo $this->Paginator->sort('brand_logo_url'); ?></th>
 			<th><?php echo $this->Paginator->sort('description'); ?></th>
 			<th><?php echo $this->Paginator->sort('response_url_type'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -16,13 +17,23 @@
 			<td><?php echo h($cobrand['Cobrand']['partner_name']); ?></td>
 			<td><?php echo h($cobrand['Cobrand']['partner_name_short']); ?></td>
 			<td><?php
-				$logo_url = $cobrand['Cobrand']['logo_url'];
-				$pos = strpos($logo_url, '/');
+				$cobrand_logo_url = $cobrand['Cobrand']['cobrand_logo_url'];
+				$pos = strpos($cobrand_logo_url, '/');
 				if ($pos === false) {
-					echo h($logo_url);
+					echo h($cobrand_logo_url);
 				} else {
 					// assume it is a url
-					echo $this->Html->link($logo_url);
+					echo $this->Html->link($cobrand_logo_url);
+				}
+			?></td>
+			<td><?php
+				$brand_logo_url = $cobrand['Cobrand']['brand_logo_url'];
+				$pos = strpos($brand_logo_url, '/');
+				if ($pos === false) {
+					echo h($brand_logo_url);
+				} else {
+					// assume it is a url
+					echo $this->Html->link($brand_logo_url);
 				}
 			?></td>
 			<td><?php echo h($cobrand['Cobrand']['description']); ?></td>

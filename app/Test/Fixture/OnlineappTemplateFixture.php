@@ -10,7 +10,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false),
 		'logo_position' => array('type' => 'integer', 'null' => false, 'default' => '3'),
-		'include_axia_logo' => array('type' => 'boolean', 'null' => false, 'default' => true),
+		'include_brand_logo' => array('type' => 'boolean', 'null' => false, 'default' => true),
 		'description' => array('type' => 'text', 'null' => true, 'length' => 1073741824),
 		'cobrand_id' => array('type' => 'integer', 'null' => true),
 		'created' => array('type' => 'datetime', 'null' => false),

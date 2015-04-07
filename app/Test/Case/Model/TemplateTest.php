@@ -118,8 +118,9 @@ class TemplateTest extends CakeTestCase {
 				'description' => 'Cobrand "Partner Name 1" description goes here.',
 				'created' => '2007-03-18 10:41:31',
 				'modified' => '2007-03-18 10:41:31',
-				'logo_url' => 'PN1 logo_url',
-				'response_url_type' => null
+				'cobrand_logo_url' => 'PN1 logo_url',
+				'response_url_type' => null,
+				'brand_logo_url' => 'PN1 logo_url',
 			),
 		);
 		$returned_cobrand = $this->Template->getCobrand(1);
@@ -133,8 +134,9 @@ class TemplateTest extends CakeTestCase {
 				'description' => 'Cobrand "Partner Name 2" description goes here.',
 				'created' => '2007-03-18 10:41:31',
 				'modified' => '2007-03-18 10:41:31',
-				'logo_url' => 'PN2 logo_url',
-				'response_url_type' => null
+				'cobrand_logo_url' => 'PN2 logo_url',
+				'response_url_type' => null,
+				'brand_logo_url' => 'PN2 logo_url',
 			),
 		);
 		$returned_cobrand = $this->Template->getCobrand(2);
@@ -148,8 +150,9 @@ class TemplateTest extends CakeTestCase {
 				'description' => 'Cobrand "Partner Name 3" description goes here.',
 				'created' => '2007-03-18 10:41:31',
 				'modified' => '2007-03-18 10:41:31',
-				'logo_url' => 'PN3 logo_url',
-				'response_url_type' => null
+				'cobrand_logo_url' => 'PN3 logo_url',
+				'response_url_type' => null,
+				'brand_logo_url' => 'PN3 logo_url',
 			),
 		);
 		$returned_cobrand = $this->Template->getCobrand(3);
@@ -844,7 +847,7 @@ class TemplateTest extends CakeTestCase {
 			'id' => (int) 5,
 			'name' => 'Template used to test getFields',
 			'logo_position' => (int) 0,
-			'include_axia_logo' => true,
+			'include_brand_logo' => true,
 			'description' => '',
 			'cobrand_id' => (int) 2,
 			'created' => '2007-03-18 10:41:31',

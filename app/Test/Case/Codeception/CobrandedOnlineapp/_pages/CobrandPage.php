@@ -19,8 +19,11 @@ class CobrandPage
 	static $partnerNameShortField = 'CobrandPartnerNameShort';
 	static $partnerNameShortLabel = 'Partner Name Short';
 
-	static $logoUrlField = 'CobrandLogoUrl';
-	static $logoUrlLabel = 'Logo Url';
+	static $cobrandLogoUrlField = 'CobrandLogoUrl';
+	static $cobrandLogoUrlLabel = 'Cobrand Logo Url';
+
+	static $brandLogoUrlField = 'BrandLogoUrl';
+	static $brandLogoUrlLabel = 'Brand Logo Url';
 
 	static $descriptionField = 'CobrandDescription';
 	static $descriptionLabel = 'Description';
@@ -91,15 +94,17 @@ class CobrandPage
 	public function checkForm() {
 		$this->webGuy->see(static::$partnerNameLabel);
 		$this->webGuy->see(static::$partnerNameShortLabel);
-		$this->webGuy->see(static::$logoUrlLabel);
+		$this->webGuy->see(static::$cobrandLogoUrlLabel);
+		$this->webGuy->see(static::$brandLogoUrlLabel);
 		$this->webGuy->see(static::$descriptionLabel);
 		$this->webGuy->see(static::$submitButtonLabel);
 	}
 
-	public function fillForm($partner_name, $partner_name_short, $logo_url, $partner_description) {
+	public function fillForm($partner_name, $partner_name_short, $cobrand_logo_url, $brand_logo_url, $partner_description) {
 		$this->webGuy->fillField(static::$partnerNameField, $partner_name);
 		$this->webGuy->fillField(static::$partnerNameShortField, $partner_name_short);
-		$this->webGuy->fillField(static::$logoUrlField, $logo_url);
+		$this->webGuy->fillField(static::$cobrandLogoUrlField, $cobrand_logo_url);
+		$this->webGuy->fillField(static::$brandLogoUrlField, $brand_logo_url);
 		$this->webGuy->fillField(static::$descriptionField, $partner_description);
 	}
 
