@@ -1215,6 +1215,18 @@ class CobrandedApplication extends AppModel {
 				$viewVars['ownerName'] = $ownerFullname;
 				$viewVars['merchant'] = $dbaBusinessName;
 
+				$this->Cobrand = ClassRegistry::init('Cobrand');
+				$cobrand = $this->Cobrand->find(
+					'first',
+					array(
+						'conditions' => array(
+							'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+						)
+					)
+				);
+
+				$viewVars['brandLogo'] = $cobrand['Cobrand']['brand_logo_url'];
+
 				$args = array(
 					'from' => $from,
 					'to' => $to,
@@ -1480,6 +1492,18 @@ class CobrandedApplication extends AppModel {
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".
 			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
+
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+		$cobrand = $this->Cobrand->find(
+			'first',
+			array(
+				'conditions' => array(
+					'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+				)
+			)
+		);
+
+		$viewVars['brandLogo'] = $cobrand['Cobrand']['brand_logo_url'];
 
 		$args = array(
 			'from' => $from,

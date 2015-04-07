@@ -15,7 +15,7 @@ Axia Merchant Services</br>
 </br>
 <?php
 	$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
-	echo $this->Html->image("https://".$hostname.'/img/axia_logo.png', array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com'));
+	echo $this->Html->image("https://".$hostname.$brandLogo, array('alt'=> __('Axia'), 'border' => '0', 'url' => 'http://www.axiapayments.com'));
 ?>
 
 
