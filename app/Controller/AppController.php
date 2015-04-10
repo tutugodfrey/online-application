@@ -31,7 +31,7 @@ class AppController extends Controller {
 
     public function beforeFilter() {
         // Force SSL
-        $excludeSSL = array("multipass_callback","document_callback");
+        $excludeSSL = array("document_callback");
         if (!$this->RequestHandler->isSSL() &&
             !in_array($this->request->action, $excludeSSL)) {
 

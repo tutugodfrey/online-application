@@ -91,19 +91,6 @@ class User extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
-		'Application' => array(
-			'className' => 'Application',
-			'foreignKey' => 'user_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		),
 		'CobrandedApplication' => array(
 			'className' => 'CobrandedApplication',
 			'foreignKey' => 'user_id',

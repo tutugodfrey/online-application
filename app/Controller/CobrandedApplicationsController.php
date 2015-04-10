@@ -108,10 +108,11 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
+		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
+		$this->set('include_brand_logo', false);
 	}
 
 /**
@@ -145,10 +146,11 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
+		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
+		$this->set('include_brand_logo', false);
 
 		if ($applications) {
 			foreach ($applications as $key => $val) {
@@ -433,8 +435,9 @@ class CobrandedApplicationsController extends AppController {
 
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 
-			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['logo_url']);
-			$this->set('include_axia_logo', $template['Template']['include_axia_logo']);
+			$this->set('brand_logo_url', $template['Template']['Cobrand']['brand_logo_url']);
+			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['cobrand_logo_url']);
+			$this->set('include_brand_logo', $template['Template']['include_brand_logo']);
 			$this->set('cobrand_logo_position', $template['Template']['logo_position']);
 			$this->set('logoPositionTypes', $this->CobrandedApplication->Template->logoPositionTypes);
 			$this->set('rightsignature_template_guid', $template['Template']['rightsignature_template_guid']);
@@ -777,6 +780,8 @@ class CobrandedApplicationsController extends AppController {
 		$recipients = array_reverse($data['document']['recipients']);
 		$state = $data['document']['state'];
 		$guid = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+		$id = $applicationId;
+
 		if ($renew != '') {
 			$renewed = $client->extendDocument($guid);
 			$extension = json_decode($renewed, true);
@@ -787,6 +792,7 @@ class CobrandedApplicationsController extends AppController {
 			}
 			$this->redirect('app_status/' . $id);
 		}
+		
 		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
 	}
 	
@@ -995,10 +1001,12 @@ class CobrandedApplicationsController extends AppController {
 				'conditions' => array('Template.id' => $appTemplateId),
 			)
 		);
-		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
+		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
+		$this->set('include_brand_logo', false);
 
 		$alreadySigned = false;
 		$this->set('alreadySigned', $alreadySigned);
