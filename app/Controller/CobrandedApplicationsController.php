@@ -780,6 +780,8 @@ class CobrandedApplicationsController extends AppController {
 		$recipients = array_reverse($data['document']['recipients']);
 		$state = $data['document']['state'];
 		$guid = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+		$id = $applicationId;
+
 		if ($renew != '') {
 			$renewed = $client->extendDocument($guid);
 			$extension = json_decode($renewed, true);
@@ -790,6 +792,7 @@ class CobrandedApplicationsController extends AppController {
 			}
 			$this->redirect('app_status/' . $id);
 		}
+		
 		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
 	}
 	
