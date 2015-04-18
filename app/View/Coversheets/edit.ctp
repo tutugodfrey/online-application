@@ -8,16 +8,9 @@
 
                 jQuery(document).ready(function () {
                     jQuery('input[type=submit]').click(function() {
-
-                        var input = jQuery("<input>")
-                           .attr("type", "hidden")
-                           .attr("name", this.name).val(this.name);
-
-                        var thisForm = jQuery(this).parents('form:first');
-                        
-                        jQuery(thisForm).append(jQuery(input));
+                        jQuery('#CoversheetEditForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
                         jQuery(this).attr('disabled', 'disabled');
-                        jQuery(thisForm).submit();
+                        jQuery('#CoversheetEditForm').submit();
                     })
                 });
             </script>
@@ -199,186 +192,171 @@
                                             echo $this->Form->radio('setup_starterkit', $options, $attributes);
                                         ?>
                                     </td>
-                               </tr>
-                            
-                                <tr>
-                                    <td>
-                                        <?php
-                                        if ($this->Form->isFieldError('setup_equipment_payment')) {
-                                            echo 'Equipment Payment: ' . $this->Form->error('setup_equipment_payment');
-                                        } else echo 'Equipment Payment:';
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php 
-                                        $options = array('ach' => 'ACH');
-                                        echo $this->Form->radio('setup_equipment_payment',$options);
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        $options = array('lease' => 'Lease - Terms: ');
-                                        $attributes = array('hiddenField' => false);
-                                        echo $this->Form->radio('setup_equipment_payment',$options,$attributes); ?>
-                                    </td>
+                                </tr>
+                            </table>
 
-                                    <td><?php echo $this->Form->input('setup_lease_price',array('label' => '$ per month','style' => 'width:40px','size' => '5')); ?></td>
-                                    <td colspan="2"><?php echo $this->Form->input('setup_lease_months',array('label' => '# of months','style' => 'width:40px','size' => '5')); ?></td>
+                            <table class="table table-condensed">
+                                <tr>
+                                    <td style="width: 50px">Partner:</td>
+                                    <td><?php echo $this->Form->input('setup_partner',array('div' => false, 'label' => false)); ?></td>
+                                    <td>Pmt Info:</td>
+                                    <td><?php echo $this->Form->input('setup_partner_type_gp',array('div' => false, 'label' => false)); ?></td>
+                                    <td>% Profit&nbsp;&nbsp;&nbsp;&nbsp;or</td>
+                                    <td><?php echo $this->Form->input('setup_partner_type_bp',array('div' => false, 'label' => false)); ?></td>
+                                    <td>% Vol. (Basis Pts).</td>
+                                    <td>% of Gross:</td>
+                                    <td><?php echo $this->Form->input('setup_partner_pct',array('div' => false, 'label' => false)); ?></td>
+                                    <td>%</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50px">Referrer:</td>
+                                    <td><?php echo $this->Form->input('setup_referrer',array('div' => false, 'label' => false)); ?></td>
+                                    <td>Pmt Info:</td>
+                                    <td><?php echo $this->Form->input('setup_referrer_type_gp',array('div' => false, 'label' => false)); ?></td>
+                                    <td>% Profit&nbsp;&nbsp;&nbsp;&nbsp;or</td>
+                                    <td><?php echo $this->Form->input('setup_referrer_type_bp',array('div' => false, 'label' => false)); ?></td>
+                                    <td>% Vol. (Basis Pts).</td>
+                                    <td>% of Gross:</td>
+                                    <td><?php echo $this->Form->input('setup_referrer_pct',array('div' => false, 'label' => false)); ?></td>
+                                    <td>%</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50px">Reseller:</td>
+                                    <td><?php echo $this->Form->input('setup_reseller',array('div' => false, 'label' => false)); ?></td>
+                                    <td>Pmt Info:</td>
+                                    <td><?php echo $this->Form->input('setup_reseller_type_gp',array('div' => false, 'label' => false)); ?></td>
+                                    <td>% Profit&nbsp;&nbsp;&nbsp;&nbsp;or</td>
+                                    <td><?php echo $this->Form->input('setup_reseller_type_bp',array('div' => false, 'label' => false)); ?></td>
+                                    <td>% Vol. (Basis Pts).</td>
+                                    <td>% of Gross:</td>
+                                    <td><?php echo $this->Form->input('setup_reseller_pct',array('div' => false, 'label' => false)); ?></td>
+                                    <td>%</td>
                                 </tr>
                             
                                 <tr>
-                                    <td colspan="3">Debit Volume: <?php echo $this->Form->input('setup_debit_volume',array('div' => false, 'label' => false,'style' => 'width:100px','size' => '20'));?></td>
-                                    <td colspan="3">Monthly Item Count: <?php echo $this->Form->input('setup_item_count',array('div' => false, 'label' => false,'style' => 'width:100px','size' => '20'));?></td>
-                                </tr>
-                            
-                                <tr class="radios">
-                                    <td>Referrer: <?php echo $this->Form->input('setup_referrer',array('div' => false, 'label' => false, 'style' => 'width:150px', 'size' => '25')); ?></td>
-                                    <td>
-                                        <?php 
-                                            $options=array('gp' => 'GP','bp' => 'BP');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('setup_referrer_type',$options,$attributes); ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                            echo $this->Form->input('setup_referrer_pct',array('div' => false, 'label' => '%','style' => 'width:50px','size' => '2'));
-                                        ?>
-                                    </td>
-                                    
-                                    <td>Reseller<?php echo $this->Form->input('setup_reseller',array('div' => false, 'label' => false,'style' => 'width:150px','size' => '25')); ?></td>
-                                    <td>
-                                        <?php 
-                                            $options=array('gp' => 'GP','bp' => 'BP');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('setup_reseller_type',$options,$attributes);
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                            echo $this->Form->input('setup_reseller_pct',array('div' => false, 'label' => '%','style' => 'width:50px', 'size' => '2'));
-                                        ?>
-                                    </td>
-                                </tr>
-                            
-                                <tr>
-                                    <td colspan="6">
+                                    <td colspan="10">
                                         Setup Notes: <?php echo $this->Form->input('setup_notes', array('rows' => '2', 'div' => false, 'label' => false,'style' => 'width:100%', 'size' => '255')); ?>
                                     </td>
                                 </tr>
                             </table>
 
-                            <table class="table">
+                            <table class="table table-condensed">
                                 <tr>
-                                <td style="text-align: center"><strong>Merchant Info Questionnaire</strong></td>
-                                
+                                    <td style="text-align: center" class="active"><strong>Merchant Info Questionnaire</strong></td>
                                 </tr>
                             </table>
-                            <?php  if ($data['Coversheet']['status'] == 'saved'){
-                            if ($cp != true): ?>
-                            <table class="table">
-                                <tr>
-                                 <td>
-                                 <?php
+
+                            <?php if ($data['Coversheet']['status'] == 'saved'){
+                                if ($cp != true): ?>
+                                    <table class="table table-condensed">
+                                        <tr>
+                                            <td>
+                                                <?php
+                                                    $div_show = 'ShowCpLink';
+                                                    $div_hide = 'HideCpLink';
+                                                    $div_string = 'Cp';
+                                                    echo '<div id="'.$div_show.'">';
+                                                    //echo $this->Js->link('Click for Card Present Merchant', '', array('update' => array($div_string,$div_hide,$div_show), 'loading' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')')); 
+                                                    echo $this->Html->link('Click for Card Present Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')'));
+                                                    echo '</div>'; 
+                                                    echo '<div id="'.$div_hide.'" style=display:none;">';
+                                                    echo $this->Html->link('Hide Card Present Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Fade(\''.$div_string.'\'),Effect.Fade(\''.$div_hide.'\'),Effect.Appear(\''.$div_show.'\')'));
+                                                    echo '</div>'; 
                                  
-                                 
-                                 $div_show = 'ShowCpLink';
-                                 $div_hide = 'HideCpLink';
-                                 $div_string = 'Cp';
-                                 echo '<div id="'.$div_show.'">';
-                                 //echo $this->Js->link('Click for Card Present Merchant', '', array('update' => array($div_string,$div_hide,$div_show), 'loading' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')')); 
-                                 echo $this->Html->link('Click for Card Present Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')'));
-                                 echo '</div>'; 
-                                 echo '<div id="'.$div_hide.'" style=display:none;">';
-                                 echo $this->Html->link('Hide Card Present Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Fade(\''.$div_string.'\'),Effect.Fade(\''.$div_hide.'\'),Effect.Appear(\''.$div_show.'\')'));
-                                 echo '</div>'; 
-                                 
-                                 ?>                         
-                                 </td>
-                                </tr>
-                            </table>
-                                 <?php 
-                                 echo '<div id="'.$div_string.'" style=display:none;">';
-                                 endif;
+                                                ?>                         
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <?php 
+                                        echo '<div id="'.$div_string.'" style=display:none;">';
+                                endif;
                             }
-                                 if(($data['Coversheet']['status'] != 'saved' && $cp != false)  || $data['Coversheet']['status'] == 'saved') {
-                                 ?>
-                              
+                            if(($data['Coversheet']['status'] != 'saved' && $cp != false)  || $data['Coversheet']['status'] == 'saved') {
+                            ?>  
 
-                             <table class="table">
+                            <table class="table table-condensed">
 
-                                 <tr>
-                                                            
-                                     <td colspan="4"><strong>Card Present Merchant:</strong></td>
-                                     
+                                <tr>                    
+                                    <td colspan="4"><strong>Card Present Merchant:</strong></td>
                                 </tr>                  
-                                 <tr >
-                                      
-                                        <td style="width: 30%;">
+                                
+                                <tr>      
+                                    <td style="width: 30%;">
                                         <?php if ($this->Form->isFieldError('cp_encrypted_sn') || $this->Form->isFieldError('cp_pinpad_ra_attached')){
-                                        echo 'Does the Merchant have Debit?' . $this->Form->error('cp_encrypted_sn');
+                                            echo 'Does the Merchant have Debit?' . $this->Form->error('cp_encrypted_sn');
                                         } else echo 'Does the Merchant have Debit?'; 
-                                            ?>                                
+                                        ?>                                
                                         
-                                        </td>
-                                        <td ><div div class="textborder">
-                                                <?php echo $data['CobrandedApplication']['TermAcceptDebit-Yes'] == 'true' ? 'Yes' : 'No'; ?>
-                                            </div>
-                                        </td>
-                                        <td style="width: 21%;">Pin Pad Type? <div class="textborder">
-                                         <?php echo $data['CobrandedApplication']['PinPad1'];?></div>
-                                 </td>
-                                 <td >
-                                     <?php echo $this->Form->input('cp_encrypted_sn', array('label' => 'JR\'s encrypted-S/N ', 'style' => 'width:100px','size' => '20', 'error' => false)); ?></td>
-                                 </tr>
-                                 <tr >
-                                     <td style="width: 30%;">
-                                         Does the Merchant do autoclose?
-                                     </td>
-                                     <td style="width: 12%;">
-                                         <div class="textborder">
+                                    </td>
+                                    <td >
+                                        <div div class="textborder">
+                                            <?php echo $data['CobrandedApplication']['TermAcceptDebit-Yes'] == 'true' ? 'Yes' : 'No'; ?>
+                                        </div>
+                                    </td>
+                                    <td style="width: 21%;">Pin Pad Type?
+                                        <div class="textborder">
+                                            <?php echo $data['CobrandedApplication']['PinPad1'];?>
+                                        </div>
+                                    </td>
+                                    <td >
+                                        <?php echo $this->Form->input('cp_encrypted_sn', array('label' => 'JR\'s encrypted-S/N ', 'style' => 'width:100px','size' => '20', 'error' => false)); ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="width: 30%;">
+                                        Does the Merchant do autoclose?
+                                    </td>
+                                    <td style="width: 12%;">
+                                        <div class="textborder">
                                             <?php echo $data['CobrandedApplication']['DoYouUseAutoclose-Autoclose'] == 'true' ? 'Yes' : 'No'; ?>
-                                         </div>
-                                     </td>
-                                     <td>
-                                         <?php echo 'Time: <div class="textborder">' . $data['CobrandedApplication']['Autoclose Time 1'] . '</div>';?>
-                                     </td>
-                                     <td >
-                                         <?php echo $this->Form->input('cp_pinpad_ra_attached', array('label' => 'Pin Pad Encryption RA Attached?', 'error' => false));?>
-                                     </td>
-                                 </tr>
-                                 <tr >
-                                     <td style="width: 32%;">
-                                         Does the merchant do gift cards?
-                                     </td>
-                                     <td >
-                                     <?php
-                                            $options=array('yes' => 'Yes','no' => 'No');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('cp_giftcards',$options,$attributes); ?>
-                                     </td>
-                                     <td>
-                                     </td>
-                                     <td>
-                                     </td>
-                                 </tr>
-                                <tr >
-                                    <td colspan="2">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php echo 'Time: <div class="textborder">' . $data['CobrandedApplication']['Autoclose Time 1'] . '</div>';?>
+                                    </td>
+                                    <td >
+                                        <?php echo $this->Form->input('cp_pinpad_ra_attached', array('label' => 'Pin Pad Encryption RA Attached?', 'error' => false));?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="width: 32%;">
+                                        Does the merchant do gift cards?
+                                    </td>
+                                    <td >
+                                    <?php
+                                        $options=array('yes' => 'Yes','no' => 'No');
+                                        $attributes=array('legend' => false);
+                                        echo $this->Form->radio('cp_giftcards',$options,$attributes); ?>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
                                         Does the merchant have check guarantee?
-                                     </td>   
-                                     <td style="width: 12%;">
-                                     <?php
-                                            $options=array('yes' => 'Yes','no' => 'No');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('cp_check_guarantee',$options,$attributes); ?>
-                                     </td>
-                                     <td>
-                                         <?php echo $this->Form->input('cp_check_guarantee_info', array('label' => 'Info: ', 'style' => 'width:80%','size' => '15')); ?>
-                                     </td>
-                                 </tr> 
+                                    </td>   
+                                    <td style="width: 12%;">
+                                    <?php
+                                        $options=array('yes' => 'Yes','no' => 'No');
+                                        $attributes=array('legend' => false);
+                                        echo $this->Form->radio('cp_check_guarantee',$options,$attributes); ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('cp_check_guarantee_info', array('label' => 'Info: ', 'style' => 'width:80%','size' => '15')); ?>
+                                    </td>
+                                    <td>
+                                    </td>
+                                 </tr>
+
                                  <tr>
-                                     <td>Does the merchant accept Amex?</td>
-                                     <td>
-                                         <div class="textborder">
+                                    <td>Does the merchant accept Amex?</td>
+                                    <td>
+                                        <div class="textborder">
                                             <?php
                                                 if ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
                                                     $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
@@ -388,44 +366,83 @@
                                                     echo 'No';
                                                 }
                                             ?>  
-                                         </div>
-                                     </td>
-                                     <td >
+                                        </div>
+                                    </td>
+                                    <td >
                                         
-                                     <?php echo ($data['CobrandedApplication']['AmexNum'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['AmexNum'] . '</div>';?>    
-                                     </td>
-                                     <td>
-                                     </td>
-                                     
-                                 </tr>
-                                 <tr>
-                                     <td>Does the merchant accept Discover?</td>
-                                     <td>
-                                         <div class="textborder">
+                                    <?php echo ($data['CobrandedApplication']['AmexNum'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') ? 'Request New Amex' : 'Amex# <div class="textborder"> ' . $data['CobrandedApplication']['AmexNum'] . '</div>';?>    
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Does the merchant accept Discover?</td>
+                                    <td>
+                                        <div class="textborder">
                                             <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Yes' : 'No'; ?> 
-                                         </div>
-                                     </td>
-                                     <td>
+                                        </div>
+                                    </td>
+                                    <td>
                                          
                                         <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : ''; ?>   
                                          
-                                     </td>
-                                     <td>
-                                     </td>
-                                 </tr>
-                                 <tr>
-                                     <td>Are they using POS?</td>
-                                     <td>
-                                     <?php
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Are they using POS?</td>
+                                    <td>
+                                    <?php
                                      
-                                            $options=array('yes' => 'Yes','no' => 'No');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('cp_pos',$options,$attributes); ?>    
-                                     </td>
-                                     <td colspan="2">
-                                     <?php echo $this->Form->input('cp_pos_contact', array('label' => 'Contact Info: ', 'style' => 'width:75%','size' => '15'));?>    
-                                     </td>
-                                 </tr>
+                                        $options=array('yes' => 'Yes','no' => 'No');
+                                        $attributes=array('legend' => false);
+                                        echo $this->Form->radio('cp_pos',$options,$attributes); ?>    
+                                    </td>
+                                    <td colspan="2">
+                                    <?php echo $this->Form->input('cp_pos_contact', array('label' => 'Contact Info: ', 'style' => 'width:75%','size' => '15'));?>    
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                <tr>                    
+                                    <td colspan="4"><strong>For Restaurant Merchant:</strong></td>
+                                </tr>
+
+                                <tr>
+                                    <td style="width: 32%;">
+                                        Does the merchant do tips?
+                                    </td>
+                                    <td >
+                                    <?php
+                                        $options=array('yes' => 'Yes','no' => 'No');
+                                        $attributes=array('legend' => false);
+                                        echo $this->Form->radio('restaurant_tips',$options,$attributes); ?>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="width: 32%;">
+                                        Does the merchant do server #s?
+                                    </td>
+                                    <td >
+                                    <?php
+                                        $options=array('yes' => 'Yes','no' => 'No');
+                                        $attributes=array('legend' => false);
+                                        echo $this->Form->radio('restaurant_server_numbers',$options,$attributes); ?>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
                                 
                              </table>
                              <?php 
@@ -436,7 +453,7 @@
                              if($data['Coversheet']['status'] == 'saved') {
                                  if ($micros != true) {
                                  ?>
-                            <table class="table">
+                            <table class="table table-condensed">
                                 <tr>
                                  <td>
                                  <?php
@@ -459,43 +476,43 @@
                              }
                              if(($data['Coversheet']['status'] != 'saved' && $data['Coversheet']['micros'] != '')  || $data['Coversheet']['status'] == 'saved') {
                                  ?>
-                             <table class="table">
+                             <table class="table table-condensed">
                                 <tr>
                                      <td colspan="2"><strong>For MICROS Merchant:</strong></td>
                                 </tr>
-                                <tr style="border: 1px solid black;">
-                                    <td >What Type of Micros system does the merchant have?</td>
+
+                                <tr>
+                                    <td>What Type of Micros system does the merchant have?</td>
                                     <td style="width: 50%;">
                                         <?php
                                      
                                             $options=array('ip' => 'IP','dial' => 'Dial-Up');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('micros',$options,$attributes); ?>
-                                        <?php //echo $this->Form->input('micros_ip', array('div'=>false, 'label' => 'IP', 'error' => false));?><?php //echo $this->Form->input('micros_dial', array('div'=>false, 'label' => 'Dial'));?></td>
-                                   
+                                        <?php //echo $this->Form->input('micros_ip', array('div'=>false, 'label' => 'IP', 'error' => false));?><?php //echo $this->Form->input('micros_dial', array('div'=>false, 'label' => 'Dial'));?>
+                                    </td>
                                 </tr>
+
                                 <tr>
-                                    <td colspan="2">
+                                    <td>
                                         <?php
                                         if ($this->Form->isFieldError('micros')) {
                                             echo $this->Form->error('micros');
                                         } else {echo 'How will the additional per item fee be handled?';}
                                         ?>
                                     </td>
-                                </tr>
-                                <tr style="border: 1px solid black;">
-                                    <td colspan="2">
-                                    <?php
-                                     
-                                            $options=array('statement' => 'Included in Pricing(BILLED ON STATEMENT)','merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)', 'rep' => 'Bill Rep');
+
+                                    <td>
+                                        <?php
+                                            $options=array('rep' => 'Included in Pricing/Billed to Rep', 'merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('micros_billing',$options,$attributes); ?>    
-                                    <?php //echo $this->Form->input('micros_bill_statement', array('div'=>false, 'label' => 'Included in Pricing(BILLED ON STATEMENT)'));?>
-                                    <?php //echo $this->Form->input('micros_bill_merchant', array('div'=>false, 'label' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)'));?>
-                                    <?php //echo $this->Form->input('micros_bill_rep', array('div'=>false, 'label' => 'Bill Rep'));?>
+                                        <?php //echo $this->Form->input('micros_bill_statement', array('div'=>false, 'label' => 'Included in Pricing(BILLED ON STATEMENT)'));?>
+                                        <?php //echo $this->Form->input('micros_bill_merchant', array('div'=>false, 'label' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)'));?>
+                                        <?php //echo $this->Form->input('micros_bill_rep', array('div'=>false, 'label' => 'Bill Rep'));?>
                                     </td>
-
                                 </tr>
+
                              </table>
                             <?php 
                             }
@@ -504,38 +521,34 @@
                             }?>
                             <?php 
                             if($data['Coversheet']['status'] == 'saved') {
-
-
-
-                                 if ($gateway != true) {
-                            echo '<table class="table">';
-                                echo '<tr>';
-                                 echo '<td>';
-                                 $div_show = 'ShowGatewayLink';
-                                 $div_hide = 'HideGatewayLink';
-                                 $div_string = 'Gateway';
-                                 echo '<div id="'.$div_show.'">';
-                                 echo $this->Html->link('Click for Gateway Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')',   )); 
-                                 echo '</div>'; 
-                                 echo '<div id="'.$div_hide.'" style=display:none;">';
-                                 echo $this->Html->link('Hide Gateway Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Fade(\''.$div_string.'\'),Effect.Fade(\''.$div_hide.'\'),Effect.Appear(\''.$div_show.'\')',));
-                                 echo '</div>';
-                                 echo '</td>';
-                                echo '</tr>';
-                            echo '</table>';
-                                 echo '<div id="'.$div_string.'" style=display:none;">';
-                                 }
+                                if ($gateway != true) {
+                                    echo '<table class="table table-condensed">';
+                                    echo '<tr>';
+                                    echo '<td>';
+                                    $div_show = 'ShowGatewayLink';
+                                    $div_hide = 'HideGatewayLink';
+                                    $div_string = 'Gateway';
+                                    echo '<div id="'.$div_show.'">';
+                                    echo $this->Html->link('Click for Gateway Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')',   )); 
+                                    echo '</div>'; 
+                                    echo '<div id="'.$div_hide.'" style=display:none;">';
+                                    echo $this->Html->link('Hide Gateway Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Fade(\''.$div_string.'\'),Effect.Fade(\''.$div_hide.'\'),Effect.Appear(\''.$div_show.'\')',));
+                                    echo '</div>';
+                                    echo '</td>';
+                                    echo '</tr>';
+                                    echo '</table>';
+                                    echo '<div id="'.$div_string.'" style=display:none;">';
+                                }
                             }
                             if(($data['Coversheet']['status'] != 'saved' && $data['Coversheet']['gateway_option'] != '') || $data['Coversheet']['status'] == 'saved') {
                                  ?>                
-                            <table class="table">
+                            <table class="table table-condensed">
                                 <tr>
-                                    <td><strong>For Axia Gateway Merchant:</strong></td>
+                                    <td colspan="2"><strong>For Axia Gateway Merchant:</strong></td>
                                 </tr>
+
                                 <tr>
                                     <td>What setup option?</td>
-                                </tr>
-                                <tr>
                                     <td>
                                        <?php
                                             $options=array('option1' => 'Option 1 ($75 setup, $10/month, $0.05 per item)','option2' => 'Option 2 ($29.95 setup, $15/month, $0.05 per item)');
@@ -546,13 +559,16 @@
                                        ?>
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <td><?php if ($this->Form->isFieldError('gateway_package')) {
                                              echo $this->Form->error('gateway_package');
                                          } else if($this->Form->isFieldError('gateway_gold_subpackage')) {
                                              echo $this->Form->error('gateway_gold_subpackage');
-                                         } else echo 'What Package';
-              
+                                         } else echo 'What Package'; ?>
+                                    </td>
+                                    <td>
+                                        <?php
                                             $options=array('silver' => 'Silver', 'gold' => 'Gold* (Please select:');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_package',$options,$attributes);
@@ -570,26 +586,41 @@
                                         ?>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td style="text-align: center;">*Additional $5 monthly fee for Gold. Additional $10 monthly fee for Platinum</td>
-                                </tr>
-                                <tr>
-                                    
 
+                                <tr>
+                                    <td colspan="2" style="text-align: center;">*Additional $5 monthly fee for Gold. Additional $10 monthly fee for Platinum</td>
+                                </tr>
+
+                                <tr>
+                                    <td style="width: 32%;">
+                                        Retail swipe enabled?
+                                    </td>
+                                    <td >
+                                    <?php
+                                        $options=array('yes' => 'Yes','no' => 'No');
+                                        $attributes=array('legend' => false);
+                                        echo $this->Form->radio('gateway_retail_swipe',$options,$attributes); ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
                                     <td>
-                                        
-                                            <?php
+                                        <?php
                                             if($this->Form->isFieldError('gateway_epay')) {
                                             echo $this->Form->error('gateway_epay');
-                                            } else echo 'ePay Charge Software';
+                                            } else echo 'ePay Charge Software'; ?>
+                                    </td>
+                                    <td>
+                                        <?php
                                             $options=array('yes' => 'Yes','no' => 'No');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_epay',$options,$attributes); 
-                                            ?>    
+                                        ?>    
 
                                         (ePay Charge Software used for swiped transactions on USAePay)
-                                    </td>         
+                                    </td>
                                 </tr>
+
                                 <tr>
                                     <td>
                                         <?php
@@ -598,17 +629,15 @@
                                             } else echo 'How will the billing of gateway fees be handled?';
                                         ?>
                                     </td>
-                                </tr>
-                                <tr>
                                     <td>
                                         <?php
-                                            
-                                            $options=array('statement' => 'Included in Pricing(BILLED ON STATEMENT)','merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)', 'rep' => 'Bill Rep');
+                                            $options=array('rep' => 'Included in Pricing/Billed to Rep','merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_billing',$options,$attributes); 
-                                            ?> 
+                                        ?> 
                                     </td>
                                 </tr>
+
                             </table>
                             <?php
                             }
@@ -618,7 +647,7 @@
                             if($data['Coversheet']['status'] == 'saved' && $data['Coversheet']['moto_online_chd'] == '') {
                               if ($moto != true) {
                                 ?>
-                            <table class="table">
+                            <table class="table table-condensed">
                                 <tr>
                                  <td>
                                  <?php
@@ -642,7 +671,7 @@
                                  }
                                  if(($data['Coversheet']['status'] != 'saved' && $data['Coversheet']['moto_online_chd'] != '') || $data['Coversheet']['status'] == 'saved') {
                                  ?>                
-                            <table class="table">
+                            <table class="table table-condensed">
                                 <tr>
                                     <td colspan="3"><strong>For MOTO/Internet Merchant:</strong></td>
                                 </tr>
