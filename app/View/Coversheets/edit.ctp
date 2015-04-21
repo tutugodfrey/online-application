@@ -3,10 +3,14 @@
         <div class='col-xs-12'>
             <?php echo $this->Html->css('coversheet', null, array('inline' => false)); ?>
 
+            <script type="text/javascript" src="/js/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
+
             <script type="text/javascript">
                 jQuery.noConflict();  
 
                 jQuery(document).ready(function () {
+                    jQuery(":input").inputmask();
+
                     jQuery('input[type=submit]').click(function() {
                         jQuery('#CoversheetEditForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
                         jQuery(this).attr('disabled', 'disabled');
@@ -198,39 +202,210 @@
                             <table class="table table-condensed">
                                 <tr>
                                     <td style="width: 50px">Partner:</td>
-                                    <td><?php echo $this->Form->input('setup_partner',array('div' => false, 'label' => false)); ?></td>
-                                    <td>Pmt Info:</td>
-                                    <td><?php echo $this->Form->input('setup_partner_type_gp',array('div' => false, 'label' => false)); ?></td>
-                                    <td>% Profit&nbsp;&nbsp;&nbsp;&nbsp;or</td>
-                                    <td><?php echo $this->Form->input('setup_partner_type_bp',array('div' => false, 'label' => false)); ?></td>
-                                    <td>% Vol. (Basis Pts).</td>
-                                    <td>% of Gross:</td>
-                                    <td><?php echo $this->Form->input('setup_partner_pct',array('div' => false, 'label' => false)); ?></td>
-                                    <td>%</td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_partner',array('div' => false, 'label' => false)); ?>
+                                    </td>
+                                    <td>
+                                        Pmt Info:
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_partner_pct_profit',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        % Profit&nbsp;&nbsp;&nbsp;&nbsp;or
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_partner_pct_volume',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        % Vol. (Basis Pts).
+                                    </td>
+                                    <td>
+                                        % of Gross:
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_partner_pct_gross',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        %
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td style="width: 50px">Referrer:</td>
-                                    <td><?php echo $this->Form->input('setup_referrer',array('div' => false, 'label' => false)); ?></td>
-                                    <td>Pmt Info:</td>
-                                    <td><?php echo $this->Form->input('setup_referrer_type_gp',array('div' => false, 'label' => false)); ?></td>
-                                    <td>% Profit&nbsp;&nbsp;&nbsp;&nbsp;or</td>
-                                    <td><?php echo $this->Form->input('setup_referrer_type_bp',array('div' => false, 'label' => false)); ?></td>
-                                    <td>% Vol. (Basis Pts).</td>
-                                    <td>% of Gross:</td>
-                                    <td><?php echo $this->Form->input('setup_referrer_pct',array('div' => false, 'label' => false)); ?></td>
-                                    <td>%</td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_referrer',array('div' => false, 'label' => false)); ?>
+                                    </td>
+                                    <td>
+                                        Pmt Info:
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_referrer_pct_profit',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        % Profit&nbsp;&nbsp;&nbsp;&nbsp;or
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_referrer_pct_volume',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        % Vol. (Basis Pts).
+                                    </td>
+                                    <td>
+                                        % of Gross:
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_referrer_pct_gross',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        %
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td style="width: 50px">Reseller:</td>
-                                    <td><?php echo $this->Form->input('setup_reseller',array('div' => false, 'label' => false)); ?></td>
-                                    <td>Pmt Info:</td>
-                                    <td><?php echo $this->Form->input('setup_reseller_type_gp',array('div' => false, 'label' => false)); ?></td>
-                                    <td>% Profit&nbsp;&nbsp;&nbsp;&nbsp;or</td>
-                                    <td><?php echo $this->Form->input('setup_reseller_type_bp',array('div' => false, 'label' => false)); ?></td>
-                                    <td>% Vol. (Basis Pts).</td>
-                                    <td>% of Gross:</td>
-                                    <td><?php echo $this->Form->input('setup_reseller_pct',array('div' => false, 'label' => false)); ?></td>
-                                    <td>%</td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_reseller',array('div' => false, 'label' => false)); ?>
+                                    </td>
+                                    <td>
+                                        Pmt Info:
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_reseller_pct_profit',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        % Profit&nbsp;&nbsp;&nbsp;&nbsp;or
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_reseller_pct_volume',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        % Vol. (Basis Pts).
+                                    </td>
+                                    <td>
+                                        % of Gross:
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('setup_reseller_pct_gross',
+                                            array(
+                                                'type' => 'text',
+                                                'div' => false,
+                                                'label' => false,
+                                                'data-inputmask' => '
+                                                    "alias": "numeric",
+                                                    "placeholder": "0",
+                                                    "autoGroup": true,
+                                                    "digits": 2,
+                                                    "digitsOptional": false,
+                                                    "clearMaskOnLostFocus": false'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        %
+                                    </td>
                                 </tr>
                             
                                 <tr>
