@@ -2056,6 +2056,10 @@ class CobrandedApplication extends AppModel {
  		$owner1Equity = 0;
  		$owner2Equity = 0;
 
+ 		$autocloseTime1Page;
+ 		$merchantDoesAutoclose = false;
+ 		$autocloseTime;
+
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
 				$isNonProfit = true;
@@ -2112,6 +2116,14 @@ class CobrandedApplication extends AppModel {
 			if ($tmpVal['name'] == 'Owner2Equity') {
 				$owner2Equity = $tmpVal['value'];
 			}
+
+			if ($tmpVal['name'] == 'DoYouUseAutoclose-Autoclose') {
+				$merchantDoesAutoclose = $tmpVal['value'];
+			}
+			
+			if ($tmpVal['name'] == 'Autoclose Time 1') {
+				$autocloseTime = $tmpVal['value'];
+			}
 		}
 
 		$methodofSalesTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed + $methodofSalesCardPresentImprint + $methodofSalesCardPresentSwiped;
@@ -2160,6 +2172,10 @@ class CobrandedApplication extends AppModel {
 
 					if ($templateField['merge_field_name'] == 'Owner1Equity') {
 						$ownerEquityPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == 'Autoclose Time 1') {
+						$autocloseTime1Page = $pageOrder;
 					}
 
 					// Owner2 information should be required if Owner1Equity < owner_equity_threshold
@@ -2395,6 +2411,19 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'Owner1Equity';
 			$errorArray['msg'] = 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%';
 			$errorArray['page'] = $ownerEquityPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($merchantDoesAutoclose == true && $autocloseTime == '') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Autoclose Time 1', 'is empty');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Autoclose Time 1';
+			$errorArray['mergeFieldName'] = 'Autoclose Time 1';
+			$errorArray['msg'] = 'Autoclose Time 1 is empty';
+			$errorArray['page'] = $autocloseTime1Page;
 							
 			$response['validationErrorsArray'][] = $errorArray;
 		}
