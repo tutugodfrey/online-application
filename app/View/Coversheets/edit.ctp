@@ -496,16 +496,22 @@
                                 </tr>
 
                                 <tr>
-                                    <td style="width: 32%;">
+                                    <td>
                                         Does the merchant do gift cards?
                                     </td>
                                     <td >
-                                    <?php
-                                        $options=array('yes' => 'Yes','no' => 'No');
-                                        $attributes=array('legend' => false);
-                                        echo $this->Form->radio('cp_giftcards',$options,$attributes); ?>
+                                        <?php
+                                            $options=array('yes' => 'Yes');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('cp_giftcards',$options,$attributes);
+                                        ?>
                                     </td>
                                     <td>
+                                        <?php
+                                            $options=array('no' => 'No');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('cp_giftcards',$options,$attributes);
+                                        ?>
                                     </td>
                                     <td>
                                     </td>
@@ -515,16 +521,22 @@
                                     <td>
                                         Does the merchant have check guarantee?
                                     </td>   
-                                    <td style="width: 12%;">
-                                    <?php
-                                        $options=array('yes' => 'Yes','no' => 'No');
-                                        $attributes=array('legend' => false);
-                                        echo $this->Form->radio('cp_check_guarantee',$options,$attributes); ?>
+                                    <td>
+                                        <?php
+                                            $options=array('yes' => 'Yes');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('cp_check_guarantee',$options,$attributes);
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $options=array('no' => 'No');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('cp_check_guarantee',$options,$attributes);
+                                        ?>
                                     </td>
                                     <td>
                                         <?php echo $this->Form->input('cp_check_guarantee_info', array('label' => 'Info: ', 'style' => 'width:80%','size' => '15')); ?>
-                                    </td>
-                                    <td>
                                     </td>
                                  </tr>
 
@@ -570,16 +582,21 @@
                                 <tr>
                                     <td>Are they using POS?</td>
                                     <td>
-                                    <?php
-                                     
-                                        $options=array('yes' => 'Yes','no' => 'No');
-                                        $attributes=array('legend' => false);
-                                        echo $this->Form->radio('cp_pos',$options,$attributes); ?>    
-                                    </td>
-                                    <td colspan="2">
-                                    <?php echo $this->Form->input('cp_pos_contact', array('label' => 'Contact Info: ', 'style' => 'width:75%','size' => '15'));?>    
+                                        <?php
+                                            $options=array('yes' => 'Yes');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('cp_pos',$options,$attributes);
+                                        ?>    
                                     </td>
                                     <td>
+                                        <?php
+                                            $options=array('no' => 'No');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('cp_pos',$options,$attributes);
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('cp_pos_contact', array('label' => 'Contact Info: ', 'style' => 'width:75%','size' => '15'));?>
                                     </td>
                                 </tr>
 
@@ -588,32 +605,44 @@
                                 </tr>
 
                                 <tr>
-                                    <td style="width: 32%;">
+                                    <td>
                                         Does the merchant do tips?
                                     </td>
                                     <td >
-                                    <?php
-                                        $options=array('yes' => 'Yes','no' => 'No');
-                                        $attributes=array('legend' => false);
-                                        echo $this->Form->radio('restaurant_tips',$options,$attributes); ?>
+                                        <?php
+                                            $options=array('yes' => 'Yes');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('restaurant_tips',$options,$attributes);
+                                        ?>
                                     </td>
                                     <td>
+                                        <?php
+                                            $options=array('no' => 'No');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('restaurant_tips',$options,$attributes);
+                                        ?>
                                     </td>
                                     <td>
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    <td style="width: 32%;">
+                                    <td>
                                         Does the merchant do server #s?
                                     </td>
                                     <td >
-                                    <?php
-                                        $options=array('yes' => 'Yes','no' => 'No');
-                                        $attributes=array('legend' => false);
-                                        echo $this->Form->radio('restaurant_server_numbers',$options,$attributes); ?>
+                                        <?php
+                                            $options=array('yes' => 'Yes');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('restaurant_server_numbers',$options,$attributes);
+                                        ?>
                                     </td>
                                     <td>
+                                        <?php
+                                            $options=array('no' => 'No');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('restaurant_server_numbers',$options,$attributes);
+                                        ?>
                                     </td>
                                     <td>
                                     </td>
@@ -653,18 +682,24 @@
                                  ?>
                              <table class="table table-condensed">
                                 <tr>
-                                     <td colspan="2"><strong>For MICROS Merchant:</strong></td>
+                                     <td colspan="3"><strong>For MICROS Merchant:</strong></td>
                                 </tr>
 
                                 <tr>
                                     <td>What Type of Micros system does the merchant have?</td>
-                                    <td style="width: 50%;">
+                                    <td>
                                         <?php
-                                     
-                                            $options=array('ip' => 'IP','dial' => 'Dial-Up');
+                                            $options=array('ip' => 'IP');
                                             $attributes=array('legend' => false);
-                                            echo $this->Form->radio('micros',$options,$attributes); ?>
-                                        <?php //echo $this->Form->input('micros_ip', array('div'=>false, 'label' => 'IP', 'error' => false));?><?php //echo $this->Form->input('micros_dial', array('div'=>false, 'label' => 'Dial'));?>
+                                            echo $this->Form->radio('micros',$options,$attributes);
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $options=array('dial' => 'Dial-Up');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('micros',$options,$attributes);
+                                        ?>
                                     </td>
                                 </tr>
 
@@ -676,15 +711,19 @@
                                         } else {echo 'How will the additional per item fee be handled?';}
                                         ?>
                                     </td>
-
                                     <td>
                                         <?php
-                                            $options=array('rep' => 'Included in Pricing/Billed to Rep', 'merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)');
+                                            $options=array('rep' => 'Included in Pricing/Billed to Rep');
                                             $attributes=array('legend' => false);
-                                            echo $this->Form->radio('micros_billing',$options,$attributes); ?>    
-                                        <?php //echo $this->Form->input('micros_bill_statement', array('div'=>false, 'label' => 'Included in Pricing(BILLED ON STATEMENT)'));?>
-                                        <?php //echo $this->Form->input('micros_bill_merchant', array('div'=>false, 'label' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)'));?>
-                                        <?php //echo $this->Form->input('micros_bill_rep', array('div'=>false, 'label' => 'Bill Rep'));?>
+                                            echo $this->Form->radio('micros_billing',$options,$attributes);
+                                        ?>    
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $options=array('merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('micros_billing',$options,$attributes);
+                                        ?>    
                                     </td>
                                 </tr>
 
@@ -719,18 +758,23 @@
                                  ?>                
                             <table class="table table-condensed">
                                 <tr>
-                                    <td colspan="2"><strong>For Axia Gateway Merchant:</strong></td>
+                                    <td colspan="3"><strong>For Axia Gateway Merchant:</strong></td>
                                 </tr>
 
                                 <tr>
                                     <td>What setup option?</td>
                                     <td>
                                        <?php
-                                            $options=array('option1' => 'Option 1 ($75 setup, $10/month, $0.05 per item)','option2' => 'Option 2 ($29.95 setup, $15/month, $0.05 per item)');
+                                            $options=array('option1' => 'Option 1 ($75 setup, $10/month, $0.05 per item)');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_option',$options,$attributes);
-                                            //echo $this->Form->input('gateway_option', array('div'=>false, 'label' => 'Option 1 ($75 setup, $10/month, $0.05 per item)'));
-                                            //echo $this->Form->input('gateway_option_2', array('div'=>false, 'label' => 'Option 2 ($29.95 setup, $15/month, $0.05 per item)'));
+                                       ?>
+                                    </td>
+                                    <td>
+                                       <?php
+                                            $options=array('option2' => 'Option 2 ($29.95 setup, $15/month, $0.05 per item)');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('gateway_option',$options,$attributes);
                                        ?>
                                     </td>
                                 </tr>
@@ -747,19 +791,15 @@
                                             $options=array('silver' => 'Silver', 'gold' => 'Gold* (Please select:');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_package',$options,$attributes);
-                                            //echo $this->Form->input('gateway_package_silver', array('div'=>false, 'label' => 'Silver'));
-                                            //echo $this->Form->input('gateway_package_gold', array('div'=>false, 'label' => 'Gold* (Please select:'));
                                             $options=array('cust_db' => 'Customer Database or', 'fraud' => 'Fraud Package)');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_gold_subpackage',$options,$attributes);
-                                            //echo $this->Form->input('gateway_package_gold_cust_db', array('div'=>false, 'label' => 'Customer Database or'));
-                                            //echo $this->Form->input('gateway_package_gold_fraud', array('div'=>false, 'label' => 'Fraud Package)'));
                                             $options=array('platinum' => 'Platinum*');
                                             $attributes=array('legend' => false, 'hiddenField' => false);
                                             echo $this->Form->radio('gateway_package',$options,$attributes);
-                                            //echo $this->Form->input('gateway_package_platinum', array('div'=>false, 'label' => 'Platinum*'));
                                         ?>
                                     </td>
+                                    <td></td>
                                 </tr>
 
                                 <tr>
@@ -767,14 +807,22 @@
                                 </tr>
 
                                 <tr>
-                                    <td style="width: 32%;">
+                                    <td>
                                         Retail swipe enabled?
                                     </td>
-                                    <td >
-                                    <?php
-                                        $options=array('yes' => 'Yes','no' => 'No');
-                                        $attributes=array('legend' => false);
-                                        echo $this->Form->radio('gateway_retail_swipe',$options,$attributes); ?>
+                                    <td>
+                                        <?php
+                                            $options=array('yes' => 'Yes');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('gateway_retail_swipe',$options,$attributes);
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $options=array('no' => 'No');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('gateway_retail_swipe',$options,$attributes);
+                                        ?>
                                     </td>
                                 </tr>
 
@@ -784,15 +832,22 @@
                                             if($this->Form->isFieldError('gateway_epay')) {
                                             echo $this->Form->error('gateway_epay');
                                             } else echo 'ePay Charge Software'; ?>
+
+                                            (ePay Charge Software used for swiped transactions on USAePay)
                                     </td>
                                     <td>
                                         <?php
-                                            $options=array('yes' => 'Yes','no' => 'No');
+                                            $options=array('yes' => 'Yes');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_epay',$options,$attributes); 
-                                        ?>    
-
-                                        (ePay Charge Software used for swiped transactions on USAePay)
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $options=array('no' => 'No');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('gateway_epay',$options,$attributes); 
+                                        ?>
                                     </td>
                                 </tr>
 
@@ -806,7 +861,14 @@
                                     </td>
                                     <td>
                                         <?php
-                                            $options=array('rep' => 'Included in Pricing/Billed to Rep','merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)');
+                                            $options=array('rep' => 'Included in Pricing/Billed to Rep');
+                                            $attributes=array('legend' => false);
+                                            echo $this->Form->radio('gateway_billing',$options,$attributes); 
+                                        ?> 
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $options=array('merchant' => 'Bill Merchant (AUTHORIZATION FORM ATTACHED)');
                                             $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_billing',$options,$attributes); 
                                         ?> 
@@ -884,25 +946,33 @@
                                      </td>
                                  </tr>
                                  <tr>
-                                     <td colspan="3">
+                                    <td>
                                          <?php if ($this->Form->isFieldError('moto_online_chd')) {
                                              echo $this->Form->error('moto_online_chd');
                                          } else 
                                          echo 'Internet Merchants: Does the merchant store credit card numbers online?';
                                          ?>
-                                     <?php 
-                                            $options=array('yes' => 'Yes', 'no' => 'No');
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            $options=array('yes' => 'Yes');
                                             $attributes = array('legend' => false);
                                             echo $this->Form->radio('moto_online_chd', $options,$attributes);
-                                     ?>   
-                                     </td>
+                                        ?>   
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            $options=array('no' => 'No');
+                                            $attributes = array('legend' => false);
+                                            echo $this->Form->radio('moto_online_chd', $options,$attributes);
+                                        ?>   
+                                    </td>
                                  </tr>
                                  <tr>
-                                    
                                     <td colspan="3">
-                                    <?php
-                            echo $this->Form->input('moto_developer', array('style' => 'width:45%', 'size' => '20', 'label' => 'If applicable, please fill in name of web developer & Gateway:'));
-                            ?>
+                                        <?php
+                                            echo $this->Form->input('moto_developer', array('style' => 'width:45%', 'size' => '20', 'label' => 'If applicable, please fill in name of web developer & Gateway:'));
+                                        ?>
                                     </td>
                                  </tr>
                                  <tr>
