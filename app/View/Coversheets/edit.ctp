@@ -619,19 +619,12 @@
                                     <td>
                                         Does the merchant do tips?
                                     </td>
-                                    <td >
-                                        <?php
-                                            $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('restaurant_tips',$options,$attributes);
-                                        ?>
+                                    <td>
+                                        <div class="label label-default">
+                                            <?php echo $data['CobrandedApplication']['Tips'] == 'true' ? 'Yes' : 'No'; ?>
+                                        </div>
                                     </td>
                                     <td>
-                                        <?php
-                                            $options=array('no' => 'No');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('restaurant_tips',$options,$attributes);
-                                        ?>
                                     </td>
                                     <td>
                                     </td>
@@ -641,19 +634,12 @@
                                     <td>
                                         Does the merchant do server #s?
                                     </td>
-                                    <td >
-                                        <?php
-                                            $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('restaurant_server_numbers',$options,$attributes);
-                                        ?>
+                                    <td>
+                                        <div class="label label-default">
+                                            <?php echo $data['CobrandedApplication']['Server'] == 'true' ? 'Yes' : 'No'; ?>
+                                        </div>
                                     </td>
                                     <td>
-                                        <?php
-                                            $options=array('no' => 'No');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('restaurant_server_numbers',$options,$attributes);
-                                        ?>
                                     </td>
                                     <td>
                                     </td>
