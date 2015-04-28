@@ -5,16 +5,9 @@
 
     jQuery(document).ready(function () {
         jQuery('input[type=submit]').click(function() {
-
-            var input = jQuery("<input>")
-               .attr("type", "hidden")
-               .attr("name", this.name).val(this.name);
-
-            var thisForm = jQuery(this).parents('form:first');
-            
-            jQuery(thisForm).append(jQuery(input));
+            jQuery('#CoversheetEditForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
             jQuery(this).attr('disabled', 'disabled');
-            jQuery(thisForm).submit();
+            jQuery('#CoversheetEditForm').submit();
         })
     });
 </script>
