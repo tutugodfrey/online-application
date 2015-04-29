@@ -755,7 +755,7 @@
                                  ?>                
                             <table class="table table-condensed">
                                 <tr>
-                                    <td colspan="4"><strong>For Axia Gateway Merchant:</strong></td>
+                                    <td colspan="5"><strong>For Axia Gateway Merchant:</strong></td>
                                 </tr>
 
                                 <tr>
@@ -774,6 +774,7 @@
                                             echo $this->Form->radio('gateway_option',$options,$attributes);
                                        ?>
                                     </td>
+                                    <td></td>
                                     <td></td>
                                 </tr>
 
@@ -797,6 +798,7 @@
                                             echo $this->Form->radio('gateway_package',$options,$attributes);
                                         ?>
                                     </td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                 </tr>
@@ -824,6 +826,7 @@
                                         ?>
                                     </td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
 
                                 <tr>
@@ -848,6 +851,9 @@
                                             $attributes=array('legend' => false, 'hiddenField' => false);
                                             echo $this->Form->radio('gateway_epay',$options,$attributes); 
                                         ?>
+                                    </td>
+                                    <td>
+                                        <?php echo "Number of ePay Charge Licenses:"; ?>
                                     </td>
                                     <td>
                                         <?php echo $this->Form->input('gateway_epay_charge_licenses',
@@ -889,6 +895,7 @@
                                             echo $this->Form->radio('gateway_billing',$options,$attributes); 
                                         ?> 
                                     </td>
+                                    <td></td>
                                     <td></td>
                                 </tr>
 

@@ -125,7 +125,7 @@
 <?php } ?>
 <field name="ePay_N"><value><?php echo ($data['Coversheet']['gateway_epay'] == 'no')? 'Yes': 'Off';?></value></field>
 <field name="ePay_Y"><value><?php echo ($data['Coversheet']['gateway_epay'] == 'yes')? 'Yes': 'Off';?></value></field>
-<field name="text6"><value><?php echo htmlspecialchars($data['Coversheet']['gateway_epay_charge_licenses']);?></value></field>
+<field name="Text6"><value><?php echo ($data['Coversheet']['gateway_epay_charge_licenses']);?></value></field>
 </fields>
 <ids original="291B2C87DCA55A4CAC8DCAFD67242545" modified="074A08C5ACD10C4182DEE27E650DAB68"/>
 </xfdf>
