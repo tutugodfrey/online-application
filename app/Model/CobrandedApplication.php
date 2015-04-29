@@ -881,10 +881,11 @@ class CobrandedApplication extends AppModel {
  * @params
  *     $appId int
  *     $userId int
+ *     $templateId int
  * @retuns
  *     true|false depending on if the application was copied or not
  */
-	public function copyApplication($appId, $userId) {
+	public function copyApplication($appId, $userId, $templateId = null) {
 		// create a new application for $userId
 		// need to look up the template_id from the appId
 		$app = $this->find(
@@ -898,11 +899,20 @@ class CobrandedApplication extends AppModel {
 			)
 		);
 
+		$lookupId = null;
+
+		if ($templateId != null) {
+			$lookupId = $templateId;
+		}
+		else {
+			$lookupId = $app['CobrandedApplication']['template_id'];
+		}
+
 		$this->create(
 			array(
 				'user_id' => $userId,
 				'uuid' => String::uuid(),
-				'template_id' => $app['CobrandedApplication']['template_id'],
+				'template_id' => $lookupId,
 				'status' => 'saved'
 			)
 		);

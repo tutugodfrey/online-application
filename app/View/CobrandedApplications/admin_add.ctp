@@ -23,6 +23,9 @@
 		echo $this->Form->input('user_id');
 		echo $this->Form->input('template_id', array('default' => $defaultTemplateId));
 		echo $this->Form->hidden('uuid');
+		if ($applicationId) {
+			echo $this->Form->hidden('applicationId');
+		}
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

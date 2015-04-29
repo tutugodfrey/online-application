@@ -530,11 +530,16 @@ class CobrandedApplicationsController extends AppController {
  *
  * @return void
  */
-	public function admin_add() {
+	public function admin_add($applicationId = null) {
 		// look up the user to make sure we don't get stale session data
 		$user = $this->User->read(null, $this->Session->read('Auth.User.id'));
 
 		if ($this->request->is('post')) {
+			// if applicationId exists, we're copying the application
+			if ($applicationId) {
+				$this->redirect(array('action' => "/copy/".$applicationId."/".$this->request->data['CobrandedApplication']['template_id']));
+			}
+
 			// now try to save with the data from the user model
 			$tmpUser = $user;
 			$tmpUser['User']['template_id'] = $this->request->data['CobrandedApplication']['template_id'];
@@ -603,6 +608,10 @@ class CobrandedApplicationsController extends AppController {
 		$defaultTemplateId = $user['User']['template_id'];
 		$templates = $this->User->getTemplates($this->User->id);
 		
+		if ($applicationId != null) {
+			$this->set('applicationId');
+		}
+
 		$this->set(compact('templates', 'users', 'defaultTemplateId'));
 	}
 
@@ -674,13 +683,13 @@ class CobrandedApplicationsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function admin_copy($id = null) {
+	public function admin_copy($id = null, $templateId = null) {
 		if (!$this->CobrandedApplication->exists($id)) {
 			throw new NotFoundException(__('Invalid application'));
 		}
 
 		$flashMsg = 'Failed to copy application';
-		if ($this->CobrandedApplication->copyApplication($id, $this->Session->read('Auth.User.id'))) {
+		if ($this->CobrandedApplication->copyApplication($id, $this->Session->read('Auth.User.id'), $templateId)) {
 			$flashMsg = 'Application copied';
 		}
 		$this->Session->setFlash(__($flashMsg));

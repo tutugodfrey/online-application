@@ -71,7 +71,7 @@
 				}
 				echo $this->Html->link(' ',
 					array(
-						'action' => 'copy',
+						'action' => 'add',
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
