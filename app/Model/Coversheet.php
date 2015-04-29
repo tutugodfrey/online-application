@@ -63,14 +63,6 @@ class Coversheet extends AppModel {
             'rule' => array('equipment_payment'),
             'message' => 'Please Enter Lease Terms'
         ),
-        'setup_referrer' => array(
-            'rule' => array('referrer'),
-            'message' => 'Type and Percentage Required'
-        ),
-        'setup_reseller' => array(
-            'rule' => array('reseller'),
-            'message' => 'Type and Percentage Required'
-        ),
         'cp_encrypted_sn' => array(
             'rule' => array('debit'),
             'message' => 'Please select Encryption Method'

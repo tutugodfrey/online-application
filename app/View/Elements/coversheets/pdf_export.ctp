@@ -66,7 +66,6 @@
 <field name="Equipment_Lease"><value><?php echo ($data['Coversheet']['setup_equipment_payment'] == 'lease')? 'Yes': 'Off';?></value></field>
 <field name="Equipment_Months"><value><?php echo htmlspecialchars($data['Coversheet']['setup_lease_months']); ?></value></field>
 <field name="Equipment_MonthlyFee"><value><?php echo htmlspecialchars($data['Coversheet']['setup_lease_price']); ?></value></field>
-<field name="ExistingAMEX"><value><?php echo htmlspecialchars($data['CobrandedApplication']['AmexNum']); ?></value></field>
 <field name="Fraud"><value><?php echo ($data['Coversheet']['gateway_gold_subpackage'] == 'fraud')? 'Yes': 'Off';?></value></field>
 <field name="Gateway"><value><?php echo htmlspecialchars($data['Coversheet']['moto_gateway']); ?></value></field>
 <field name="Gold"><value><?php echo ($data['Coversheet']['gateway_package'] == 'gold')? 'Yes': 'Off';?></value></field>
@@ -95,15 +94,21 @@
 <field name="POSContactInfo"><value><?php echo htmlspecialchars($data['Coversheet']['cp_pos_contact']);?></value></field>
 <field name="POSGateway"><value><?php echo ($data['Coversheet']['setup_equipment_gateway'] === true)? 'Yes': 'Off';?></value></field>
 <field name="Platinum"><value><?php echo ($data['Coversheet']['gateway_package'] == 'platinum')? 'Yes': 'Off';?></value></field>
-<field name="Ref_BP"><value><?php echo ($data['Coversheet']['setup_referrer_type'] == 'bp')? 'Yes': 'Off';?></value></field>
-<field name="Ref_GP"><value><?php echo ($data['Coversheet']['setup_referrer_type'] == 'gp')? 'Yes': 'Off';?></value></field>
-<field name="Ref_value"><value><?php echo htmlspecialchars($data['Coversheet']['setup_referrer_pct']); ?></value></field>
+<field name="Partner"><value><?php echo htmlspecialchars($data['Coversheet']['setup_partner']); ?></value></field>
+<field name="Text7.0.2.0.0"><value><?php echo htmlspecialchars($data['Coversheet']['setup_partner_pct_profit']); ?></value></field>
+<field name="Text7.0.2.0.1"><value><?php echo htmlspecialchars($data['Coversheet']['setup_partner_pct_volume']); ?></value></field>
+<field name="Text7.0.0"><value><?php echo htmlspecialchars($data['Coversheet']['setup_partner_pct_gross']); ?></value></field>
 <field name="Referrer"><value><?php echo htmlspecialchars($data['Coversheet']['setup_referrer']); ?></value></field>
-<field name="RepName"><value><?php echo htmlspecialchars($data['User']['fullname']); ?></value></field>
-<field name="Res_BP"><value><?php echo ($data['Coversheet']['setup_reseller_type'] == 'bp')? 'Yes': 'Off';?></value></field>
-<field name="Res_GP"><value><?php echo ($data['Coversheet']['setup_reseller_type'] == 'gp')? 'Yes': 'Off';?></value></field>
-<field name="Res_Value"><value><?php echo htmlspecialchars($data['Coversheet']['setup_reseller_pct']); ?></value></field>
+<field name="Text7.0.2.1.0"><value><?php echo htmlspecialchars($data['Coversheet']['setup_referrer_pct_profit']); ?></value></field>
+<field name="Text7.0.2.1.1"><value><?php echo htmlspecialchars($data['Coversheet']['setup_referrer_pct_volume']); ?></value></field>
+<field name="Text7.1.0"><value><?php echo htmlspecialchars($data['Coversheet']['setup_referrer_pct_gross']); ?></value></field>
 <field name="Reseller"><value><?php echo htmlspecialchars($data['Coversheet']['setup_reseller']); ?></value></field>
+<field name="Text7.0.2.2.0"><value><?php echo htmlspecialchars($data['Coversheet']['setup_reseller_pct_profit']); ?></value></field>
+<field name="Text7.0.2.2.1"><value><?php echo htmlspecialchars($data['Coversheet']['setup_reseller_pct_volume']); ?></value></field>
+<field name="Text7.2.0"><value><?php echo htmlspecialchars($data['Coversheet']['setup_reseller_pct_gross']); ?></value></field>
+<field name="RSYes"><value><?php echo ($data['Coversheet']['gateway_retail_swipe'] == 'yes')? 'Yes': 'Off';?></value></field>
+<field name="RSNo"><value><?php echo ($data['Coversheet']['gateway_retail_swipe'] == 'no')? 'Yes': 'Off';?></value></field>
+<field name="RepName"><value><?php echo htmlspecialchars($data['User']['fullname']); ?></value></field>
 <field name="Silver"><value><?php echo ($data['Coversheet']['gateway_package'] == 'silver')? 'Yes': 'Off';?></value></field>
 <field name="StarterKit_Axia"><value><?php echo ($data['Coversheet']['setup_starterkit'] == 'axia')? 'Yes': 'Off';?></value></field>
 <field name="StarterKit_Rep"><value><?php echo ($data['Coversheet']['setup_starterkit'] == 'rep')? 'Yes': 'Off';?></value></field>
@@ -120,6 +125,7 @@
 <?php } ?>
 <field name="ePay_N"><value><?php echo ($data['Coversheet']['gateway_epay'] == 'no')? 'Yes': 'Off';?></value></field>
 <field name="ePay_Y"><value><?php echo ($data['Coversheet']['gateway_epay'] == 'yes')? 'Yes': 'Off';?></value></field>
+<field name="text6"><value><?php echo htmlspecialchars($data['Coversheet']['gateway_epay_charge_licenses']);?></value></field>
 </fields>
 <ids original="291B2C87DCA55A4CAC8DCAFD67242545" modified="074A08C5ACD10C4182DEE27E650DAB68"/>
 </xfdf>
