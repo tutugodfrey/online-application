@@ -410,7 +410,16 @@
                             
                                 <tr>
                                     <td colspan="10">
-                                        Setup Notes: <?php echo $this->Form->input('setup_notes', array('rows' => '2', 'div' => false, 'label' => false,'style' => 'width:100%', 'size' => '255')); ?>
+                                        Setup Notes: <?php echo $this->Form->input('setup_notes',
+                                            array(
+                                                'rows' => '2',
+                                                'div' => false,
+                                                'label' => false,
+                                                'style' => 'width:100%',
+                                                'size' => '255',
+                                                'hiddenField' => false
+                                            )
+                                        ); ?>
                                     </td>
                                 </tr>
                             </table>

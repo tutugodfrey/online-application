@@ -3,14 +3,12 @@
 <?php echo '<f href="https://app.axiapayments.com/axia_' . $data['Coversheet']['id'] . '_coversheet.pdf"/>';?>
 <fields>
 <field name="10">
-<field name="1"><value><?php echo ($data['Coversheet']['micros_billing'] == 'statement')? 'Yes': 'Off';?></value></field>
+<field name="1"><value><?php echo ($data['Coversheet']['micros_billing'] == 'rep')? 'Yes': 'Off';?></value></field>
 <field name="2"><value><?php echo ($data['Coversheet']['micros_billing'] == 'merchant')? 'Yes': 'Off';?></value></field>
-<field name="3"><value><?php echo ($data['Coversheet']['micros_billing'] == 'rep')? 'Yes': 'Off';?></value></field>
 </field>
 <field name="11">
-<field name="1"><value><?php echo ($data['Coversheet']['gateway_billing'] == 'statement')? 'Yes': 'Off';?></value></field>
+<field name="1"><value><?php echo ($data['Coversheet']['gateway_billing'] == 'rep')? 'Yes': 'Off';?></value></field>
 <field name="2"><value><?php echo ($data['Coversheet']['gateway_billing'] == 'merchant')? 'Yes': 'Off';?></value></field>
-<field name="3"><value><?php echo ($data['Coversheet']['gateway_billing'] == 'rep')? 'Yes': 'Off';?></value></field>
 </field>
     <?php if($cp === false) { ?>
 <field name="12">
@@ -48,10 +46,10 @@
 <field name="6_Y"><value><?php echo ($data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true')? 'Yes': 'Off';?></value></field>
 <field name="7_N"><value><?php echo ($data['Coversheet']['cp_pos'] == 'no')? 'Yes': 'Off';?></value></field>
 <field name="7_Y"><value><?php echo ($data['Coversheet']['cp_pos'] == 'yes')? 'Yes': 'Off';?></value></field>
-<field name="8_N"><value><?php echo ($data['CobrandedApplication']['Server'] === false)? 'Yes': 'Off';?></value></field>
-<field name="8_Y"><value><?php echo ($data['CobrandedApplication']['Server'] === true)? 'Yes': 'Off';?></value></field>
-<field name="9_N"><value><?php echo ($data['CobrandedApplication']['Tips'] === false)? 'Yes': 'Off';?></value></field>
-<field name="9_Y"><value><?php echo ($data['CobrandedApplication']['Tips'] === true)? 'Yes': 'Off';?></value></field>
+<field name="8_N"><value><?php echo ($data['CobrandedApplication']['Server'] == false)? 'Yes': 'Off';?></value></field>
+<field name="8_Y"><value><?php echo ($data['CobrandedApplication']['Server'] == true)? 'Yes': 'Off';?></value></field>
+<field name="9_N"><value><?php echo ($data['CobrandedApplication']['Tips'] == false)? 'Yes': 'Off';?></value></field>
+<field name="9_Y"><value><?php echo ($data['CobrandedApplication']['Tips'] == true)? 'Yes': 'Off';?></value></field>
 <?php } ?>
 <field name="Banking"><value><?php echo ($data['Coversheet']['setup_banking'] === true)? 'Yes': 'Off';?></value></field>
 <field name="BusLicenseUtilityBill"><value>><?php echo ($data['Coversheet']['setup_business_license'] === true)? 'Yes': 'Off';?></value></field>
