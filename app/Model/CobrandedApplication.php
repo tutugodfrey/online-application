@@ -1772,10 +1772,11 @@ class CobrandedApplication extends AppModel {
  *     $sender string
  *     $rightSignatureTemplate array
  *     $subject string
+ *     $terminalType string
  * @returns
  *     $xml string
  */
-	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate, $subject = null) {
+	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate, $subject = null, $terminalType = null) {
 		$cobrandedApplication = $this->find(
 			'first',
 			array(
@@ -1940,9 +1941,7 @@ class CobrandedApplication extends AppModel {
 
 			if ($mergeField['name'] == "SystemType") {
 				$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-				foreach ($cobrandedApplication['Merchant']['EquipmentProgramming'] as $programming) {
-					$xml .= "				<value>".htmlspecialchars($programming['terminal_type'])."</value>\n";
-				}
+				$xml .= "				<value>".htmlspecialchars($terminalType)."</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
