@@ -58,6 +58,8 @@
     while ($templateRow = pg_fetch_assoc($templateQuery)) {
         $newTemplateId = createTemplate($cobrandId, $templateRow);
 
+	grantUsersToNewTemplate($templateRow['id'], $newTemplateId);
+
         $pageQuery = pg_query($conn, "SELECT * FROM onlineapp_template_pages WHERE template_id = ".$templateRow['id']);
 
         while ($pageRow = pg_fetch_assoc($pageQuery)) {
@@ -71,187 +73,17 @@
                 $fieldQuery = pg_query($conn, "SELECT * FROM onlineapp_template_fields WHERE section_id = ".$sectionRow['id']);
 
                 while ($fieldRow = pg_fetch_assoc($fieldQuery)) {
+			if ($sectionRow['name'] == 'General Underwriting Profile') {
+			    if ($fieldRow['merge_field_name'] == 'MonthlyVol') {
+				$fieldRow['name'] = 'Visa/MC Vol';
+			    }
+			}
 
 			if ($sectionRow['name'] == 'Bank Information') {
 			    if ($fieldRow['merge_field_name'] != 'BankName' && $fieldRow['merge_field_name'] != 'BankContact' && $fieldRow['merge_field_name'] != 'BankPhone') {
 				continue;
 			    }
 			}
-
-			if ($sectionRow['name'] == 'General Underwriting Profile') {
-			    if ($fieldRow['merge_field_name'] == 'MonthlyVol') {
-				$fieldRow['name'] = 'Visa/MC Vol';
-			    }
-
-			    if ($GUPflag == true) {
-			        $DiscVol = array(
-				    'id' => 0,
-				    'name' => 'Discover Volume',
-				    'description' => '',
-				    'rep_only' => 'f',
-				    'width' => 4,
-				    'type' => 10,
-				    'required' => 't',
-				    'source' => 2,
-				    'default_value' => '',
-				    'merge_field_name' => 'DiscVol',
-				    'order' => '5',
-				    'encrypt' => 'f'
-			        );
-
-                                $result = createTemplateField($newSectionId, $DiscVol);
-
-			        $AEMoVol = array(
-				    'id' => 0,
-				    'name' => 'American Express Volume',
-				    'description' => '',
-				    'rep_only' => 'f',
-				    'width' => 4,
-				    'type' => 10,
-				    'required' => 't',
-				    'source' => 2,
-				    'default_value' => '',
-				    'merge_field_name' => 'AEMoVol',
-				    'order' => '6',
-				    'encrypt' => 'f'
-			        );
-
-                                $result = createTemplateField($newSectionId, $AEMoVol);
-
-			        $PINMoVol = array(
-				    'id' => 0,
-				    'name' => 'Pin Debit Volume',
-				    'description' => '',
-				    'rep_only' => 'f',
-				    'width' => 4,
-				    'type' => 10,
-				    'required' => 't',
-				    'source' => 2,
-				    'default_value' => '',
-				    'merge_field_name' => 'PINMoVol',
-				    'order' => '7',
-				    'encrypt' => 'f'
-			        );
-
-                                $result = createTemplateField($newSectionId, $PINMoVol);
-
-				$GUPflag = false;
-			    }
-			}
-
-			if ($sectionRow['name'] == 'Terminal/Software Type(1)') {
-                            if ($TST1flag == true) {
-                                $Term1 = array(
-                                    'id' => 0,
-                                    'name' => 'Primary Communication',
-                                    'description' => '',
-                                    'rep_only' => 'f',
-                                    'width' => 12,
-                                    'type' => 4,
-                                    'required' => 't',
-                                    'source' => 2,
-                                    'default_value' => 'IP/SSL::IP,Dial::Dial',
-                                    'merge_field_name' => 'Term1-',
-                                    'order' => '11',
-                                    'encrypt' => 'f'
-                                );
-
-                                $result = createTemplateField($newSectionId, $Term1);
-
-                                $HR = array(
-                                    'id' => 0,
-                                    'name' => 'Horizontal Rule',
-                                    'description' => '',
-                                    'rep_only' => 'f',
-                                    'width' => 12,
-                                    'type' => 8,
-                                    'required' => 'f',
-                                    'source' => 1,
-                                    'default_value' => '',
-                                    'merge_field_name' => 'HR',
-                                    'order' => '12',
-                                    'encrypt' => 'f'
-                                );
-
-                                $result = createTemplateField($newSectionId, $HR);
-
-                                $PinPadProvider = array(
-                                    'id' => 0,
-                                    'name' => 'Pin Pad Provider',
-                                    'description' => '',
-                                    'rep_only' => 'f',
-                                    'width' => 3,
-                                    'type' => 4,
-                                    'required' => 'f',
-                                    'source' => 2,
-                                    'default_value' => 'Axia::Axia,Merchant::Merchant',
-                                    'merge_field_name' => 'PinPadProvider-',
-                                    'order' => '16',
-                                    'encrypt' => 'f'
-                                );
-
-                                $result = createTemplateField($newSectionId, $PinPadProvider);
-
-                                $TST1flag = false;
-                            }
-                        }
-
-			if ($sectionRow['name'] == 'Terminal/Software Type(2)') {
-                            if ($TST2flag == true) {
-                                $Term2 = array(
-                                    'id' => 0,
-                                    'name' => 'Primary Communication',
-                                    'description' => '',
-                                    'rep_only' => 'f',
-                                    'width' => 12,
-                                    'type' => 4,
-                                    'required' => 't',
-                                    'source' => 2,
-                                    'default_value' => 'IP/SSL::IP,Dial::Dial',
-                                    'merge_field_name' => 'Term2-',
-                                    'order' => '11',
-                                    'encrypt' => 'f'
-                                );
-
-                                $result = createTemplateField($newSectionId, $Term2);
-
-                                $HR2 = array(
-                                    'id' => 0,
-                                    'name' => 'Horizontal Rule',
-                                    'description' => '',
-                                    'rep_only' => 'f',
-                                    'width' => 12,
-                                    'type' => 8,
-                                    'required' => 'f',
-                                    'source' => 1,
-                                    'default_value' => '',
-                                    'merge_field_name' => 'HR2',
-                                    'order' => '12',
-                                    'encrypt' => 'f'
-                                );
-
-                                $result = createTemplateField($newSectionId, $HR2);
-
-                                $PinPadProvider2 = array(
-                                    'id' => 0,
-                                    'name' => 'Pin Pad Provider',
-                                    'description' => '',
-                                    'rep_only' => 'f',
-                                    'width' => 3,
-                                    'type' => 4,
-                                    'required' => 'f',
-                                    'source' => 2,
-                                    'default_value' => 'Axia::Axia,Merchant::Merchant',
-                                    'merge_field_name' => 'PinPadProvider2-',
-                                    'order' => '16',
-                                    'encrypt' => 'f'
-                                );
-
-                                $result = createTemplateField($newSectionId, $PinPadProvider2);
-
-                                $TST2flag = false;
-                            }
-                        }
 
 			if ($sectionRow['name'] == 'Schedule of Fees Part I') {
 			    if ($fieldRow['merge_field_name'] == 'Rate Structure') {
@@ -264,6 +96,186 @@
 			}
 
                         $newFieldId = createTemplateField($newSectionId, $fieldRow);
+                }
+
+		if ($sectionRow['name'] == 'General Underwriting Profile') {
+		    if ($GUPflag == true) {
+		        $DiscVol = array(
+			    'id' => 0,
+			    'name' => 'Discover Volume',
+			    'description' => '',
+			    'rep_only' => 'f',
+			    'width' => 4,
+			    'type' => 10,
+			    'required' => 't',
+			    'source' => 2,
+			    'default_value' => '',
+			    'merge_field_name' => 'DiscVol',
+			    'order' => '5',
+			    'encrypt' => 'f'
+		        );
+
+			updateOrder($newSectionId, 5);
+                        $result = createTemplateField($newSectionId, $DiscVol);
+
+		        $AEMoVol = array(
+			    'id' => 0,
+			    'name' => 'American Express Volume',
+			    'description' => '',
+			    'rep_only' => 'f',
+			    'width' => 4,
+			    'type' => 10,
+			    'required' => 't',
+			    'source' => 2,
+			    'default_value' => '',
+			    'merge_field_name' => 'AEMoVol',
+			    'order' => '6',
+			    'encrypt' => 'f'
+		        );
+
+			updateOrder($newSectionId, 6);
+                        $result = createTemplateField($newSectionId, $AEMoVol);
+
+		        $PINMoVol = array(
+			    'id' => 0,
+			    'name' => 'Pin Debit Volume',
+			    'description' => '',
+			    'rep_only' => 'f',
+			    'width' => 4,
+			    'type' => 10,
+			    'required' => 't',
+			    'source' => 2,
+			    'default_value' => '',
+			    'merge_field_name' => 'PINMoVol',
+			    'order' => '7',
+			    'encrypt' => 'f'
+		        );
+
+			updateOrder($newSectionId, 7);
+                        $result = createTemplateField($newSectionId, $PINMoVol);
+
+			$GUPflag = false;
+		    }
+		}
+
+		if ($sectionRow['name'] == 'Terminal/Software Type(1)') {
+                    if ($TST1flag == true) {
+                        $Term1 = array(
+                            'id' => 0,
+                            'name' => 'Primary Communication',
+                            'description' => '',
+                            'rep_only' => 'f',
+                            'width' => 12,
+                            'type' => 4,
+                            'required' => 't',
+                            'source' => 2,
+                            'default_value' => 'IP/SSL::IP,Dial::Dial',
+                            'merge_field_name' => 'Term1-',
+                            'order' => '11',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 11);
+                        $result = createTemplateField($newSectionId, $Term1);
+
+                        $HR = array(
+                            'id' => 0,
+                            'name' => 'Horizontal Rule',
+                            'description' => '',
+                            'rep_only' => 'f',
+                            'width' => 12,
+                            'type' => 8,
+                            'required' => 'f',
+                            'source' => 1,
+                            'default_value' => '',
+                            'merge_field_name' => 'HR',
+                            'order' => '12',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 12);
+                        $result = createTemplateField($newSectionId, $HR);
+
+                        $PinPadProvider = array(
+                            'id' => 0,
+                            'name' => 'Pin Pad Provider',
+                            'description' => '',
+                            'rep_only' => 'f',
+                            'width' => 3,
+                            'type' => 4,
+                            'required' => 'f',
+                            'source' => 2,
+                            'default_value' => 'Axia::Axia,Merchant::Merchant',
+                            'merge_field_name' => 'PinPadProvider-',
+                            'order' => '16',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 16);
+                        $result = createTemplateField($newSectionId, $PinPadProvider);
+
+                        $TST1flag = false;
+                    }
+                }
+
+		if ($sectionRow['name'] == 'Terminal/Software Type(2)') {
+                    if ($TST2flag == true) {
+                        $Term2 = array(
+                            'id' => 0,
+                            'name' => 'Primary Communication',
+                            'description' => '',
+                            'rep_only' => 'f',
+                            'width' => 12,
+                            'type' => 4,
+                            'required' => 't',
+                            'source' => 2,
+                            'default_value' => 'IP/SSL::IP,Dial::Dial',
+                            'merge_field_name' => 'Term2-',
+                            'order' => '11',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 11);
+                        $result = createTemplateField($newSectionId, $Term2);
+
+                        $HR2 = array(
+                            'id' => 0,
+                            'name' => 'Horizontal Rule',
+                            'description' => '',
+                            'rep_only' => 'f',
+                            'width' => 12,
+                            'type' => 8,
+                            'required' => 'f',
+                            'source' => 1,
+                            'default_value' => '',
+                            'merge_field_name' => 'HR2',
+                            'order' => '12',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 12);
+                        $result = createTemplateField($newSectionId, $HR2);
+
+                        $PinPadProvider2 = array(
+                            'id' => 0,
+                            'name' => 'Pin Pad Provider',
+                            'description' => '',
+                            'rep_only' => 'f',
+                            'width' => 3,
+                            'type' => 4,
+                            'required' => 'f',
+                            'source' => 2,
+                            'default_value' => 'Axia::Axia,Merchant::Merchant',
+                            'merge_field_name' => 'PinPadProvider2-',
+                            'order' => '16',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 16);
+                        $result = createTemplateField($newSectionId, $PinPadProvider2);
+
+                        $TST2flag = false;
+                    }
                 }
             }
         }
@@ -421,6 +433,46 @@
         $newTemplateFieldResult = pg_query($conn, $newTemplateFieldQuery);
         $row = pg_fetch_row($newTemplateFieldResult);
         return $row[0];
+    }
+
+    function updateOrder($sectionId, $order) {
+        global $conn;
+
+        $selectQuery = '
+	    SELECT id, "order"
+	      FROM onlineapp_template_fields
+	     WHERE section_id = '.$sectionId.'
+	       AND "order" >= '.$order;
+
+        $results = pg_query($conn, $selectQuery);
+
+	while ($row = pg_fetch_assoc($results)) {
+            $updateQuery = '
+                UPDATE onlineapp_template_fields
+                   SET "order" = '.($row["order"] + 1).'
+                 WHERE id = '.$row["id"];
+
+            pg_query($conn, $updateQuery);
+	}
+    }
+
+    function grantUsersToNewTemplate($templateId, $newTemplateId) {
+        global $conn;
+
+        $selectQuery = '
+	    SELECT user_id
+	      FROM onlineapp_users_onlineapp_templates
+	     WHERE template_id = '.$templateId;
+
+        $results = pg_query($conn, $selectQuery);
+
+	while ($row = pg_fetch_assoc($results)) {
+            $insertQuery = '
+                INSERT INTO onlineapp_users_onlineapp_templates (user_id, template_id)
+		            VALUES('.$row["user_id"].','.$newTemplateId.')';
+
+            pg_query($conn, $insertQuery);
+	}
     }
 
 ?>
