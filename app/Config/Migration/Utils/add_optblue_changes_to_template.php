@@ -42,6 +42,8 @@
     }
 
     $GUPflag = true;
+    $TST1flag = true;
+    $TST2flag = true;
 
     $cobrandId = null;
 
@@ -70,8 +72,17 @@
 
                 while ($fieldRow = pg_fetch_assoc($fieldQuery)) {
 
+			if ($sectionRow['name'] == 'Bank Information') {
+			    if ($fieldRow['merge_field_name'] != 'BankName' && $fieldRow['merge_field_name'] != 'BankContact' && $fieldRow['merge_field_name'] != 'BankPhone') {
+				continue;
+			    }
+			}
 
 			if ($sectionRow['name'] == 'General Underwriting Profile') {
+			    if ($fieldRow['merge_field_name'] == 'MonthlyVol') {
+				$fieldRow['name'] = 'Visa/MC Vol';
+			    }
+
 			    if ($GUPflag == true) {
 			        $DiscVol = array(
 				    'id' => 0,
@@ -128,7 +139,131 @@
 			    }
 			}
 
-                    $newFieldId = createTemplateField($newSectionId, $fieldRow);
+			if ($sectionRow['name'] == 'Terminal/Software Type(1)') {
+                            if ($TST1flag == true) {
+                                $Term1 = array(
+                                    'id' => 0,
+                                    'name' => 'Primary Communication',
+                                    'description' => '',
+                                    'rep_only' => 'f',
+                                    'width' => 12,
+                                    'type' => 4,
+                                    'required' => 't',
+                                    'source' => 2,
+                                    'default_value' => 'IP/SSL::IP,Dial::Dial',
+                                    'merge_field_name' => 'Term1-',
+                                    'order' => '11',
+                                    'encrypt' => 'f'
+                                );
+
+                                $result = createTemplateField($newSectionId, $Term1);
+
+                                $HR = array(
+                                    'id' => 0,
+                                    'name' => 'Horizontal Rule',
+                                    'description' => '',
+                                    'rep_only' => 'f',
+                                    'width' => 12,
+                                    'type' => 8,
+                                    'required' => 'f',
+                                    'source' => 1,
+                                    'default_value' => '',
+                                    'merge_field_name' => 'HR',
+                                    'order' => '12',
+                                    'encrypt' => 'f'
+                                );
+
+                                $result = createTemplateField($newSectionId, $HR);
+
+                                $PinPadProvider = array(
+                                    'id' => 0,
+                                    'name' => 'Pin Pad Provider',
+                                    'description' => '',
+                                    'rep_only' => 'f',
+                                    'width' => 3,
+                                    'type' => 4,
+                                    'required' => 'f',
+                                    'source' => 2,
+                                    'default_value' => 'Axia::Axia,Merchant::Merchant',
+                                    'merge_field_name' => 'PinPadProvider-',
+                                    'order' => '16',
+                                    'encrypt' => 'f'
+                                );
+
+                                $result = createTemplateField($newSectionId, $PinPadProvider);
+
+                                $TST1flag = false;
+                            }
+                        }
+
+			if ($sectionRow['name'] == 'Terminal/Software Type(2)') {
+                            if ($TST2flag == true) {
+                                $Term2 = array(
+                                    'id' => 0,
+                                    'name' => 'Primary Communication',
+                                    'description' => '',
+                                    'rep_only' => 'f',
+                                    'width' => 12,
+                                    'type' => 4,
+                                    'required' => 't',
+                                    'source' => 2,
+                                    'default_value' => 'IP/SSL::IP,Dial::Dial',
+                                    'merge_field_name' => 'Term2-',
+                                    'order' => '11',
+                                    'encrypt' => 'f'
+                                );
+
+                                $result = createTemplateField($newSectionId, $Term2);
+
+                                $HR2 = array(
+                                    'id' => 0,
+                                    'name' => 'Horizontal Rule',
+                                    'description' => '',
+                                    'rep_only' => 'f',
+                                    'width' => 12,
+                                    'type' => 8,
+                                    'required' => 'f',
+                                    'source' => 1,
+                                    'default_value' => '',
+                                    'merge_field_name' => 'HR2',
+                                    'order' => '12',
+                                    'encrypt' => 'f'
+                                );
+
+                                $result = createTemplateField($newSectionId, $HR2);
+
+                                $PinPadProvider2 = array(
+                                    'id' => 0,
+                                    'name' => 'Pin Pad Provider',
+                                    'description' => '',
+                                    'rep_only' => 'f',
+                                    'width' => 3,
+                                    'type' => 4,
+                                    'required' => 'f',
+                                    'source' => 2,
+                                    'default_value' => 'Axia::Axia,Merchant::Merchant',
+                                    'merge_field_name' => 'PinPadProvider2-',
+                                    'order' => '16',
+                                    'encrypt' => 'f'
+                                );
+
+                                $result = createTemplateField($newSectionId, $PinPadProvider2);
+
+                                $TST2flag = false;
+                            }
+                        }
+
+			if ($sectionRow['name'] == 'Schedule of Fees Part I') {
+			    if ($fieldRow['merge_field_name'] == 'Rate Structure') {
+				$fieldRow['default_value'] = 'Pass Thru::Pass Thru,Cost Plus::Cost Plus,Downgrades at Cost::Downgrades at Cost,Bucketed::Bucketed';
+			    }
+
+			    if ($fieldRow['merge_field_name'] == 'Downgrades') {
+				$fieldRow['default_value'] = 'Visa/MasterCard/Discover Interchange at Pass Thru::Visa/MasterCard/Discover Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards,Visa/MasterCard/Discover Cost Plus .05%::Visa/MasterCard/Discover Cost Plus .05%,Visa/MasterCard/Discover Cost Plus .10%::Visa/MasterCard/Discover Cost Plus .10%,Visa/MasterCard/Discover Cost Plus .15%::Visa/MasterCard/Discover Cost Plus .15%,Visa/MasterCard/Discover Cost Plus .20%::Visa/MasterCard/Discover Cost Plus .20%,Visa/MasterCard/Discover Cost Plus .25%::Visa/MasterCard/Discover Cost Plus .25%,Visa/MasterCard/Discover Cost Plus .30%::Visa/MasterCard/Discover Cost Plus .30%,Visa/MasterCard/Discover Cost Plus .35%::Visa/MasterCard/Discover Cost Plus .35%,Visa/MasterCard/Discover Cost Plus .40%::Visa/MasterCard/Discover Cost Plus .40%,Visa/MasterCard/Discover Cost Plus .45%::Visa/MasterCard/Discover Cost Plus .45%,Visa/MasterCard/Discover Cost Plus .50%::Visa/MasterCard/Discover Cost Plus .50%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,Visa/MasterCard/Discover Cost Plus .60%::Visa/MasterCard/Discover Cost Plus .60%,Visa/MasterCard/Discover Cost Plus .65%::Visa/MasterCard/Discover Cost Plus .65%,Visa/MasterCard/Discover Cost Plus .70%::Visa/MasterCard/Discover Cost Plus .70%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10::RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10';
+			    }
+			}
+
+                        $newFieldId = createTemplateField($newSectionId, $fieldRow);
                 }
             }
         }
