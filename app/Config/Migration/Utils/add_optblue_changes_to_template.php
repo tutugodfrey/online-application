@@ -44,6 +44,8 @@
     $GUPflag = true;
     $TST1flag = true;
     $TST2flag = true;
+    $SOF1flag = true;
+    $SOF2flag = true;
 
     $cobrandId = null;
 
@@ -92,6 +94,16 @@
 
 			    if ($fieldRow['merge_field_name'] == 'Downgrades') {
 				$fieldRow['default_value'] = 'Visa/MasterCard/Discover Interchange at Pass Thru::Visa/MasterCard/Discover Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards,Visa/MasterCard/Discover Cost Plus .05%::Visa/MasterCard/Discover Cost Plus .05%,Visa/MasterCard/Discover Cost Plus .10%::Visa/MasterCard/Discover Cost Plus .10%,Visa/MasterCard/Discover Cost Plus .15%::Visa/MasterCard/Discover Cost Plus .15%,Visa/MasterCard/Discover Cost Plus .20%::Visa/MasterCard/Discover Cost Plus .20%,Visa/MasterCard/Discover Cost Plus .25%::Visa/MasterCard/Discover Cost Plus .25%,Visa/MasterCard/Discover Cost Plus .30%::Visa/MasterCard/Discover Cost Plus .30%,Visa/MasterCard/Discover Cost Plus .35%::Visa/MasterCard/Discover Cost Plus .35%,Visa/MasterCard/Discover Cost Plus .40%::Visa/MasterCard/Discover Cost Plus .40%,Visa/MasterCard/Discover Cost Plus .45%::Visa/MasterCard/Discover Cost Plus .45%,Visa/MasterCard/Discover Cost Plus .50%::Visa/MasterCard/Discover Cost Plus .50%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,Visa/MasterCard/Discover Cost Plus .60%::Visa/MasterCard/Discover Cost Plus .60%,Visa/MasterCard/Discover Cost Plus .65%::Visa/MasterCard/Discover Cost Plus .65%,Visa/MasterCard/Discover Cost Plus .70%::Visa/MasterCard/Discover Cost Plus .70%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10::RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10';
+			    }
+			}
+
+			if ($sectionRow['name'] == 'Schedule of Fees Part II') {
+			    if ($fieldRow['merge_field_name'] == 'Amex Discount Rate') {
+				continue;
+			    }
+
+			    if ($fieldRow['merge_field_name'] == 'Discount Paid') {
+			        $fieldRow['width'] = 3;
 			    }
 			}
 
@@ -277,6 +289,90 @@
                         $TST2flag = false;
                     }
                 }
+
+	        if ($sectionRow['name'] == 'Schedule of Fees Part I') {
+                    if ($SOF1flag == true) {
+                        $AmexDiscountRate = array(
+                            'id' => 0,
+                            'name' => 'Amex Discount Rate',
+                            'description' => '',
+                            'rep_only' => 't',
+                            'width' => 6,
+                            'type' => 11,
+                            'required' => 't',
+                            'source' => 1,
+                            'default_value' => '',
+                            'merge_field_name' => 'Amex Discount Rate',
+                            'order' => '3',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 3);
+                        $result = createTemplateField($newSectionId, $AmexDiscountRate);
+
+                        $AmexRateStructure = array(
+                            'id' => 0,
+                            'name' => 'Amex Rate Structure',
+                            'description' => '',
+                            'rep_only' => 't',
+                            'width' => 6,
+                            'type' => 20,
+                            'required' => 't',
+                            'source' => 1,
+                            'default_value' => 'Pass Thru::Pass Thru,Cost Plus::Cost Plus',
+                            'merge_field_name' => 'Amex Rate Structure',
+                            'order' => '4',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 4);
+                        $result = createTemplateField($newSectionId, $AmexRateStructure);
+
+                        $AmexDowngrades = array(
+                            'id' => 0,
+                            'name' => 'Amex Downgrades',
+                            'description' => '',
+                            'rep_only' => 't',
+                            'width' => 12,
+                            'type' => 20,
+                            'required' => 't',
+                            'source' => 1,
+                            'default_value' => 'American Express Fees Passed Thru::American Express Fees Passed Thru,American Express Cost Plus .05%::American Express Cost Plus .05%,American Express Cost Plus .10%::American Express Cost Plus .10%,American Express Cost Plus .15%::American Express Cost Plus .15%,American Express Cost Plus .20%::American Express Cost Plus .20%,American Express Cost Plus .25%::American Express Cost Plus .25%,American Express Cost Plus .30%::American Express Cost Plus .30%,American Express Cost Plus .35%::American Express Cost Plus .35%,American Express Cost Plus .40%::American Express Cost Plus .40%,American Express Cost Plus .45%::American Express Cost Plus .45%,American Express Cost Plus .50%::American Express Cost Plus .50%,American Express Cost Plus .55%::American Express Cost Plus .55%,American Express Cost Plus .60%::American Express Cost Plus .60%,American Express Cost Plus .65%::American Express Cost Plus .65%,American Express Cost Plus .70%::American Express Cost Plus .70%,American Express Cost Plus .75%::American Express Cost Plus .75%',
+                            'merge_field_name' => 'Amex Downgrades',
+                            'order' => '5',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 5);
+                        $result = createTemplateField($newSectionId, $AmexDowngrades);
+
+		        $SOF1flag = false;
+		    }
+		}
+
+	        if ($sectionRow['name'] == 'Schedule of Fees Part II') {
+                    if ($SOF2flag == true) {
+                        $Tax = array(
+                            'id' => 0,
+                            'name' => 'Tax',
+                            'description' => '',
+                            'rep_only' => 't',
+                            'width' => 1,
+                            'type' => 0,
+                            'required' => 't',
+                            'source' => 2,
+                            'default_value' => '',
+                            'merge_field_name' => 'Tax',
+                            'order' => '11',
+                            'encrypt' => 'f'
+                        );
+
+			updateOrder($newSectionId, 11);
+                        $result = createTemplateField($newSectionId, $Tax);
+
+		        $SOF2flag = false;
+		    }
+		}
             }
         }
     }
