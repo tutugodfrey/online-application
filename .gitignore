@@ -1,11 +1,12 @@
 # User specific & automatically generated files #
 #################################################
-#/app/Config/database.php
+/app/Config/database.php
+/app/Plugin
+/app/Vendor
 /app/tmp
 /app/Plugins
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
-/vendors
 /build
 /dist
 /tags
@@ -16,6 +17,7 @@
 *~
 /app/Test/Case/Codeception/_data/
 /app/Test/Case/Codeception/_log/
+/cakephp
 
 # OS generated files #
 ######################

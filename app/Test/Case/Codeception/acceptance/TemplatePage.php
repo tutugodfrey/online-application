@@ -13,8 +13,8 @@ class TemplatePage
 	public static $templateLogoPositionField = 'TemplateLogoPosition';
 	public static $templateLogoPositionLabel = 'Logo Position';
 
-	public static $templateIncludeAxiaLogoField = 'TemplateIncludeAxiaLogo';
-	public static $templateIncludeAxiaLogoLabel = 'Include Axia Logo';
+	public static $templateIncludeBrandLogoField = 'TemplateIncludeBrandLogo';
+	public static $templateIncludeBrandLogoLabel = 'Include Brand Logo';
 
 	public static $descriptionField = 'TemplateDescription';
 	public static $descriptionLabel = 'Description';

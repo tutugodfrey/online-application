@@ -62,7 +62,7 @@ class CobrandedApplicationsController extends AppController {
 			'sign_rightsignature_document',
 			'submit_for_review');
 
-		$this->Security->unlockedActions= array('quickAdd', 'retrieve');
+		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'document_callback');
 
 		if (($this->params['ext'] == 'json' || $this->request->accepts('application/json'))) {
 			$this->Security->unlockedActions= array('api_add');
@@ -108,10 +108,11 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
+		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
+		$this->set('include_brand_logo', false);
 	}
 
 /**
@@ -145,10 +146,11 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
+		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
+		$this->set('include_brand_logo', false);
 
 		if ($applications) {
 			foreach ($applications as $key => $val) {
@@ -433,8 +435,9 @@ class CobrandedApplicationsController extends AppController {
 
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 
-			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['logo_url']);
-			$this->set('include_axia_logo', $template['Template']['include_axia_logo']);
+			$this->set('brand_logo_url', $template['Template']['Cobrand']['brand_logo_url']);
+			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['cobrand_logo_url']);
+			$this->set('include_brand_logo', $template['Template']['include_brand_logo']);
 			$this->set('cobrand_logo_position', $template['Template']['logo_position']);
 			$this->set('logoPositionTypes', $this->CobrandedApplication->Template->logoPositionTypes);
 			$this->set('rightsignature_template_guid', $template['Template']['rightsignature_template_guid']);
@@ -527,11 +530,16 @@ class CobrandedApplicationsController extends AppController {
  *
  * @return void
  */
-	public function admin_add() {
+	public function admin_add($applicationId = null) {
 		// look up the user to make sure we don't get stale session data
 		$user = $this->User->read(null, $this->Session->read('Auth.User.id'));
 
 		if ($this->request->is('post')) {
+			// if applicationId exists, we're copying the application
+			if ($applicationId) {
+				$this->redirect(array('action' => "/copy/".$applicationId."/".$this->request->data['CobrandedApplication']['template_id']));
+			}
+
 			// now try to save with the data from the user model
 			$tmpUser = $user;
 			$tmpUser['User']['template_id'] = $this->request->data['CobrandedApplication']['template_id'];
@@ -600,6 +608,10 @@ class CobrandedApplicationsController extends AppController {
 		$defaultTemplateId = $user['User']['template_id'];
 		$templates = $this->User->getTemplates($this->User->id);
 		
+		if ($applicationId != null) {
+			$this->set('applicationId');
+		}
+
 		$this->set(compact('templates', 'users', 'defaultTemplateId'));
 	}
 
@@ -671,13 +683,13 @@ class CobrandedApplicationsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function admin_copy($id = null) {
+	public function admin_copy($id = null, $templateId = null) {
 		if (!$this->CobrandedApplication->exists($id)) {
 			throw new NotFoundException(__('Invalid application'));
 		}
 
 		$flashMsg = 'Failed to copy application';
-		if ($this->CobrandedApplication->copyApplication($id, $this->Session->read('Auth.User.id'))) {
+		if ($this->CobrandedApplication->copyApplication($id, $this->Session->read('Auth.User.id'), $templateId)) {
 			$flashMsg = 'Application copied';
 		}
 		$this->Session->setFlash(__($flashMsg));
@@ -777,6 +789,8 @@ class CobrandedApplicationsController extends AppController {
 		$recipients = array_reverse($data['document']['recipients']);
 		$state = $data['document']['state'];
 		$guid = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+		$id = $applicationId;
+
 		if ($renew != '') {
 			$renewed = $client->extendDocument($guid);
 			$extension = json_decode($renewed, true);
@@ -787,6 +801,7 @@ class CobrandedApplicationsController extends AppController {
 			}
 			$this->redirect('app_status/' . $id);
 		}
+		
 		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
 	}
 	
@@ -995,10 +1010,12 @@ class CobrandedApplicationsController extends AppController {
 				'conditions' => array('Template.id' => $appTemplateId),
 			)
 		);
-		$this->set('cobrand_logo_url', $template['Cobrand']['logo_url']);
+
+		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
+		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_axia_logo', false);
+		$this->set('include_brand_logo', false);
 
 		$alreadySigned = false;
 		$this->set('alreadySigned', $alreadySigned);
@@ -1125,7 +1142,8 @@ class CobrandedApplicationsController extends AppController {
 		if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
 			$subject = "Axia Install Sheet - VAR";
 			$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
-				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject);
+				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject,
+				$this->request->data['CobrandedApplication']['select_terminal_type']);
 
 			$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
 			$response = json_decode($response, true);

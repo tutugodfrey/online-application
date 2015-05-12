@@ -12,7 +12,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'key' => 'primary'),
-		'onlineapp_application_id' => array('type' => 'integer', 'null' => false),
+//		'onlineapp_application_id' => array('type' => 'integer', 'null' => false),
 		'user_id' => array('type' => 'integer', 'null' => false),
 		'status' => array('type' => 'string', 'null' => false, 'length' => 10),
 		'setup_existing_merchant' => array('type' => 'boolean', 'null' => true),
@@ -71,7 +71,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 		'cobranded_application_id' => array('type' => 'integer', 'null' => true),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
-			'onlineapp_application_id_key' => array('unique' => true, 'column' => 'onlineapp_application_id')
+			'cobranded_application_id_key' => array('unique' => true, 'column' => 'cobranded_application_id')
 		),
 		'tableParameters' => array()
 	);
@@ -84,7 +84,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'onlineapp_application_id' => 1,
+//			'onlineapp_application_id' => 1,
 			'user_id' => 1,
 			'status' => 'Lorem ip',
 			'setup_existing_merchant' => 1,

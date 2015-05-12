@@ -3,7 +3,7 @@
 		array(
 			'url' => array_merge(
 				array(
-					'action' => 'index'),
+					'action' => 'admin_index'),
 					$this->params['pass']
 				),
 			'inputDefaults' => array(
@@ -57,7 +57,7 @@
 		array(
 			'div' => 'form-group', 
 			'class' => 'btn btn-success', 
-			'name' => 'search', 
+			'name' => 'Search', 
 			'type' => 'submit'
 		)
 	);

@@ -1,3 +1,25 @@
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		var cobrandPattern = /CobrandCobrandLogoSelect/;
+		var brandPattern = /CobrandBrandLogoSelect/;
+
+		$('select').on('change', function() {
+			var id = $(this).attr('id');
+			var selected = $(this).find("option:selected").text();
+
+			if (cobrandPattern.test(id)) {
+				$('#CobrandCobrandLogoUrl').val('/img/'+selected);
+			}
+			else if (brandPattern.test(id)) {
+				$('#CobrandBrandLogoUrl').val('/img/'+selected);
+			}
+		});
+	});
+
+</script>
+
 <div class="cobrands form">
 <?php echo $this->Form->create('Cobrand', array('enctype' => 'multipart/form-data')); ?>
 	<fieldset>
@@ -6,15 +28,53 @@
 		echo $this->Form->input('id');
 		echo $this->Form->input('partner_name');
 		echo $this->Form->input('partner_name_short');
-		if (!empty($this->request->data['Cobrand']['logo_url'])) {
-			$label = 'Replace Logo';
-			echo '<strong>Existing Logo</strong><br/>' . $this->Html->image($this->request->data['Cobrand']['logo_url'], array('height' => '50px'));
+
+		echo "<br>";
+
+		if (!empty($this->request->data['Cobrand']['cobrand_logo_url'])) {
+			$label = 'Replace Cobrand Logo';
+			echo '<strong>Existing Cobrand Logo</strong><br/>' . $this->Html->image($this->request->data['Cobrand']['cobrand_logo_url'], array('height' => '50px'));
 		} else {
-			$label = 'Upload Logo';
+			$label = 'Upload Cobrand Logo';
 		}
-		echo $this->Form->input('logo', array('type' => 'file', 'label' => $label, 'novalidate' => true, 'required' => false));
-		echo $this->Form->input('delete_logo', array('type' => 'checkbox'));
-		echo $this->Form->input('logo_url');
+
+		echo $this->Form->input(
+			'cobrand_logo_select',
+			array(
+				'options' => $existingLogos,
+				'label' => 'Select Existing Logo',
+				'type' => 'select'
+			)
+		);
+
+		echo $this->Form->input('cobrand_logo', array('type' => 'file', 'label' => $label, 'novalidate' => true, 'required' => false));
+		echo $this->Form->input('delete_cobrand_logo', array('type' => 'checkbox'));
+		echo $this->Form->input('cobrand_logo_url');
+
+		echo "<br><br>";
+
+		if (!empty($this->request->data['Cobrand']['brand_logo_url'])) {
+			$label = 'Replace Brand Logo';
+			echo '<strong>Existing Brand Logo</strong><br/>' . $this->Html->image($this->request->data['Cobrand']['brand_logo_url'], array('height' => '50px'));
+		} else {
+			$label = 'Upload Brand Logo';
+		}
+
+		echo $this->Form->input(
+			'brand_logo_select',
+			array(
+				'options' => $existingLogos,
+				'label' => 'Select Existing Logo',
+				'type' => 'select'
+			)
+		);
+
+		echo $this->Form->input('brand_logo', array('type' => 'file', 'label' => $label, 'novalidate' => true, 'required' => false));
+		echo $this->Form->input('delete_brand_logo', array('type' => 'checkbox'));
+		echo $this->Form->input('brand_logo_url');
+
+		echo "<br><br>";
+
 		echo $this->Form->input('description');
 		echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));
 	?>

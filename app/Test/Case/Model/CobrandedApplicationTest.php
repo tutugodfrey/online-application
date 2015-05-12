@@ -20,7 +20,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.group',
 //		'app.onlineappUser',
 		'app.onlineappCobrand',
-		'app.onlineappApplication',
+//		'app.onlineappApplication',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
@@ -51,7 +51,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
-		$this->Application = ClassRegistry::init('Application');
+//		$this->Application = ClassRegistry::init('Application');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
@@ -108,7 +108,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['OnlineappUser']['id']);
 		//$this->__cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
 
-		$this->loadFixtures('OnlineappApplication');
+//		$this->loadFixtures('OnlineappApplication');
 		$this->loadFixtures('OnlineappCoversheet');
 	}
 
@@ -123,7 +123,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
-		$this->Application->deleteAll(true, false);
+//		$this->Application->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
@@ -134,7 +134,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
-		unset($this->Application);
+//		unset($this->Application);
 		unset($this->TemplateField);
 		unset($this->TemplateSection);
 		unset($this->TemplatePage);
@@ -201,7 +201,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'id' => (int) 1,
 				'name' => 'Template 1 for PN1',
 				'logo_position' => (int) 0,
-				'include_axia_logo' => true,
+				'include_brand_logo' => true,
 				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 				'cobrand_id' => (int) 1,
 				'created' => '2007-03-18 10:41:31',
@@ -213,11 +213,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'id' => (int) 1,
 					'partner_name' => 'Partner Name 1',
 					'partner_name_short' => 'PN1',
-					'logo_url' => 'PN1 logo_url',
+					'cobrand_logo_url' => 'PN1 logo_url',
 					'description' => 'Cobrand "Partner Name 1" description goes here.',
 					'created' => '2007-03-18 10:41:31',
 					'modified' => '2007-03-18 10:41:31',
-					'response_url_type' => null
+					'response_url_type' => null,
+					'brand_logo_url' => 'PN1 logo_url',
 				),
 				'TemplatePages' => array(
 					(int) 0 => array(
@@ -1371,19 +1372,20 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse = array(
 			'success' => false,
 			'validationErrors' => array(
-				'required_text_from_user_without_default' => 'required',
+				'Field 1' => 'required',
+				'Encrypt1' => 'required'
      		),
      		'validationErrorsArray' => array(
 				0 => array(
             		'fieldName' => 'field 1',
-            		'mergeFieldName' => 'required_text_from_user_without_default',
+            		'mergeFieldName' => 'Field 1',
             		'msg' => 'Required field is empty: field 1',
             		'page' => 1,
             		'rep_only' => false
          		),
          		1 => array(
             		'fieldName' => 'field 2',
-            		'mergeFieldName' => 'required_text_from_user_without_default',
+            		'mergeFieldName' => 'Encrypt1',
             		'msg' => 'Required field is empty: field 2',
             		'page' => 1,
             		'rep_only' => false

@@ -881,10 +881,11 @@ class CobrandedApplication extends AppModel {
  * @params
  *     $appId int
  *     $userId int
+ *     $templateId int
  * @retuns
  *     true|false depending on if the application was copied or not
  */
-	public function copyApplication($appId, $userId) {
+	public function copyApplication($appId, $userId, $templateId = null) {
 		// create a new application for $userId
 		// need to look up the template_id from the appId
 		$app = $this->find(
@@ -898,11 +899,20 @@ class CobrandedApplication extends AppModel {
 			)
 		);
 
+		$lookupId = null;
+
+		if ($templateId != null) {
+			$lookupId = $templateId;
+		}
+		else {
+			$lookupId = $app['CobrandedApplication']['template_id'];
+		}
+
 		$this->create(
 			array(
 				'user_id' => $userId,
 				'uuid' => String::uuid(),
-				'template_id' => $app['CobrandedApplication']['template_id'],
+				'template_id' => $lookupId,
 				'status' => 'saved'
 			)
 		);
@@ -1215,6 +1225,18 @@ class CobrandedApplication extends AppModel {
 				$viewVars['ownerName'] = $ownerFullname;
 				$viewVars['merchant'] = $dbaBusinessName;
 
+				$this->Cobrand = ClassRegistry::init('Cobrand');
+				$cobrand = $this->Cobrand->find(
+					'first',
+					array(
+						'conditions' => array(
+							'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+						)
+					)
+				);
+
+				$viewVars['brandLogo'] = $cobrand['Cobrand']['brand_logo_url'];
+
 				$args = array(
 					'from' => $from,
 					'to' => $to,
@@ -1481,6 +1503,18 @@ class CobrandedApplication extends AppModel {
 		$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".
 			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
 
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+		$cobrand = $this->Cobrand->find(
+			'first',
+			array(
+				'conditions' => array(
+					'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+				)
+			)
+		);
+
+		$viewVars['brandLogo'] = $cobrand['Cobrand']['brand_logo_url'];
+
 		$args = array(
 			'from' => $from,
 			'to' => $to,
@@ -1738,10 +1772,11 @@ class CobrandedApplication extends AppModel {
  *     $sender string
  *     $rightSignatureTemplate array
  *     $subject string
+ *     $terminalType string
  * @returns
  *     $xml string
  */
-	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate, $subject = null) {
+	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate, $subject = null, $terminalType = null) {
 		$cobrandedApplication = $this->find(
 			'first',
 			array(
@@ -1757,6 +1792,19 @@ class CobrandedApplication extends AppModel {
 				'recursive' => 2
 			)
 		);
+
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
+		$cobrand = $this->Cobrand->find(
+			'first',
+			array(
+				'conditions' => array(
+					'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+				)
+			)
+		);
+
+		$partnerName = $cobrand['Cobrand']['partner_name'];
 
 		$owner1Fullname = '';
 		$owner2Fullname = '';
@@ -1838,15 +1886,37 @@ class CobrandedApplication extends AppModel {
 		$xml .= "		<merge_fields>\n";
 
 		foreach ($rightSignatureTemplate['merge_fields'] as $mergeField) {
-			$appValue = $this->CobrandedApplicationValues->find(
-				'first',
-				array(
-					'conditions' => array(
-						'cobranded_application_id' => $applicationId,
-						'CobrandedApplicationValues.name' => $mergeField['name']
-					),
-				)
-			);
+			$appValue = null;
+
+			if ($partnerName == 'Corral' && $mergeField['name'] == 'Terminal2-') {
+				$appValue = $this->CobrandedApplicationValues->find(
+					'first',
+					array(
+						'conditions' => array(
+							'cobranded_application_id' => $applicationId,
+							'CobrandedApplicationValues.name LIKE' => 'Terminal2-%',
+							'CobrandedApplicationValues.value' => 'true'
+						),
+					)
+				);
+
+				if (!empty($appValue)) {
+					$name = $appValue['CobrandedApplicationValues']['name'];
+					$name = preg_replace('/^Terminal2-/', '', $name);
+					$appValue['CobrandedApplicationValues']['value'] = $name;
+					$appValue['TemplateField']['type'] = 0;
+				}
+			} else {
+				$appValue = $this->CobrandedApplicationValues->find(
+					'first',
+					array(
+						'conditions' => array(
+							'cobranded_application_id' => $applicationId,
+							'CobrandedApplicationValues.name' => $mergeField['name']
+						),
+					)
+				);
+			}
 
 			// we don't want to send null or empty values
 			if (isset($appValue['CobrandedApplicationValues']['value'])) {
@@ -1871,9 +1941,7 @@ class CobrandedApplication extends AppModel {
 
 			if ($mergeField['name'] == "SystemType") {
 				$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-				foreach ($cobrandedApplication['Merchant']['EquipmentProgramming'] as $programming) {
-					$xml .= "				<value>".htmlspecialchars($programming['terminal_type'])."</value>\n";
-				}
+				$xml .= "				<value>".htmlspecialchars($terminalType)."</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
@@ -1997,6 +2065,10 @@ class CobrandedApplication extends AppModel {
  		$owner1Equity = 0;
  		$owner2Equity = 0;
 
+ 		$autocloseTime1Page;
+ 		$merchantDoesAutoclose = false;
+ 		$autocloseTime;
+
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
 				$isNonProfit = true;
@@ -2053,6 +2125,14 @@ class CobrandedApplication extends AppModel {
 			if ($tmpVal['name'] == 'Owner2Equity') {
 				$owner2Equity = $tmpVal['value'];
 			}
+
+			if ($tmpVal['name'] == 'DoYouUseAutoclose-Autoclose') {
+				$merchantDoesAutoclose = $tmpVal['value'];
+			}
+			
+			if ($tmpVal['name'] == 'Autoclose Time 1') {
+				$autocloseTime = $tmpVal['value'];
+			}
 		}
 
 		$methodofSalesTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed + $methodofSalesCardPresentImprint + $methodofSalesCardPresentSwiped;
@@ -2101,6 +2181,10 @@ class CobrandedApplication extends AppModel {
 
 					if ($templateField['merge_field_name'] == 'Owner1Equity') {
 						$ownerEquityPage = $pageOrder;
+					}
+
+					if ($templateField['merge_field_name'] == 'Autoclose Time 1') {
+						$autocloseTime1Page = $pageOrder;
 					}
 
 					// Owner2 information should be required if Owner1Equity < owner_equity_threshold
@@ -2196,9 +2280,10 @@ class CobrandedApplication extends AppModel {
 									$mergeFieldName = $templateField['merge_field_name'];
 
 									if (empty($mergeFieldName)) {
-										$mergeFieldName = $tmpVal['name'];
 										$fieldName = $tmpVal['name'];
 									}
+
+									$mergeFieldName = $tmpVal['name'];
 
 									// update our validationErrors array
 									$response['validationErrors'] = Hash::insert($response['validationErrors'], $mergeFieldName, 'required');
@@ -2335,6 +2420,19 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'Owner1Equity';
 			$errorArray['msg'] = 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%';
 			$errorArray['page'] = $ownerEquityPage;
+							
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($merchantDoesAutoclose == true && $autocloseTime == '') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Autoclose Time 1', 'is empty');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Autoclose Time 1';
+			$errorArray['mergeFieldName'] = 'Autoclose Time 1';
+			$errorArray['msg'] = 'Autoclose Time 1 is empty';
+			$errorArray['page'] = $autocloseTime1Page;
 							
 			$response['validationErrorsArray'][] = $errorArray;
 		}

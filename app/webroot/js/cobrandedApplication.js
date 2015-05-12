@@ -197,7 +197,8 @@ var totalStartUpFees = function() {
 
 	newTotal = newTotal.toFixed(2);
 	
-	$("[label='Start Up Fees'][name='Total']").val(newTotal);
+	$("[label*='Start Up Fees'][name='Total']").val(newTotal);
+	$("[label*='Start Up Fees'][name='Total']").trigger('change');
 }
 
 $(document).ready(function() {

@@ -104,18 +104,22 @@
             INSERT INTO onlineapp_cobrands (
                 partner_name,
                 partner_name_short,
-                logo_url,
+                cobrand_logo_url,
                 description,
                 created,
-                modified
+                modified,
+                response_url_type,
+                brand_logo_url
             )
             VALUES (
                 '$data[partner_name]',
                 '$data[partner_name_short]',
-                '$data[logo_url]',
+                '$data[cobrand_logo_url]',
                 '$data[description]',
                 now(),
-                now()
+                now(),
+                '$data[response_url_type]',
+                '$data[brand_logo_url]'
             )
             RETURNING Currval('onlineapp_cobrands_id_seq')
         ";
@@ -132,7 +136,7 @@
             INSERT INTO onlineapp_templates (
                 name,
                 logo_position,
-                include_axia_logo,
+                include_brand_logo,
                 description,
                 cobrand_id,
                 created,
@@ -143,7 +147,7 @@
             VALUES (
                 '$data[name]',
                 '$data[logo_position]',
-                '$data[include_axia_logo]',
+                '$data[include_brand_logo]',
                 '$data[description]',
                 $id,
                 now(),

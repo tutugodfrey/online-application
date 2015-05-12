@@ -1,6 +1,26 @@
 {
-        "require": {
-                "phpunit/phpunit": "3.7.32",
-                "codeception/codeception": "1.8.1"
-        }
+	"name": "online-application",
+	"require": {
+		"cakedc/migrations": "dev-master",
+		"cakedc/search": "dev-master",
+		"cakedc/utils": "dev-master",
+		"cakephp/cakephp": "2.6.*",
+		"cakephp/debug_kit": "2.2.*",
+		"phpunit/phpunit": "3.7.32",
+		"slywalker/boost_cake": "*",
+		"josegonzalez/cakephp-upload": "1.1.1"
+	},
+	"extra": {
+		"installer-paths": {
+			"app/Plugin/Migrations": ["cakedc/migrations"],
+			"app/Plugin/Search": ["cakedc/search"],
+			"app/Plugin/Utils": ["cakedc/utils"],
+			"app/Plugin/DebugKit": ["cakephp/debug_kit"],
+			"app/Plugin/BoostCake": ["slywalker/boost_cake"],
+			"app/Plugin/Upload": ["josegonzalez/cakephp-upload"]
+		}
+	},
+	"config": {
+		"vendor-dir": "app/Vendor/"
+	}
 }

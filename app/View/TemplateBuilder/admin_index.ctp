@@ -88,9 +88,9 @@ if (!empty($template) && $template) {
                         'empty' => __('(choose one)')
                     )
                 );
-                echo $this->Form->input('include_axia_logo',
+                echo $this->Form->input('include_brand_logo',
                     array(
-                        'label' => 'Include Axia Logo',
+                        'label' => 'Include Brand Logo',
                         'type' => 'checkbox'
                     )
                 );
