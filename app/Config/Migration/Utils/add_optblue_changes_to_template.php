@@ -41,12 +41,6 @@
         fwrite($filehandle, "could not connect to db: $conn_string\n");
     }
 
-    $GUPflag = true;
-    $TST1flag = true;
-    $TST2flag = true;
-    $SOF1flag = true;
-    $SOF2flag = true;
-
     $cobrandId = null;
 
     $cobrandIdQuery = pg_query($conn, "SELECT * FROM onlineapp_cobrands WHERE partner_name = '$cobrandName'");
@@ -58,6 +52,12 @@
     $templateQuery = pg_query($conn, "SELECT * FROM onlineapp_templates WHERE cobrand_id = ".$cobrandId);
 
     while ($templateRow = pg_fetch_assoc($templateQuery)) {
+        $GUPflag = true;
+        $TST1flag = true;
+        $TST2flag = true;
+        $SOF1flag = true;
+        $SOF2flag = true;
+
         $newTemplateId = createTemplate($cobrandId, $templateRow);
 
 	grantUsersToNewTemplate($templateRow['id'], $newTemplateId);
