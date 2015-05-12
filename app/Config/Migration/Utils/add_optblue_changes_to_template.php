@@ -382,6 +382,12 @@
     function createTemplate($id, $data) {
         global $conn;
 
+        $equityThreshold = 0;
+
+        if (isset($data['owner_equity_threshold'])) {
+            $equityThreshold = $data['owner_equity_threshold'];
+        }
+
         $newTemplateQuery = "
             INSERT INTO onlineapp_templates (
                 name,
@@ -405,7 +411,7 @@
                 now(),
                 '$data[rightsignature_template_guid]',
                 '$data[rightsignature_install_template_guid]',
-                '$data[owner_equity_threshold]'
+                $equityThreshold
             )
             RETURNING Currval('onlineapp_templates_id_seq')
         ";
