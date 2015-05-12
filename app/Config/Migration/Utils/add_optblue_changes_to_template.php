@@ -239,7 +239,7 @@
                             'rep_only' => 'f',
                             'width' => 12,
                             'type' => 4,
-                            'required' => 't',
+                            'required' => 'f',
                             'source' => 2,
                             'default_value' => 'IP/SSL::IP,Dial::Dial',
                             'merge_field_name' => 'Term2-',
@@ -361,7 +361,7 @@
                             'type' => 0,
                             'required' => 't',
                             'source' => 2,
-                            'default_value' => '',
+                            'default_value' => 'TBD',
                             'merge_field_name' => 'Tax',
                             'order' => '11',
                             'encrypt' => 'f'
