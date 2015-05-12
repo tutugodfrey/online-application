@@ -68,11 +68,22 @@
 		echo '<td><strong>Fax:</strong> ' . '877.875.5135' . '</td>';
 		echo '<td><strong>Phone/Fax:</strong> ' . $phoneNumber . ' / ' . $faxNumber . '</td>';
 		echo '</tr>';
-		echo '</table>';
+
+		$terminalTypes = array();
 
 		foreach ($data['Merchant']['EquipmentProgramming'] as $programming) {
-			echo 'Terminal Type: ' . $programming['terminal_type'];
+			$terminalTypes[$programming['terminal_type']] = $programming['terminal_type'];
 		}
+
+		echo '<tr>';
+		echo '<td><strong>Select Terminal Type:</strong></td>';
+		echo '<td>'.$this->Form->select(
+			'select_terminal_type',
+			$terminalTypes
+		).'</td>';
+		echo '</tr>';
+		echo '</table>';
+
 		echo '<p>Installation Information</p>';
 		echo '<strong>Address: </strong>' . $address . '<br/>';
 		echo '<strong>City: </strong>' . $city . '<br/>';

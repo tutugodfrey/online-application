@@ -78,8 +78,7 @@
                                     <td>
                                         <?php 
                                             $options = array('2' => 'Tier 2:');
-                                            $attributes=array('hiddenField' => false);
-                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                            echo $this->Form->radio('setup_tier_select', $options);
                                         ?>
                                     </td>
                                     <td colspan="5">MOTO: Volume $0-$150,000, Average Ticket Less Than $1,000</td>
@@ -89,8 +88,7 @@
                                     <td>
                                         <?php 
                                             $options = array('3' => 'Tier 3:');
-                                            $attributes=array('hiddenField' => false);
-                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                            echo $this->Form->radio('setup_tier_select', $options);
                                         ?>
                                     </td>
                                     <td colspan="5">
@@ -105,8 +103,7 @@
                                     <td>
                                         <?php 
                                         $options = array('4' => 'Tier 4:');
-                                        $attributes=array('hiddenField' => false);
-                                        echo $this->Form->radio('setup_tier_select', $options, $attributes); ?>
+                                        echo $this->Form->radio('setup_tier_select', $options); ?>
                                         
                                     </td>
                                     <td colspan="5">
@@ -160,9 +157,8 @@
                                     </td>
                                     <td>
                                         <?php 
-                                            $options = array('axia' => 'Axia');
-                                            $attributes=array('hiddenField' => false);                        
-                                            echo $this->Form->radio('setup_install', $options, $attributes);
+                                            $options = array('axia' => 'Axia');                       
+                                            echo $this->Form->radio('setup_install', $options);
                                         ?>
                                     </td>    
                                     <td colspan="3">
@@ -511,7 +507,7 @@
                                     <td >
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('cp_giftcards',$options,$attributes);
                                         ?>
                                     </td>
@@ -533,7 +529,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('cp_check_guarantee',$options,$attributes);
                                         ?>
                                     </td>
@@ -604,7 +600,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('cp_pos',$options,$attributes);
                                         ?>    
                                     </td>
@@ -696,7 +692,7 @@
                                     <td>
                                         <?php
                                             $options=array('ip' => 'IP');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('micros',$options,$attributes);
                                         ?>
                                     </td>
@@ -720,7 +716,7 @@
                                     <td>
                                         <?php
                                             $options=array('rep' => 'Included in Pricing/Billed to Rep');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('micros_billing',$options,$attributes);
                                         ?>    
                                     </td>
@@ -772,7 +768,7 @@
                                     <td>
                                        <?php
                                             $options=array('option1' => 'Option 1 ($75 setup, $10/month, $0.05 per item)');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_option',$options,$attributes);
                                        ?>
                                     </td>
@@ -823,7 +819,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_retail_swipe',$options,$attributes);
                                         ?>
                                     </td>
@@ -850,7 +846,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_epay',$options,$attributes); 
                                         ?>
                                     </td>
@@ -893,7 +889,7 @@
                                     <td>
                                         <?php
                                             $options=array('rep' => 'Included in Pricing/Billed to Rep');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_billing',$options,$attributes); 
                                         ?> 
                                     </td>
