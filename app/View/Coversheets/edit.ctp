@@ -62,14 +62,15 @@
                             
                                 <tr <?php if ($tier == 'tier1') echo 'class="warning"'; ?>>
                                     <td>
-                                        <?php 
-                                    $options = array('1' => 'Tier 1:');
-                                    echo $this->Form->radio('setup_tier_select', $options); 
-                                    if ($this->Form->isFieldError('setup_tier_select')){
-                                        echo $this->Form->error('setup_tier_select');
-                                    }
-                                ?>
-                                
+                                    <?php 
+                                        $options = array('1' => 'Tier 1:');
+                                        $attributes=array('hiddenField' => false);
+                                        echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                    
+                                        if ($this->Form->isFieldError('setup_tier_select')){
+                                            echo $this->Form->error('setup_tier_select');
+                                        }
+                                    ?>
                                     </td>
                                     <td colspan="5">Retail: Volume $0-$250,000/month, Average Ticket Less Than $1,000</td>
                                 </tr>
@@ -78,7 +79,8 @@
                                     <td>
                                         <?php 
                                             $options = array('2' => 'Tier 2:');
-                                            echo $this->Form->radio('setup_tier_select', $options);
+                                            $attributes=array('hiddenField' => false);
+                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>
                                     </td>
                                     <td colspan="5">MOTO: Volume $0-$150,000, Average Ticket Less Than $1,000</td>
@@ -88,7 +90,8 @@
                                     <td>
                                         <?php 
                                             $options = array('3' => 'Tier 3:');
-                                            echo $this->Form->radio('setup_tier_select', $options);
+                                            $attributes=array('hiddenField' => false);
+                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>
                                     </td>
                                     <td colspan="5">
@@ -102,9 +105,10 @@
                                 <tr <?php if ($tier == 'tier4') echo 'class="warning"'; ?>>
                                     <td>
                                         <?php 
-                                        $options = array('4' => 'Tier 4:');
-                                        echo $this->Form->radio('setup_tier_select', $options); ?>
-                                        
+                                            $options = array('4' => 'Tier 4:');
+                                            $attributes=array('hiddenField' => false);
+                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                        ?>
                                     </td>
                                     <td colspan="5">
                                         <p>Retail: Volume $0-$250,000/month, Average Ticket Greater Than $1,000</p>
@@ -116,9 +120,10 @@
                                 <tr <?php if ($tier == 'tier5') echo 'class="warning"'; ?>>
                                     <td>
                                         <?php 
-                                        $options = array('5' => 'Tier 5:');
-                                        $attributes=array('hiddenField' => false);
-                                        echo $this->Form->radio('setup_tier_select', $options, $attributes); ?>                        
+                                            $options = array('5' => 'Tier 5:');
+                                            $attributes=array('hiddenField' => false);
+                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                        ?>                        
                                     </td>
                                     <td colspan="5"><p>Retail: Volume $250,000 or Greater/month, Average Ticket Greater Than $1,000</p>
                                         <p>MOTO/Internet: Volume $150,000 or Greater/month</p>
