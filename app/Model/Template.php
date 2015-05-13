@@ -553,7 +553,7 @@ class Template extends AppModel {
 							'type' => 0,
 							'width' => 1,
 							'required' => true,
-							'source' => 2,
+							'source' => 3,
 							'default_value' => 'TBD',
 							'rep_only' => true,
 							'merge_field_name' => 'Tax',
