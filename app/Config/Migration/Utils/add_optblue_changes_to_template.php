@@ -360,7 +360,7 @@
                             'width' => 1,
                             'type' => 0,
                             'required' => 't',
-                            'source' => 2,
+                            'source' => 3,
                             'default_value' => 'TBD',
                             'merge_field_name' => 'Tax',
                             'order' => '11',
