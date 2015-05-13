@@ -33,6 +33,7 @@
 
             <div class="form-group">
             <?php echo $this->Form->create('Coversheet', array('novalidate' => true));?>
+		<?php $attributes = array('hiddenField' => false); ?>
             	<fieldset>
             		<legend><?php echo __('Add %s', __('Coversheet')); ?></legend>
             	       <?php echo $this->Form->hidden('id'); ?>
@@ -48,24 +49,63 @@
                                 
                                 <tr>
                                     <td><?php echo "Attached:"?></td>
-                                    <td><?php echo $this->Form->input('setup_banking', array('label' => "Banking (no starter checks)")); ?></td>
-                                    <td><?php echo $this->Form->input('setup_statements', array('label' => "3 Mo. Processing Stmts")); ?></td>
-                                    <td colspan="3"><?php echo $this->Form->input('setup_drivers_license', array('label' => "Owner's Driver's License")); ?></td>
+                                    <td>
+					<?php 
+						echo $this->Form->input('setup_banking', 
+							array('label' => "Banking (no starter checks)")
+						); 
+					?>
+				    </td>
+                                    <td>
+					<?php 
+						echo $this->Form->input('setup_statements',
+							array('label' => "3 Mo. Processing Stmts")
+						); 
+					?>
+				    </td>
+                                    <td colspan="3">
+					<?php 
+						echo $this->Form->input('setup_drivers_license',
+							array('label' => "Owner's Driver's License")
+						);
+					?>
+				    </td>
                                 </tr>
-
                                 <tr>
                                     <td><?php echo "For New Businesses:"?></td>
-                                    <td><?php echo $this->Form->input('setup_business_license', array('label' => "Business License or Utility Bill")); ?></td>
-                                    <td><?php echo $this->Form->input('setup_other', array('label' => "Other:")); ?></td>
-                                    <td style="width: 25%;" colspan="3"><?php echo $this->Form->input('setup_field_other', array('div' => false, 'label' => false, 'style' => 'width: 120px;','size' => '20')); ?></td>
+                                    <td>
+					<?php
+						echo $this->Form->input('setup_business_license',
+							array(
+								'label' => "Business License or Utility Bill"
+							)
+						); 
+					?>
+				    </td>
+                                    <td colspan="4">
+					<?php
+						echo $this->Form->input('setup_other',
+							array(
+								'label' => "Other:"
+							)
+						);
+						echo $this->Form->input('setup_field_other',
+							array(
+								'div' => false,
+								'label' => false,
+								'style' => 'width: 120px;',
+								'size' => '20'
+							)
+						);
+					?>
+				    </td>
                                 </tr>
                             
                                 <tr <?php if ($tier == 'tier1') echo 'class="warning"'; ?>>
                                     <td>
                                     <?php 
                                         $options = array('1' => 'Tier 1:');
-                                        $attributes=array('hiddenField' => false);
-                                        echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                        echo $this->Form->radio('setup_tier_select', $options);
                                     
                                         if ($this->Form->isFieldError('setup_tier_select')){
                                             echo $this->Form->error('setup_tier_select');
@@ -79,7 +119,6 @@
                                     <td>
                                         <?php 
                                             $options = array('2' => 'Tier 2:');
-                                            $attributes=array('hiddenField' => false);
                                             echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>
                                     </td>
@@ -90,14 +129,17 @@
                                     <td>
                                         <?php 
                                             $options = array('3' => 'Tier 3:');
-                                            $attributes=array('hiddenField' => false);
                                             echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>
                                     </td>
                                     <td colspan="5">
                                         <p>Retail: Volume $250,000 or Greater/month, Average Ticket Less Than $1,000</p>
-                                        <?php echo $this->Form->input('setup_tier3',
-                                            array('label' => '2 years business financials or 2 years tax returns')); 
+                                        <?php
+						echo $this->Form->input('setup_tier3',
+                                            		array(
+								'label' => '2 years business financials or 2 years tax returns'
+							)
+						);
                                         ?>
                                     </td>
                                 </tr>
@@ -106,14 +148,19 @@
                                     <td>
                                         <?php 
                                             $options = array('4' => 'Tier 4:');
-                                            $attributes=array('hiddenField' => false);
                                             echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>
                                     </td>
                                     <td colspan="5">
                                         <p>Retail: Volume $0-$250,000/month, Average Ticket Greater Than $1,000</p>
                                         <p>MOTO/Internet: Volume $0-$150,000/month, Average Ticket Greater than $1,000</p>
-                                        <?php echo $this->Form->input('setup_tier4',array('label' => '2 years business financials or 2 years tax returns')); ?>
+                                        <?php
+						echo $this->Form->input('setup_tier4',
+							array(
+								'label' => '2 years business financials or 2 years tax returns'
+							)
+						);
+					?>
                                     </td>
                                 </tr>
 
@@ -121,15 +168,28 @@
                                     <td>
                                         <?php 
                                             $options = array('5' => 'Tier 5:');
-                                            $attributes=array('hiddenField' => false);
                                             echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>                        
                                     </td>
                                     <td colspan="5"><p>Retail: Volume $250,000 or Greater/month, Average Ticket Greater Than $1,000</p>
                                         <p>MOTO/Internet: Volume $150,000 or Greater/month</p>
-                                        <?php echo $this->Form->input('setup_tier5_financials',array('label' => '2 years audited business financials or 2 years tax returns')); ?>
-                                        <?php echo $this->Form->input('setup_tier5_processing_statements',array('label' => '6 months processing statements')); ?>
-                                        <?php echo $this->Form->input('setup_tier5_bank_statements',array('label' => '3 months bank statements')); ?>
+                                        <?php
+						echo $this->Form->input('setup_tier5_financials',
+							array(
+								'label' => '2 years audited business financials or 2 years tax returns'
+							)
+						);
+                                        	echo $this->Form->input('setup_tier5_processing_statements',
+							array(
+								'label' => '6 months processing statements'
+							)
+						);
+                                        	echo $this->Form->input('setup_tier5_bank_statements',
+							array(
+								'label' => '3 months bank statements'
+							)
+						);
+					?>
                                     </td>
                                 </tr>
                             
@@ -140,8 +200,26 @@
                                         echo $this->Form->error('setup_equipment_terminal');
                                         } else echo 'Equipment Type:'; ?>
                                     </td>
-                                    <td><?php echo $this->Form->input('setup_equipment_terminal', array('label' => 'Terminal', 'error' => false));  ?></td>
-                                    <td colspan="4"><?php echo $this->Form->input('setup_equipment_gateway', array('label' => 'POS/Gateway', 'error' => false)); ?></td>
+                                    <td>
+					<?php
+						echo $this->Form->input('setup_equipment_terminal',
+							array(
+								'label' => 'Terminal',
+								'error' => false
+							)
+						);
+					?>
+				    </td>
+                                    <td colspan="4">
+					<?php
+						echo $this->Form->input('setup_equipment_gateway',
+							array(
+								'label' => 'POS/Gateway',
+								'error' => false
+							)
+						);
+					?>
+				    </td>
                                          
                                </tr>
                            
@@ -163,18 +241,17 @@
                                     <td>
                                         <?php 
                                             $options = array('axia' => 'Axia');                       
-                                            echo $this->Form->radio('setup_install', $options);
+                                            echo $this->Form->radio('setup_install', $options, $attributes);
                                         ?>
                                     </td>    
                                     <td colspan="3">
                                         <?php 
                                             $options = array('pos' => 'POS/Gateway Provider');
-                                            $attributes=array('hiddenField' => false);                        
                                             echo $this->Form->radio('setup_install', $options, $attributes);
                                         ?>
                                     </td>
                                </tr>
-                            
+ 
                                 <tr>
                                     <td>
                                         <?php
@@ -193,7 +270,6 @@
                                     <td colspan="4">
                                         <?php 
                                             $options = array('axia' => 'Axia (ship or drop off)');
-                                            $attributes = array('hiddenField' => false);                        
                                             echo $this->Form->radio('setup_starterkit', $options, $attributes);
                                         ?>
                                     </td>
@@ -501,7 +577,14 @@
                                         Time: <div <?php echo ($data['CobrandedApplication']['Autoclose Time 1']) ? 'class="label label-default"' : ''; ?> ><?php echo $data['CobrandedApplication']['Autoclose Time 1']; ?></div>
                                     </td>
                                     <td >
-                                        <?php echo $this->Form->input('cp_pinpad_ra_attached', array('label' => 'Pin Pad Encryption RA Attached?', 'error' => false));?>
+                                        <?php
+						echo $this->Form->input('cp_pinpad_ra_attached',
+							array(
+								'label' => 'Pin Pad Encryption RA Attached?',
+								'error' => false
+							)
+						);
+					?>
                                     </td>
                                 </tr>
 
@@ -1058,7 +1141,7 @@
                                 if ($moto != true) {echo '</div>';}
                             }?>
                     </fieldset>
-                
+
                 <?php 
                 $this->Html->css(array('coversheet'), 'stylesheet', array('media' => 'print'));
                 if ($data['Coversheet']['status'] == 'saved') {
