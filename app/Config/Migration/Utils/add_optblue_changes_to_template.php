@@ -89,7 +89,10 @@
 
 			if ($sectionRow['name'] == 'Schedule of Fees Part I') {
 			    if ($fieldRow['merge_field_name'] == 'Rate Structure') {
-				if (preg_match('/(Flat Rate::Flat Rate.*?),?/', $fieldRow['default_value'], $matches)) {
+				if (preg_match('/(Flat Rate::Flat Rate\{default\})/i', $fieldRow['default_value'], $matches)) {
+				    $fieldRow['default_value'] = $matches[1].',Pass Thru::Pass Thru,Cost Plus::Cost Plus,Downgrades at Cost::Downgrades at Cost,Bucketed::Bucketed';
+            			}
+				else if (preg_match('/(Flat Rate::Flat Rate)/i', $fieldRow['default_value'], $matches)) {
 				    $fieldRow['default_value'] = $matches[1].',Pass Thru::Pass Thru,Cost Plus::Cost Plus,Downgrades at Cost::Downgrades at Cost,Bucketed::Bucketed';
             			}
 				else {
@@ -98,7 +101,10 @@
 			    }
 
 			    if ($fieldRow['merge_field_name'] == 'Downgrades') {
-				if (preg_match('/(Flat Rate::Flat Rate.*?),?/', $fieldRow['default_value'], $matches)) {
+				if (preg_match('/(Flat Rate::Flat Rate\{default\})/i', $fieldRow['default_value'], $matches)) {
+				    $fieldRow['default_value'] = $matches[1].',Visa/MasterCard/Discover Interchange at Pass Thru::Visa/MasterCard/Discover Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards,Visa/MasterCard/Discover Cost Plus .05%::Visa/MasterCard/Discover Cost Plus .05%,Visa/MasterCard/Discover Cost Plus .10%::Visa/MasterCard/Discover Cost Plus .10%,Visa/MasterCard/Discover Cost Plus .15%::Visa/MasterCard/Discover Cost Plus .15%,Visa/MasterCard/Discover Cost Plus .20%::Visa/MasterCard/Discover Cost Plus .20%,Visa/MasterCard/Discover Cost Plus .25%::Visa/MasterCard/Discover Cost Plus .25%,Visa/MasterCard/Discover Cost Plus .30%::Visa/MasterCard/Discover Cost Plus .30%,Visa/MasterCard/Discover Cost Plus .35%::Visa/MasterCard/Discover Cost Plus .35%,Visa/MasterCard/Discover Cost Plus .40%::Visa/MasterCard/Discover Cost Plus .40%,Visa/MasterCard/Discover Cost Plus .45%::Visa/MasterCard/Discover Cost Plus .45%,Visa/MasterCard/Discover Cost Plus .50%::Visa/MasterCard/Discover Cost Plus .50%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,Visa/MasterCard/Discover Cost Plus .60%::Visa/MasterCard/Discover Cost Plus .60%,Visa/MasterCard/Discover Cost Plus .65%::Visa/MasterCard/Discover Cost Plus .65%,Visa/MasterCard/Discover Cost Plus .70%::Visa/MasterCard/Discover Cost Plus .70%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10::RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10';
+            			}
+				else if (preg_match('/(Flat Rate::Flat Rate)/i', $fieldRow['default_value'], $matches)) {
 				    $fieldRow['default_value'] = $matches[1].',Visa/MasterCard/Discover Interchange at Pass Thru::Visa/MasterCard/Discover Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards,Visa/MasterCard/Discover Cost Plus .05%::Visa/MasterCard/Discover Cost Plus .05%,Visa/MasterCard/Discover Cost Plus .10%::Visa/MasterCard/Discover Cost Plus .10%,Visa/MasterCard/Discover Cost Plus .15%::Visa/MasterCard/Discover Cost Plus .15%,Visa/MasterCard/Discover Cost Plus .20%::Visa/MasterCard/Discover Cost Plus .20%,Visa/MasterCard/Discover Cost Plus .25%::Visa/MasterCard/Discover Cost Plus .25%,Visa/MasterCard/Discover Cost Plus .30%::Visa/MasterCard/Discover Cost Plus .30%,Visa/MasterCard/Discover Cost Plus .35%::Visa/MasterCard/Discover Cost Plus .35%,Visa/MasterCard/Discover Cost Plus .40%::Visa/MasterCard/Discover Cost Plus .40%,Visa/MasterCard/Discover Cost Plus .45%::Visa/MasterCard/Discover Cost Plus .45%,Visa/MasterCard/Discover Cost Plus .50%::Visa/MasterCard/Discover Cost Plus .50%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,Visa/MasterCard/Discover Cost Plus .60%::Visa/MasterCard/Discover Cost Plus .60%,Visa/MasterCard/Discover Cost Plus .65%::Visa/MasterCard/Discover Cost Plus .65%,Visa/MasterCard/Discover Cost Plus .70%::Visa/MasterCard/Discover Cost Plus .70%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10::RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10';
             			}
 				else {
@@ -417,8 +423,8 @@
                 '$data[include_brand_logo]',
                 '$data[description]',
                 $id,
-                now(),
-                now(),
+                now()::timestamptz(0),
+                now()::timestamptz(0),
                 '$data[rightsignature_template_guid]',
                 '$data[rightsignature_install_template_guid]',
                 $equityThreshold
@@ -433,7 +439,7 @@
 	$updateTemplateNameQuery = "
 		UPDATE onlineapp_templates
 		   SET name = '".$newName."',
-		       modified = now()
+		       modified = now()::timestamptz(0)
 		 WHERE id = ".$data['id'];
 	$updateResult = pg_query($conn, $updateTemplateNameQuery);
 
@@ -459,8 +465,8 @@
                 '$data[rep_only]',
                 $id,
                 $data[order],
-                now(),
-                now()
+                now()::timestamptz(0),
+                now()::timestamptz(0)
             )
             RETURNING Currval('onlineapp_template_pages_id_seq')
         ";
@@ -491,8 +497,8 @@
                 $data[width],
                 $id,
                 $data[order],
-                now(),
-                now()
+                now()::timestamptz(0),
+                now()::timestamptz(0)
             )
             RETURNING Currval('onlineapp_template_sections_id_seq')
         ";
@@ -535,8 +541,8 @@
                 '$data[merge_field_name]',
                 $data[order],
                 $id,
-                now(),
-                now(),
+                now()::timestamptz(0),
+                now()::timestamptz(0),
                 '$data[encrypt]'
             )
             RETURNING Currval('onlineapp_template_fields_id_seq')
