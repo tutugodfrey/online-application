@@ -75,20 +75,20 @@
                 $fieldQuery = pg_query($conn, "SELECT * FROM onlineapp_template_fields WHERE section_id = ".$sectionRow['id']);
 
                 while ($fieldRow = pg_fetch_assoc($fieldQuery)) {
-			if ($sectionRow['name'] == 'General Underwriting Profile') {
-			    if ($fieldRow['merge_field_name'] == 'MonthlyVol') {
+			if (preg_match('/General Underwriting Profile/i', $sectionRow['name'])) {
+			    if (preg_match('/MonthlyVol/i', $fieldRow['merge_field_name'])) {
 				$fieldRow['name'] = 'Visa/MC Vol';
 			    }
 			}
 
-			if ($sectionRow['name'] == 'Bank Information') {
+			if (preg_match('/Bank Information/i', $sectionRow['name'])) {
 			    if ($fieldRow['merge_field_name'] != 'BankName' && $fieldRow['merge_field_name'] != 'BankContact' && $fieldRow['merge_field_name'] != 'BankPhone') {
 				continue;
 			    }
 			}
 
-			if ($sectionRow['name'] == 'Schedule of Fees Part I') {
-			    if ($fieldRow['merge_field_name'] == 'Rate Structure') {
+			if (preg_match('/Schedule of Fees Part I/i', $sectionRow['name'])) {
+			    if (preg_match('/Rate Structure/i', $fieldRow['merge_field_name'])) {
 				if (preg_match('/(Flat Rate::Flat Rate\{default\})/i', $fieldRow['default_value'], $matches)) {
 				    $fieldRow['default_value'] = $matches[1].',Pass Thru::Pass Thru,Cost Plus::Cost Plus,Downgrades at Cost::Downgrades at Cost,Bucketed::Bucketed';
             			}
@@ -100,7 +100,7 @@
 				}
 			    }
 
-			    if ($fieldRow['merge_field_name'] == 'Downgrades') {
+			    if (preg_match('/Downgrades/i', $fieldRow['merge_field_name'])) {
 				if (preg_match('/(Flat Rate::Flat Rate\{default\})/i', $fieldRow['default_value'], $matches)) {
 				    $fieldRow['default_value'] = $matches[1].',Visa/MasterCard/Discover Interchange at Pass Thru::Visa/MasterCard/Discover Interchange at Pass Thru,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Non-Regulated Check Cards,Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards::Non-Qualified Transactions at Additional Visa/MasterCard/Discover Cost Based on Qualified Consumer Cards,Visa/MasterCard/Discover Cost Plus .05%::Visa/MasterCard/Discover Cost Plus .05%,Visa/MasterCard/Discover Cost Plus .10%::Visa/MasterCard/Discover Cost Plus .10%,Visa/MasterCard/Discover Cost Plus .15%::Visa/MasterCard/Discover Cost Plus .15%,Visa/MasterCard/Discover Cost Plus .20%::Visa/MasterCard/Discover Cost Plus .20%,Visa/MasterCard/Discover Cost Plus .25%::Visa/MasterCard/Discover Cost Plus .25%,Visa/MasterCard/Discover Cost Plus .30%::Visa/MasterCard/Discover Cost Plus .30%,Visa/MasterCard/Discover Cost Plus .35%::Visa/MasterCard/Discover Cost Plus .35%,Visa/MasterCard/Discover Cost Plus .40%::Visa/MasterCard/Discover Cost Plus .40%,Visa/MasterCard/Discover Cost Plus .45%::Visa/MasterCard/Discover Cost Plus .45%,Visa/MasterCard/Discover Cost Plus .50%::Visa/MasterCard/Discover Cost Plus .50%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,Visa/MasterCard/Discover Cost Plus .60%::Visa/MasterCard/Discover Cost Plus .60%,Visa/MasterCard/Discover Cost Plus .65%::Visa/MasterCard/Discover Cost Plus .65%,Visa/MasterCard/Discover Cost Plus .70%::Visa/MasterCard/Discover Cost Plus .70%,Visa/MasterCard/Discover Cost Plus .55%::Visa/MasterCard/Discover Cost Plus .55%,(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%::(SSI) RATE 2: Keyed: 0.40% Keyed Rewards: 0.75% Mid-Qual: 0.95% Bus: 1.15% Non-Qual: 1.90%,RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10::RATE 2: 0.85% RATE 3: 1.15% + $0.10 BUS 1: 1.05% + $0.10 BUS 2: 1.95% + $0.10';
             			}
@@ -113,12 +113,12 @@
 			    }
 			}
 
-			if ($sectionRow['name'] == 'Schedule of Fees Part II') {
-			    if ($fieldRow['merge_field_name'] == 'Amex Discount Rate') {
+			if (preg_match('/Schedule of Fees Part II/i', $sectionRow['name'])) {
+			    if (preg_match('/Amex Discount Rate/i', $fieldRow['merge_field_name'])) {
 				continue;
 			    }
 
-			    if ($fieldRow['merge_field_name'] == 'Discount Paid') {
+			    if (preg_match('/Discount Paid/i', $fieldRow['merge_field_name'])) {
 			        $fieldRow['width'] = 3;
 			    }
 			}
@@ -126,7 +126,7 @@
                         $newFieldId = createTemplateField($newSectionId, $fieldRow);
                 }
 
-		if ($sectionRow['name'] == 'General Underwriting Profile') {
+		if (preg_match('/General Underwriting Profile/i', $sectionRow['name'])) {
 		    if ($GUPflag == true) {
 		        $DiscVol = array(
 			    'id' => 0,
@@ -186,7 +186,7 @@
 		    }
 		}
 
-		if ($sectionRow['name'] == 'Terminal/Software Type(1)') {
+		if (preg_match('/Terminal\/Software Type\(1\)/i', $sectionRow['name'])) {
                     if ($TST1flag == true) {
                         $Term1 = array(
                             'id' => 0,
@@ -246,7 +246,7 @@
                     }
                 }
 
-		if ($sectionRow['name'] == 'Terminal/Software Type(2)') {
+		if (preg_match('/Terminal\/Software Type\(2\)/i', $sectionRow['name'])) {
                     if ($TST2flag == true) {
                         $Term2 = array(
                             'id' => 0,
@@ -306,7 +306,7 @@
                     }
                 }
 
-	        if ($sectionRow['name'] == 'Schedule of Fees Part I') {
+	        if (preg_match('/Schedule of Fees Part I/i', $sectionRow['name'])) {
                     if ($SOF1flag == true) {
                         $AmexDiscountRate = array(
                             'id' => 0,
@@ -366,7 +366,7 @@
 		    }
 		}
 
-	        if ($sectionRow['name'] == 'Schedule of Fees Part II') {
+	        if (preg_match('/Schedule of Fees Part II/i', $sectionRow['name'])) {
                     if ($SOF2flag == true) {
                         $Tax = array(
                             'id' => 0,
