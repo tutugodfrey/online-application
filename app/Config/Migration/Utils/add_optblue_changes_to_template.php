@@ -354,7 +354,7 @@
                             'required' => 't',
                             'source' => 1,
                             'default_value' => 'American Express Fees Passed Thru::American Express Fees Passed Thru,American Express Cost Plus .05%::American Express Cost Plus .05%,American Express Cost Plus .10%::American Express Cost Plus .10%,American Express Cost Plus .15%::American Express Cost Plus .15%,American Express Cost Plus .20%::American Express Cost Plus .20%,American Express Cost Plus .25%::American Express Cost Plus .25%,American Express Cost Plus .30%::American Express Cost Plus .30%,American Express Cost Plus .35%::American Express Cost Plus .35%,American Express Cost Plus .40%::American Express Cost Plus .40%,American Express Cost Plus .45%::American Express Cost Plus .45%,American Express Cost Plus .50%::American Express Cost Plus .50%,American Express Cost Plus .55%::American Express Cost Plus .55%,American Express Cost Plus .60%::American Express Cost Plus .60%,American Express Cost Plus .65%::American Express Cost Plus .65%,American Express Cost Plus .70%::American Express Cost Plus .70%,American Express Cost Plus .75%::American Express Cost Plus .75%',
-                            'merge_field_name' => 'Amex Downgrades',
+                            'merge_field_name' => 'Amex Qualified Exemptions',
                             'order' => '5',
                             'encrypt' => 'f'
                         );

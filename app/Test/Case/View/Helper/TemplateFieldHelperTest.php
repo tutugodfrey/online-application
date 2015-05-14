@@ -183,21 +183,19 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['type'] = 7;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
-				'<fieldset id="merge_field_name" class="fees">'.
-					'<legend>name</legend>'.
-					'<label for="value1">name1*</label>'.
-					'<div class="input-group col-md-12">'.
-						'<span class="input-group-addon col-md-1">$</span>'.
-						'<input label="name*" name="name1" id="value1" required="required" type="text" class="col-md-9" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;placeholder&#039;: &#039;0&#039;" data-vtype="money">'.
-						'</input>'.
-					'</div>'.
-					'<label for="value2">name2*</label>'.
-					'<div class="input-group col-md-12">'.
-						'<span class="input-group-addon col-md-1">$</span>'.
-						'<input label="name*" name="name2" id="value2" required="required" type="text" class="col-md-9" data-value-id="id2" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;placeholder&#039;: &#039;0&#039;" data-vtype="money">'.
-						'</input>'.
-					'</div>'.
-				'</fieldset>'.
+			'<fieldset id="merge_field_name" class="fees">'.
+			'<legend>name</legend>'.
+			'<label for="value1">name1*</label>'.
+			'<div class="input-group col-md-12">'.
+			'<span class="input-group-addon col-md-1">$</span>'.
+			'<input label="name*" name="name1" id="value1" required="required" type="text" class="col-md-9" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 3, &#039;digitsOptional&#039;: true"></input>'.
+			'</div>'.
+			'<label for="value2">name2*</label>'.
+			'<div class="input-group col-md-12">'.
+			'<span class="input-group-addon col-md-1">$</span>'.
+			'<input label="name*" name="name2" id="value2" required="required" type="text" class="col-md-9" data-value-id="id2" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 3, &#039;digitsOptional&#039;: true"></input>'.
+			'</div>'.
+			'</fieldset>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-7-name-id-merg_field_name-1'
@@ -222,12 +220,11 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['type'] = 10;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">'.
-				'<label for="merge_field_name">name*</label>'.
-				'<div class="input-group col-md-12">'.
-					'<span class="input-group-addon col-md-1">$</span>'.
-					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: false, &#039;placeholder&#039;: &#039;0&#039;" type="text" data-vtype="money" class="col-md-9">'.
-					'</input>'.
-				'</div>'.
+			'<label for="merge_field_name">name*</label>'.
+			'<div class="input-group col-md-12">'.
+			'<span class="input-group-addon col-md-1">$</span>'.
+			'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: true" type="text" class="col-md-9"></input>'.
+			'</div>'.
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-10-name-id-merg_field_name-1'
