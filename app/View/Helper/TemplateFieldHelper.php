@@ -277,7 +277,7 @@ class TemplateFieldHelper extends Helper {
 					$requiredProp = ($field['required'] && $requireRequired) ? true : false;
 					$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
 
-					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'placeholder': '0'");
+					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 3, 'digitsOptional': true");
 
 					$tmpLabel = $nameValuePair[0];
 
@@ -297,7 +297,7 @@ class TemplateFieldHelper extends Helper {
 
 			// 'money',         // 10 - $###.##
 			case 10:
-				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0'");
+				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': true");
 				$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $label, $fieldId);
 				break;
 			// 'percent',       // 11 - (0-100)%
@@ -372,7 +372,7 @@ class TemplateFieldHelper extends Helper {
 
 	private function __buildMoneyField($fieldOptions, $label, $fieldId) {
 		$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-		$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
+		//$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
 		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-9');
 
 		$fieldId = preg_replace('/\{.*\}$/', '', $fieldId);

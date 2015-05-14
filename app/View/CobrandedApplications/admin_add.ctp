@@ -11,7 +11,12 @@
 				},
 				cache: false
 			});
-    	});
+		});
+		jQuery('input[type=submit]').click(function() {
+			jQuery('#CobrandedApplicationAdminAddForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
+			jQuery(this).attr('disabled', 'disabled');
+			jQuery('#CobrandedApplicationAdminAddForm').submit();
+		})
 	});
 </script>
 

@@ -195,7 +195,7 @@ var totalStartUpFees = function() {
 
 	var newTotal = creditAppFee + creditEquipmentFee + creditExpediteFee + creditReprogramFee + creditVirtualTrainingFee + creditMobileSetupFee;
 
-	newTotal = newTotal.toFixed(2);
+	newTotal = newTotal.toFixed(3);
 	
 	$("[label*='Start Up Fees'][name='Total']").val(newTotal);
 	$("[label*='Start Up Fees'][name='Total']").trigger('change');

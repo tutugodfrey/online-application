@@ -1142,7 +1142,8 @@ class CobrandedApplicationsController extends AppController {
 		if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
 			$subject = "Axia Install Sheet - VAR";
 			$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
-				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject);
+				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject,
+				$this->request->data['CobrandedApplication']['select_terminal_type']);
 
 			$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
 			$response = json_decode($response, true);
