@@ -3,6 +3,8 @@
         <div class='col-xs-12'>
             <?php echo $this->Html->css('coversheet', null, array('inline' => false)); ?>
 
+            <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
+            <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
             <script type="text/javascript" src="/js/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 
             <script type="text/javascript">
@@ -16,6 +18,20 @@
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#CoversheetEditForm').submit();
                     })
+
+                    var validationRules = {};
+
+                    jQuery("#CoversheetEditForm input[data-vtype]").map(function(index, input) {
+                        var currentInput = jQuery(input);
+                
+                        if (typeof(validationRules[currentInput.attr('id')]) == 'undefined') {
+                            var rule = new Object();
+                            rule[currentInput.attr('data-vtype')] = true;
+                            validationRules[currentInput.attr('id')] = rule;
+                        }
+                    });
+
+                    $validator = jQuery("#CoversheetEditForm").validate({ rules: validationRules });
                 });
             </script>
 
@@ -33,7 +49,7 @@
 
             <div class="form-group">
             <?php echo $this->Form->create('Coversheet', array('novalidate' => true));?>
-		<?php $attributes = array('hiddenField' => false); ?>
+		      <?php $attributes = array('hiddenField' => false); ?>
             	<fieldset>
             		<legend><?php echo __('Add %s', __('Coversheet')); ?></legend>
             	       <?php echo $this->Form->hidden('id'); ?>
@@ -288,16 +304,17 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_partner_pct_profit',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -307,7 +324,9 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_partner_pct_volume',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -315,8 +334,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -329,7 +347,9 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_partner_pct_gross',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -337,8 +357,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -357,16 +376,17 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_referrer_pct_profit',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -376,7 +396,9 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_referrer_pct_volume',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -384,8 +406,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -398,7 +419,9 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_referrer_pct_gross',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -406,8 +429,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -426,16 +448,17 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_reseller_pct_profit',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -445,7 +468,9 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_reseller_pct_volume',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -453,8 +478,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -467,7 +491,9 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_reseller_pct_gross',
                                             array(
-                                                'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -475,8 +501,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
