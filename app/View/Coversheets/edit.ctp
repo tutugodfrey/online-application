@@ -17,7 +17,17 @@
 
                         var submitFlag = true;
 
-                        if (jQuery('#CoversheetSetupPartner').val()) {
+                        if (jQuery('#CoversheetSetupPartner').val() || jQuery('#CoversheetSetupPartnerPctProfit').val() ||
+                            jQuery('#CoversheetSetupPartnerPctVolume').val() || jQuery('#CoversheetSetupPartnerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupPartner').val()) {
+                                jQuery('#CoversheetSetupPartner').css('background','#FFFF00');
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupPartner').css('background','#FFFFFF');
+                            }
+
                             if (!jQuery('#CoversheetSetupPartnerPctProfit').val() && !jQuery('#CoversheetSetupPartnerPctVolume').val()) {
                                     jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
                                     jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
@@ -46,7 +56,17 @@
                             }
                         }
 
-                        if (jQuery('#CoversheetSetupReferrer').val()) {
+                        if (jQuery('#CoversheetSetupReferrer').val() || jQuery('#CoversheetSetupReferrerPctProfit').val() ||
+                            jQuery('#CoversheetSetupReferrerPctVolume').val() || jQuery('#CoversheetSetupReferrerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupReferrer').val()) {
+                                jQuery('#CoversheetSetupReferrer').css('background','#FFFF00');
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReferrer').css('background','#FFFFFF');
+                            }
+
                             if (!jQuery('#CoversheetSetupReferrerPctProfit').val() && !jQuery('#CoversheetSetupReferrerPctVolume').val()) {
                                     jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
                                     jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
@@ -75,7 +95,17 @@
                             }
                         }
 
-                        if (jQuery('#CoversheetSetupReseller').val()) {
+                        if (jQuery('#CoversheetSetupReseller').val() || jQuery('#CoversheetSetupResellerPctProfit').val() ||
+                            jQuery('#CoversheetSetupResellerPctVolume').val() || jQuery('#CoversheetSetupResellerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupReseller').val()) {
+                                jQuery('#CoversheetSetupReseller').css('background','#FFFF00');
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReseller').css('background','#FFFFFF');
+                            }
+
                             if (!jQuery('#CoversheetSetupResellerPctProfit').val() && !jQuery('#CoversheetSetupResellerPctVolume').val()) {
                                     jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
                                     jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
