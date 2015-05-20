@@ -24,8 +24,16 @@
                                     submitFlag = false;
                             }
                             else {
-                                jQuery('#CoversheetSetupPartnerPctProfit').css('background','#ffffff');
-                                jQuery('#CoversheetSetupPartnerPctVolume').css('background','#ffffff');
+                                if ((jQuery('#CoversheetSetupPartnerPctProfit').val() && (jQuery('#CoversheetSetupPartnerPctProfit').val() > 100 || jQuery('#CoversheetSetupPartnerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupPartnerPctVolume').val() && (jQuery('#CoversheetSetupPartnerPctVolume').val() > 5 || jQuery('#CoversheetSetupPartnerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupPartnerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupPartnerPctVolume').css('background','#ffffff');
+                                }
                             }
 
                             if (!jQuery('#CoversheetSetupPartnerPctGross').val() ||
@@ -45,8 +53,16 @@
                                     submitFlag = false;
                             }
                             else {
-                                jQuery('#CoversheetSetupReferrerPctProfit').css('background','#ffffff');
-                                jQuery('#CoversheetSetupReferrerPctVolume').css('background','#ffffff');
+                                if ((jQuery('#CoversheetSetupReferrerPctProfit').val() && (jQuery('#CoversheetSetupReferrerPctProfit').val() > 100 || jQuery('#CoversheetSetupReferrerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupReferrerPctVolume').val() && (jQuery('#CoversheetSetupReferrerPctVolume').val() > 5 || jQuery('#CoversheetSetupReferrerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupReferrerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupReferrerPctVolume').css('background','#ffffff');
+                                }
                             }
                             
                             if (!jQuery('#CoversheetSetupReferrerPctGross').val() ||
@@ -66,8 +82,16 @@
                                     submitFlag = false;
                             }
                             else {
-                                jQuery('#CoversheetSetupResellerPctProfit').css('background','#ffffff');
-                                jQuery('#CoversheetSetupResellerPctVolume').css('background','#ffffff');
+                                if ((jQuery('#CoversheetSetupResellerPctProfit').val() && (jQuery('#CoversheetSetupResellerPctProfit').val() > 100 || jQuery('#CoversheetSetupResellerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupResellerPctVolume').val() && (jQuery('#CoversheetSetupResellerPctVolume').val() > 5 || jQuery('#CoversheetSetupResellerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupResellerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupResellerPctVolume').css('background','#ffffff');
+                                }
                             }
 
                             if (!jQuery('#CoversheetSetupResellerPctGross').val() ||
