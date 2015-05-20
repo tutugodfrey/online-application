@@ -13,7 +13,78 @@
                 jQuery(document).ready(function () {
                     jQuery(":input").inputmask();
 
-                    jQuery('input[type=submit]').click(function() {
+                    jQuery('input[type=submit]').click(function(e) {
+
+                        var submitFlag = true;
+
+                        if (jQuery('#CoversheetSetupPartner').val()) {
+                            if (!jQuery('#CoversheetSetupPartnerPctProfit').val() && !jQuery('#CoversheetSetupPartnerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupPartnerPctProfit').css('background','#ffffff');
+                                jQuery('#CoversheetSetupPartnerPctVolume').css('background','#ffffff');
+                            }
+
+                            if (!jQuery('#CoversheetSetupPartnerPctGross').val() ||
+                                jQuery('#CoversheetSetupPartnerPctGross').val() > 100 || jQuery('#CoversheetSetupPartnerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupPartnerPctGross').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupPartnerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (jQuery('#CoversheetSetupReferrer').val()) {
+                            if (!jQuery('#CoversheetSetupReferrerPctProfit').val() && !jQuery('#CoversheetSetupReferrerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReferrerPctProfit').css('background','#ffffff');
+                                jQuery('#CoversheetSetupReferrerPctVolume').css('background','#ffffff');
+                            }
+                            
+                            if (!jQuery('#CoversheetSetupReferrerPctGross').val() ||
+                                jQuery('#CoversheetSetupReferrerPctGross').val() > 100 || jQuery('#CoversheetSetupReferrerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupReferrerPctGross').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReferrerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (jQuery('#CoversheetSetupReseller').val()) {
+                            if (!jQuery('#CoversheetSetupResellerPctProfit').val() && !jQuery('#CoversheetSetupResellerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupResellerPctProfit').css('background','#ffffff');
+                                jQuery('#CoversheetSetupResellerPctVolume').css('background','#ffffff');
+                            }
+
+                            if (!jQuery('#CoversheetSetupResellerPctGross').val() ||
+                                jQuery('#CoversheetSetupResellerPctGross').val() > 100 || jQuery('#CoversheetSetupResellerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupResellerPctGross').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupResellerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (!submitFlag) {
+                            e.preventDefault()
+                            return false;
+                        }
+
                         jQuery('#CoversheetEditForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#CoversheetEditForm').submit();
@@ -304,6 +375,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_partner_pct_profit',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '1',
                                                 'max' => '100',
@@ -324,6 +396,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_partner_pct_volume',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '.01',
                                                 'max' => '5',
@@ -347,6 +420,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_partner_pct_gross',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '1',
                                                 'max' => '100',
@@ -376,6 +450,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_referrer_pct_profit',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '1',
                                                 'max' => '100',
@@ -396,6 +471,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_referrer_pct_volume',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '.01',
                                                 'max' => '5',
@@ -419,6 +495,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_referrer_pct_gross',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '1',
                                                 'max' => '100',
@@ -448,6 +525,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_reseller_pct_profit',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '1',
                                                 'max' => '100',
@@ -468,6 +546,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_reseller_pct_volume',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '.01',
                                                 'max' => '5',
@@ -491,6 +570,7 @@
                                     <td>
                                         <?php echo $this->Form->input('setup_reseller_pct_gross',
                                             array(
+                                                'type' => 'text',
                                                 'data-vtype' => 'number',
                                                 'min' => '1',
                                                 'max' => '100',
