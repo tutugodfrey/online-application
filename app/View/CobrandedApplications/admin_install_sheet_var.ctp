@@ -2,8 +2,11 @@
 <?php
 	echo $this->Html->script('prototype');
 	echo $this->Html->script('scriptaculous/src/scriptaculous.js?load=effects');
+
 	if ($data['Merchant']['merchant_id'] == "") {
-		echo '<h4>This Application Has not been boarded into the Database!<br/>Please contact <a href="mailto:support@axiapayments.com?subject= Onlineapp ' . $data['CobrandedApplication']['id'] . ' not boarded">support@axiapayments.com</a></h4>';
+		echo '<h4>This Application Has not been boarded into the Database!<br/>Please contact <a href="mailto:support@axiapayments.com?subject=Onlineapp ' . $data['CobrandedApplication']['id'] . ' not boarded">support@axiapayments.com</a></h4>';
+	} else if (empty($data['Merchant']['EquipmentProgramming'])) {
+		echo '<h4>A terminal has not yet been configured!<br/>Please contact <a href="mailto:support@axiapayments.com?subject=Onlineapp ' . $data['CobrandedApplication']['id'] . ' no terminal configured">support@axiapayments.com</a></h4>';
 	} else {
 		$contractorId = '';
 		$dba = '';
