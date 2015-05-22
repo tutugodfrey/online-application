@@ -1056,7 +1056,7 @@
                                 </tr>
 
                                 <tr>
-                                    <td colspan="2" style="text-align: center;">*Additional $5 monthly fee for Gold. Additional $10 monthly fee for Platinum</td>
+                                    <td colspan="2" style="text-align: center;">*Additional fees may apply for Gold and Platinum packages</td>
                                 </tr>
 
                                 <tr>
