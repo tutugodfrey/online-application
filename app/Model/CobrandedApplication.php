@@ -1717,6 +1717,37 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * getRightSignatureTemplates
+ * 
+ * @params
+ *     $client object
+ * @returns
+ *     $templates array
+ */
+	public function getRightSignatureTemplates($client) {
+		$page = 1;
+		$totalPages = 99;
+
+		$templates = array();
+
+		while ($page <= $totalPages) {
+			$response = $client->signAndSendRequest("GET", "/api/templates.json?page=".$page);
+			$response = json_decode($response, true);
+			$totalPages = $response['page']['total_pages'];
+
+			foreach ($response['page']['templates'] as $arr) {
+				$filename = $arr['filename'];
+				$guid = $arr['guid'];
+				$templates[$guid] = $filename;
+			}
+			$page++;
+		}
+
+		array_multisort($templates);
+		return $templates;
+	}
+
+/**
  * getRightSignatureTemplateDetails
  * 
  * @params
