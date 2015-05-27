@@ -13,9 +13,9 @@
 			});
 		});
 		jQuery('input[type=submit]').click(function() {
-			jQuery('#CobrandedApplication').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
+			jQuery('#CobrandedApplicationAdminAddForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
 			jQuery(this).attr('disabled', 'disabled');
-			jQuery('#CobrandedApplication').submit();
+			jQuery('#CobrandedApplicationAdminAddForm').submit();
 		})
 	});
 </script>

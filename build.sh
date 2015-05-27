@@ -5,7 +5,6 @@ sudo setfacl -R -m u:${HTTPDUSER}:rwx app/tmp
 sudo setfacl -R -d -m u:${HTTPDUSER}:rwx app/tmp
 CURRENTUSER=`whoami`
 sudo setfacl -R -m u:${CURRENTUSER}:rwx app/tmp
-composer self-update
+sudo composer self-update
 composer update
 app/Console/cake Migrations.migration run all
-Console/cake Migrations.migration run all
