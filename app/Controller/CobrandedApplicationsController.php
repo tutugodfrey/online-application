@@ -1088,6 +1088,12 @@ class CobrandedApplicationsController extends AppController {
 		$this->set('data', $data);
 
 		if ($this->request->data) {
+			if (empty($this->request->data['CobrandedApplication']['select_terminal_type'])) {
+				$url = "/install_sheet_var/".$data['CobrandedApplication']['id'];
+				$this->Session->setFlash(__('error! terminal type not selected'));
+				$this->redirect(array('action' => $url));
+			}
+
 			$this->CobrandedApplication->set($this->request->data);
 
 			if (!empty($this->request->data['CobrandedApplication']['select_email_address'])) {
@@ -1142,7 +1148,8 @@ class CobrandedApplicationsController extends AppController {
 		if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
 			$subject = "Axia Install Sheet - VAR";
 			$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
-				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject);
+				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject,
+				$this->request->data['CobrandedApplication']['select_terminal_type']);
 
 			$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
 			$response = json_decode($response, true);

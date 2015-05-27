@@ -3,6 +3,8 @@
         <div class='col-xs-12'>
             <?php echo $this->Html->css('coversheet', null, array('inline' => false)); ?>
 
+            <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
+            <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
             <script type="text/javascript" src="/js/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 
             <script type="text/javascript">
@@ -11,11 +13,150 @@
                 jQuery(document).ready(function () {
                     jQuery(":input").inputmask();
 
-                    jQuery('input[type=submit]').click(function() {
+                    jQuery('input[type=submit]').click(function(e) {
+
+                        var submitFlag = true;
+
+                        if (jQuery('#CoversheetSetupPartner').val() || jQuery('#CoversheetSetupPartnerPctProfit').val() ||
+                            jQuery('#CoversheetSetupPartnerPctVolume').val() || jQuery('#CoversheetSetupPartnerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupPartner').val()) {
+                                jQuery('#CoversheetSetupPartner').css('background','#FFFF00');
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupPartner').css('background','#FFFFFF');
+                            }
+
+                            if (!jQuery('#CoversheetSetupPartnerPctProfit').val() && !jQuery('#CoversheetSetupPartnerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                if ((jQuery('#CoversheetSetupPartnerPctProfit').val() && (jQuery('#CoversheetSetupPartnerPctProfit').val() > 100 || jQuery('#CoversheetSetupPartnerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupPartnerPctVolume').val() && (jQuery('#CoversheetSetupPartnerPctVolume').val() > 5 || jQuery('#CoversheetSetupPartnerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupPartnerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupPartnerPctVolume').css('background','#ffffff');
+                                }
+                            }
+
+                            if (!jQuery('#CoversheetSetupPartnerPctGross').val() ||
+                                jQuery('#CoversheetSetupPartnerPctGross').val() > 100 || jQuery('#CoversheetSetupPartnerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupPartnerPctGross').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupPartnerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (jQuery('#CoversheetSetupReferrer').val() || jQuery('#CoversheetSetupReferrerPctProfit').val() ||
+                            jQuery('#CoversheetSetupReferrerPctVolume').val() || jQuery('#CoversheetSetupReferrerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupReferrer').val()) {
+                                jQuery('#CoversheetSetupReferrer').css('background','#FFFF00');
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReferrer').css('background','#FFFFFF');
+                            }
+
+                            if (!jQuery('#CoversheetSetupReferrerPctProfit').val() && !jQuery('#CoversheetSetupReferrerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                if ((jQuery('#CoversheetSetupReferrerPctProfit').val() && (jQuery('#CoversheetSetupReferrerPctProfit').val() > 100 || jQuery('#CoversheetSetupReferrerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupReferrerPctVolume').val() && (jQuery('#CoversheetSetupReferrerPctVolume').val() > 5 || jQuery('#CoversheetSetupReferrerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupReferrerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupReferrerPctVolume').css('background','#ffffff');
+                                }
+                            }
+                            
+                            if (!jQuery('#CoversheetSetupReferrerPctGross').val() ||
+                                jQuery('#CoversheetSetupReferrerPctGross').val() > 100 || jQuery('#CoversheetSetupReferrerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupReferrerPctGross').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReferrerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (jQuery('#CoversheetSetupReseller').val() || jQuery('#CoversheetSetupResellerPctProfit').val() ||
+                            jQuery('#CoversheetSetupResellerPctVolume').val() || jQuery('#CoversheetSetupResellerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupReseller').val()) {
+                                jQuery('#CoversheetSetupReseller').css('background','#FFFF00');
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReseller').css('background','#FFFFFF');
+                            }
+
+                            if (!jQuery('#CoversheetSetupResellerPctProfit').val() && !jQuery('#CoversheetSetupResellerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                if ((jQuery('#CoversheetSetupResellerPctProfit').val() && (jQuery('#CoversheetSetupResellerPctProfit').val() > 100 || jQuery('#CoversheetSetupResellerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupResellerPctVolume').val() && (jQuery('#CoversheetSetupResellerPctVolume').val() > 5 || jQuery('#CoversheetSetupResellerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupResellerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupResellerPctVolume').css('background','#ffffff');
+                                }
+                            }
+
+                            if (!jQuery('#CoversheetSetupResellerPctGross').val() ||
+                                jQuery('#CoversheetSetupResellerPctGross').val() > 100 || jQuery('#CoversheetSetupResellerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupResellerPctGross').css('background','#FFFF00');
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupResellerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (!submitFlag) {
+                            e.preventDefault()
+                            return false;
+                        }
+
                         jQuery('#CoversheetEditForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#CoversheetEditForm').submit();
                     })
+
+                    var validationRules = {};
+
+                    jQuery("#CoversheetEditForm input[data-vtype]").map(function(index, input) {
+                        var currentInput = jQuery(input);
+                
+                        if (typeof(validationRules[currentInput.attr('id')]) == 'undefined') {
+                            var rule = new Object();
+                            rule[currentInput.attr('data-vtype')] = true;
+                            validationRules[currentInput.attr('id')] = rule;
+                        }
+                    });
+
+                    $validator = jQuery("#CoversheetEditForm").validate({ rules: validationRules });
                 });
             </script>
 
@@ -33,6 +174,7 @@
 
             <div class="form-group">
             <?php echo $this->Form->create('Coversheet', array('novalidate' => true));?>
+		      <?php $attributes = array('hiddenField' => false); ?>
             	<fieldset>
             		<legend><?php echo __('Add %s', __('Coversheet')); ?></legend>
             	       <?php echo $this->Form->hidden('id'); ?>
@@ -48,28 +190,68 @@
                                 
                                 <tr>
                                     <td><?php echo "Attached:"?></td>
-                                    <td><?php echo $this->Form->input('setup_banking', array('label' => "Banking (no starter checks)")); ?></td>
-                                    <td><?php echo $this->Form->input('setup_statements', array('label' => "3 Mo. Processing Stmts")); ?></td>
-                                    <td colspan="3"><?php echo $this->Form->input('setup_drivers_license', array('label' => "Owner's Driver's License")); ?></td>
+                                    <td>
+					<?php 
+						echo $this->Form->input('setup_banking', 
+							array('label' => "Banking (no starter checks)")
+						); 
+					?>
+				    </td>
+                                    <td>
+					<?php 
+						echo $this->Form->input('setup_statements',
+							array('label' => "3 Mo. Processing Stmts")
+						); 
+					?>
+				    </td>
+                                    <td colspan="3">
+					<?php 
+						echo $this->Form->input('setup_drivers_license',
+							array('label' => "Owner's Driver's License")
+						);
+					?>
+				    </td>
                                 </tr>
-
                                 <tr>
                                     <td><?php echo "For New Businesses:"?></td>
-                                    <td><?php echo $this->Form->input('setup_business_license', array('label' => "Business License or Utility Bill")); ?></td>
-                                    <td><?php echo $this->Form->input('setup_other', array('label' => "Other:")); ?></td>
-                                    <td style="width: 25%;" colspan="3"><?php echo $this->Form->input('setup_field_other', array('div' => false, 'label' => false, 'style' => 'width: 120px;','size' => '20')); ?></td>
+                                    <td>
+					<?php
+						echo $this->Form->input('setup_business_license',
+							array(
+								'label' => "Business License or Utility Bill"
+							)
+						); 
+					?>
+				    </td>
+                                    <td colspan="4">
+					<?php
+						echo $this->Form->input('setup_other',
+							array(
+								'label' => "Other:"
+							)
+						);
+						echo $this->Form->input('setup_field_other',
+							array(
+								'div' => false,
+								'label' => false,
+								'style' => 'width: 120px;',
+								'size' => '20'
+							)
+						);
+					?>
+				    </td>
                                 </tr>
                             
                                 <tr <?php if ($tier == 'tier1') echo 'class="warning"'; ?>>
                                     <td>
-                                        <?php 
-                                    $options = array('1' => 'Tier 1:');
-                                    echo $this->Form->radio('setup_tier_select', $options); 
-                                    if ($this->Form->isFieldError('setup_tier_select')){
-                                        echo $this->Form->error('setup_tier_select');
-                                    }
-                                ?>
-                                
+                                    <?php 
+                                        $options = array('1' => 'Tier 1:');
+                                        echo $this->Form->radio('setup_tier_select', $options);
+                                    
+                                        if ($this->Form->isFieldError('setup_tier_select')){
+                                            echo $this->Form->error('setup_tier_select');
+                                        }
+                                    ?>
                                     </td>
                                     <td colspan="5">Retail: Volume $0-$250,000/month, Average Ticket Less Than $1,000</td>
                                 </tr>
@@ -78,7 +260,6 @@
                                     <td>
                                         <?php 
                                             $options = array('2' => 'Tier 2:');
-                                            $attributes=array('hiddenField' => false);
                                             echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>
                                     </td>
@@ -89,14 +270,17 @@
                                     <td>
                                         <?php 
                                             $options = array('3' => 'Tier 3:');
-                                            $attributes=array('hiddenField' => false);
                                             echo $this->Form->radio('setup_tier_select', $options, $attributes);
                                         ?>
                                     </td>
                                     <td colspan="5">
                                         <p>Retail: Volume $250,000 or Greater/month, Average Ticket Less Than $1,000</p>
-                                        <?php echo $this->Form->input('setup_tier3',
-                                            array('label' => '2 years business financials or 2 years tax returns')); 
+                                        <?php
+						echo $this->Form->input('setup_tier3',
+                                            		array(
+								'label' => '2 years business financials or 2 years tax returns'
+							)
+						);
                                         ?>
                                     </td>
                                 </tr>
@@ -104,30 +288,49 @@
                                 <tr <?php if ($tier == 'tier4') echo 'class="warning"'; ?>>
                                     <td>
                                         <?php 
-                                        $options = array('4' => 'Tier 4:');
-                                        $attributes=array('hiddenField' => false);
-                                        echo $this->Form->radio('setup_tier_select', $options, $attributes); ?>
-                                        
+                                            $options = array('4' => 'Tier 4:');
+                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                        ?>
                                     </td>
                                     <td colspan="5">
                                         <p>Retail: Volume $0-$250,000/month, Average Ticket Greater Than $1,000</p>
                                         <p>MOTO/Internet: Volume $0-$150,000/month, Average Ticket Greater than $1,000</p>
-                                        <?php echo $this->Form->input('setup_tier4',array('label' => '2 years business financials or 2 years tax returns')); ?>
+                                        <?php
+						echo $this->Form->input('setup_tier4',
+							array(
+								'label' => '2 years business financials or 2 years tax returns'
+							)
+						);
+					?>
                                     </td>
                                 </tr>
 
                                 <tr <?php if ($tier == 'tier5') echo 'class="warning"'; ?>>
                                     <td>
                                         <?php 
-                                        $options = array('5' => 'Tier 5:');
-                                        $attributes=array('hiddenField' => false);
-                                        echo $this->Form->radio('setup_tier_select', $options, $attributes); ?>                        
+                                            $options = array('5' => 'Tier 5:');
+                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                        ?>                        
                                     </td>
                                     <td colspan="5"><p>Retail: Volume $250,000 or Greater/month, Average Ticket Greater Than $1,000</p>
                                         <p>MOTO/Internet: Volume $150,000 or Greater/month</p>
-                                        <?php echo $this->Form->input('setup_tier5_financials',array('label' => '2 years audited business financials or 2 years tax returns')); ?>
-                                        <?php echo $this->Form->input('setup_tier5_processing_statements',array('label' => '6 months processing statements')); ?>
-                                        <?php echo $this->Form->input('setup_tier5_bank_statements',array('label' => '3 months bank statements')); ?>
+                                        <?php
+						echo $this->Form->input('setup_tier5_financials',
+							array(
+								'label' => '2 years audited business financials or 2 years tax returns'
+							)
+						);
+                                        	echo $this->Form->input('setup_tier5_processing_statements',
+							array(
+								'label' => '6 months processing statements'
+							)
+						);
+                                        	echo $this->Form->input('setup_tier5_bank_statements',
+							array(
+								'label' => '3 months bank statements'
+							)
+						);
+					?>
                                     </td>
                                 </tr>
                             
@@ -138,8 +341,26 @@
                                         echo $this->Form->error('setup_equipment_terminal');
                                         } else echo 'Equipment Type:'; ?>
                                     </td>
-                                    <td><?php echo $this->Form->input('setup_equipment_terminal', array('label' => 'Terminal', 'error' => false));  ?></td>
-                                    <td colspan="4"><?php echo $this->Form->input('setup_equipment_gateway', array('label' => 'POS/Gateway', 'error' => false)); ?></td>
+                                    <td>
+					<?php
+						echo $this->Form->input('setup_equipment_terminal',
+							array(
+								'label' => 'Terminal',
+								'error' => false
+							)
+						);
+					?>
+				    </td>
+                                    <td colspan="4">
+					<?php
+						echo $this->Form->input('setup_equipment_gateway',
+							array(
+								'label' => 'POS/Gateway',
+								'error' => false
+							)
+						);
+					?>
+				    </td>
                                          
                                </tr>
                            
@@ -160,20 +381,18 @@
                                     </td>
                                     <td>
                                         <?php 
-                                            $options = array('axia' => 'Axia');
-                                            $attributes=array('hiddenField' => false);                        
+                                            $options = array('axia' => 'Axia');                       
                                             echo $this->Form->radio('setup_install', $options, $attributes);
                                         ?>
                                     </td>    
                                     <td colspan="3">
                                         <?php 
                                             $options = array('pos' => 'POS/Gateway Provider');
-                                            $attributes=array('hiddenField' => false);                        
                                             echo $this->Form->radio('setup_install', $options, $attributes);
                                         ?>
                                     </td>
                                </tr>
-                            
+ 
                                 <tr>
                                     <td>
                                         <?php
@@ -192,7 +411,6 @@
                                     <td colspan="4">
                                         <?php 
                                             $options = array('axia' => 'Axia (ship or drop off)');
-                                            $attributes = array('hiddenField' => false);                        
                                             echo $this->Form->radio('setup_starterkit', $options, $attributes);
                                         ?>
                                     </td>
@@ -212,15 +430,17 @@
                                         <?php echo $this->Form->input('setup_partner_pct_profit',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -231,6 +451,9 @@
                                         <?php echo $this->Form->input('setup_partner_pct_volume',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -238,8 +461,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -253,6 +475,9 @@
                                         <?php echo $this->Form->input('setup_partner_pct_gross',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -260,8 +485,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -281,15 +505,17 @@
                                         <?php echo $this->Form->input('setup_referrer_pct_profit',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -300,6 +526,9 @@
                                         <?php echo $this->Form->input('setup_referrer_pct_volume',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -307,8 +536,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -322,6 +550,9 @@
                                         <?php echo $this->Form->input('setup_referrer_pct_gross',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -329,8 +560,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -350,15 +580,17 @@
                                         <?php echo $this->Form->input('setup_reseller_pct_profit',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -369,6 +601,9 @@
                                         <?php echo $this->Form->input('setup_reseller_pct_volume',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -376,8 +611,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -391,6 +625,9 @@
                                         <?php echo $this->Form->input('setup_reseller_pct_gross',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -398,8 +635,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -500,7 +736,14 @@
                                         Time: <div <?php echo ($data['CobrandedApplication']['Autoclose Time 1']) ? 'class="label label-default"' : ''; ?> ><?php echo $data['CobrandedApplication']['Autoclose Time 1']; ?></div>
                                     </td>
                                     <td >
-                                        <?php echo $this->Form->input('cp_pinpad_ra_attached', array('label' => 'Pin Pad Encryption RA Attached?', 'error' => false));?>
+                                        <?php
+						echo $this->Form->input('cp_pinpad_ra_attached',
+							array(
+								'label' => 'Pin Pad Encryption RA Attached?',
+								'error' => false
+							)
+						);
+					?>
                                     </td>
                                 </tr>
 
@@ -511,7 +754,7 @@
                                     <td >
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('cp_giftcards',$options,$attributes);
                                         ?>
                                     </td>
@@ -533,7 +776,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('cp_check_guarantee',$options,$attributes);
                                         ?>
                                     </td>
@@ -604,7 +847,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('cp_pos',$options,$attributes);
                                         ?>    
                                     </td>
@@ -696,7 +939,7 @@
                                     <td>
                                         <?php
                                             $options=array('ip' => 'IP');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('micros',$options,$attributes);
                                         ?>
                                     </td>
@@ -720,7 +963,7 @@
                                     <td>
                                         <?php
                                             $options=array('rep' => 'Included in Pricing/Billed to Rep');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('micros_billing',$options,$attributes);
                                         ?>    
                                     </td>
@@ -772,7 +1015,7 @@
                                     <td>
                                        <?php
                                             $options=array('option1' => 'Option 1 ($75 setup, $10/month, $0.05 per item)');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_option',$options,$attributes);
                                        ?>
                                     </td>
@@ -813,7 +1056,7 @@
                                 </tr>
 
                                 <tr>
-                                    <td colspan="2" style="text-align: center;">*Additional $5 monthly fee for Gold. Additional $10 monthly fee for Platinum</td>
+                                    <td colspan="2" style="text-align: center;">*Additional fees may apply for Gold and Platinum packages</td>
                                 </tr>
 
                                 <tr>
@@ -823,7 +1066,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_retail_swipe',$options,$attributes);
                                         ?>
                                     </td>
@@ -850,7 +1093,7 @@
                                     <td>
                                         <?php
                                             $options=array('yes' => 'Yes');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_epay',$options,$attributes); 
                                         ?>
                                     </td>
@@ -893,7 +1136,7 @@
                                     <td>
                                         <?php
                                             $options=array('rep' => 'Included in Pricing/Billed to Rep');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
+                                            $attributes=array('legend' => false);
                                             echo $this->Form->radio('gateway_billing',$options,$attributes); 
                                         ?> 
                                     </td>
@@ -1057,7 +1300,7 @@
                                 if ($moto != true) {echo '</div>';}
                             }?>
                     </fieldset>
-                
+
                 <?php 
                 $this->Html->css(array('coversheet'), 'stylesheet', array('media' => 'print'));
                 if ($data['Coversheet']['status'] == 'saved') {

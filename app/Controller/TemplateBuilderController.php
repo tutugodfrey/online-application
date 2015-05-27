@@ -35,6 +35,25 @@ class TemplateBuilderController extends AppController {
 
 			$this->request->data = $this->Session->read('requestData');
 			$this->set('template', $template);
+
+			$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+			
+			$client = $this->CobrandedApplication->createRightSignatureClient();
+			$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
+
+			$templates = array();
+			$installTemplates = array();
+
+			foreach ($results as $guid => $filename) {
+				if (preg_match('/install/i', $filename)) {
+					$installTemplates[$guid] = $filename;
+				} else {
+					$templates[$guid] = $filename;
+				}
+			}
+
+			$this->set('templateList', $templates);
+			$this->set('installTemplateList', $installTemplates);
 		}
 
 		$this->Session->delete('requestData');

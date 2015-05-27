@@ -31,8 +31,23 @@
 		);
 
 		echo $this->Form->input('description');
-		echo $this->Form->input('rightsignature_template_guid');
-		echo $this->Form->input('rightsignature_install_template_guid');
+		
+		echo $this->Form->input('rightsignature_template_guid',
+    		array(
+    			'type' => 'select',
+    			'label' => 'Rightsignature Template Guid',
+        		'options' => $templateList,
+    		)
+		);
+
+		echo $this->Form->input('rightsignature_install_template_guid',
+    		array(
+    			'type' => 'select',
+    			'label' => 'Rightsignature Install Template Guid',
+        		'options' => $installTemplateList,
+    		)
+		);
+
 		echo $this->Form->input('owner_equity_threshold');
 		echo $this->Form->hidden('cobrand_id');
 	?>

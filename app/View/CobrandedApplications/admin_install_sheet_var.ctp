@@ -2,8 +2,11 @@
 <?php
 	echo $this->Html->script('prototype');
 	echo $this->Html->script('scriptaculous/src/scriptaculous.js?load=effects');
+
 	if ($data['Merchant']['merchant_id'] == "") {
-		echo '<h4>This Application Has not been boarded into the Database!<br/>Please contact <a href="mailto:support@axiapayments.com?subject= Onlineapp ' . $data['CobrandedApplication']['id'] . ' not boarded">support@axiapayments.com</a></h4>';
+		echo '<h4>This Application Has not been boarded into the Database!<br/>Please contact <a href="mailto:support@axiapayments.com?subject=Onlineapp ' . $data['CobrandedApplication']['id'] . ' not boarded">support@axiapayments.com</a></h4>';
+	} else if (empty($data['Merchant']['EquipmentProgramming'])) {
+		echo '<h4>A terminal has not yet been configured!<br/>Please contact <a href="mailto:support@axiapayments.com?subject=Onlineapp ' . $data['CobrandedApplication']['id'] . ' no terminal configured">support@axiapayments.com</a></h4>';
 	} else {
 		$contractorId = '';
 		$dba = '';
@@ -68,11 +71,22 @@
 		echo '<td><strong>Fax:</strong> ' . '877.875.5135' . '</td>';
 		echo '<td><strong>Phone/Fax:</strong> ' . $phoneNumber . ' / ' . $faxNumber . '</td>';
 		echo '</tr>';
-		echo '</table>';
+
+		$terminalTypes = array();
 
 		foreach ($data['Merchant']['EquipmentProgramming'] as $programming) {
-			echo 'Terminal Type: ' . $programming['terminal_type'];
+			$terminalTypes[$programming['terminal_type']] = $programming['terminal_type'];
 		}
+
+		echo '<tr>';
+		echo '<td><strong>Select Terminal Type:</strong></td>';
+		echo '<td>'.$this->Form->select(
+			'select_terminal_type',
+			$terminalTypes
+		).'</td>';
+		echo '</tr>';
+		echo '</table>';
+
 		echo '<p>Installation Information</p>';
 		echo '<strong>Address: </strong>' . $address . '<br/>';
 		echo '<strong>City: </strong>' . $city . '<br/>';
