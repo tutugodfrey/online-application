@@ -15,6 +15,7 @@
 
                     jQuery('input[type=submit]').click(function(e) {
 
+                        var focusField = null;
                         var submitFlag = true;
 
                         if (jQuery('#CoversheetSetupPartner').val() || jQuery('#CoversheetSetupPartnerPctProfit').val() ||
@@ -22,6 +23,7 @@
 
                             if (!jQuery('#CoversheetSetupPartner').val()) {
                                 jQuery('#CoversheetSetupPartner').css('background','#FFFF00');
+                                focusField = 'CoversheetSetupPartner';
                                 submitFlag = false;
                             }
                             else {
@@ -31,6 +33,9 @@
                             if (!jQuery('#CoversheetSetupPartnerPctProfit').val() && !jQuery('#CoversheetSetupPartnerPctVolume').val()) {
                                     jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
                                     jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupPartnerPctProfit';
+                                    }
                                     submitFlag = false;
                             }
                             else {
@@ -38,6 +43,9 @@
                                     (jQuery('#CoversheetSetupPartnerPctVolume').val() && (jQuery('#CoversheetSetupPartnerPctVolume').val() > 5 || jQuery('#CoversheetSetupPartnerPctVolume').val() < .01))) {
                                         jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
                                         jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                        if (focusField == null) {
+                                            focusField = 'CoversheetSetupPartnerPctProfit';
+                                        }
                                         submitFlag = false;
                                 }
                                 else {
@@ -49,6 +57,9 @@
                             if (!jQuery('#CoversheetSetupPartnerPctGross').val() ||
                                 jQuery('#CoversheetSetupPartnerPctGross').val() > 100 || jQuery('#CoversheetSetupPartnerPctGross').val() < 1) {
                                     jQuery('#CoversheetSetupPartnerPctGross').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupPartnerPctGross';
+                                    }
                                     submitFlag = false;
                             }
                             else {
@@ -61,6 +72,9 @@
 
                             if (!jQuery('#CoversheetSetupReferrer').val()) {
                                 jQuery('#CoversheetSetupReferrer').css('background','#FFFF00');
+                                if (focusField == null) {
+                                    focusField = 'CoversheetSetupReferrer';
+                                }
                                 submitFlag = false;
                             }
                             else {
@@ -70,6 +84,9 @@
                             if (!jQuery('#CoversheetSetupReferrerPctProfit').val() && !jQuery('#CoversheetSetupReferrerPctVolume').val()) {
                                     jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
                                     jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupReferrerPctProfit';
+                                    }
                                     submitFlag = false;
                             }
                             else {
@@ -77,6 +94,9 @@
                                     (jQuery('#CoversheetSetupReferrerPctVolume').val() && (jQuery('#CoversheetSetupReferrerPctVolume').val() > 5 || jQuery('#CoversheetSetupReferrerPctVolume').val() < .01))) {
                                         jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
                                         jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                        if (focusField == null) {
+                                            focusField = 'CoversheetSetupReferrerPctProfit';
+                                        }
                                         submitFlag = false;
                                 }
                                 else {
@@ -88,6 +108,9 @@
                             if (!jQuery('#CoversheetSetupReferrerPctGross').val() ||
                                 jQuery('#CoversheetSetupReferrerPctGross').val() > 100 || jQuery('#CoversheetSetupReferrerPctGross').val() < 1) {
                                     jQuery('#CoversheetSetupReferrerPctGross').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupReferrerPctGross';
+                                    }
                                     submitFlag = false;
                             }
                             else {
@@ -100,6 +123,9 @@
 
                             if (!jQuery('#CoversheetSetupReseller').val()) {
                                 jQuery('#CoversheetSetupReseller').css('background','#FFFF00');
+                                if (focusField == null) {
+                                    focusField = 'CoversheetSetupReseller';
+                                }
                                 submitFlag = false;
                             }
                             else {
@@ -109,6 +135,9 @@
                             if (!jQuery('#CoversheetSetupResellerPctProfit').val() && !jQuery('#CoversheetSetupResellerPctVolume').val()) {
                                     jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
                                     jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupResellerPctProfit';
+                                    }
                                     submitFlag = false;
                             }
                             else {
@@ -116,6 +145,9 @@
                                     (jQuery('#CoversheetSetupResellerPctVolume').val() && (jQuery('#CoversheetSetupResellerPctVolume').val() > 5 || jQuery('#CoversheetSetupResellerPctVolume').val() < .01))) {
                                         jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
                                         jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                        if (focusField == null) {
+                                            focusField = 'CoversheetSetupResellerPctProfit';
+                                        }
                                         submitFlag = false;
                                 }
                                 else {
@@ -127,6 +159,9 @@
                             if (!jQuery('#CoversheetSetupResellerPctGross').val() ||
                                 jQuery('#CoversheetSetupResellerPctGross').val() > 100 || jQuery('#CoversheetSetupResellerPctGross').val() < 1) {
                                     jQuery('#CoversheetSetupResellerPctGross').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupResellerPctGross';
+                                    }
                                     submitFlag = false;
                             }
                             else {
@@ -135,7 +170,8 @@
                         }
 
                         if (!submitFlag) {
-                            e.preventDefault()
+                            e.preventDefault();
+                            jQuery("#"+focusField).focus();
                             return false;
                         }
 
