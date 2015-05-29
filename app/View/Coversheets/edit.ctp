@@ -198,8 +198,8 @@
 
             <?php if ($data['Coversheet']['status'] != 'saved') { ?>
             <script type="text/javascript">                                        
-               $(document).ready(function () {
-               $('#CoversheetEditForm :input').attr('disabled', true);
+               jQuery(document).ready(function () {
+               jQuery('#CoversheetEditForm :input').attr('disabled', true);
                });
             </script>
             <?php } else{
