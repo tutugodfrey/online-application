@@ -198,8 +198,8 @@
 
             <?php if ($data['Coversheet']['status'] != 'saved') { ?>
             <script type="text/javascript">                                        
-               $(document).ready(function () {
-               $('#CoversheetEditForm :input').attr('disabled', true);
+               jQuery(document).ready(function () {
+               jQuery('#CoversheetEditForm :input').attr('disabled', true);
                });
             </script>
             <?php } else{
@@ -1047,52 +1047,54 @@
                                 </tr>
 
                                 <tr>
-                                    <td>What setup option?</td>
-                                    <td>
-                                       <?php
-                                            $options=array('option1' => 'Option 1 ($75 setup, $10/month, $0.05 per item)');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('gateway_option',$options,$attributes);
-                                       ?>
-                                    </td>
-                                    <td>
-                                       <?php
-                                            $options=array('option2' => 'Option 2 ($29.95 setup, $15/month, $0.05 per item)');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
-                                            echo $this->Form->radio('gateway_option',$options,$attributes);
-                                       ?>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-
-                                <tr>
                                     <td><?php if ($this->Form->isFieldError('gateway_package')) {
                                              echo $this->Form->error('gateway_package');
                                          } else if($this->Form->isFieldError('gateway_gold_subpackage')) {
                                              echo $this->Form->error('gateway_gold_subpackage');
                                          } else echo 'What Package'; ?>
                                     </td>
-                                    <td>
-                                        <?php
-                                            $options=array('silver' => 'Silver', 'gold' => 'Gold* (Please select:');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('gateway_package',$options,$attributes);
-                                            $options=array('cust_db' => 'Customer Database or', 'fraud' => 'Fraud Package)');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('gateway_gold_subpackage',$options,$attributes);
-                                            $options=array('platinum' => 'Platinum*');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
-                                            echo $this->Form->radio('gateway_package',$options,$attributes);
-                                        ?>
+
+                                    <td colspan="2">
+                                        <table width="50%">
+                                            <tr>
+                                                <td>
+                                                    <?php
+                                                        $options=array('silver' => 'Silver', 'gold' => 'Gold* (Please select:');
+                                                        $attributes=array('legend' => false);
+                                                        echo $this->Form->radio('gateway_package',$options,$attributes);
+                                                    ?>
+                                                <td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-indent:25px;">
+                                                    <?php
+                                                        $options=array('cust_db' => 'Customer Database or', 'fraud' => 'Fraud Package)');
+                                                        $attributes=array('legend' => false);
+                                                        echo $this->Form->radio('gateway_gold_subpackage',$options,$attributes);
+                                                    ?>
+                                                <td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <?php
+                                                        $options=array('platinum' => 'Platinum*');
+                                                        $attributes=array('legend' => false, 'hiddenField' => false);
+                                                        echo $this->Form->radio('gateway_package',$options,$attributes);
+                                                    ?>
+                                                <td>
+                                            </tr>
+                                        </table>
                                     </td>
-                                    <td></td>
+                                    
                                     <td></td>
                                     <td></td>
                                 </tr>
 
                                 <tr>
                                     <td colspan="2" style="text-align: center;">*Additional fees may apply for Gold and Platinum packages</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
 
                                 <tr>
