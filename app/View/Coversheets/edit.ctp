@@ -3,6 +3,8 @@
         <div class='col-xs-12'>
             <?php echo $this->Html->css('coversheet', null, array('inline' => false)); ?>
 
+            <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
+            <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
             <script type="text/javascript" src="/js/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 
             <script type="text/javascript">
@@ -11,18 +13,193 @@
                 jQuery(document).ready(function () {
                     jQuery(":input").inputmask();
 
-                    jQuery('input[type=submit]').click(function() {
+                    jQuery('input[type=submit]').click(function(e) {
+
+                        var focusField = null;
+                        var submitFlag = true;
+
+                        if (jQuery('#CoversheetSetupPartner').val() || jQuery('#CoversheetSetupPartnerPctProfit').val() ||
+                            jQuery('#CoversheetSetupPartnerPctVolume').val() || jQuery('#CoversheetSetupPartnerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupPartner').val()) {
+                                jQuery('#CoversheetSetupPartner').css('background','#FFFF00');
+                                focusField = 'CoversheetSetupPartner';
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupPartner').css('background','#FFFFFF');
+                            }
+
+                            if (!jQuery('#CoversheetSetupPartnerPctProfit').val() && !jQuery('#CoversheetSetupPartnerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupPartnerPctProfit';
+                                    }
+                                    submitFlag = false;
+                            }
+                            else {
+                                if ((jQuery('#CoversheetSetupPartnerPctProfit').val() && (jQuery('#CoversheetSetupPartnerPctProfit').val() > 100 || jQuery('#CoversheetSetupPartnerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupPartnerPctVolume').val() && (jQuery('#CoversheetSetupPartnerPctVolume').val() > 5 || jQuery('#CoversheetSetupPartnerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
+                                        if (focusField == null) {
+                                            focusField = 'CoversheetSetupPartnerPctProfit';
+                                        }
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupPartnerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupPartnerPctVolume').css('background','#ffffff');
+                                }
+                            }
+
+                            if (!jQuery('#CoversheetSetupPartnerPctGross').val() ||
+                                jQuery('#CoversheetSetupPartnerPctGross').val() > 100 || jQuery('#CoversheetSetupPartnerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupPartnerPctGross').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupPartnerPctGross';
+                                    }
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupPartnerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (jQuery('#CoversheetSetupReferrer').val() || jQuery('#CoversheetSetupReferrerPctProfit').val() ||
+                            jQuery('#CoversheetSetupReferrerPctVolume').val() || jQuery('#CoversheetSetupReferrerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupReferrer').val()) {
+                                jQuery('#CoversheetSetupReferrer').css('background','#FFFF00');
+                                if (focusField == null) {
+                                    focusField = 'CoversheetSetupReferrer';
+                                }
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReferrer').css('background','#FFFFFF');
+                            }
+
+                            if (!jQuery('#CoversheetSetupReferrerPctProfit').val() && !jQuery('#CoversheetSetupReferrerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupReferrerPctProfit';
+                                    }
+                                    submitFlag = false;
+                            }
+                            else {
+                                if ((jQuery('#CoversheetSetupReferrerPctProfit').val() && (jQuery('#CoversheetSetupReferrerPctProfit').val() > 100 || jQuery('#CoversheetSetupReferrerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupReferrerPctVolume').val() && (jQuery('#CoversheetSetupReferrerPctVolume').val() > 5 || jQuery('#CoversheetSetupReferrerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
+                                        if (focusField == null) {
+                                            focusField = 'CoversheetSetupReferrerPctProfit';
+                                        }
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupReferrerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupReferrerPctVolume').css('background','#ffffff');
+                                }
+                            }
+                            
+                            if (!jQuery('#CoversheetSetupReferrerPctGross').val() ||
+                                jQuery('#CoversheetSetupReferrerPctGross').val() > 100 || jQuery('#CoversheetSetupReferrerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupReferrerPctGross').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupReferrerPctGross';
+                                    }
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReferrerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (jQuery('#CoversheetSetupReseller').val() || jQuery('#CoversheetSetupResellerPctProfit').val() ||
+                            jQuery('#CoversheetSetupResellerPctVolume').val() || jQuery('#CoversheetSetupResellerPctGross').val()) {
+
+                            if (!jQuery('#CoversheetSetupReseller').val()) {
+                                jQuery('#CoversheetSetupReseller').css('background','#FFFF00');
+                                if (focusField == null) {
+                                    focusField = 'CoversheetSetupReseller';
+                                }
+                                submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupReseller').css('background','#FFFFFF');
+                            }
+
+                            if (!jQuery('#CoversheetSetupResellerPctProfit').val() && !jQuery('#CoversheetSetupResellerPctVolume').val()) {
+                                    jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
+                                    jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupResellerPctProfit';
+                                    }
+                                    submitFlag = false;
+                            }
+                            else {
+                                if ((jQuery('#CoversheetSetupResellerPctProfit').val() && (jQuery('#CoversheetSetupResellerPctProfit').val() > 100 || jQuery('#CoversheetSetupResellerPctProfit').val() < 1)) ||
+                                    (jQuery('#CoversheetSetupResellerPctVolume').val() && (jQuery('#CoversheetSetupResellerPctVolume').val() > 5 || jQuery('#CoversheetSetupResellerPctVolume').val() < .01))) {
+                                        jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
+                                        jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
+                                        if (focusField == null) {
+                                            focusField = 'CoversheetSetupResellerPctProfit';
+                                        }
+                                        submitFlag = false;
+                                }
+                                else {
+                                    jQuery('#CoversheetSetupResellerPctProfit').css('background','#ffffff');
+                                    jQuery('#CoversheetSetupResellerPctVolume').css('background','#ffffff');
+                                }
+                            }
+
+                            if (!jQuery('#CoversheetSetupResellerPctGross').val() ||
+                                jQuery('#CoversheetSetupResellerPctGross').val() > 100 || jQuery('#CoversheetSetupResellerPctGross').val() < 1) {
+                                    jQuery('#CoversheetSetupResellerPctGross').css('background','#FFFF00');
+                                    if (focusField == null) {
+                                        focusField = 'CoversheetSetupResellerPctGross';
+                                    }
+                                    submitFlag = false;
+                            }
+                            else {
+                                jQuery('#CoversheetSetupResellerPctGross').css('background','#ffffff');
+                            }
+                        }
+
+                        if (!submitFlag) {
+                            e.preventDefault();
+                            jQuery("#"+focusField).focus();
+                            return false;
+                        }
+
                         jQuery('#CoversheetEditForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#CoversheetEditForm').submit();
                     })
+
+                    var validationRules = {};
+
+                    jQuery("#CoversheetEditForm input[data-vtype]").map(function(index, input) {
+                        var currentInput = jQuery(input);
+                
+                        if (typeof(validationRules[currentInput.attr('id')]) == 'undefined') {
+                            var rule = new Object();
+                            rule[currentInput.attr('data-vtype')] = true;
+                            validationRules[currentInput.attr('id')] = rule;
+                        }
+                    });
+
+                    $validator = jQuery("#CoversheetEditForm").validate({ rules: validationRules });
                 });
             </script>
 
             <?php if ($data['Coversheet']['status'] != 'saved') { ?>
             <script type="text/javascript">                                        
-               $(document).ready(function () {
-               $('#CoversheetEditForm :input').attr('disabled', true);
+               jQuery(document).ready(function () {
+               jQuery('#CoversheetEditForm :input').attr('disabled', true);
                });
             </script>
             <?php } else{
@@ -33,7 +210,7 @@
 
             <div class="form-group">
             <?php echo $this->Form->create('Coversheet', array('novalidate' => true));?>
-		<?php $attributes = array('hiddenField' => false); ?>
+		      <?php $attributes = array('hiddenField' => false); ?>
             	<fieldset>
             		<legend><?php echo __('Add %s', __('Coversheet')); ?></legend>
             	       <?php echo $this->Form->hidden('id'); ?>
@@ -289,15 +466,17 @@
                                         <?php echo $this->Form->input('setup_partner_pct_profit',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -308,6 +487,9 @@
                                         <?php echo $this->Form->input('setup_partner_pct_volume',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -315,8 +497,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -330,6 +511,9 @@
                                         <?php echo $this->Form->input('setup_partner_pct_gross',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -337,8 +521,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -358,15 +541,17 @@
                                         <?php echo $this->Form->input('setup_referrer_pct_profit',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -377,6 +562,9 @@
                                         <?php echo $this->Form->input('setup_referrer_pct_volume',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -384,8 +572,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -399,6 +586,9 @@
                                         <?php echo $this->Form->input('setup_referrer_pct_gross',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -406,8 +596,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -427,15 +616,17 @@
                                         <?php echo $this->Form->input('setup_reseller_pct_profit',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
                                                     "placeholder": "0",
                                                     "autoGroup": true,
-                                                    "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digits": 3,
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -446,6 +637,9 @@
                                         <?php echo $this->Form->input('setup_reseller_pct_volume',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '.01',
+                                                'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -453,8 +647,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -468,6 +661,9 @@
                                         <?php echo $this->Form->input('setup_reseller_pct_gross',
                                             array(
                                                 'type' => 'text',
+                                                'data-vtype' => 'number',
+                                                'min' => '1',
+                                                'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
@@ -475,8 +671,7 @@
                                                     "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false,
-                                                    "clearMaskOnLostFocus": false'
+                                                    "digitsOptional": false'
                                             )
                                         ); ?>
                                     </td>
@@ -852,52 +1047,54 @@
                                 </tr>
 
                                 <tr>
-                                    <td>What setup option?</td>
-                                    <td>
-                                       <?php
-                                            $options=array('option1' => 'Option 1 ($75 setup, $10/month, $0.05 per item)');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('gateway_option',$options,$attributes);
-                                       ?>
-                                    </td>
-                                    <td>
-                                       <?php
-                                            $options=array('option2' => 'Option 2 ($29.95 setup, $15/month, $0.05 per item)');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
-                                            echo $this->Form->radio('gateway_option',$options,$attributes);
-                                       ?>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-
-                                <tr>
                                     <td><?php if ($this->Form->isFieldError('gateway_package')) {
                                              echo $this->Form->error('gateway_package');
                                          } else if($this->Form->isFieldError('gateway_gold_subpackage')) {
                                              echo $this->Form->error('gateway_gold_subpackage');
                                          } else echo 'What Package'; ?>
                                     </td>
-                                    <td>
-                                        <?php
-                                            $options=array('silver' => 'Silver', 'gold' => 'Gold* (Please select:');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('gateway_package',$options,$attributes);
-                                            $options=array('cust_db' => 'Customer Database or', 'fraud' => 'Fraud Package)');
-                                            $attributes=array('legend' => false);
-                                            echo $this->Form->radio('gateway_gold_subpackage',$options,$attributes);
-                                            $options=array('platinum' => 'Platinum*');
-                                            $attributes=array('legend' => false, 'hiddenField' => false);
-                                            echo $this->Form->radio('gateway_package',$options,$attributes);
-                                        ?>
+
+                                    <td colspan="2">
+                                        <table width="50%">
+                                            <tr>
+                                                <td>
+                                                    <?php
+                                                        $options=array('silver' => 'Silver', 'gold' => 'Gold* (Please select:');
+                                                        $attributes=array('legend' => false);
+                                                        echo $this->Form->radio('gateway_package',$options,$attributes);
+                                                    ?>
+                                                <td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-indent:25px;">
+                                                    <?php
+                                                        $options=array('cust_db' => 'Customer Database or', 'fraud' => 'Fraud Package)');
+                                                        $attributes=array('legend' => false);
+                                                        echo $this->Form->radio('gateway_gold_subpackage',$options,$attributes);
+                                                    ?>
+                                                <td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <?php
+                                                        $options=array('platinum' => 'Platinum*');
+                                                        $attributes=array('legend' => false, 'hiddenField' => false);
+                                                        echo $this->Form->radio('gateway_package',$options,$attributes);
+                                                    ?>
+                                                <td>
+                                            </tr>
+                                        </table>
                                     </td>
-                                    <td></td>
+                                    
                                     <td></td>
                                     <td></td>
                                 </tr>
 
                                 <tr>
-                                    <td colspan="2" style="text-align: center;">*Additional $5 monthly fee for Gold. Additional $10 monthly fee for Platinum</td>
+                                    <td colspan="2" style="text-align: center;">*Additional fees may apply for Gold and Platinum packages</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
 
                                 <tr>

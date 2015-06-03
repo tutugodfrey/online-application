@@ -2,18 +2,24 @@
 
 	$(document).ready(function(){
 
+		var nonePattern = /none/;
 		var cobrandPattern = /CobrandCobrandLogoSelect/;
 		var brandPattern = /CobrandBrandLogoSelect/;
 
 		$('select').on('change', function() {
 			var id = $(this).attr('id');
 			var selected = $(this).find("option:selected").text();
+			var filename = '/img/'+selected;
+
+			if (nonePattern.test(selected)) {
+				filename = '';
+			}
 
 			if (cobrandPattern.test(id)) {
-				$('#CobrandCobrandLogoUrl').val('/img/'+selected);
+				$('#CobrandCobrandLogoUrl').val(filename);
 			}
 			else if (brandPattern.test(id)) {
-				$('#CobrandBrandLogoUrl').val('/img/'+selected);
+				$('#CobrandBrandLogoUrl').val(filename);
 			}
 		});
 	});
@@ -38,12 +44,26 @@
 			$label = 'Upload Cobrand Logo';
 		}
 
+		$counter = 0;
+		$selected = null;
+		$cobrandLogo = $cobrand['Cobrand']['cobrand_logo_url'];
+		$cobrandLogo = preg_replace('/\/img\//', '', $cobrandLogo);
+
+		foreach ($existingLogos as $logo) {
+			if ($logo == $cobrandLogo) {
+				$selected = $counter;
+			}
+			$counter++;
+		}
+
 		echo $this->Form->input(
 			'cobrand_logo_select',
 			array(
+				'type' => 'select',
+				'selected' => $selected,
 				'options' => $existingLogos,
 				'label' => 'Select Existing Logo',
-				'type' => 'select'
+				'empty' => 'none'
 			)
 		);
 
@@ -60,12 +80,26 @@
 			$label = 'Upload Brand Logo';
 		}
 
+		$counter = 0;
+		$selected = null;
+		$brandLogo = $cobrand['Cobrand']['brand_logo_url'];
+		$brandLogo = preg_replace('/\/img\//', '', $brandLogo);
+
+		foreach ($existingLogos as $logo) {
+			if ($logo == $brandLogo) {
+				$selected = $counter;
+			}
+			$counter++;
+		}
+
 		echo $this->Form->input(
 			'brand_logo_select',
 			array(
+				'type' => 'select',
+				'selected' => $selected,
 				'options' => $existingLogos,
 				'label' => 'Select Existing Logo',
-				'type' => 'select'
+				'empty' => 'none'
 			)
 		);
 

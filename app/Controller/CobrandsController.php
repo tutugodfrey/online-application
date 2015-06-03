@@ -34,7 +34,8 @@ class CobrandsController extends AppController {
 		$this->set('existingLogos', $this->Cobrand->getExistingLogos());
 
 		$data = $this->Cobrand->find('first', array('conditions' => array('id' => $this->Cobrand->id), 'recursive' => -1));
-
+		$this->set('cobrand', $data);
+		
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Cobrand->read();
 		} else {

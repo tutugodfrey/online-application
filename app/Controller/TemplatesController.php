@@ -31,6 +31,25 @@ class TemplatesController extends NestedResourceController {
 			$this->Session->setFlash(__('Unable to add your template'));
 		}
 
+		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+			
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
+
+		$templates = array();
+		$installTemplates = array();
+
+		foreach ($results as $guid => $filename) {
+			if (preg_match('/install/i', $filename)) {
+				$installTemplates[$guid] = $filename;
+			} else {
+				$templates[$guid] = $filename;
+			}
+		}
+
+		$this->set('templateList', $templates);
+		$this->set('installTemplateList', $installTemplates);
+
 		$this->__setCommonViewVariables();
 	}
 
@@ -38,6 +57,25 @@ class TemplatesController extends NestedResourceController {
 		$this->Template->id = $idToEdit;
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Template->read();
+
+			$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+			
+			$client = $this->CobrandedApplication->createRightSignatureClient();
+			$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
+
+			$templates = array();
+			$installTemplates = array();
+
+			foreach ($results as $guid => $filename) {
+				if (preg_match('/install/i', $filename)) {
+					$installTemplates[$guid] = $filename;
+				} else {
+					$templates[$guid] = $filename;
+				}
+			}
+
+			$this->set('templateList', $templates);
+			$this->set('installTemplateList', $installTemplates);
 		} else {
 			$data = $this->request->data;
 			// we know the cobrand_id from the uri
