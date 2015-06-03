@@ -1879,7 +1879,7 @@ class CobrandedApplication extends AppModel {
 
         if ($subject == 'Axia Install Sheet - VAR') {
         	if (!empty($owner1Fullname)) {
-        		$xml .= "			<role role_name='Signor'>\n";
+        		$xml .= "			<role role_name='Signer'>\n";
         		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
         		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
         		$xml .= "				<locked>true</locked>\n";
