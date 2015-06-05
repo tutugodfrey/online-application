@@ -3,7 +3,6 @@
         <div class='col-xs-12'>
             <?php echo $this->Html->css('coversheet', null, array('inline' => false)); ?>
 
-            <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
             <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>
             <script type="text/javascript" src="/js/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 
