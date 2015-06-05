@@ -113,17 +113,17 @@
 					)
 				);
 
-				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed') {
-				echo $this->Html->link(' ',
-					array(
-						'action' => 'install_sheet_var',
-						$cobrandedApplication['CobrandedApplication']['id']
-					),
-					array(
-						'class' => 'btn btn-default btn-sm glyphicon glyphicon-file',
-						'title' => __('Install Sheet')
-					)
-				);
+				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['merchant_id'])) {
+					echo $this->Html->link(' ',
+						array(
+							'action' => 'install_sheet_var',
+							$cobrandedApplication['CobrandedApplication']['id']
+						),
+						array(
+							'class' => 'btn btn-default btn-sm glyphicon glyphicon-file',
+							'title' => __('Install Sheet')
+						)
+					);
 				}
 				if (isset($cobrandedApplication['Coversheet']['id'])) {
 					echo $this->Html->link(' ',
