@@ -50,6 +50,8 @@
 		<mkdir dir="${basedir}/app/webroot/coverage"/>
 		<mkdir dir="${basedir}/app/webroot/code-browser"/>
 		<mkdir dir="${basedir}/app/webroot/api"/>
+		<copy file="/var/lib/jenkins/project_config/onlineapp_database.php" tofile="${basedir}/app/Config/database.php"/>
+		<copy file="/var/lib/jenkins/project_config/onlineapp_core.php" tofile="${basedir}/app/Config/core.php"/>
 		<exec executable="/usr/local/bin/composer" dir="${basedir}">
 			<arg line="install"/>
 		</exec>
