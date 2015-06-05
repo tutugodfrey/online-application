@@ -2507,7 +2507,8 @@ class CobrandedApplication extends AppModel {
 				'Owner1Email.value',
 				'Owner2Email.value',
 				'EMail.value',
-				'LocEMail.value'
+				'LocEMail.value',
+				'Merchant.merchant_id'
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
@@ -2579,6 +2580,13 @@ class CobrandedApplication extends AppModel {
 					'type' => 'LEFT',
 					'conditions' => array(
 						'CobrandedApplication.id = Coversheet.cobranded_application_id',
+					),
+				),
+				array('table' => 'merchant',
+					'alias' => 'Merchant',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Merchant.cobranded_application_id',
 					),
 				),
 			);
