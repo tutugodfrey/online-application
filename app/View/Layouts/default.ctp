@@ -99,7 +99,7 @@
 					session_box.style.display = 'none';
 				}
                 window.onload=function() {
-					$('body').on('click', resetTimer).on('keypress', resetTimer);
+					          jQuery('body').on('click', resetTimer).on('keypress', resetTimer);
                     doTimer();
 					}
         </script>";
