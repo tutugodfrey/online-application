@@ -9,7 +9,6 @@ class CoversheetsController extends AppController {
     public $helpers = array('Js'); 
     public $permissions = array(
         'admin_index' => array('rep', 'admin', 'manager'),
-        'admin_search' => array('rep', 'admin', 'manager'),
         'add' => array('rep', 'admin', 'manager'),
         'edit' => array('rep', 'admin', 'manager'),
         'admin_delete' => array('rep', 'admin', 'manager')
@@ -265,36 +264,7 @@ class CoversheetsController extends AppController {
 /*
  * Display a list of coversheets
  */        
-       /* 
 	public function admin_index() {
-		//$this->Prg->commonProcess();
-		if ($this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
-			$conditions =  array(
-				'Coversheet.user_id' => $this->Auth->user('id') 
-			);
-		} else {
-			$conditions = null;
-		}
-		$this->paginate = array('index',
-			'conditions' => $conditions,
-			'order' => array('Coversheet.id' => 'desc')
-		);  
-		$this->Paginator->settings = $this->paginate;
-		$user_id = $this->Auth->user('id');
-		
-		$users = $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
-                if (empty($users)) {
-                        $users = $this->Coversheet->User->find(
-                                'list', 
-                                array(
-                                        'conditions' => array('User.id' => $this->Auth->user('id')),
-                                )   
-                        );  
-                } 
-		$Coversheets = $this->Paginator->paginate();
-		$this->set(compact('users', 'Coversheets', 'user_id'));
-	}*/
-        	public function admin_index() {
 		//reset all of the search parameters
 		if(isset($this->request->data['reset'])) {
 			foreach($this->request->data['Coversheet'] as $i => $value){
@@ -357,45 +327,6 @@ class CoversheetsController extends AppController {
 		$this->set('user_id', $this->Auth->user('id'));
 		}
 	
-/*
- * Search for a coversheet, criteria available is determined by user rights
- */        
-        
-	public function admin_search() {
-		$this->Prg->commonProcess();
-
-       		// perform some permissions checks
-		// Reps can see only their own apps
-		// Managers can see their own plus reps assigned to them
-		// Admins can see everything
-		if (!in_array($this->passedArgs['user_id'], $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))) && $this->Auth->user('group_id') !== User::ADMIN_GROUP_ID) {
-			$conditions[] =  array(
-				'Coversheet.user_id' => $this->Coversheet->User->getAssignedUserIds($this->Auth->user('id'))
-			);
-		} else if ($this->Auth->user('group_id') === User::REPRESENTATIVE_GROUP_ID) {
-			$conditions[] = array('Coversheet.user_id' => $this->passedArgs['user_id']);
-		} else {
-			$conditions = null;
-		}
-
-		if ($this->passedArgs['app_status'] != '') {
-			$conditions[] = array('CobrandedApplication.status' => $this->passedArgs['app_status']);
-		}
-
-		if ($this->passedArgs['coversheet_status'] != '') {
-			$conditions[] = array('Coversheet.status' => $this->passedArgs['coversheet_status']);
-		}
-
-		$this->paginate = array('index',
-			'conditions' => $conditions,
-			'order' => array('Coversheet.id' => 'desc')
-		);  
-		$user_id = $this->Auth->user('id');
-		$Coversheets = $this->paginate();
-		$users = $this->Coversheet->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
-		$this->set(compact('Coversheets', 'users', 'user_id'));
-		$this->render('admin_index');
-	}
         
 	public function admin_view($id = null) {
 		if (!$id) {
