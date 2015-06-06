@@ -79,43 +79,38 @@ class UsersController extends AppController {
 	}
 
 /**
- * Provide Paginated results for the admin index
- *
- * @todo this function should be removed
- * @return null
- */
-
-	public function admin_all() {
-		$this->paginate = array(
-			'limit' => 100,
-			'order' => array('User.active' => 'ASC'),
-		);
-
-		$data = $this->paginate('User');
-		$this->set('users', $data);
-		$this->set('scaffoldFields', array_keys($this->User->schema()));
-		$this->render('admin_index');
-	}
-
-/**
  * Create Index for Managing Users
  *
- * @param integer $all What does this do?
- * @todo this function should be refactored
  * @return null
  */
 
-	public function admin_index($all = null) {
+	public function admin_index() {
+		$queryString = (isset($this->request->query['all']) ? $this->request->query['all'] : null);
+		if ($queryString == '1') {
+			$conditions = array();
+		} else {
+			$conditions = array('User.active' => 'true');
+		}
+
+		$this->Prg->commonProcess();
+
 		$this->paginate = array(
+			'contain' => array('Group'),
 			'limit' => 25,
-			'order' => array('User.firstname' => 'ASC'),
-			'conditions' => array('User.active' => 't'),
-			'recursive' => 0
+			'order' => array(
+				'User.firstname' => 'ASC',
+				'User.lastname' => 'ASC'
+			),
+			'conditions' => $conditions,
 		);
-		$groups = $this->User->Group->find('list');
-		$templates = $this->User->Template->getList();
-		$users = $this->paginate('User');
-		$this->set(compact('groups', 'templates', 'users'));
+		$params = $this->Prg->parsedParams();
+		if (!empty($params)) {
+			$this->Paginator->settings['conditions'] = $this->User->parseCriteria($this->Prg->parsedParams());
+		}
+		//		$groups = $this->User->Group->find('list');
+		//		$templates = $this->User->Template->getList();
+		$users = $this->paginate();
+		$this->set(compact('users', 'queryString'));
 		$this->set('scaffoldFields', array_keys($this->User->schema()));
 	}
 
@@ -210,7 +205,7 @@ class UsersController extends AppController {
 		$this->set('userTemplates', $userTemplates);
 		$this->set('defaultTemplateId', $user['User']['template_id']);
 
-		// TODO: add templates
+		// TODO: Replace $this->User->read() with an action query
 		if (empty($this->request->data)) {
 			$this->request->data = $this->User->read();
 		} else {
@@ -223,38 +218,6 @@ class UsersController extends AppController {
 				$this->redirect('/admin/users');
 			}
 		}
-	}
-
-/**
- * Search functionality for the Users Index
- *
- * @todo this can be refactored along with the users index
- * @return null
- */
-
-	public function admin_search() {
-		$this->Prg->commonProcess();
-		$criteria = trim($this->passedArgs['search']);
-		$criteria = '%' . $criteria . '%';
-		$conditions = array(
-			'OR' => array(
-				'User.firstname ILIKE' => $criteria,
-				'User.lastname ILIKE' => $criteria,
-				'User.fullname ILIKE' => $criteria,
-				'User.email ILIKE' => $criteria,
-				'CAST(User.extension AS TEXT) ILIKE' => $criteria,
-				'CAST(User.id AS TEXT) ILIKE' => $criteria,
-			),
-		);
-		$this->paginate = array(
-			'limit' => 100,
-			'order' => array('User.firstname' => 'ASC')
-		);
-		$users = $this->paginate('User', $conditions);
-		$this->set(compact('users'));
-		$this->set('scaffoldFields', array_keys($this->User->schema()));
-		$this->set('criteria', $this->passedArgs['search']); //I do it this way because I dont want to include the % chars
-		$this->render('admin_index');
 	}
 
 /**
