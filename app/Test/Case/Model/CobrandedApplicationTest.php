@@ -1445,6 +1445,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 					),
 					'LocEMail' => array(
 						'value' => null,
+					),
+					'Merchant' => array(
+						'value' => null,
 					)
 			),
 		);
