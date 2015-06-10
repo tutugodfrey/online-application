@@ -754,7 +754,15 @@
                                         </div>
                                     </td>
                                     <td >
-                                        <?php echo $this->Form->input('cp_encrypted_sn', array('label' => 'JR\'s encrypted-S/N ', 'style' => 'width:100px','size' => '20', 'error' => false)); ?>
+                                        <?php echo $this->Form->input('cp_encrypted_sn',
+                                            array(
+                                                'label' => 'JR\'s encrypted-S/N ',
+                                                'style' => 'width:100px',
+                                                'size' => '20',
+                                                'required' => false,
+                                                'error' => false
+                                            )
+                                        ); ?>
                                     </td>
                                 </tr>
 
@@ -823,7 +831,14 @@
                                         ?>
                                     </td>
                                     <td>
-                                        <?php echo $this->Form->input('cp_check_guarantee_info', array('label' => 'Info: ', 'style' => 'width:80%','size' => '15')); ?>
+                                        <?php echo $this->Form->input('cp_check_guarantee_info',
+                                            array(
+                                                'label' => 'Info: ',
+                                                'style' => 'width:80%',
+                                                'size' => '15',
+                                                'required' => false
+                                            )
+                                        ); ?>
                                     </td>
                                  </tr>
 
