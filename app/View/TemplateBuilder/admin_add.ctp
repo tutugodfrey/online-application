@@ -2,7 +2,9 @@
 
 echo "<div class='cobrandedApplications form'>";
 echo "<br><br>";
-echo $response;
+if (isset($response)) {
+	echo $response;
+}
 echo "</div>";
 
 ?>
