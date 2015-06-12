@@ -33,7 +33,6 @@ class OnlineappAddEmvToCobrandedApplicationValues extends CakeMigration {
 		$this->TemplateSection = $this->generateModel('OnlineappTemplateSection');
 		$this->TemplateField = $this->generateModel('OnlineappTemplateField');
 		$this->CobrandedApplication = $this->generateModel('OnlineappCobrandedApplication');
-		$this->CobrandedApplicationValue = $this->generateModel('OnlineappCobrandedApplicationValue');
 
 		$this->Cobrand->recursive = -1;
 		$this->Template->recursive = -1;
@@ -41,7 +40,6 @@ class OnlineappAddEmvToCobrandedApplicationValues extends CakeMigration {
 		$this->TemplateSection->recursive = -1;
 		$this->TemplateField->recursive = -1;
 		$this->CobrandedApplication->recursive = -1;
-		$this->CobrandedApplicationValue->recursive = -1;
 
 		$optBluTemplateIds = array();
 
@@ -113,19 +111,13 @@ class OnlineappAddEmvToCobrandedApplicationValues extends CakeMigration {
 								}
 							}
 
-							if (preg_match('/^EMV-Yes$/', $templateField['OnlineappTemplateField']['merge_field_name'])) {
+							if (preg_match('/^EMV-$/', $templateField['OnlineappTemplateField']['merge_field_name'])) {
 								$emvYesId = $templateField['OnlineappTemplateField']['id'];
-							}
-
-							if (preg_match('/^EMV-No$/', $templateField['OnlineappTemplateField']['merge_field_name'])) {
 								$emvNoId = $templateField['OnlineappTemplateField']['id'];
 							}
 
-							if (preg_match('/^EMV2-Yes$/', $templateField['OnlineappTemplateField']['merge_field_name'])) {
+							if (preg_match('/^EMV2-$/', $templateField['OnlineappTemplateField']['merge_field_name'])) {
 								$emv2YesId = $templateField['OnlineappTemplateField']['id'];
-							}
-
-							if (preg_match('/^EMV2-No$/', $templateField['OnlineappTemplateField']['merge_field_name'])) {
 								$emv2NoId = $templateField['OnlineappTemplateField']['id'];
 							}
 						}
@@ -144,30 +136,39 @@ class OnlineappAddEmvToCobrandedApplicationValues extends CakeMigration {
 					);
 
 					foreach ($applications as $application) {
-						$cav = array();
-						$cav['CobrandedApplicationValue']['cobranded_application_id'] = $application['OnlineappCobrandedApplication']['id'];
+						if (!empty($emvYesId) && !empty($emvNoId) && !empty($emv2YesId) && !empty($emv2NoId)) {
+							$cav = array();
+							$cav['OnlineappCobrandedApplicationValue']['cobranded_application_id'] = $application['OnlineappCobrandedApplication']['id'];
+							$cav['OnlineappCobrandedApplicationValue']['template_field_id'] = $emvYesId;
+							$cav['OnlineappCobrandedApplicationValue']['name'] = 'EMV-Yes';
+							$cav['OnlineappCobrandedApplicationValue']['value'] = '';
+							$this->CobrandedApplicationValue = $this->generateModel('OnlineappCobrandedApplicationValue');
+							$this->CobrandedApplicationValue->save($cav);
 
-						$cav['CobrandedApplicationValue']['template_field_id'] = $emvYesId;
-						$cav['CobrandedApplicationValue']['name'] = 'EMV-Yes';
-						$cav['CobrandedApplicationValue']['value'] = '';
-echo print_r($cav);
-						$this->CobrandedApplicationValue->save($cav);
+							$cav = array();
+							$cav['OnlineappCobrandedApplicationValue']['cobranded_application_id'] = $application['OnlineappCobrandedApplication']['id'];
+							$cav['OnlineappCobrandedApplicationValue']['template_field_id'] = $emvNoId;
+							$cav['OnlineappCobrandedApplicationValue']['name'] = 'EMV-No';
+							$cav['OnlineappCobrandedApplicationValue']['value'] = 'true';
+							$this->CobrandedApplicationValue = $this->generateModel('OnlineappCobrandedApplicationValue');
+							$this->CobrandedApplicationValue->save($cav);
 
-						$cav['CobrandedApplicationValue']['template_field_id'] = $emvNoId;
-						$cav['CobrandedApplicationValue']['name'] = 'EMV-No';
-						$cav['CobrandedApplicationValue']['value'] = 'true';
-						$this->CobrandedApplicationValue->save($cav);
+							$cav = array();
+							$cav['OnlineappCobrandedApplicationValue']['cobranded_application_id'] = $application['OnlineappCobrandedApplication']['id'];
+							$cav['OnlineappCobrandedApplicationValue']['template_field_id'] = $emv2YesId;
+							$cav['OnlineappCobrandedApplicationValue']['name'] = 'EMV2-Yes';
+							$cav['OnlineappCobrandedApplicationValue']['value'] = '';
+							$this->CobrandedApplicationValue = $this->generateModel('OnlineappCobrandedApplicationValue');
+							$this->CobrandedApplicationValue->save($cav);
 
-						$cav['CobrandedApplicationValue']['template_field_id'] = $emv2YesId;
-						$cav['CobrandedApplicationValue']['name'] = 'EMV2-Yes';
-						$cav['CobrandedApplicationValue']['value'] = '';
-						$this->CobrandedApplicationValue->save($cav);
-
-						$cav['CobrandedApplicationValue']['template_field_id'] = $emv2NoId;
-						$cav['CobrandedApplicationValue']['name'] = 'EMV2-No';
-						$cav['CobrandedApplicationValue']['value'] = 'true';
-						$this->CobrandedApplicationValue->save($cav);
-
+							$cav = array();
+							$cav['OnlineappCobrandedApplicationValue']['cobranded_application_id'] = $application['OnlineappCobrandedApplication']['id'];
+							$cav['OnlineappCobrandedApplicationValue']['template_field_id'] = $emv2NoId;
+							$cav['OnlineappCobrandedApplicationValue']['name'] = 'EMV2-No';
+							$cav['OnlineappCobrandedApplicationValue']['value'] = 'true';
+							$this->CobrandedApplicationValue = $this->generateModel('OnlineappCobrandedApplicationValue');
+							$this->CobrandedApplicationValue->save($cav);
+						}
 					}
 				}
 			}
