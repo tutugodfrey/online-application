@@ -165,7 +165,7 @@
             <?php else: ?>
                 <div style="margin-top: 25px;">
                 <?php
-                  if (!empty($brand_logo_url) && !empty($cobrand_logo_url)) {
+                  if (!empty($brand_logo_url) || !empty($cobrand_logo_url)) {
 
                     $brand_logo = $this->Html->image($brand_logo_url, array('class' => 'pull-right'));
                     $cobrand_logo = $this->Html->image($cobrand_logo_url, array('height' => '50px'));
@@ -221,14 +221,14 @@
                     }
                   }
                   else {
-                    	echo $this->Html->image(
-				'logo.png',
-				array(
-					'alt'=> __('Axia'),
-					'border' => '0',
-					'style' => 'display: block; margin-left:auto; margin-right: auto;'
-				)
-			);
+                    echo $this->Html->image(
+                      'logo.png',
+                      array(
+                        'alt'=> __('Axia'),
+                        'border' => '0',
+                        'style' => 'display: block; margin-left:auto; margin-right: auto;'
+                      )
+                    );
                   }
                 ?>
               </div>
