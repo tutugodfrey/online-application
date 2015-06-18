@@ -17,7 +17,7 @@
                         var focusField = null;
                         var submitFlag = true;
 
-                        if (jQuery('#CoversheetSetupPartner').val() || jQuery('#CoversheetSetupPartnerPctProfit').val() ||
+                        /*if (jQuery('#CoversheetSetupPartner').val() || jQuery('#CoversheetSetupPartnerPctProfit').val() ||
                             jQuery('#CoversheetSetupPartnerPctVolume').val() || jQuery('#CoversheetSetupPartnerPctGross').val()) {
 
                             if (!jQuery('#CoversheetSetupPartner').val()) {
@@ -64,7 +64,7 @@
                             else {
                                 jQuery('#CoversheetSetupPartnerPctGross').css('background','#ffffff');
                             }
-                        }
+                        }*/
 
                         if (jQuery('#CoversheetSetupReferrer').val() || jQuery('#CoversheetSetupReferrerPctProfit').val() ||
                             jQuery('#CoversheetSetupReferrerPctVolume').val() || jQuery('#CoversheetSetupReferrerPctGross').val()) {
