@@ -2475,6 +2475,27 @@ class CobrandedApplication extends AppModel {
 
 		return $response;
 	}
+
+/**
+ * getRightsignatureTemplateGuid
+ * 
+ * @params
+ *     $cobrandName string
+ *     $type string
+ *
+ * @returns
+ *     $guid string
+ */
+	public function getRightsignatureTemplateGuid($cobrandName = null, $type = null) {
+		$guid = nulll;
+
+		if ($cobrandName == 'Corral' && $type == 'ach') {
+			// Corral AxiaMed Vericheck Merchant Agreement
+			$guid = 'a_9862353_e947fd71b87a43539a4e06a95c184ce6';
+		}
+
+		return $guid;
+	}
 	
 /**
  * Return options array to be used for custom pagination and filtering
