@@ -181,6 +181,7 @@ class TemplateFieldHelper extends Helper {
 									array(
 										'type' => 'radio',
 										'name' => $field['merge_field_name'],
+										'id' => $radioOption['name'],
 										'data-value-id' => $radioOption['id'],
 										'checked' => ($radioOption['value'] == null ? '' : 'checked'),
 										'disabled' => $disabled,
