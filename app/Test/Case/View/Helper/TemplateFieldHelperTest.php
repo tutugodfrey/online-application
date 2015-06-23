@@ -134,12 +134,12 @@ class TemplateFieldHelperTest extends CakeTestCase {
 					'<ul class="list-inline">'.
 						'<li>'.
 							'<label>'.
-								'<input type="radio" name="merge_field_name" data-value-id="id1"  >name1</input>'.
+								'<input type="radio" name="merge_field_name" id="name1" data-value-id="id1"  >name1</input>'.
 							'</label>'.
 						'</li>'.
 						'<li>'.
 							'<label>'.
-								'<input type="radio" name="merge_field_name" data-value-id="id2" checked="checked" >name2</input>'.
+								'<input type="radio" name="merge_field_name" id="name2" data-value-id="id2" checked="checked" >name2</input>'.
 							'</label>'.
 						'</li>'.
 					'</ul>'.
