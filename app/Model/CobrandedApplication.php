@@ -14,6 +14,7 @@ App::uses('HttpSocket', 'Network/Http');
 class CobrandedApplication extends AppModel {
 
 	const RIGHTSIGNATURE_NO_TEMPLATE_ERROR = "error! The signature template has not been configured";
+	const CORRAL_ACH_TEMPLATE_GUID = "a_10508841_8c16eeeefe42498e9eaf13bc5ca13ba7";
 
 /**
  * Table to use
@@ -2507,7 +2508,8 @@ class CobrandedApplication extends AppModel {
 
 		if ($cobrandName == 'Corral' && $type == 'ach') {
 			// Corral AxiaMed Vericheck Merchant Agreement
-			$guid = 'a_9862353_e947fd71b87a43539a4e06a95c184ce6';
+			$guid = self::CORRAL_ACH_TEMPLATE_GUID; 
+				//'a_9862353_e947fd71b87a43539a4e06a95c184ce6';
 		}
 
 		return $guid;
