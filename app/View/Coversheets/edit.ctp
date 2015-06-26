@@ -226,7 +226,7 @@
                                 <tr>
                                     <td><?php echo "Attached:"?></td>
                                     <td>
-					<?php 
+					<?php
 						echo $this->Form->input('setup_banking', 
 							array('label' => "Banking (no starter checks)")
 						); 
@@ -1352,6 +1352,28 @@
                                 if ($moto != true) {echo '</div>';}
                             }?>
                     </fieldset>
+
+                <?php if (!empty($errors)) { ?>
+                    <script type="text/javascript">
+
+                        Effect.Appear('Cp');
+                        Effect.Appear('HideCpLink');
+                        Effect.Fade('ShowCpLink');
+
+                        Effect.Appear('Micros');
+                        Effect.Appear('HideMicrosLink');
+                        Effect.Fade('ShowMicrosLink');
+
+                        Effect.Appear('Gateway');
+                        Effect.Appear('HideGatewayLink');
+                        Effect.Fade('ShowGatewayLink');
+
+                        Effect.Appear('Moto');
+                        Effect.Appear('HideMotoLink');
+                        Effect.Fade('ShowMotoLink');
+
+                    </script>
+                <?php } ?>
 
                 <?php 
                 $this->Html->css(array('coversheet'), 'stylesheet', array('media' => 'print'));
