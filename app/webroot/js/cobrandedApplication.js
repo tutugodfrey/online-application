@@ -201,6 +201,29 @@ var totalStartUpFees = function() {
 	$("[label*='Start Up Fees'][name='Total']").trigger('change');
 }
 
+var achHideOrShow = function() {
+	var selectedVal = $('input[name=ACH-]:checked').attr('id');
+
+	if (selectedVal == 'ACH-Yes') {
+		$('label[for="AnnualCheckVolume"]').show();
+		$('label[for="AnnualCheckVolume"]').next().show();
+		$('#AnnualCheckVolume').show();
+
+		$('label[for="TotalSalesVolume"]').show();
+		$('label[for="TotalSalesVolume"]').next().show();
+		$('#TotalSalesVolume').show();
+	}
+	else {
+		$('label[for="AnnualCheckVolume"]').hide();
+		$('label[for="AnnualCheckVolume"]').next().hide();
+		$('#AnnualCheckVolume').hide();
+
+		$('label[for="TotalSalesVolume"]').hide();
+		$('label[for="TotalSalesVolume"]').next().hide();
+		$('#TotalSalesVolume').hide();
+	}
+}
+
 $(document).ready(function() {
 	$(window).resize(onWindowResize);
 
@@ -287,6 +310,11 @@ $(document).ready(function() {
 	$("[name='CreditReprogramFee']").on('blur', totalStartUpFees);
 	$("[name='CreditVirtualTrainingFee']").on('blur', totalStartUpFees);
 	$("[name='CreditMobileSetupFee']").on('blur', totalStartUpFees);
+
+	$('#ACH-Yes').on('change', achHideOrShow);
+	$('#ACH-No').on('change', achHideOrShow);
+
+	achHideOrShow();
 });
 
 
