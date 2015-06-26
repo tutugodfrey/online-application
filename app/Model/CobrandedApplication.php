@@ -14,6 +14,7 @@ App::uses('HttpSocket', 'Network/Http');
 class CobrandedApplication extends AppModel {
 
 	const RIGHTSIGNATURE_NO_TEMPLATE_ERROR = "error! The signature template has not been configured";
+	const CORRAL_ACH_TEMPLATE_GUID = "a_10508841_8c16eeeefe42498e9eaf13bc5ca13ba7";
 
 /**
  * Table to use
@@ -2100,6 +2101,8 @@ class CobrandedApplication extends AppModel {
  		$merchantDoesAutoclose = false;
  		$autocloseTime;
 
+ 		$ach = false;
+
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
 				$isNonProfit = true;
@@ -2163,6 +2166,10 @@ class CobrandedApplication extends AppModel {
 			
 			if ($tmpVal['name'] == 'Autoclose Time 1') {
 				$autocloseTime = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'ACH-Yes' && $tmpVal['value'] == true) {
+				$ach = true;
 			}
 		}
 
@@ -2250,6 +2257,16 @@ class CobrandedApplication extends AppModel {
 
 						// WebAddress can be empty
 						if ($templateField['merge_field_name'] == 'WebAddress') {
+							continue;
+						}
+
+						// don't validate if ach is not true
+						if ($templateField['merge_field_name'] == 'AnnualCheckVolume' && $ach != true) {
+							continue;
+						}
+
+						// don't validate if ach is not true
+						if ($templateField['merge_field_name'] == 'TotalSalesVolume' && $ach != true) {
 							continue;
 						}
 
@@ -2474,6 +2491,28 @@ class CobrandedApplication extends AppModel {
 		}
 
 		return $response;
+	}
+
+/**
+ * getRightsignatureTemplateGuid
+ * 
+ * @params
+ *     $cobrandName string
+ *     $type string
+ *
+ * @returns
+ *     $guid string
+ */
+	public function getRightsignatureTemplateGuid($cobrandName = null, $type = null) {
+		$guid = nulll;
+
+		if ($cobrandName == 'Corral' && $type == 'ach') {
+			// Corral AxiaMed Vericheck Merchant Agreement
+			$guid = self::CORRAL_ACH_TEMPLATE_GUID; 
+				//'a_9862353_e947fd71b87a43539a4e06a95c184ce6';
+		}
+
+		return $guid;
 	}
 	
 /**

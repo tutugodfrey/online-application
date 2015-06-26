@@ -853,7 +853,31 @@ class CobrandedApplicationsController extends AppController {
 		} else {
 			if (empty($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'])) {
 				$client = $this->CobrandedApplication->createRightSignatureClient();
+
+				$this->Cobrand = ClassRegistry::init('Cobrand');
+				$cobrand = $this->Cobrand->find('first',
+					array(
+						'conditions' => array(
+							'id' => $cobrandedApplication['Template']['cobrand_id']
+						)
+					)
+				);
+
+				$achYes = false;
+
+				$valuesMap = $this->getCobrandedApplicationValues($cobrandedApplication['CobrandedApplication']['id']);
+        			foreach ($valuesMap as $key => $val) {
+					if (preg_match('/ACH-Yes/', $key)) {
+						$achYes = $val;
+					}
+				}
+				
 				$templateGuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
+
+				if ($achYes == true) {
+					$templateGuid = $this->CobrandedApplication->getRightsignatureTemplateGuid($cobrand['Cobrand']['partner_name'], 'ach');
+				}
+
 				$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
 				$response = json_decode($response, true);
 
