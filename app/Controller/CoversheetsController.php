@@ -193,6 +193,7 @@ class CoversheetsController extends AppController {
                 } else {
 				    $this->Session->setFlash(__('The coversheet could not be validated. Please, try again.'));
                     $errors = $this->Coversheet->validationErrors;
+                    $this->set('errors', $errors);
                     if (array_key_exists('cp_encrypted_sn', $errors) || array_key_exists('cp_pinpad_ra_attached', $errors) || array_key_exists('cp_check_guarantee_info', $errors) || array_key_exists('cp_pos_contact', $errors)) {
                         $this->set('cardPresent', true);
                     }
