@@ -119,7 +119,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">' .
 				'<div class="checkbox">' .
 					'<input type="hidden" name="merge_field_name" id="merge_field_name_" value="0"/>' .
-					'<input type="checkbox" name="merge_field_name"  label="name*" id="merge_field_name" required="required" data-value-id="id1" value="true" checked="checked"/>' .
+					'<input type="checkbox" name="merge_field_name" label="name*" id="merge_field_name" required="required" data-value-id="id1" value="true" checked="checked"/>' .
 					'<label for="merge_field_name">name*</label>' .
 				'</div>' .
 			'</div>',
