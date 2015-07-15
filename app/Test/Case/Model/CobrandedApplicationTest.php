@@ -1412,6 +1412,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'rightsignature_install_document_guid' => null,
 						'rightsignature_install_status' => null,
 					),
+					'Cobrand' => array(
+						'id' => 1,
+						'partner_name' => 'Partner Name 1',
+					),
 					'Template' => array(
 						'id' => 1,
 						'name' => 'Template 1 for PN1',

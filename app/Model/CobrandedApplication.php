@@ -15,6 +15,11 @@ class CobrandedApplication extends AppModel {
 
 	const RIGHTSIGNATURE_NO_TEMPLATE_ERROR = "error! The signature template has not been configured";
 	const CORRAL_ACH_TEMPLATE_GUID = "a_10508841_8c16eeeefe42498e9eaf13bc5ca13ba7";
+	const STATUS_SAVED = "saved";
+	const STATUS_VALIDATE = "validate";
+	const STATUS_PENDING = "pending";
+	const STATUS_COMPLETED = "completed";
+	const STATUS_SIGNED = "signed";
 
 /**
  * Table to use
@@ -2533,6 +2538,8 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.status',
 				'CobrandedApplication.rightsignature_install_document_guid',
 				'CobrandedApplication.rightsignature_install_status',
+				'Cobrand.id',
+				'Cobrand.partner_name',
 				'Template.id',
 				'Template.name',
 				'User.id',
@@ -2606,7 +2613,14 @@ class CobrandedApplication extends AppModel {
 					'conditions' => array(
 						'CobrandedApplication.template_id = Template.id',
 					),
-				),				
+				),
+				array('table' => 'onlineapp_cobrands',
+					'alias' => 'Cobrand',
+					'type' => 'LEFT',
+					'conditions' => array(
+						"Template.cobrand_id = Cobrand.id",
+					),
+				),
 				array('table' => 'onlineapp_users',
 					'alias' => 'User',
 					'type' => 'LEFT',
@@ -2696,9 +2710,12 @@ class CobrandedApplication extends AppModel {
 				'OR' => array(
 					'Dba.value ILIKE' => '%' . $filter . '%',
 					'CorpName.value ILIKE' => '%' . $filter . '%',
-					'CorpContact.value ILIKE' => '%' . $filter . '%', 
-					'User.email ILIKE' => '%' . $filter . '%',
-					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '% '. $filter .'%',	
+					'CorpContact.value ILIKE' => '%' . $filter . '%',
+					'Owner1Email.value ILIKE' => '%' . $filter . '%',
+					'Owner1Email.value ILIKE' => '%' . $filter . '%',
+					'EMail.value ILIKE' => '%' . $filter . '%',
+					'LocEMail.value ILIKE' => '%' . $filter . '%',
+					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '% ' . $filter . '%',
 				)
 			);
 		return $conditions;
