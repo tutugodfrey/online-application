@@ -124,15 +124,13 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function index($email, $timestamp) {
 		if (!$email || !$timestamp) {
-			header("HTTP/1.0 403 Forbidden");
-			exit;
+			$this->redirect(array('action' => 'index'));
 		}
 
 		// index URL is only good for 2 days (172800 seconds)
 		$currentTimestamp = time();
 		if ($timestamp < ($currentTimestamp - 172800)) {
-			header("HTTP/1.0 403 Forbidden");
-			exit;
+			$this->redirect(array('action' => 'index'));
 		}
 
 		$applications = $this->CobrandedApplication->findAppsByEmail($email);
