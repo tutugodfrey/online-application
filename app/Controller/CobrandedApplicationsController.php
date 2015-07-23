@@ -124,13 +124,13 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function index($email, $timestamp) {
 		if (!$email || !$timestamp) {
-			$this->redirect(array('action' => 'index'));
+			$this->redirect('/');
 		}
 
 		// index URL is only good for 2 days (172800 seconds)
 		$currentTimestamp = time();
 		if ($timestamp < ($currentTimestamp - 172800)) {
-			$this->redirect(array('action' => 'index'));
+			$this->redirect('/');
 		}
 
 		$applications = $this->CobrandedApplication->findAppsByEmail($email);
