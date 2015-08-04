@@ -177,7 +177,7 @@
 
                         jQuery('#CoversheetEditForm').append('<input type="hidden" name="'+this.name+'" value="'+this.name+'" />');
                         jQuery(this).attr('disabled', 'disabled');
-                        jQuery('#CoversheetEditForm').submit();
+                        document.getElementById('CoversheetEditForm').submit();
                     })
 
                     var validationRules = {};
@@ -1377,13 +1377,13 @@
                 <?php } ?>
 
                 <?php 
-                $this->Html->css(array('coversheet'), 'stylesheet', array('media' => 'print'));
-                if ($data['Coversheet']['status'] == 'saved') {
-                    echo $this->Form->submit('Save',array('name'=>'save'));
-                    echo $this->Form->submit('Submit to UW',array('name'=>'uw'));
-                    echo $this->Form->end();
-                }
-                    ?>
+                    $this->Html->css(array('coversheet'), 'stylesheet', array('media' => 'print'));
+                    if ($data['Coversheet']['status'] == 'saved') {
+                        echo $this->Form->submit('Save',array('name'=>'save'));
+                        echo $this->Form->submit('Submit to UW',array('name'=>'uw'));
+                        echo $this->Form->end();
+                    }
+                ?>
             </div>
 
             <?php 
