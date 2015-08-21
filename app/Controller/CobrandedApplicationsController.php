@@ -1234,9 +1234,9 @@ class CobrandedApplicationsController extends AppController {
  * they have been signed.
  */
 	public function document_callback() {
-		$this->data = array_change_key_case($this->data, CASE_LOWER);	
+		$this->data = array_change_key_case($this->data, CASE_LOWER);
 		CakeLog::write('debug', print_r($this->request->data, true));
-		
+
 		if ($this->request->data['callback']['guid'] && $this->data['callback']['status'] == 'signed') {
 
 			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($this->request->data['callback']['guid']);
@@ -1246,6 +1246,7 @@ class CobrandedApplicationsController extends AppController {
 				if (!empty($data)) {
 					$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
 					$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
+					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id'], 'rep_notify_signed_install_sheet');
 				}
 				exit;
 			}
@@ -1256,7 +1257,7 @@ class CobrandedApplicationsController extends AppController {
 				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
 			}
 		}
-		
+
 		exit;
 	}
 

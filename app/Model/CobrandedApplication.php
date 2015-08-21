@@ -1346,10 +1346,11 @@ class CobrandedApplication extends AppModel {
  * repNotifySignedEmail
  *
  * @param int $applicationId Cobranded Application Id
+ * @param string $optionalTemplate optional template to use 
  *
  * @return $response array
  */
-	public function repNotifySignedEmail($applicationId) {
+	public function repNotifySignedEmail($applicationId, $optionalTemplate = null) {
 		if (!$this->exists($applicationId)) {
 			$response = array(
 				'success' => false,
@@ -1377,6 +1378,10 @@ class CobrandedApplication extends AppModel {
 		$viewVars['rep'] = $cobrandedApplication['User']['email'];
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['link'] = Router::url('/users/login', true);
+
+		if ($optionalTemplate != null) {
+			$template = $optionalTemplate;
+		}
 
 		$args = array(
 			'from' => $from,
@@ -1462,7 +1467,7 @@ class CobrandedApplication extends AppModel {
  * sendRightsignatureInstallSheetEmail
  *
  * @param int $applicationId Cobranded Application Id
- * @param string $email email address for the user that should recieve the
+ * @param string $email email address for the user that should recieve the email
  *
  * @return mixed response message
  */
