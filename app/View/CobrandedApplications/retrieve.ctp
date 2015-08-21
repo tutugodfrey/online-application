@@ -6,8 +6,8 @@
 	echo isset($error) ? $this->Html->div('error', $error) : '';
 	echo $this->Form->create(array('controller' => 'cobranded_applications', 'action' => 'retrieve'));
 	echo $this->Html->div(
-		'email',
-		$this->Form->text('email', array('type' => 'email'))
+		'emailText',
+		$this->Form->text('emailText', array('type' => 'email'))
 	);
 	echo $this->Form->end('Submit');
 	echo $this->Element('cobranded_applications/return');
