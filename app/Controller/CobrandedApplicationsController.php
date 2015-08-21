@@ -1246,7 +1246,7 @@ class CobrandedApplicationsController extends AppController {
 				if (!empty($data)) {
 					$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
 					$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
-					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id'], 'rep_notify_signed_install_sheet.ctp');
+					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id'], 'rep_notify_signed_install_sheet');
 				}
 				exit;
 			}
