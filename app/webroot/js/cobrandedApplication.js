@@ -179,12 +179,12 @@ var motoQuestionnaireCheck = function(){
 };
 
 var totalStartUpFees = function() {
-	var creditAppFee = parseFloat($("[name=CreditAppFee]").val());
-	var creditEquipmentFee = parseFloat($("[name=CreditEquipmentFee]").val());
-	var creditExpediteFee = parseFloat($("[name=CreditExpediteFee]").val());
-	var creditReprogramFee = parseFloat($("[name=CreditReprogramFee]").val());
-	var creditVirtualTrainingFee = parseFloat($("[name=CreditVirtualTrainingFee]").val());
-	var creditMobileSetupFee = parseFloat($("[name=CreditMobileSetupFee]").val());
+	var creditAppFee = parseFloat($("[name=CreditAppFee]").val().replace(/,/g, ''));
+	var creditEquipmentFee = parseFloat($("[name=CreditEquipmentFee]").val().replace(/,/g, ''));
+	var creditExpediteFee = parseFloat($("[name=CreditExpediteFee]").val().replace(/,/g, ''));
+	var creditReprogramFee = parseFloat($("[name=CreditReprogramFee]").val().replace(/,/g, ''));
+	var creditVirtualTrainingFee = parseFloat($("[name=CreditVirtualTrainingFee]").val().replace(/,/g, ''));
+	var creditMobileSetupFee = parseFloat($("[name=CreditMobileSetupFee]").val().replace(/,/g, ''));
 
 	if (!creditAppFee) {creditAppFee = 0;}
 	if (!creditEquipmentFee) {creditEquipmentFee = 0;}
