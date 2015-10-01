@@ -39,8 +39,8 @@
                                     submitFlag = false;
                             }
                             else {
-                                if ((jQuery('#CoversheetSetupPartnerPctProfit').val() && (jQuery('#CoversheetSetupPartnerPctProfit').val() > 100 || jQuery('#CoversheetSetupPartnerPctProfit').val() < 1)) ||
-                                    (jQuery('#CoversheetSetupPartnerPctVolume').val() && (jQuery('#CoversheetSetupPartnerPctVolume').val() > 5 || jQuery('#CoversheetSetupPartnerPctVolume').val() < .01))) {
+                                if ((jQuery('#CoversheetSetupPartnerPctProfit').val() && (jQuery('#CoversheetSetupPartnerPctProfit').val() > 100 || jQuery('#CoversheetSetupPartnerPctProfit').val() < 0)) ||
+                                    (jQuery('#CoversheetSetupPartnerPctVolume').val() && (jQuery('#CoversheetSetupPartnerPctVolume').val() > 5 || jQuery('#CoversheetSetupPartnerPctVolume').val() < 0))) {
                                         jQuery('#CoversheetSetupPartnerPctProfit').css('background','#FFFF00');
                                         jQuery('#CoversheetSetupPartnerPctVolume').css('background','#FFFF00');
                                         if (focusField == null) {
@@ -90,8 +90,8 @@
                                     submitFlag = false;
                             }
                             else {
-                                if ((jQuery('#CoversheetSetupReferrerPctProfit').val() && (jQuery('#CoversheetSetupReferrerPctProfit').val() > 100 || jQuery('#CoversheetSetupReferrerPctProfit').val() < 1)) ||
-                                    (jQuery('#CoversheetSetupReferrerPctVolume').val() && (jQuery('#CoversheetSetupReferrerPctVolume').val() > 5 || jQuery('#CoversheetSetupReferrerPctVolume').val() < .01))) {
+                                if ((jQuery('#CoversheetSetupReferrerPctProfit').val() && (jQuery('#CoversheetSetupReferrerPctProfit').val() > 100 || jQuery('#CoversheetSetupReferrerPctProfit').val() < 0)) ||
+                                    (jQuery('#CoversheetSetupReferrerPctVolume').val() && (jQuery('#CoversheetSetupReferrerPctVolume').val() > 5 || jQuery('#CoversheetSetupReferrerPctVolume').val() < 0))) {
                                         jQuery('#CoversheetSetupReferrerPctProfit').css('background','#FFFF00');
                                         jQuery('#CoversheetSetupReferrerPctVolume').css('background','#FFFF00');
                                         if (focusField == null) {
@@ -141,8 +141,8 @@
                                     submitFlag = false;
                             }
                             else {
-                                if ((jQuery('#CoversheetSetupResellerPctProfit').val() && (jQuery('#CoversheetSetupResellerPctProfit').val() > 100 || jQuery('#CoversheetSetupResellerPctProfit').val() < 1)) ||
-                                    (jQuery('#CoversheetSetupResellerPctVolume').val() && (jQuery('#CoversheetSetupResellerPctVolume').val() > 5 || jQuery('#CoversheetSetupResellerPctVolume').val() < .01))) {
+                                if ((jQuery('#CoversheetSetupResellerPctProfit').val() && (jQuery('#CoversheetSetupResellerPctProfit').val() > 100 || jQuery('#CoversheetSetupResellerPctProfit').val() < 0)) ||
+                                    (jQuery('#CoversheetSetupResellerPctVolume').val() && (jQuery('#CoversheetSetupResellerPctVolume').val() > 5 || jQuery('#CoversheetSetupResellerPctVolume').val() < 0))) {
                                         jQuery('#CoversheetSetupResellerPctProfit').css('background','#FFFF00');
                                         jQuery('#CoversheetSetupResellerPctVolume').css('background','#FFFF00');
                                         if (focusField == null) {
@@ -467,16 +467,15 @@
                                             array(
                                                 'type' => 'text',
                                                 'data-vtype' => 'number',
-                                                'min' => '1',
+                                                'min' => '0',
                                                 'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 3,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -488,16 +487,15 @@
                                             array(
                                                 'type' => 'text',
                                                 'data-vtype' => 'number',
-                                                'min' => '.01',
+                                                'min' => '0',
                                                 'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -518,10 +516,9 @@
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -542,16 +539,15 @@
                                             array(
                                                 'type' => 'text',
                                                 'data-vtype' => 'number',
-                                                'min' => '1',
+                                                'min' => '0',
                                                 'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 3,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -563,16 +559,15 @@
                                             array(
                                                 'type' => 'text',
                                                 'data-vtype' => 'number',
-                                                'min' => '.01',
+                                                'min' => '0',
                                                 'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -593,10 +588,9 @@
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -617,16 +611,15 @@
                                             array(
                                                 'type' => 'text',
                                                 'data-vtype' => 'number',
-                                                'min' => '1',
+                                                'min' => '0',
                                                 'max' => '100',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 3,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -638,16 +631,15 @@
                                             array(
                                                 'type' => 'text',
                                                 'data-vtype' => 'number',
-                                                'min' => '.01',
+                                                'min' => '0',
                                                 'max' => '5',
                                                 'div' => false,
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
@@ -668,10 +660,9 @@
                                                 'label' => false,
                                                 'data-inputmask' => '
                                                     "alias": "numeric",
-                                                    "placeholder": "0",
                                                     "autoGroup": true,
                                                     "digits": 2,
-                                                    "digitsOptional": false'
+                                                    "digitsOptional": true'
                                             )
                                         ); ?>
                                     </td>
