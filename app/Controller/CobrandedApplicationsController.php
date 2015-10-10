@@ -45,6 +45,7 @@ class CobrandedApplicationsController extends AppController {
 		'document_callback' => array('*'),
 		'admin_install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
 		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_var_success' => array(User::ADMIN, User::REP, User::MANAGER),
 		'submit_for_review' => array('*')
 	);
 
