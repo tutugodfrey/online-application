@@ -709,7 +709,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",'.
 			'"Off",'.
 			'"",'.
-			'"2",'.
+			'"3",'.
 			'"",'.
 			'""';
 
@@ -762,7 +762,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Yes",'.
 			'"Yes",'.
 			'"",'.
-			'"2",'.
+			'"3",'.
 			'"",'.
 			'""';
 
@@ -1399,8 +1399,21 @@ class CobrandedApplicationTest extends CakeTestCase {
 	}
 
 	public function testIndexInfo() {
+		$responseTmp = $this->CobrandedApplication->find('index');
+
+		$index = 0;
+		$response = array();
+
+		foreach ($responseTmp as $r) {
+			if ($r['CobrandedApplication']['uuid'] == 'b118ac22d3cd4ab49148b05d5254ed59') {
+				$response[$index] = $r;
+				break;
+			}
+			$index++;
+		}
+
 		$expectedResponse = array(
-			0 => array(
+			$index => array(
 					'CobrandedApplication' => array(
 						'id' => 1,
 						'user_id' => 1,
@@ -1456,8 +1469,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			),
 		);
 
-		$response = $this->CobrandedApplication->find('index');
-		$expectedResponse[0]['CobrandedApplication']['modified'] = $response[0]['CobrandedApplication']['modified'];
+		$expectedResponse[$index]['CobrandedApplication']['modified'] = $response[$index]['CobrandedApplication']['modified'];
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
