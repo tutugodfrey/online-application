@@ -27,6 +27,8 @@ class CoversheetTest extends CakeTestCase {
 		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
+		'app.onlineappEmailTimelineSubject',
+		'app.onlineappEmailTimeline',
 	);
 
 /**
@@ -46,6 +48,8 @@ class CoversheetTest extends CakeTestCase {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
+		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
 		$this->Coversheet->validator()->remove('cp_encrypted_sn');
 		$this->Coversheet->validator()->remove('cp_pinpad_ra_attached');
@@ -62,6 +66,8 @@ class CoversheetTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 		$this->loadFixtures('OnlineappCoversheet');
+		$this->loadFixtures('OnlineappEmailTimelineSubject');
+		$this->loadFixtures('OnlineappEmailTimeline');
 	}
 
 /**
@@ -70,6 +76,8 @@ class CoversheetTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		$this->OnlineappEmailTimeline->deleteAll(true, false);
+		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		$this->Coversheet->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
@@ -80,6 +88,8 @@ class CoversheetTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+		unset($this->OnlineappEmailTimeline);
+		unset($this->OnlineappEmailTimelineSubject);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
@@ -127,6 +137,117 @@ class CoversheetTest extends CakeTestCase {
 
 		$this->Coversheet->create($coversheet['Coversheet']);
 		$response = $this->Coversheet->validates();
+		$this->assertFalse($response);
+
+		$coversheet = $this->Coversheet->find('first',
+			array(
+				'conditions' => array(
+					'Coversheet.id' => 1
+				)
+			)
+		);
+
+		$coversheet['Coversheet']['setup_tier_select'] = '3';
+		$coversheet['Coversheet']['setup_tier3'] = '2';
+
+		$this->Coversheet->create($coversheet['Coversheet']);
+		$response = $this->Coversheet->validates();
+		$this->assertFalse($response);
+
+		$coversheet = $this->Coversheet->find('first',
+			array(
+				'conditions' => array(
+					'Coversheet.id' => 1
+				)
+			)
+		);
+
+		$coversheet['Coversheet']['setup_tier_select'] = '3';
+		$coversheet['Coversheet']['setup_tier3'] = '1';
+
+		$this->Coversheet->create($coversheet['Coversheet']);
+		$response = $this->Coversheet->validates();
+		$this->assertTrue($response);
+
+		$coversheet = $this->Coversheet->find('first',
+			array(
+				'conditions' => array(
+					'Coversheet.id' => 1
+				)
+			)
+		);
+
+		$coversheet['Coversheet']['setup_tier_select'] = '4';
+		$coversheet['Coversheet']['setup_tier4'] = '2';
+
+		$this->Coversheet->create($coversheet['Coversheet']);
+		$response = $this->Coversheet->validates();
+		$this->assertFalse($response);
+
+		$coversheet = $this->Coversheet->find('first',
+			array(
+				'conditions' => array(
+					'Coversheet.id' => 1
+				)
+			)
+		);
+
+		$coversheet['Coversheet']['setup_tier_select'] = '4';
+		$coversheet['Coversheet']['setup_tier4'] = '1';
+
+		$this->Coversheet->create($coversheet['Coversheet']);
+		$response = $this->Coversheet->validates();
+		$this->assertTrue($response);
+
+		$coversheet = $this->Coversheet->find('first',
+			array(
+				'conditions' => array(
+					'Coversheet.id' => 2
+				)
+			)
+		);
+
+		$coversheet['Coversheet']['setup_tier5_financials'] = '1';
+		$coversheet['Coversheet']['setup_tier5_processing_statements'] = '1';
+		$coversheet['Coversheet']['setup_tier5_bank_statements'] = '1';
+		$coversheet['Coversheet']['setup_equipment_terminal'] = '1';
+		$coversheet['Coversheet']['setup_starterkit'] = '';
+		$coversheet['Coversheet']['setup_lease_price'] = '';
+		$coversheet['Coversheet']['gateway_package'] = '';
+
+		$this->Coversheet->create($coversheet['Coversheet']);
+		$response = $this->Coversheet->validates();
+		$this->assertFalse($response);
+	}
+
+/**
+ * testPdfGen method
+ *
+ * @return void
+ */
+	public function testPdfGen() {
+		$response = $this->Coversheet->pdfGen('1', 'test');
+		$this->assertTrue($response);
+
+		$response = $this->Coversheet->pdfGen();
+		$this->assertFalse($response);
+	}
+
+/**
+ * testSendCoversheet method
+ *
+ * @return void
+ */
+	public function testSendCoversheet() {
+		$file = WWW_ROOT . DS . 'files' . DS . 'axia_1_coversheet.pdf';
+		$fh = (fopen($file, 'w'));
+		fwrite($fh, "");
+		fclose($fh);
+
+		$response = $this->Coversheet->sendCoversheet(1);
+		$this->assertTrue($response);
+
+		$response = $this->Coversheet->sendCoversheet();
 		$this->assertFalse($response);
 	}
 
