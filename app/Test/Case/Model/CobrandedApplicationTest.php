@@ -1131,6 +1131,71 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// assertions
 		$this->assertFalse($response['success'], 'sendNewApiApplicationEmail with invalid email address should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'from argument is missing.'
+		);
+
+		$args = array('to' => 'test@axiapayments.com');
+		$response = $this->CobrandedApplication->sendEmail($args);
+
+		// assertions
+		$this->assertFalse($response['success'], 'sendEmail with missing from argument should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'to argument is missing.'
+		);
+
+		$args = array('from' => 'test@axiapayments.com');
+		$response = $this->CobrandedApplication->sendEmail($args);
+
+		// assertions
+		$this->assertFalse($response['success'], 'sendEmail with missing to argument should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => ''
+		);
+
+		$args = array(
+			'from' => 'test@axiapayments.com',
+			'to' => 'test@axiapayments.com',
+			'attachments' => array(
+				'test' => array(
+					'data' => 'test'
+				)
+			)
+		);
+		$response = $this->CobrandedApplication->sendEmail($args);
+
+		// assertions
+		$this->assertTrue($response['success'], 'sendEmail using default values should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$this->CobrandedApplication->CakeEmail = null;
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => ''
+		);
+
+		$args = array(
+			'from' => 'test@axiapayments.com',
+			'to' => 'test@axiapayments.com'
+		);
+		$response = $this->CobrandedApplication->sendEmail($args);
+
+		// assertions
+		$this->assertTrue($response['success'], 'sendEmail using default values should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
 	public function testSendApplicationForSigningEmail() {
@@ -1320,6 +1385,57 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// assertions
 		$this->assertTrue($response['success'], 'createNewApiApplicationEmailTimelineEntry with good value for required field should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'cobranded_application_id argument is missing.'
+		);
+
+		// use bad data
+		$args = array(
+			'email_timeline_subject_id' => '',
+			'recipient' => ''
+		);
+		$response = $this->CobrandedApplication->createEmailTimelineEntry($args);
+
+		// assertions
+		$this->assertFalse($response['success'], 'createEmailTimelineEntry with missing cobranded_application_id should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'email_timeline_subject_id argument is missing.'
+		);
+
+		// use bad data
+		$args = array(
+			'cobranded_application_id' => '1',
+			'recipient' => ''
+		);
+		$response = $this->CobrandedApplication->createEmailTimelineEntry($args);
+
+		// assertions
+		$this->assertFalse($response['success'], 'createEmailTimelineEntry with missing email_timeline_subject_id should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'recipient argument is missing.'
+		);
+
+		// use bad data
+		$args = array(
+			'cobranded_application_id' => '1',
+			'email_timeline_subject_id' => ''
+		);
+		$response = $this->CobrandedApplication->createEmailTimelineEntry($args);
+
+		// assertions
+		$this->assertFalse($response['success'], 'createEmailTimelineEntry with missing recipient should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
