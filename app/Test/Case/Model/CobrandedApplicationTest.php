@@ -18,9 +18,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public $fixtures = array(
 		'app.group',
-//		'app.onlineappUser',
 		'app.onlineappCobrand',
-//		'app.onlineappApplication',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
@@ -33,7 +31,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 	);
 
 	private $__template;
+
 	private $__user;
+
 	private $__cobrandedApplication;
 
 /**
@@ -51,15 +51,13 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
-//		$this->Application = ClassRegistry::init('Application');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
-		
+
 		// load data
 		$this->loadFixtures('Group');
-//		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -96,19 +94,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'active' => 1,
 				'api_password' => 'notset',
 				'api_enabled' => 1,
-		//		'api' => 1,
-		//		'cobrand_id' => 2,
 				'template_id' => $this->__template['Template']['id'],
-		//	)
 		);
 
 		$this->__user = $this->User->save($user);
 		$cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
 		$this->CobrandedApplication->id = $cobrandedApplication['CobrandedApplication']['id'];
 		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['OnlineappUser']['id']);
-		//$this->__cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
 
-//		$this->loadFixtures('OnlineappApplication');
 		$this->loadFixtures('OnlineappCoversheet');
 	}
 
@@ -123,7 +116,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
-//		$this->Application->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
 		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
@@ -134,7 +126,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->Coversheet);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
-//		unset($this->Application);
 		unset($this->TemplateField);
 		unset($this->TemplateSection);
 		unset($this->TemplatePage);
@@ -186,9 +177,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// expected was built via fixtures
 		$expected = array(
 			'CobrandedApplication' => array(
-				'id' => (int) 1,
-				'user_id' => (int) 1,
-				'template_id' => (int) 1,
+				'id' => (int)1,
+				'user_id' => (int)1,
+				'template_id' => (int)1,
 				'uuid' => 'b118ac22d3cd4ab49148b05d5254ed59',
 				'created' => '2014-01-24 09:07:08',
 				'modified' => $this->__cobrandedApplication['CobrandedApplication']['modified'],
@@ -198,19 +189,19 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'rightsignature_install_status' => null,
 			),
 			'Template' => array(
-				'id' => (int) 1,
+				'id' => (int)1,
 				'name' => 'Template 1 for PN1',
-				'logo_position' => (int) 0,
+				'logo_position' => (int)0,
 				'include_brand_logo' => true,
 				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-				'cobrand_id' => (int) 1,
+				'cobrand_id' => (int)1,
 				'created' => '2007-03-18 10:41:31',
 				'modified' => '2007-03-18 10:41:31',
 				'rightsignature_template_guid' => null,
 				'rightsignature_install_template_guid' => null,
 				'owner_equity_threshold' => 50,
 				'Cobrand' => array(
-					'id' => (int) 1,
+					'id' => (int)1,
 					'partner_name' => 'Partner Name 1',
 					'partner_name_short' => 'PN1',
 					'cobrand_logo_url' => 'PN1 logo_url',
@@ -221,48 +212,48 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'brand_logo_url' => 'PN1 logo_url',
 				),
 				'TemplatePages' => array(
-					(int) 0 => array(
-						'id' => (int) 1,
+					(int)0 => array(
+						'id' => (int)1,
 						'name' => 'Page 1',
 						'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 						'rep_only' => false,
-						'template_id' => (int) 1,
-						'order' => (int) 0,
+						'template_id' => (int)1,
+						'order' => (int)0,
 						'created' => '2013-12-18 09:26:45',
 						'modified' => '2013-12-18 09:26:45',
 						'TemplateSections' => array(
-							(int) 0 => array(
-								'id' => (int) 1,
+							(int)0 => array(
+								'id' => (int)1,
 								'name' => 'Page Section 1',
 								'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 								'rep_only' => false,
-								'width' => (int) 12,
-								'page_id' => (int) 1,
-								'order' => (int) 0,
+								'width' => (int)12,
+								'page_id' => (int)1,
+								'order' => (int)0,
 								'created' => '2013-12-18 13:36:11',
 								'modified' => '2013-12-18 13:36:11',
 								'TemplateFields' => array(
-									(int) 0 => array(
-										'id' => (int) 1,
+									(int)0 => array(
+										'id' => (int)1,
 										'name' => 'field 1',
 										'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 										'rep_only' => false,
-										'width' => (int) 12,
-										'type' => (int) 1,
+										'width' => (int)12,
+										'type' => (int)1,
 										'required' => true,
-										'source' => (int) 1,
+										'source' => (int)1,
 										'default_value' => '',
 										'merge_field_name' => 'required_text_from_user_without_default',
-										'order' => (int) 0,
-										'section_id' => (int) 1,
+										'order' => (int)0,
+										'section_id' => (int)1,
 										'encrypt' => false,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array(
-											(int) 0 => array(
-												'id' => (int) 1,
-												'cobranded_application_id' => (int) 1,
-												'template_field_id' => (int) 1,
+											(int)0 => array(
+												'id' => (int)1,
+												'cobranded_application_id' => (int)1,
+												'template_field_id' => (int)1,
 												'name' => 'Field 1',
 												'value' => null,
 												'created' => '2014-01-23 17:28:15',
@@ -270,27 +261,27 @@ class CobrandedApplicationTest extends CakeTestCase {
 											)
 										)
 									),
-									(int) 1 => array(
-										'id' => (int) 2,
+									(int)1 => array(
+										'id' => (int)2,
 										'name' => 'field 2',
 										'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 										'rep_only' => false,
-										'width' => (int) 12,
-										'type' => (int) 0,
+										'width' => (int)12,
+										'type' => (int)0,
 										'required' => true,
-										'source' => (int) 1,
+										'source' => (int)1,
 										'default_value' => '',
 										'merge_field_name' => 'required_text_from_user_without_default',
-										'order' => (int) 1,
-										'section_id' => (int) 1,
+										'order' => (int)1,
+										'section_id' => (int)1,
 										'encrypt' => true,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array(
-											(int) 0 => array(
-												'id' => (int) 5,
-												'cobranded_application_id' => (int) 1,
-												'template_field_id' => (int) 2,
+											(int)0 => array(
+												'id' => (int)5,
+												'cobranded_application_id' => (int)1,
+												'template_field_id' => (int)2,
 												'name' => 'Encrypt1',
 												'value' => null,
 												'created' => '2014-01-23 17:28:15',
@@ -298,25 +289,25 @@ class CobrandedApplicationTest extends CakeTestCase {
 											)
 										)
 									),
-									(int) 2 => array(
-										'id' => (int) 3,
+									(int)2 => array(
+										'id' => (int)3,
 										'name' => 'field 3',
 										'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 										'rep_only' => false,
-										'width' => (int) 12,
-										'type' => (int) 0,
+										'width' => (int)12,
+										'type' => (int)0,
 										'required' => true,
-										'source' => (int) 1,
+										'source' => (int)1,
 										'default_value' => '',
 										'merge_field_name' => 'required_text_from_user_without_default',
-										'order' => (int) 2,
-										'section_id' => (int) 1,
+										'order' => (int)2,
+										'section_id' => (int)1,
 										'encrypt' => false,
 										'created' => '2013-12-18 14:10:17',
 										'modified' => '2013-12-18 14:10:17',
 										'CobrandedApplicationValues' => array()
 									),
-									(int) 3 => array(
+									(int)3 => array(
 										'id' => 4,
 										'name' => 'field 4',
 										'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -373,50 +364,50 @@ class CobrandedApplicationTest extends CakeTestCase {
 									),
 								)
 							),
-							(int) 1 => array(
-								'id' => (int) 2,
+							(int)1 => array(
+								'id' => (int)2,
 								'name' => 'Page Section 2',
 								'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 								'rep_only' => false,
-								'width' => (int) 12,
-								'page_id' => (int) 1,
-								'order' => (int) 1,
+								'width' => (int)12,
+								'page_id' => (int)1,
+								'order' => (int)1,
 								'created' => '2013-12-18 13:36:11',
 								'modified' => '2013-12-18 13:36:11',
 								'TemplateFields' => array()
 							),
-							(int) 2 => array(
-								'id' => (int) 3,
+							(int)2 => array(
+								'id' => (int)3,
 								'name' => 'Page Section 2',
 								'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 								'rep_only' => false,
-								'width' => (int) 12,
-								'page_id' => (int) 1,
-								'order' => (int) 2,
+								'width' => (int)12,
+								'page_id' => (int)1,
+								'order' => (int)2,
 								'created' => '2013-12-18 13:36:11',
 								'modified' => '2013-12-18 13:36:11',
 								'TemplateFields' => array()
 							)
 						)
 					),
-					(int) 1 => array(
-						'id' => (int) 2,
+					(int)1 => array(
+						'id' => (int)2,
 						'name' => 'Page 2',
 						'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 						'rep_only' => false,
-						'template_id' => (int) 1,
-						'order' => (int) 1,
+						'template_id' => (int)1,
+						'order' => (int)1,
 						'created' => '2013-12-18 09:26:45',
 						'modified' => '2013-12-18 09:26:45',
 						'TemplateSections' => array()
 					),
-					(int) 2 => array(
-						'id' => (int) 3,
+					(int)2 => array(
+						'id' => (int)3,
 						'name' => 'Page 3',
 						'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 						'rep_only' => false,
-						'template_id' => (int) 1,
-						'order' => (int) 2,
+						'template_id' => (int)1,
+						'order' => (int)2,
 						'created' => '2013-12-18 09:26:45',
 						'modified' => '2013-12-18 09:26:45',
 						'TemplateSections' => array()
@@ -432,39 +423,39 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// we should get rep_only pages, sections, and fields, if we're logged in
 		$expected['Template']['TemplatePages'][3] = array(
-			'id' => (int) 6,
+			'id' => (int)6,
 			'name' => 'Page 4',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 			'rep_only' => true,
-			'template_id' => (int) 1,
-			'order' => (int) 3,
+			'template_id' => (int)1,
+			'order' => (int)3,
 			'created' => '2013-12-18 09:26:45',
 			'modified' => '2013-12-18 09:26:45',
 			'TemplateSections' => array(
-				(int) 0 => array(
-					'id' => (int) 6,
+				(int)0 => array(
+					'id' => (int)6,
 					'name' => 'Page Section 1',
 					'description' => '',
 					'rep_only' => true,
-					'width' => (int) 12,
-					'page_id' => (int) 6,
-					'order' => (int) 0,
+					'width' => (int)12,
+					'page_id' => (int)6,
+					'order' => (int)0,
 					'created' => '2013-12-18 13:36:11',
 					'modified' => '2013-12-18 13:36:11',
 					'TemplateFields' => array(
-						(int) 0 => array(
-							'id' => (int) 43,
+						(int)0 => array(
+							'id' => (int)43,
 							'name' => 'Text field 1',
 							'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 							'rep_only' => true,
-							'width' => (int) 12,
-							'type' => (int) 0,
+							'width' => (int)12,
+							'type' => (int)0,
 							'required' => true,
-							'source' => (int) 1,
+							'source' => (int)1,
 							'default_value' => '',
 							'merge_field_name' => 'rep_only_true_field_for_testing_rep_only_view_logic',
-							'order' => (int) 0,
-							'section_id' => (int) 6,
+							'order' => (int)0,
+							'section_id' => (int)6,
 							'encrypt' => false,
 							'created' => '2013-12-18 14:10:17',
 							'modified' => '2013-12-18 14:10:17',
@@ -634,83 +625,83 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$cobrandedApplication = $this->CobrandedApplication->save();
 
 		// export a empty application
-		$expectedKeys = 
-			'"MID",'.
-			'"required_text_from_user_without_default",'.
-			'"required_date_from_user_without_default",'.
-			'"required_time_from_user_without_default",'.
-			'"required_checkbox_from_user_without_default",'.
-			'"required_radio_from_user_without_defaultvalue1",'.
-			'"required_radio_from_user_without_defaultvalue2",'.
-			'"required_radio_from_user_without_defaultvalue3",'.
-			'"required_percents_from_user_without_defaultvalue1",'.
-			'"required_percents_from_user_without_defaultvalue2",'.
-			'"required_percents_from_user_without_defaultvalue3",'.
-			'"required_fees_from_user_without_defaultvalue1",'.
-			'"required_fees_from_user_without_defaultvalue2",'.
-			'"required_fees_from_user_without_defaultvalue3",'.
-			'"required_phoneUS_from_user_without_default",'.
-			'"required_money_from_user_without_default",'.
-			'"required_percent_from_user_without_default",'.
-			'"required_ssn_from_user_without_default",'.
-			'"required_zipcodeUS_from_user_without_default",'.
-			'"required_email_from_user_without_default",'.
-			'"required_url_from_user_without_default",'.
-			'"required_number_from_user_without_default",'.
-			'"required_digits_from_user_without_default",'.
-			'"required_select_from_user_without_default",'.
-			'"required_textArea_from_user_without_default",'.
-			'"Referral1",'.
-			'"Referral2",'.
-			'"Referral3",'.
-			'"OwnerType-Corp",'.
-			'"OwnerType-SoleProp",'.
-			'"OwnerType-LLC",'.
-			'"OwnerType-Partnership",'.
-			'"OwnerType-NonProfit",'.
-			'"OwnerType-Other",'.
-			'"Unknown Type for testing",'.
-			'"oaID",'.
-			'"api",'.
+		$expectedKeys =
+			'"MID",' .
+			'"required_text_from_user_without_default",' .
+			'"required_date_from_user_without_default",' .
+			'"required_time_from_user_without_default",' .
+			'"required_checkbox_from_user_without_default",' .
+			'"required_radio_from_user_without_defaultvalue1",' .
+			'"required_radio_from_user_without_defaultvalue2",' .
+			'"required_radio_from_user_without_defaultvalue3",' .
+			'"required_percents_from_user_without_defaultvalue1",' .
+			'"required_percents_from_user_without_defaultvalue2",' .
+			'"required_percents_from_user_without_defaultvalue3",' .
+			'"required_fees_from_user_without_defaultvalue1",' .
+			'"required_fees_from_user_without_defaultvalue2",' .
+			'"required_fees_from_user_without_defaultvalue3",' .
+			'"required_phoneUS_from_user_without_default",' .
+			'"required_money_from_user_without_default",' .
+			'"required_percent_from_user_without_default",' .
+			'"required_ssn_from_user_without_default",' .
+			'"required_zipcodeUS_from_user_without_default",' .
+			'"required_email_from_user_without_default",' .
+			'"required_url_from_user_without_default",' .
+			'"required_number_from_user_without_default",' .
+			'"required_digits_from_user_without_default",' .
+			'"required_select_from_user_without_default",' .
+			'"required_textArea_from_user_without_default",' .
+			'"Referral1",' .
+			'"Referral2",' .
+			'"Referral3",' .
+			'"OwnerType-Corp",' .
+			'"OwnerType-SoleProp",' .
+			'"OwnerType-LLC",' .
+			'"OwnerType-Partnership",' .
+			'"OwnerType-NonProfit",' .
+			'"OwnerType-Other",' .
+			'"Unknown Type for testing",' .
+			'"oaID",' .
+			'"api",' .
 			'"aggregated"';
-		$expectedValues = 
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"",'.
-			'"Referral3",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"Off",'.
-			'"",'.
-			'"3",'.
-			'"",'.
+		$expectedValues =
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"Off",' .
+			'"Off",' .
+			'"Off",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"Referral3",' .
+			'"Off",' .
+			'"Off",' .
+			'"Off",' .
+			'"Off",' .
+			'"Off",' .
+			'"Off",' .
+			'"",' .
+			'"3",' .
+			'"",' .
 			'""';
 
 		$actualKeys = '';
@@ -724,46 +715,44 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		$this->__setSomeValuesBasedOnType($app);
 
-		$expectedValues = 
-			'"",'.
-			'"text",'.
-			'"2000-01-01",'.
-			'"08:00 pm",'.
-			'"true",'.
-			'"On",'.
-			'"On",'.
-			'"On",'.
-			'"10",'.
-			'"10",'.
-			'"10",'.
-			'"10.00",'.
-			'"10.00",'.
-			'"10.00",'.
-			'"8005551234",'.
-			'"10.00",'.
-			'"50",'.
-			'"123-45-6789",'.
-			'"12345-1234",'.
-			'"name@domain.com",'.
-			//'"10 months",'.
-			//'"4111-1111-1111-1111",'.
-			'"http://www.domain.com",'.
-			'"12.82234",'.
-			'"1234567890",'.
-			'"",'.
-			'"a whole lot of text can go into this field...",'.
-			'"text text text",'.
-			'"text text text",'.
-			'"text text text",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"Yes",'.
-			'"",'.
-			'"3",'.
-			'"",'.
+		$expectedValues =
+			'"",' .
+			'"text",' .
+			'"2000-01-01",' .
+			'"08:00 pm",' .
+			'"true",' .
+			'"On",' .
+			'"On",' .
+			'"On",' .
+			'"10",' .
+			'"10",' .
+			'"10",' .
+			'"10.00",' .
+			'"10.00",' .
+			'"10.00",' .
+			'"8005551234",' .
+			'"10.00",' .
+			'"50",' .
+			'"123-45-6789",' .
+			'"12345-1234",' .
+			'"name@domain.com",' .
+			'"http://www.domain.com",' .
+			'"12.82234",' .
+			'"1234567890",' .
+			'"",' .
+			'"a whole lot of text can go into this field...",' .
+			'"text text text",' .
+			'"text text text",' .
+			'"text text text",' .
+			'"Yes",' .
+			'"Yes",' .
+			'"Yes",' .
+			'"Yes",' .
+			'"Yes",' .
+			'"Yes",' .
+			'"",' .
+			'"3",' .
+			'"",' .
 			'""';
 
 		$actualKeys = '';
@@ -787,7 +776,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['. $this->__user['OnlineappUser']['id'] .']');
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		// set expected results
 		$expectedValidationErrors = array(
@@ -820,7 +809,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			)
 		);
 
-		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
@@ -834,7 +823,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'description' => 'Lorem ipsum dolor sit amet',
 				'auth_type' => 'Lorem ipsum dolor sit amet',
 				'routing_number' => '321174851',
-            	'account_number' => '9900000003',
+				'account_number' => '9900000003',
 				'bank_name' => 'Lorem ipsum dolor sit amet'
 			),
 		);
@@ -859,7 +848,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'description' => 'Lorem ipsum dolor sit amet',
 				'auth_type' => 'Lorem ipsum dolor sit amet',
 				'routing_number' => '3211',
-            	'account_number' => '9900000003',
+				'account_number' => '9900000003',
 				'bank_name' => 'Lorem ipsum dolor sit amet'
 			),
 		);
@@ -897,12 +886,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 			)
 		);
 
-		$this->assertEquals(2, count($applications), 'Expect to find two applications for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(2, count($applications), 'Expect to find two applications for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
 		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
 
-		for ($index=1; $index < 23; $index++) {
+		for ($index = 1; $index < 23; $index++) {
 			// 15 and 16 are not implemented yet
 			if ($index == 15 || $index == 16) {
 				// ignore for now
@@ -942,28 +931,28 @@ class CobrandedApplicationTest extends CakeTestCase {
 	}
 
 	private $__invalidApiTestValue = array(
-		'text type is not validated',                                    //  0 - free form
-		'not a date',                                                    //  1 - yyyy/mm/dd
-		'not a time',                                                    //  2 - hh:mm:ss
-		'radio type is not validated',                                   //  3 - 
-		'label type is not validated',                                   //  4 - 
-		'100000',                                                        //  5 - (group of percent)
-		'label type is not validated',                                   //  6 - no validation
-		'fees type is not validated',                                    //  7 - (group of money?)
-		'hr type is not validated',                                      //  8 - no validation
-		'phoneUS',                                                       //  9 - (###) ###-####
-		'money same as fees',                                            // 10 - $(#(1-3),)?(#(1-3)).## << needs work
-		'percent should be > 0 < 100',                                   // 11 - (0-100)%
-		'ssn value shoudl be ###-##-####',                               // 12 - ###-##-####
-		'zipcodeUS could include zip and the optional plus four value',  // 13 - #####[-####]
-		'email value shoudld be name@domainname.com',                    // 14 - 
-		'lengthoftime is not used yet',                                  // 15 - [#+] [year|month|day]s
-		'creditcard is not used yet',                                    // 16 - 
-		'url value should look like http://domain.com',                  // 17 - 
-		'number with a decimal',                                         // 18 - (#)+.(#)+
-		'digits only, nothing else',                                     // 19 - (#)+
-		'select... must be one of the default values',                   // 20 - *** need to implement this ***
-		'',                                                              // 21 - free form textarea
+		'text type is not validated',										//  0 - free form
+		'not a date',														//  1 - yyyy/mm/dd
+		'not a time',														//  2 - hh:mm:ss
+		'radio type is not validated',										//  3 -
+		'label type is not validated',										//  4 -
+		'100000',															//  5 - (group of percent)
+		'label type is not validated',										//  6 - no validation
+		'fees type is not validated',										//  7 - (group of money?)
+		'hr type is not validated',											//  8 - no validation
+		'phoneUS',															//  9 - (###) ###-####
+		'money same as fees',												// 10 - $(#(1-3),)?(#(1-3)).## << needs work
+		'percent should be > 0 < 100',										// 11 - (0-100)%
+		'ssn value shoudl be ###-##-####',									// 12 - ###-##-####
+		'zipcodeUS could include zip and the optional plus four value',		// 13 - #####[-####]
+		'email value shoudld be name@domainname.com',						// 14 -
+		'lengthoftime is not used yet',										// 15 - [#+] [year|month|day]s
+		'creditcard is not used yet',										// 16 -
+		'url value should look like http://domain.com',						// 17 -
+		'number with a decimal',											// 18 - (#)+.(#)+
+		'digits only, nothing else',										// 19 - (#)+
+		'select... must be one of the default values',						// 20 - *** need to implement this ***
+		'',																	// 21 - free form textarea
 	);
 
 	public function testCreateOnlineappForUser() {
@@ -980,7 +969,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertNotNull($actualResponse['cobrandedApplication']['id'], 'createOnlineappForUser should return a cobranded application id that is not null');
 
 		// next pass a uuid and guess at the id (id++)
-		$expectedResponse['cobrandedApplication']['id'] = $actualResponse['cobrandedApplication']['id']+1;
+		$expectedResponse['cobrandedApplication']['id'] = $actualResponse['cobrandedApplication']['id'] + 1;
 		$uuid = String::uuid();
 		$expectedResponse['cobrandedApplication']['uuid'] = $uuid;
 		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['OnlineappUser'], $uuid);
@@ -1000,7 +989,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				),
 			)
 		);
-		$this->assertEquals(0, count($apps), 'Expected to find no apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(0, count($apps), 'Expected to find no apps for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		// create an app
 		$this->CobrandedApplication->create(
@@ -1022,7 +1011,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		);
 
 		// should now have 2 apps
-		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		// update the values
 		$expectedApp = $apps[0];
@@ -1042,7 +1031,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		);
 
 		// should now have 3 apps
-		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id ['.$this->__user['OnlineappUser']['id'].']');
+		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		// and they should have the same user_id and template_id
 		$this->assertEquals(
@@ -1289,7 +1278,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'success' => false,
 			'msg' => 'Invalid application.'
 		);
-		
+
 		// assertions
 		$this->assertFalse($response['success'], 'sendApplicationForSigningEmail with invalid application should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
@@ -1329,7 +1318,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'success' => false,
 			'msg' => 'Invalid application.'
 		);
-		
+
 		// assertions
 		$this->assertFalse($response['success'], 'sendForCompletion with invalid application should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
@@ -1426,7 +1415,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'success' => false,
 			'msg' => 'Invalid application.'
 		);
-		
+
 		// assertions
 		$this->assertFalse($response['success'], 'sendRightsignatureInstallSheetEmail with invalid application should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
@@ -1565,23 +1554,23 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'validationErrors' => array(
 				'Field 1' => 'required',
 				'Encrypt1' => 'required'
-     		),
-     		'validationErrorsArray' => array(
+			),
+			'validationErrorsArray' => array(
 				0 => array(
-            		'fieldName' => 'field 1',
-            		'mergeFieldName' => 'Field 1',
-            		'msg' => 'Required field is empty: field 1',
-            		'page' => 1,
-            		'rep_only' => false
-         		),
-         		1 => array(
-            		'fieldName' => 'field 2',
-            		'mergeFieldName' => 'Encrypt1',
-            		'msg' => 'Required field is empty: field 2',
-            		'page' => 1,
-            		'rep_only' => false
-         		)
-     		)
+					'fieldName' => 'field 1',
+					'mergeFieldName' => 'Field 1',
+					'msg' => 'Required field is empty: field 1',
+					'page' => 1,
+					'rep_only' => false
+				),
+				1 => array(
+					'fieldName' => 'field 2',
+					'mergeFieldName' => 'Encrypt1',
+					'msg' => 'Required field is empty: field 2',
+					'page' => 1,
+					'rep_only' => false
+				)
+			)
 		);
 
 		// assertions
