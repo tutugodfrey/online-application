@@ -1115,6 +1115,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// assertions
 		$this->assertTrue($response['success'], 'sendFieldCompletionEmail with good email address should succeed');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => '',
+			'dba' => 'Doing Business As',
+			'email' => 'nogood@assertfail.com',
+			'fullname' => 'Corporate Contact'
+		);
+
+		$emailAddress = 'nogood@assertfail.com';
+		$response = $this->CobrandedApplication->sendFieldCompletionEmail($emailAddress, 1);
+
+		// assertions
+		$this->assertTrue($response['success'], 'sendFieldCompletionEmail with good id should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
 	public function testSendNewApiApplicationEmail() {
@@ -1137,6 +1153,28 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// set expected results
 		$expectedResponse = array(
+			'success' => true,
+			'msg' => ''
+		);
+
+		$args = array(
+			'from' => 'test@axiapayments.com',
+			'cobrand' => 'test',
+			'link' => 'test',
+			'attachments' => array(
+				'test' => array(
+					'data' => 'test'
+				)
+			)
+		);
+		$response = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
+
+		// assertions
+		$this->assertTrue($response['success'], 'sendNewApiApplicationEmail using default values should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
 			'success' => false,
 			'msg' => 'invalid email address submitted.'
 		);
@@ -1147,6 +1185,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// assertions
 		$this->assertFalse($response['success'], 'sendNewApiApplicationEmail with invalid email address should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
+	public function testSendEmail() {
+		$CakeEmail = new CakeEmail('default');
+		$CakeEmail->transport('Debug');
+		$this->CobrandedApplication->CakeEmail = $CakeEmail;
 
 		// set expected results
 		$expectedResponse = array(
