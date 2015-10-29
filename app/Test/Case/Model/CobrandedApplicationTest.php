@@ -1010,7 +1010,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			)
 		);
 
-		// should now have 2 apps
+		// should now have 1 app
 		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		// update the values
@@ -1030,7 +1030,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			)
 		);
 
-		// should now have 3 apps
+		// should now have 2 apps
 		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
 
 		// and they should have the same user_id and template_id
@@ -1053,6 +1053,28 @@ class CobrandedApplicationTest extends CakeTestCase {
 				"Copied applications value [$expected] did not match original [$actual]"
 			);
 		}
+
+		// make sure copy works when passing template_id
+		$this->CobrandedApplication->copyApplication(
+			$expectedApp['CobrandedApplication']['id'],
+			$this->__user['OnlineappUser']['id'],
+			$this->__user['OnlineappUser']['template_id']
+		);
+
+		$apps = $this->CobrandedApplication->find(
+			'all',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
+				),
+			)
+		);
+
+		// should now have 3 apps
+		$this->assertEquals(3, count($apps), 'Expected to find three apps for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+
+		$response = $this->CobrandedApplication->copyApplication(null, null, 999999);
+		$this->assertFalse($response, 'copyApplication with bad template_id should fail.');
 	}
 
 	public function testSendFieldCompletionEmail() {
