@@ -1099,6 +1099,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// assertions
 		$this->assertFalse($response['success'], 'sendFieldCompletionEmail with bad email address should fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		// set expected results
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => '',
+			'dba' => 'Doing Business As',
+			'email' => 'testing@axiapayments.com',
+			'fullname' => 'Corporate Contact'
+		);
+
+		$emailAddress = 'testing@axiapayments.com';
+		$response = $this->CobrandedApplication->sendFieldCompletionEmail($emailAddress, 1);
+
+		// assertions
+		$this->assertTrue($response['success'], 'sendFieldCompletionEmail with good email address should succeed');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
 	public function testSendNewApiApplicationEmail() {
@@ -1305,9 +1321,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'success' => false,
 			'msg' => 'Invalid application.'
 		);
-		
+
 		// assertions
 		$this->assertFalse($response['success'], 'repNotifySignedEmail with invalid application should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$optionalTemplate = 'rep_notify_signed';
+
+		$response = $this->CobrandedApplication->repNotifySignedEmail($app['CobrandedApplication']['id'], $optionalTemplate);
+
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => '',
+		);
+
+		// assertions
+		$this->assertTrue($response['success'], 'repNotifySignedEmail with valid application should not fail');
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
@@ -1460,6 +1489,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'email' => 'testing@axiapayments.com',
 			'Owner1Email' => 'testing@axiapayments.com',
 			'Owner1Name' => 'Owner1NameTest',
+			'Owner2Email' => 'testing@axiapayments.com',
+			'Owner2Name' => 'Owner2NameTest',
 			'TextField1' => 'text field 1',
 			'TextField2' => 'text field 2',
 			'TextField3' => 'text field 3',
@@ -1571,7 +1602,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'value' => 'testing@axiapayments.com',
 					),
 					'Owner2Email' => array(
-						'value' => null,
+						'value' => 'testing@axiapayments.com',
 					),
 					'EMail' => array(
 						'value' => null,
