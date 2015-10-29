@@ -1675,6 +1675,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
+	public function testBeforeFind() {
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.user_id' => '1'
+				),
+				'sort' => 'CobrandedApplication.user_id',
+				'direction' => 'ASC'
+			)
+		);
+
+		// assertions
+		$this->assertNotEmpty($app['CobrandedApplication'], 'Expected to find one app for user with id 1');
+	}
+
 	private function __setSomeValuesBasedOnType(&$app) {
 		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 			$templateField = $this->TemplateField->find(
