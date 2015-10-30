@@ -244,7 +244,7 @@ class CoversheetTest extends CakeTestCase {
 		fwrite($fh, "");
 		fclose($fh);
 
-		$response = $this->Coversheet->sendCoversheet(1);
+		$response = $this->Coversheet->sendCoversheet(1, array('to' => 'test@axiapayments.com'));
 		$this->assertTrue($response);
 
 		$response = $this->Coversheet->sendCoversheet();
