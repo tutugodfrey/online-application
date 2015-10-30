@@ -50,7 +50,7 @@ class OnlineappCobrandedApplicationFixture extends CakeTestFixture {
 			'created' => '2014-01-24 09:07:08',
 			'modified' => '2014-01-24 09:07:08',
 			'rightsignature_document_guid' => null,
-			'status' => null,
+			'status' => 'signed',
 			'rightsignature_install_document_guid' => null,
 			'rightsignature_install_status' => null,
 		)

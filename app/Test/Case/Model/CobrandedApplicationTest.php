@@ -1713,6 +1713,33 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertNotEmpty($app['CobrandedApplication'], 'Expected to find one app for user with id 1');
 	}
 
+	public function testIsExpired() {
+		$response = $this->CobrandedApplication->isExpired('b118ac22d3cd4ab49148b05d5254ed59');
+		// assertions
+		$this->assertFalse($response, 'Expected isExpired to return false for non-signed application');
+
+		$response = $this->CobrandedApplication->isExpired('c118ac22d3cd4ab49148b05d5254ed59');
+		// assertions
+		$this->assertTrue($response, 'Expected isExpired to return true for signed application');
+	}
+
+	public function testOrConditions() {
+		$expectedResponse = array(
+			'Dba.value ILIKE' => '%test%',
+			'CorpName.value ILIKE' => '%test%',
+			'CorpContact.value ILIKE' => '%test%',
+			'Owner1Email.value ILIKE' => '%test%',
+			'EMail.value ILIKE' => '%test%',
+			'LocEMail.value ILIKE' => '%test%',
+			'CAST(CobrandedApplication.id AS TEXT) ILIKE' => '% test%'
+		);
+
+		$response = $this->CobrandedApplication->orConditions(array('search' => 'test'));
+
+		// assertions
+		$this->assertEquals($expectedResponse, $response['OR'], 'Expected response did not match response');
+	}
+
 	private function __setSomeValuesBasedOnType(&$app) {
 		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 			$templateField = $this->TemplateField->find(
