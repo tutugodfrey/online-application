@@ -25,6 +25,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
+		'app.onlineappCobrandedApplicationAch',
 		'app.onlineappCoversheet',
 		'app.onlineappEmailTimelineSubject',
 		'app.onlineappEmailTimeline'
@@ -53,6 +54,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+		$this->CobrandedApplicationAch = ClassRegistry::init('CobrandedApplicationAch');
 		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
 		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
@@ -65,6 +67,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplateField');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+		$this->loadFixtures('OnlineappCobrandedApplicationAch');
 		$this->loadFixtures('OnlineappEmailTimelineSubject');
 		$this->loadFixtures('OnlineappEmailTimeline');
 
@@ -114,6 +117,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->Coversheet->deleteAll(true, false);
 		$this->OnlineappEmailTimeline->deleteAll(true, false);
 		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
+		$this->CobrandedApplicationAch->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
 		$this->User->delete($this->__user['OnlineappUser']['id']);
@@ -124,6 +128,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
 		unset($this->Coversheet);
+		unset($this->CobrandedApplicationAch);
 		unset($this->CobrandedApplicationValue);
 		unset($this->CobrandedApplication);
 		unset($this->TemplateField);
@@ -762,6 +767,13 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// the keys should not have changed
 		$this->assertEquals($expectedKeys, $actualKeys, 'Filled out application keys were not what we expected');
 		$this->assertEquals($expectedValues, $actualValues, 'Filled out application values were not what we expected');
+
+		$actualKeys = '';
+		$actualValues = '';
+		$this->CobrandedApplication->buildExportData(1, $actualKeys, $actualValues);
+
+		// assertion
+		$this->assertNotEmpty($actualValues, 'Expected values to not be empty');
 	}
 
 	public function testSetFields() {
@@ -1673,6 +1685,16 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		$expectedResponse[$index]['CobrandedApplication']['modified'] = $response[$index]['CobrandedApplication']['modified'];
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$responseTmp = $this->CobrandedApplication->find('index',
+			array(
+				'operation' => 'count',
+				'sort' => 'test'
+			)
+		);
+
+		// assertions
+		$this->assertNotEmpty($responseTmp, 'Expected to find at least one app');
 	}
 
 	public function testBeforeFind() {
