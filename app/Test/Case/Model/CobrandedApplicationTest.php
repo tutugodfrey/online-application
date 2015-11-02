@@ -1740,6 +1740,49 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedResponse, $response['OR'], 'Expected response did not match response');
 	}
 
+	public function testCreateRightSignatureClient() {
+		$response = $this->CobrandedApplication->createRightSignatureClient();
+
+		// assertions
+		$this->assertInstanceOf('RightSignature', $response, 'Expected response to be instance of RightSignature Object');
+	}
+
+	public function testSubmitForReviewEmail() {
+		$CakeEmail = new CakeEmail('default');
+		$CakeEmail->transport('Debug');
+		$this->CobrandedApplication->CakeEmail = $CakeEmail;
+
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.user_id' => '1'
+				),
+			)
+		);
+		$response = $this->CobrandedApplication->submitForReviewEmail($app['CobrandedApplication']['id']);
+
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => '',
+		);
+
+		// assertions
+		$this->assertTrue($response['success'], 'submitForReviewEmail with valid application should not fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$response = $this->CobrandedApplication->submitForReviewEmail('0');
+
+		$expectedResponse = array(
+			'success' => false,
+			'msg' => 'Invalid application.'
+		);
+
+		// assertions
+		$this->assertFalse($response['success'], 'submitForReviewEmail with invalid application should fail');
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
 	private function __setSomeValuesBasedOnType(&$app) {
 		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 			$templateField = $this->TemplateField->find(
