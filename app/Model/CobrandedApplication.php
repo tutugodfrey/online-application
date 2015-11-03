@@ -2731,25 +2731,6 @@ class CobrandedApplication extends AppModel {
 			$query['order']['0'] = array($query['sort'] => $query['direction']);
 		} return $query;
 	}
-/**
- * Return list of user_id and username for use in ajax searches
- *
- * @return array
- */
-	public function findUserByUsername($searchStr, $active) {
-		$dbCol = 'username';
-			$searchStr = '%' . $searchStr;
-
-		return $this->find('list', array('recursive' => -1,
-			'conditions' => array(
-				$dbCol . ' ILIKE' => $searchStr,
-				'active' => $active
-			),
-			'fields' => array($this->alias . '.' . $dbCol),
-			'limit' => 10
-			)
-		);
-	}
 
 /**
  * __addKey
