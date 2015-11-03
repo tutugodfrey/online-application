@@ -1783,6 +1783,183 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
+	public function testCreateRightSignatureApplicationXml() {
+		$expectedResponse = "<?xml version='1.0' encoding='UTF-8'?>
+	<template>
+		<guid>1234</guid>
+		<subject>Doing Business As Axia Merchant Application</subject>
+		<description>Sent for signature by test@axiapayments.com</description>
+		<action>send</action>
+		<expires_in>10 days</expires_in>
+		<roles>
+			<role role_name='Owner/Officer 1 PG'>
+				<name>Owner1NameTest</name>
+				<email>noemail@rightsignature.com</email>
+				<locked>true</locked>
+			</role>
+			<role role_name='Owner/Officer 1'>
+				<name>Owner1NameTest</name>
+				<email>noemail@rightsignature.com</email>
+				<locked>true</locked>
+			</role>
+			<role role_name='Owner/Officer 2 PG'>
+				<name>Owner2NameTest</name>
+				<email>noemail@rightsignature.com</email>
+				<locked>true</locked>
+			</role>
+			<role role_name='Owner/Officer 2'>
+				<name>Owner2NameTest</name>
+				<email>noemail@rightsignature.com</email>
+				<locked>true</locked>
+			</role>
+		</roles>
+		<merge_fields>
+			<merge_field merge_field_name='SystemType'>
+				<value></value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='MID'>
+				<value></value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Customer Service Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Product Shipment Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Handling of Returns Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Application Date'>
+				<value>11/02/2015</value>
+				<locked>true</locked>
+			</merge_field>
+		</merge_fields>
+		<callback_location>http://app-sean-dev/cobranded_applications/document_callback</callback_location>
+	</template>
+";
+
+		$applicationId = 1;
+		$sender = 'test@axiapayments.com';
+		$subject = null;
+		$terminalType = null;
+
+		$rightSignatureTemplate = array();
+		$rightSignatureTemplate['guid'] = '1234';
+		$rightSignatureTemplate['merge_fields'] = array(
+			array(
+				'name' => 'SystemType'
+			),
+			array(
+				'name' => 'MID'
+			),
+			array(
+				'name' => 'Customer Service'
+			),
+			array(
+				'name' => 'Product Shipment'
+			),
+			array(
+				'name' => 'Handling of Returns'
+			),
+		);
+
+		$response = $this->CobrandedApplication->createRightSignatureApplicationXml(
+			$applicationId, $sender, $rightSignatureTemplate, $subject, $terminalType
+		);
+
+		// assertions
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$expectedResponse = "<?xml version='1.0' encoding='UTF-8'?>
+	<template>
+		<guid>1234</guid>
+		<subject>Doing Business As Axia Install Sheet - VAR</subject>
+		<description>Sent for signature by test@axiapayments.com</description>
+		<action>send</action>
+		<expires_in>10 days</expires_in>
+		<roles>
+			<role role_name='Signer'>
+				<name>Owner1NameTest</name>
+				<email>noemail@rightsignature.com</email>
+				<locked>true</locked>
+			</role>
+		</roles>
+		<merge_fields>
+			<merge_field merge_field_name='SystemType'>
+				<value></value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='MID'>
+				<value></value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Customer Service Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Product Shipment Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Handling of Returns Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Phone#'>
+				<value>877.875.6114 x 1</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='RepFax#'>
+				<value>877.875.5135</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Application Date'>
+				<value>11/02/2015</value>
+				<locked>true</locked>
+			</merge_field>
+		</merge_fields>
+		<callback_location>http://app-sean-dev/cobranded_applications/document_callback</callback_location>
+	</template>
+";
+
+		$applicationId = 1;
+		$sender = 'test@axiapayments.com';
+		$subject = 'Axia Install Sheet - VAR';
+		$terminalType = null;
+
+		$rightSignatureTemplate = array();
+		$rightSignatureTemplate['guid'] = '1234';
+		$rightSignatureTemplate['merge_fields'] = array(
+			array(
+				'name' => 'SystemType'
+			),
+			array(
+				'name' => 'MID'
+			),
+			array(
+				'name' => 'Customer Service'
+			),
+			array(
+				'name' => 'Product Shipment'
+			),
+			array(
+				'name' => 'Handling of Returns'
+			),
+		);
+
+		$response = $this->CobrandedApplication->createRightSignatureApplicationXml(
+			$applicationId, $sender, $rightSignatureTemplate, $subject, $terminalType
+		);
+
+		// assertions
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
 	private function __setSomeValuesBasedOnType(&$app) {
 		foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 			$templateField = $this->TemplateField->find(
