@@ -1784,6 +1784,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 	}
 
 	public function testCreateRightSignatureApplicationXml() {
+		$now = date('m/d/Y');
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+
 		$expectedResponse = "<?xml version='1.0' encoding='UTF-8'?>
 	<template>
 		<guid>1234</guid>
@@ -1835,11 +1838,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 				<locked>true</locked>
 			</merge_field>
 			<merge_field merge_field_name='Application Date'>
-				<value>11/02/2015</value>
+				<value>" . htmlspecialchars($now) . "</value>
 				<locked>true</locked>
 			</merge_field>
 		</merge_fields>
-		<callback_location>http://app-sean-dev/cobranded_applications/document_callback</callback_location>
+		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>
 	</template>
 ";
 
@@ -1919,11 +1922,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 				<locked>true</locked>
 			</merge_field>
 			<merge_field merge_field_name='Application Date'>
-				<value>11/02/2015</value>
+				<value>" . htmlspecialchars($now) . "</value>
 				<locked>true</locked>
 			</merge_field>
 		</merge_fields>
-		<callback_location>http://app-sean-dev/cobranded_applications/document_callback</callback_location>
+		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>
 	</template>
 ";
 
