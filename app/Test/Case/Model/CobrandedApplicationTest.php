@@ -1785,7 +1785,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 	public function testCreateRightSignatureApplicationXml() {
 		$now = date('m/d/Y');
-		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : gethostname();
 
 		$expectedResponse = "<?xml version='1.0' encoding='UTF-8'?>
 	<template>
