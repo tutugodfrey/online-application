@@ -31,6 +31,7 @@
 			<directory suffix=".php">app/tmp</directory>
 			<directory suffix=".php">app/Test</directory>
 			<directory suffix=".php">app/vendor</directory>
+			<directory suffix=".php">app/vendor/OAuth</directory>
 			<directory suffix=".php">app/Vendor</directory>
 			<directory suffix=".php">app/webroot</directory>
 			<directory suffix=".php">cakephp</directory>
