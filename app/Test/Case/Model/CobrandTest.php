@@ -39,6 +39,7 @@ class CobrandTest extends CakeTestCase {
 		$expected[1] = 'Partner Name 1';
 		$expected[2] = 'Partner Name 2';
 		$expected[3] = 'Partner Name 3';
+		$expected[4] = 'Corral';
 
 		$result = $this->Cobrand->getList();
 

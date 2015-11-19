@@ -705,7 +705,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",' .
 			'"Off",' .
 			'"",' .
-			'"3",' .
+			'"4",' .
 			'"",' .
 			'""';
 
@@ -756,7 +756,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Yes",' .
 			'"Yes",' .
 			'"",' .
-			'"3",' .
+			'"4",' .
 			'"",' .
 			'""';
 
@@ -1952,6 +1952,84 @@ class CobrandedApplicationTest extends CakeTestCase {
 			),
 			array(
 				'name' => 'Handling of Returns'
+			),
+		);
+
+		$response = $this->CobrandedApplication->createRightSignatureApplicationXml(
+			$applicationId, $sender, $rightSignatureTemplate, $subject, $terminalType
+		);
+
+		// assertions
+		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+
+		$expectedResponse = "<?xml version='1.0' encoding='UTF-8'?>
+	<template>
+		<guid>1234</guid>
+		<subject> Axia Merchant Application</subject>
+		<description>Sent for signature by test@axiapayments.com</description>
+		<action>send</action>
+		<expires_in>10 days</expires_in>
+		<roles>
+		</roles>
+		<merge_fields>
+			<merge_field merge_field_name='SystemType'>
+				<value></value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='MID'>
+				<value></value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Customer Service Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Product Shipment Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Handling of Returns Checkbox'>
+				<value>x</value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Terminal2-'>
+				<value></value>
+				<locked>true</locked>
+			</merge_field>
+			<merge_field merge_field_name='Application Date'>
+				<value>" . htmlspecialchars($now) . "</value>
+				<locked>true</locked>
+			</merge_field>
+		</merge_fields>
+		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>
+	</template>
+";
+
+		$applicationId = 3;
+		$sender = 'test@axiapayments.com';
+		$subject = null;
+		$terminalType = null;
+
+		$rightSignatureTemplate = array();
+		$rightSignatureTemplate['guid'] = '1234';
+		$rightSignatureTemplate['merge_fields'] = array(
+			array(
+				'name' => 'SystemType'
+			),
+			array(
+				'name' => 'MID'
+			),
+			array(
+				'name' => 'Customer Service'
+			),
+			array(
+				'name' => 'Product Shipment'
+			),
+			array(
+				'name' => 'Handling of Returns'
+			),
+			array(
+				'name' => 'Terminal2-'
 			),
 		);
 
