@@ -166,6 +166,14 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
 		),
+		array(
+			'cobranded_application_id' => 3,
+			'template_field_id' => 43,
+			'name' => 'Terminal2-',
+			'value' => 'true',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
 	);
 
 }
