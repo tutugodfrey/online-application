@@ -16,8 +16,9 @@ foreach ($templatePage['TemplateSections'] as $section) {
 							$fieldOptions = Hash::insert($fieldOptions, 'hiddenField', 'false');
 							$fieldOptions = Hash::insert($fieldOptions, 'onchange', 'copyCorpToLocFields()');
 
-							if ($applicationStatus == 'signed') {
-								$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'true');
+							if ($applicationStatus == CobrandedApplication::STATUS_SIGNED ||
+								$applicationStatus == CobrandedApplication::STATUS_COMPLETED) {
+									$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'true');
 							}
 
 							echo "<tr><th> " . $this->Form->checkbox('loc_same_as_corp', $fieldOptions) . "<font size='-1'>Same As Corporate Information</font></th></tr>";
@@ -28,8 +29,9 @@ foreach ($templatePage['TemplateSections'] as $section) {
 							$fieldOptions = Hash::insert($fieldOptions, 'hiddenField', 'false');
 							$fieldOptions = Hash::insert($fieldOptions, 'onchange', 'copyDepositoryToFeesFields()');
 
-							if ($applicationStatus == 'signed') {
-								$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'true');
+							if ($applicationStatus == CobrandedApplication::STATUS_SIGNED ||
+								$applicationStatus == CobrandedApplication::STATUS_COMPLETED) {
+									$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'true');
 							}
 
 							echo "<tr><th> " . $this->Form->checkbox('fees_same_as_depository', $fieldOptions) . "<font size='-1'>Same As Depository Information</font></th></tr>";
