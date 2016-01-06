@@ -277,6 +277,7 @@ class TemplateTest extends CakeTestCase {
 					'description' => '',
 				),
 			), // one field from the user
+			array() // all fields are expected to be from the user
 		);
 		$index = 0;
 		foreach ($templates as $key => $template) {
@@ -284,7 +285,7 @@ class TemplateTest extends CakeTestCase {
 			$this->assertEquals(
 				$expectedFields[$index],
 				$actualFields,
-				'Template with id ['.$index.'] did not match expected API fields');
+				'Template with id [' . $index . '] did not match expected API fields');
 			$index = $index + 1;
 		}
 
@@ -557,6 +558,7 @@ class TemplateTest extends CakeTestCase {
 					'description' => '',
 				),
 			), // one field from the user
+			array() // all fields are expected to be from the user
 		);
 
 		$index = 0;
@@ -565,7 +567,7 @@ class TemplateTest extends CakeTestCase {
 			$this->assertEquals(
 				$expectedFields[$index],
 				$actualFields,
-				'Template with id ['.$index.'] did not match expected API fields');
+				'Template with id [' . $index . '] did not match expected API fields');
 			$index = $index + 1;
 		}
 
@@ -828,6 +830,7 @@ class TemplateTest extends CakeTestCase {
 					'description' => '',
 				),
 			), // one field from the user
+			array() // all fields are expected to be from the user
 		);
 
 		// test source 1 - user only
@@ -837,7 +840,7 @@ class TemplateTest extends CakeTestCase {
 			$this->assertEquals(
 				$expectedFields[$index],
 				$actualFields,
-				'Template with id ['.$index.'] did not match expected API fields');
+				'Template with id [' . $index . '] did not match expected API fields');
 			$index = $index + 1;
 		}
 	}

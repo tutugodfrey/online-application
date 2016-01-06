@@ -57,6 +57,16 @@ class OnlineappCobrandFixture extends CakeTestFixture {
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
 			'brand_logo_url' => 'PN3 logo_url',
+		),
+		array(
+			'id' => 4,
+			'partner_name' => 'Corral',
+			'partner_name_short' => 'Corral',
+			'cobrand_logo_url' => 'Corral logo_url',
+			'description' => 'Cobrand "Corral" description goes here.',
+			'created' => '2007-03-18 10:41:31',
+			'modified' => '2007-03-18 10:41:31',
+			'brand_logo_url' => 'Corral logo_url',
 		)
 	);
 }

@@ -73,5 +73,14 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'modified' => '2007-03-18 10:41:31',
 			'owner_equity_threshold' => 50
 		),
+		array(
+			'name' => 'Template 1 for Corral',
+			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+			'cobrand_id' => 4,
+			'logo_position' => 0,
+			'created' => '2007-03-18 10:41:31',
+			'modified' => '2007-03-18 10:41:31',
+			'owner_equity_threshold' => 50
+		),
 	);
 }
