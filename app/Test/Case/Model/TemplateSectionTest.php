@@ -35,6 +35,7 @@ class TemplateSectionTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
+		$this->loadFixtures('OnlineappTemplateField');
 	}
 
 	public function tearDown() {
@@ -43,6 +44,8 @@ class TemplateSectionTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+
+		unset($this->TemplateField);
 		unset($this->TemplateSection);
 		unset($this->TemplatePage);
 		unset($this->Template);

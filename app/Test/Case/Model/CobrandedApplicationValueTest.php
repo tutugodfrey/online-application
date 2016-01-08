@@ -26,6 +26,9 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		'app.onlineappTemplateField',
 		'app.onlineappCobrandedApplicationValue',
 		'app.onlineappCobrandedApplication',
+		'app.onlineappCoversheet',
+		'app.onlineappEmailTimeline',
+		'app.onlineappCobrandedApplicationAch',
 	);
 
 	private $__template;
@@ -47,6 +50,9 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+		$this->Coversheet = ClassRegistry::init('Coversheet');
+		$this->EmailTimeline = ClassRegistry::init('EmailTimeline');
+		$this->CobrandedApplicationAch = ClassRegistry::init('CobrandedApplicationAch');
 
 		// load data
 		$this->loadFixtures('Group');
@@ -58,6 +64,9 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 //		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappCobrandedApplication');
 		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+		$this->loadFixtures('OnlineappCoversheet');
+		$this->loadFixtures('OnlineappEmailTimeline');
+		$this->loadFixtures('OnlineappCobrandedApplicationAch');
 
 		$this->__template = $this->Template->find(
 			'first',
@@ -111,6 +120,10 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+		$this->Coversheet->deleteAll(true, false);
+		$this->EmailTimeline->deleteAll(true, false);
+		$this->CobrandedApplicationAch->deleteAll(true, false);
+
 		unset($this->CobrandedApplication);
 		unset($this->CobrandedApplicationValue);
 		unset($this->TemplateField);
@@ -120,6 +133,9 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		unset($this->Cobrand);
 		unset($this->User);
 		unset($this->Group);
+		unset($this->Coversheet);
+		unset($this->EmailTimeline);
+		unset($this->CobrandedApplicationAch);
 
 		parent::tearDown();
 	}

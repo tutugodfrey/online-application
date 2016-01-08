@@ -1,7 +1,7 @@
 <?php
 class OrderableChildBehavior extends ModelBehavior {
 
-	public function setup(Model $model, $settings) {
+	public function setup(Model $model, $settings = array()) {
 		if (!isset($this->settings[$model->alias])) {
 			$this->settings[$model->alias] = array(
 				'fields' => array()
