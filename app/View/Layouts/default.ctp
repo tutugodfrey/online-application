@@ -77,7 +77,7 @@
 
 				function resetTimer(){
 					if(remainingMins < 10){
-							$.ajax({
+							jQuery.ajax({
 								type: 'POST',
 								url: '/Pages/refreshSession',
 								dataType: 'html',
