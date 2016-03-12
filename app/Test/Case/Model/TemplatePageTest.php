@@ -17,6 +17,7 @@ class TemplatePageTest extends CakeTestCase {
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
+		'app.onlineappCobrandedApplicationValue',
 	);
 
 	public $autoFixtures = false;
@@ -36,11 +37,15 @@ class TemplatePageTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
+		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
+		$this->loadFixtures('OnlineappTemplateSection');
+		$this->loadFixtures('OnlineappTemplateField');
+		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 	}
 
 	public function tearDown() {
@@ -49,9 +54,14 @@ class TemplatePageTest extends CakeTestCase {
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+		$this->CobrandedApplicationValue->deleteAll(true, false);
+
+		unset($this->TemplateField);
+		unset($this->TemplateSection);
 		unset($this->TemplatePage);
 		unset($this->Template);
 		unset($this->Cobrand);
+		unset($this->CobrandedApplicationValue);
 
 		parent::tearDown();
 	}
