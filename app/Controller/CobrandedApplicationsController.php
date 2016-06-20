@@ -426,7 +426,7 @@ class CobrandedApplicationsController extends AppController {
 				$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
 				$this->request->data = $this->CobrandedApplication->find('first', $options);
 				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
-				$this->set('values_map', $valuesMap);
+				$this->set('valuesMap', $valuesMap);
 			}
 
 			$users = $this->CobrandedApplication->User->find('list');
