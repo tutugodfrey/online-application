@@ -668,7 +668,65 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Unknown Type for testing",' .
 			'"oaID",' .
 			'"api",' .
-			'"aggregated"';
+			'"aggregated",' .
+			'"id",' .
+			'"user_id",' .
+			'"status",' .
+			'"setup_existing_merchant",' .
+			'"setup_banking",' .
+			'"setup_statements",' .
+			'"setup_drivers_license",' .
+			'"setup_new_merchant",' .
+			'"setup_business_license",' .
+			'"setup_other",' .
+			'"setup_field_other",' .
+			'"setup_tier_select",' .
+			'"setup_tier3",' .
+			'"setup_tier4",' .
+			'"setup_tier5_financials",' .
+			'"setup_tier5_processing_statements",' .
+			'"setup_tier5_bank_statements",' .
+			'"setup_equipment_terminal",' .
+			'"setup_equipment_gateway",' .
+			'"setup_install",' .
+			'"setup_starterkit",' .
+			'"setup_equipment_payment",' .
+			'"setup_lease_price",' .
+			'"setup_lease_months",' .
+			'"setup_debit_volume",' .
+			'"setup_item_count",' .
+			'"setup_referrer",' .
+			'"setup_referrer_type",' .
+			'"setup_referrer_pct",' .
+			'"setup_reseller",' .
+			'"setup_reseller_type",' .
+			'"setup_reseller_pct",' .
+			'"setup_notes",' .
+			'"cp_encrypted_sn",' .
+			'"cp_pinpad_ra_attached",' .
+			'"cp_giftcards",' .
+			'"cp_check_guarantee",' .
+			'"cp_check_guarantee_info",' .
+			'"cp_pos",' .
+			'"cp_pos_contact",' .
+			'"micros",' .
+			'"micros_billing",' .
+			'"gateway_option",' .
+			'"gateway_package",' .
+			'"gateway_gold_subpackage",' .
+			'"gateway_epay",' .
+			'"gateway_billing",' .
+			'"moto_online_chd",' .
+			'"moto_developer",' .
+			'"moto_company",' .
+			'"moto_gateway",' .
+			'"moto_contact",' .
+			'"moto_phone",' .
+			'"moto_email",' .
+			'"created",' .
+			'"modified",' .
+			'"cobranded_application_id"';
+
 		$expectedValues =
 			'"",' .
 			'"",' .
@@ -706,6 +764,63 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",' .
 			'"",' .
 			'"4",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
 			'"",' .
 			'""';
 
@@ -757,6 +872,63 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Yes",' .
 			'"",' .
 			'"4",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
 			'"",' .
 			'""';
 

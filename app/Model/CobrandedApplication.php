@@ -877,6 +877,13 @@ class CobrandedApplication extends AppModel {
 				}
 			}
 		}
+
+		if (!empty($app['Coversheet'])) {
+			foreach ($app['Coversheet'] as $key => $val) {
+				$keys = $this->__addKey($keys, $key);
+				$values = $this->__addValue($values, $val);
+			}
+		}
 	}
 
 /**
