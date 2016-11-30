@@ -681,6 +681,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"oaID",' .
 			'"api",' .
 			'"aggregated",' .
+			'"onlineapp_application_id",' .
 			'"user_id",' .
 			'"status",' .
 			'"setup_existing_merchant",' .
@@ -735,7 +736,19 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"moto_phone",' .
 			'"moto_email",' .
 			'"created",' .
-			'"modified"';
+			'"modified",' .
+			'"setup_referrer_pct_profit",' .
+			'"setup_referrer_pct_volume",' .
+			'"setup_referrer_pct_gross",' .
+			'"setup_reseller_pct_profit",' .
+			'"setup_reseller_pct_volume",' .
+			'"setup_reseller_pct_gross",' .
+			'"setup_partner",' .
+			'"setup_partner_pct_profit",' .
+			'"setup_partner_pct_volume",' .
+			'"setup_partner_pct_gross",' .
+			'"gateway_retail_swipe",' .
+			'"gateway_epay_charge_licenses"';
 
 		$expectedValues =
 			'"",' .
@@ -774,6 +787,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",' .
 			'"",' .
 			'"4",' .
+			'"",' .
 			'"",' .
 			'"",' .
 			'"1",' .
@@ -830,7 +844,19 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"",' .
 			'"",' .
 			'"2016-09-16 14:56:40",' .
-			'"2016-09-16 14:56:40"';
+			'"2016-09-16 14:56:40",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'""';
 
 		$actualKeys = '';
 		$actualValues = '';
@@ -944,6 +970,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"4",' .
 			'"",' .
 			'"",' .
+			'"",' .
 			'"1",' .
 			'"saved",' .
 			'"",' .
@@ -998,7 +1025,19 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"",' .
 			'"",' .
 			'"2016-09-16 14:56:40",' .
-			'"2016-09-16 14:56:40"';
+			'"2016-09-16 14:56:40",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'""';
 
 		$actualKeys = '';
 		$actualValues = '';
