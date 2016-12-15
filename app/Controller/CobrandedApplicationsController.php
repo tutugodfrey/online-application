@@ -154,7 +154,7 @@ class CobrandedApplicationsController extends AppController {
 		if ($applications) {
 			foreach ($applications as $key => $val) {
 				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($val['CobrandedApplicationValues']);
-				$applications[$key]['ValuesMap'] = $valuesMap; 
+				$applications[$key]['ValuesMap'] = $valuesMap;
 			}
 			$this->set('email', $email);
 			$this->set('applications', $applications);
@@ -217,7 +217,7 @@ class CobrandedApplicationsController extends AppController {
 		$response = array('success' => false);
 
 		$user = $this->User->find(
-			'first', 
+			'first',
 			array(
 				'conditions' => array('User.id' => $this->Auth->user('id')),
 			)
@@ -279,7 +279,7 @@ class CobrandedApplicationsController extends AppController {
 						);
 
 						$cobrand = $this->Cobrand->find(
-							'first', 
+							'first',
 							array(
 								'conditions' => array('Cobrand.id' => $template['Template']['cobrand_id']),
 							)
@@ -347,15 +347,15 @@ class CobrandedApplicationsController extends AppController {
 
 		unset($response['partner_name']);
 		unset($response['response_url_type']);
-		
+
 		echo json_encode($response);
 		$this->redirect(null, 200);
 	}
 
 /**
  * retrieve
- * 
- * 
+ *
+ *
  */
 	public function retrieve() {
 		$error = '';
@@ -513,7 +513,7 @@ class CobrandedApplicationsController extends AppController {
 
 		if (empty($users)) {
 			$users = $this->CobrandedApplication->User->find(
-				'list', 
+				'list',
 				array(
 					'conditions' => array('User.id' => $this->Auth->user('id')),
 				)
@@ -550,7 +550,7 @@ class CobrandedApplicationsController extends AppController {
 
 				$userId = $this->request->data['CobrandedApplication']['user_id'];
 				$user = $this->CobrandedApplication->User->find(
-					'first', 
+					'first',
 					array(
 						'conditions' => array('User.id' => $userId),
 					)
@@ -559,6 +559,7 @@ class CobrandedApplicationsController extends AppController {
 				$app = $this->CobrandedApplication->find(
 					'first',
 					array(
+						'contain' => array('User.firstname', 'User.lastname'),
 						'conditions' => array('CobrandedApplication.uuid' => $this->request->data['CobrandedApplication']['uuid']),
 						'recursive' => -1
 					)
@@ -574,10 +575,10 @@ class CobrandedApplicationsController extends AppController {
 						'recursive' => -1
 					)
 				);
-
-				$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'].' '.$user['User']['lastname'];
-				$this->CobrandedApplicationValue->save($appValue);
-
+				if(isset($appValue['CobrandedApplicationValue']['name'])) {
+					$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'].' '.$user['User']['lastname'];
+					$this->CobrandedApplicationValue->save($appValue);
+				}
 				$this->Session->setFlash(__('Application created'));
 				$this->redirect(array('action' => "/edit/".$response['cobrandedApplication']['uuid'], 'admin' => false));
 			} else {
@@ -594,10 +595,10 @@ class CobrandedApplicationsController extends AppController {
 		}
 
 		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
-		
+
 		if (empty($users)) {
 			$users = $this->CobrandedApplication->User->find(
-				'list', 
+				'list',
 				array(
 					'conditions' => array('User.id' => $this->Auth->user('id')),
 				)
@@ -606,7 +607,7 @@ class CobrandedApplicationsController extends AppController {
 
 		$defaultTemplateId = $user['User']['template_id'];
 		$templates = $this->User->getTemplates($this->User->id);
-		
+
 		if ($applicationId != null) {
 			$this->set('applicationId');
 		}
@@ -635,7 +636,7 @@ class CobrandedApplicationsController extends AppController {
 		} else {
 			$options = array('conditions' => array(
 				'CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id,
-				
+
 				),
 				'recursive' => -1
 			);
@@ -648,7 +649,7 @@ class CobrandedApplicationsController extends AppController {
 
 /**
  * admin_export method
- * 
+ *
  * @throws NotFoundException
  * @param string $id
  * @return void
@@ -677,7 +678,7 @@ class CobrandedApplicationsController extends AppController {
 
 /**
  * admin_copy method
- * 
+ *
  * @throws NotFoundException
  * @param string $id
  * @return void
@@ -747,7 +748,7 @@ class CobrandedApplicationsController extends AppController {
 		if (!empty($valuesMap['DBA'])) {
 			$dba = $valuesMap['DBA'];
 		}
-	
+
 		$data[0]['CobrandedApplication']['DBA'] = $dba;
 		$this->set('applications', $data);
 	}
@@ -769,7 +770,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('error', $response['msg']);
 		}
 	}
-	
+
 /**
  * Grab document status via the RightSignature API
  * https://rightsignature.com/apidocs/api_calls?api_method=documentDetails
@@ -800,10 +801,10 @@ class CobrandedApplicationsController extends AppController {
 			}
 			$this->redirect('app_status/' . $id);
 		}
-		
+
 		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
 	}
-	
+
 /**
  * Extend the life of a RightSignature document via Right Signature API
  * https://rightsignature.com/apidocs/api_calls?api_method=extendExpiration
@@ -815,7 +816,7 @@ class CobrandedApplicationsController extends AppController {
 		$results = $HttpSocket->post('https://rightsignature.com/api/documents/' . $guid . '/extend_expiration.xml');
 		$this->render('admin_app_status');
 	}
-	
+
 /**
  * create_rightsignature_document
  *
@@ -870,7 +871,7 @@ class CobrandedApplicationsController extends AppController {
 						$achYes = $val;
 					}
 				}
-				
+
 				$templateGuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
 
 				if ($achYes == true) {
@@ -902,7 +903,7 @@ class CobrandedApplicationsController extends AppController {
 				$response['document']['status'] = 'sent';
 				$response['document']['guid'] = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 			}
-	
+
 			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
 				// save the guid
 				$this->CobrandedApplication->save(
@@ -921,10 +922,10 @@ class CobrandedApplicationsController extends AppController {
 					$this->redirect(array('action' => 'sign_rightsignature_document?guid='.$response['document']['guid']));
 				} else {
 					$applicationValues = Hash::combine(
-						$cobrandedApplication, 
-						'CobrandedApplicationValues.{n}.name', 
+						$cobrandedApplication,
+						'CobrandedApplicationValues.{n}.name',
 						'CobrandedApplicationValues.{n}.value'
-					);	
+					);
 					// if not simply send the documents
 					$emailResponse = $this->CobrandedApplication->sendApplicationForSigningEmail($applicationId);
 					if ($emailResponse['success'] === true) {
@@ -949,7 +950,7 @@ class CobrandedApplicationsController extends AppController {
 
 /**
  * sign_rightsignature_document
- *     
+ *
  */
 	public function sign_rightsignature_document() {
 		$client = $this->CobrandedApplication->createRightSignatureClient();
@@ -993,14 +994,14 @@ class CobrandedApplicationsController extends AppController {
 			$appTemplateId = $data['CobrandedApplication']['template_id'];
 			$this->layout = 'default';
 
-			if (key_exists('error', $xml) && 
+			if (key_exists('error', $xml) &&
 				$xml['error']['message'] == "Document is already signed." &&
 				$data['CobrandedApplication']['status'] != 'signed') {
 
 				if ($data['Coversheet']['status'] == 'validated') {
 					$this->sendCoversheet($data);
 				}
-			}          
+			}
 		}
 
         if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
@@ -1193,7 +1194,7 @@ class CobrandedApplicationsController extends AppController {
 					} else {
 						$this->Session->write('CobrandedApplication.email', $this->request->data['CobrandedApplication']['enter_email_address']);
 					}
-				
+
 					if ($this->CobrandedApplication->save(
 							array(
 								'CobrandedApplication' => array(
@@ -1294,27 +1295,27 @@ class CobrandedApplicationsController extends AppController {
  */
     public function getCobrandedApplicationValues($applicationId, $valueConditions = array(), $recursive = null) {
         $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-	
+
         if (!isset($recursive)) {
             $recursive = 1;
         }
-	
+
         $conditions = array(
             'conditions' => array(
                 'cobranded_application_id' => $applicationId,
             ),
             'recursive' => $recursive
         );
-	
+
         if (!empty($valueConditions)) {
             $conditions['conditions'][] = $valueConditions;
         }
-        
+
         $appValues = $CobrandedApplicationValue->find(
             'all',
-            $conditions  	
+            $conditions
         );
-	
+
         $appValueArray = array();
         foreach ($appValues as $arr) {
             $appValueArray[] = $arr['CobrandedApplicationValue'];
