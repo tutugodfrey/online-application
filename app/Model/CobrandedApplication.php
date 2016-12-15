@@ -401,7 +401,7 @@ class CobrandedApplication extends AppModel {
 		$appValue = $this->getApplicationValue($data['id']);
 
 		// if the value is different
-		if ($appValue['CobrandedApplicationValue']['value'] != $data['value']) {
+		if ($appValue['CobrandedApplicationValue']['value'] !== $data['value']) {
 			$appValue['CobrandedApplicationValue']['value'] = $data['value'];
 			if ($this->CobrandedApplicationValue->save($appValue)) {
 				// value saved
@@ -877,6 +877,16 @@ class CobrandedApplication extends AppModel {
 				}
 			}
 		}
+
+		if (!empty($app['Coversheet'])) {
+			foreach ($app['Coversheet'] as $key => $val) {
+				if ($key == 'id' || $key == 'cobranded_application_id') {
+					continue;
+				}
+				$keys = $this->__addKey($keys, $key);
+				$values = $this->__addValue($values, $val);
+			}
+		}
 	}
 
 /**
@@ -1346,7 +1356,7 @@ class CobrandedApplication extends AppModel {
  * repNotifySignedEmail
  *
  * @param int $applicationId Cobranded Application Id
- * @param string $optionalTemplate optional template to use 
+ * @param string $optionalTemplate optional template to use
  *
  * @return $response array
  */

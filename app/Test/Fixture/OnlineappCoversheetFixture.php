@@ -12,6 +12,7 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'key' => 'primary'),
+		'onlineapp_application_id' => array('type' => 'integer', 'null' => true),
 		'user_id' => array('type' => 'integer', 'null' => false),
 		'status' => array('type' => 'string', 'null' => false, 'length' => 10),
 		'setup_existing_merchant' => array('type' => 'boolean', 'null' => true),
@@ -68,6 +69,18 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => true),
 		'modified' => array('type' => 'datetime', 'null' => true),
 		'cobranded_application_id' => array('type' => 'integer', 'null' => true),
+		'setup_referrer_pct_profit' => array('type' => 'float', 'null' => true),
+		'setup_referrer_pct_volume' => array('type' => 'float', 'null' => true),
+		'setup_referrer_pct_gross' => array('type' => 'float', 'null' => true),
+		'setup_reseller_pct_profit' => array('type' => 'float', 'null' => true),
+		'setup_reseller_pct_volume' => array('type' => 'float', 'null' => true),
+		'setup_reseller_pct_gross' => array('type' => 'float', 'null' => true),
+		'setup_partner' => array('type' => 'string', 'null' => true, 'length' => 20),
+		'setup_partner_pct_profit' => array('type' => 'float', 'null' => true),
+		'setup_partner_pct_volume' => array('type' => 'float', 'null' => true),
+		'setup_partner_pct_gross' => array('type' => 'float', 'null' => true),
+		'gateway_retail_swipe' => array('type' => 'string', 'null' => true, 'length' => 10),
+		'gateway_epay_charge_licenses' => array('type' => 'float', 'null' => true),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'cobranded_application_id_key' => array('unique' => true, 'column' => 'cobranded_application_id')
@@ -138,7 +151,19 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'moto_email' => 'Lorem ipsum dolor sit amet',
 			'created' => '2013-12-31 12:13:36',
 			'modified' => '2013-12-31 12:13:36',
-			'cobranded_application_id' => 1
+			'cobranded_application_id' => 1,
+			'setup_referrer_pct_profit' => 1,
+			'setup_referrer_pct_volume' => 1,
+			'setup_referrer_pct_gross' => 1,
+			'setup_reseller_pct_profit' => 1,
+			'setup_reseller_pct_volume' => 1,
+			'setup_reseller_pct_gross' => 1,
+			'setup_partner' => '',
+			'setup_partner_pct_profit' => 1,
+			'setup_partner_pct_volume' => 1,
+			'setup_partner_pct_gross' => 1,
+			'gateway_retail_swipe' => '',
+			'gateway_epay_charge_licenses' => 1,
 		),
 		array(
 			'id' => 2,
@@ -197,7 +222,19 @@ class OnlineappCoversheetFixture extends CakeTestFixture {
 			'moto_email' => 'Lorem ipsum dolor sit amet',
 			'created' => '2013-12-31 12:13:36',
 			'modified' => '2013-12-31 12:13:36',
-			'cobranded_application_id' => 2
+			'cobranded_application_id' => 2,
+			'setup_referrer_pct_profit' => 1,
+			'setup_referrer_pct_volume' => 1,
+			'setup_referrer_pct_gross' => 1,
+			'setup_reseller_pct_profit' => 1,
+			'setup_reseller_pct_volume' => 1,
+			'setup_reseller_pct_gross' => 1,
+			'setup_partner' => '',
+			'setup_partner_pct_profit' => 1,
+			'setup_partner_pct_volume' => 1,
+			'setup_partner_pct_gross' => 1,
+			'gateway_retail_swipe' => '',
+			'gateway_epay_charge_licenses' => 1,
 		)
 	);
 }
