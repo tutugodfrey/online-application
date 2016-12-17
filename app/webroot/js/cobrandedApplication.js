@@ -179,12 +179,12 @@ var motoQuestionnaireCheck = function(){
 };
 
 var totalStartUpFees = function() {
-	var creditAppFee = parseFloat($("[name=CreditAppFee]").val().replace(/,/g, ''));
-	var creditEquipmentFee = parseFloat($("[name=CreditEquipmentFee]").val().replace(/,/g, ''));
-	var creditExpediteFee = parseFloat($("[name=CreditExpediteFee]").val().replace(/,/g, ''));
-	var creditReprogramFee = parseFloat($("[name=CreditReprogramFee]").val().replace(/,/g, ''));
-	var creditVirtualTrainingFee = parseFloat($("[name=CreditVirtualTrainingFee]").val().replace(/,/g, ''));
-	var creditMobileSetupFee = parseFloat($("[name=CreditMobileSetupFee]").val().replace(/,/g, ''));
+	var creditAppFee = ($("[name=CreditAppFee]").length)? parseFloat($("[name=CreditAppFee]").val().replace(/,/g, '')) : false ;
+	var creditEquipmentFee = ($("[name=CreditEquipmentFee]").length)? parseFloat($("[name=CreditEquipmentFee]").val().replace(/,/g, '')) : false;
+	var creditExpediteFee = ($("[name=CreditExpediteFee]").length)? parseFloat($("[name=CreditExpediteFee]").val().replace(/,/g, '')) : false;
+	var creditReprogramFee = ($("[name=CreditReprogramFee]").length)? parseFloat($("[name=CreditReprogramFee]").val().replace(/,/g, '')) : false;
+	var creditVirtualTrainingFee = ($("[name=CreditVirtualTrainingFee]").length)? parseFloat($("[name=CreditVirtualTrainingFee]").val().replace(/,/g, '')) : false;
+	var creditMobileSetupFee = ($("[name=CreditMobileSetupFee]").length)? parseFloat($("[name=CreditMobileSetupFee]").val().replace(/,/g, '')) : false;
 
 	if (!creditAppFee) {creditAppFee = 0;}
 	if (!creditEquipmentFee) {creditEquipmentFee = 0;}
