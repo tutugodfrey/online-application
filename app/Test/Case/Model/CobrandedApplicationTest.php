@@ -626,10 +626,22 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
+
 		$this->CobrandedApplication->create($applictionData);
 		$cobrandedApplication = $this->CobrandedApplication->save();
 
-		// export a empty application
+		$coversheet = array(
+			'user_id' => $this->__user['OnlineappUser']['id'],
+			'status' => 'saved',
+			'created' => '2016-09-16 14:56:40',
+			'modified' => '2016-09-16 14:56:40',
+			'cobranded_application_id' => $this->CobrandedApplication->id
+		);
+
+		$this->Coversheet->create($coversheet);
+		$newCoversheet = $this->Coversheet->save();
+
+		// export an empty application
 		$expectedKeys =
 			'"MID",' .
 			'"required_text_from_user_without_default",' .
@@ -668,7 +680,76 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Unknown Type for testing",' .
 			'"oaID",' .
 			'"api",' .
-			'"aggregated"';
+			'"aggregated",' .
+			'"onlineapp_application_id",' .
+			'"user_id",' .
+			'"status",' .
+			'"setup_existing_merchant",' .
+			'"setup_banking",' .
+			'"setup_statements",' .
+			'"setup_drivers_license",' .
+			'"setup_new_merchant",' .
+			'"setup_business_license",' .
+			'"setup_other",' .
+			'"setup_field_other",' .
+			'"setup_tier_select",' .
+			'"setup_tier3",' .
+			'"setup_tier4",' .
+			'"setup_tier5_financials",' .
+			'"setup_tier5_processing_statements",' .
+			'"setup_tier5_bank_statements",' .
+			'"setup_equipment_terminal",' .
+			'"setup_equipment_gateway",' .
+			'"setup_install",' .
+			'"setup_starterkit",' .
+			'"setup_equipment_payment",' .
+			'"setup_lease_price",' .
+			'"setup_lease_months",' .
+			'"setup_debit_volume",' .
+			'"setup_item_count",' .
+			'"setup_referrer",' .
+			'"setup_referrer_type",' .
+			'"setup_referrer_pct",' .
+			'"setup_reseller",' .
+			'"setup_reseller_type",' .
+			'"setup_reseller_pct",' .
+			'"setup_notes",' .
+			'"cp_encrypted_sn",' .
+			'"cp_pinpad_ra_attached",' .
+			'"cp_giftcards",' .
+			'"cp_check_guarantee",' .
+			'"cp_check_guarantee_info",' .
+			'"cp_pos",' .
+			'"cp_pos_contact",' .
+			'"micros",' .
+			'"micros_billing",' .
+			'"gateway_option",' .
+			'"gateway_package",' .
+			'"gateway_gold_subpackage",' .
+			'"gateway_epay",' .
+			'"gateway_billing",' .
+			'"moto_online_chd",' .
+			'"moto_developer",' .
+			'"moto_company",' .
+			'"moto_gateway",' .
+			'"moto_contact",' .
+			'"moto_phone",' .
+			'"moto_email",' .
+			'"created",' .
+			'"modified",' .
+			'"setup_referrer_pct_profit",' .
+			'"setup_referrer_pct_volume",' .
+			'"setup_referrer_pct_gross",' .
+			'"setup_reseller_pct_profit",' .
+			'"setup_reseller_pct_volume",' .
+			'"setup_reseller_pct_gross",' .
+			'"setup_partner",' .
+			'"setup_partner_pct_profit",' .
+			'"setup_partner_pct_volume",' .
+			'"setup_partner_pct_gross",' .
+			'"gateway_retail_swipe",' .
+			'"gateway_epay_charge_licenses"';
+
 		$expectedValues =
 			'"",' .
 			'"",' .
@@ -707,11 +788,80 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"",' .
 			'"4",' .
 			'"",' .
+			'"",' .
+			'"",' .
+			'"1",' .
+			'"saved",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"2016-09-16 14:56:40",' .
+			'"2016-09-16 14:56:40",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
 			'""';
 
 		$actualKeys = '';
 		$actualValues = '';
 		$this->CobrandedApplication->buildExportData($this->CobrandedApplication->id, $actualKeys, $actualValues);
+
 		$this->assertEquals($expectedKeys, $actualKeys, 'Empty application keys were not what we expected');
 		$this->assertEquals($expectedValues, $actualValues, 'Empty application values were not what we expected');
 
@@ -719,6 +869,67 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$app = $this->CobrandedApplication->read();
 
 		$this->__setSomeValuesBasedOnType($app);
+
+		// update the coversheet with some values
+		$coversheetData = array(
+			'Coversheet' => array(
+				'setup_existing_merchant' => '',
+				'setup_banking' => true,
+				'setup_statements' => true,
+				'setup_drivers_license' => true,
+				'setup_new_merchant' => true,
+				'setup_business_license' => true,
+				'setup_other' => true,
+				'setup_field_other' => '',
+				'setup_tier_select' => true,
+				'setup_tier3' => false,
+				'setup_tier4' => false,
+				'setup_tier5_financials' => false,
+				'setup_tier5_processing_statements' => false,
+				'setup_tier5_bank_statements' => false,
+				'setup_equipment_terminal' => false,
+				'setup_equipment_gateway' => true,
+				'setup_install' => 'pos',
+				'setup_starterkit' => '',
+				'setup_equipment_payment' => '',
+				'setup_lease_price' => '',
+				'setup_lease_months' => '',
+				'setup_debit_volume' => '',
+				'setup_item_count' => '',
+				'setup_referrer' => 'Xsilva',
+				'setup_referrer_type' => 'gp',
+				'setup_referrer_pct' => '20',
+				'setup_reseller' => 'BFA Technologies',
+				'setup_reseller_type' => 'gp',
+				'setup_reseller_pct' => '30',
+				'setup_notes' => '',
+				'cp_encrypted_sn' => '',
+				'cp_pinpad_ra_attached' => false,
+				'cp_giftcards' => 'no',
+				'cp_check_guarantee' => 'no',
+				'cp_check_guarantee_info' => '',
+				'cp_pos' => 'yes',
+				'cp_pos_contact' => 'LightSpeed',
+				'micros' => '',
+				'micros_billing' => '',
+				'gateway_option' => 'option2',
+				'gateway_package' => 'silver',
+				'gateway_gold_subpackage' => '',
+				'gateway_epay' => true,
+				'gateway_billing' => 'rep',
+				'moto_online_chd' => '',
+				'moto_developer' => '',
+				'moto_company' => '',
+				'moto_gateway' => '',
+				'moto_contact' => '',
+				'moto_phone' => '',
+				'moto_email' => '',
+				'modified' => '2016-09-16 14:56:40'
+			)
+		);
+
+		$this->Coversheet->id = $newCoversheet['Coversheet']['id'];
+		$this->Coversheet->save($coversheetData, false);
 
 		$expectedValues =
 			'"",' .
@@ -757,6 +968,74 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Yes",' .
 			'"",' .
 			'"4",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"1",' .
+			'"saved",' .
+			'"",' .
+			'"1",' .
+			'"1",' .
+			'"1",' .
+			'"1",' .
+			'"1",' .
+			'"1",' .
+			'"",' .
+			'"1",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"1",' .
+			'"pos",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"Xsilva",' .
+			'"gp",' .
+			'"20",' .
+			'"BFA Technologies",' .
+			'"gp",' .
+			'"30",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"no",' .
+			'"no",' .
+			'"",' .
+			'"yes",' .
+			'"LightSpeed",' .
+			'"",' .
+			'"",' .
+			'"option2",' .
+			'"silver",' .
+			'"",' .
+			'"1",' .
+			'"rep",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"2016-09-16 14:56:40",' .
+			'"2016-09-16 14:56:40",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
+			'"",' .
 			'"",' .
 			'""';
 

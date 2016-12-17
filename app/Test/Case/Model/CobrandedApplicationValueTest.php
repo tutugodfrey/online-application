@@ -11,134 +11,136 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 
 	public $autoFixtures = false;
 
-/**
- * Fixtures
- *
- * @var array
- */
-	public $fixtures = array(
-		'app.group',
+	/**
+	 * Fixtures
+	 *
+	 * @var array
+	 */
+		public $fixtures = array(
 //		'app.onlineappUser',
-		'app.onlineappCobrand',
-		'app.onlineappTemplate',
-		'app.onlineappTemplatePage',
-		'app.onlineappTemplateSection',
-		'app.onlineappTemplateField',
-		'app.onlineappCobrandedApplicationValue',
-		'app.onlineappCobrandedApplication',
-		'app.onlineappCoversheet',
-		'app.onlineappEmailTimeline',
-		'app.onlineappCobrandedApplicationAch',
-	);
+			'app.group',
+			'app.onlineappCobrand',
+			'app.onlineappTemplate',
+			'app.onlineappTemplatePage',
+			'app.onlineappTemplateSection',
+			'app.onlineappTemplateField',
+			'app.onlineappCobrandedApplication',
+			'app.onlineappCobrandedApplicationValue',
+			'app.onlineappCobrandedApplicationAch',
+			'app.onlineappCoversheet',
+			'app.onlineappEmailTimelineSubject',
+			'app.onlineappEmailTimeline'
+		);
 
-	private $__template;
-	private $__user;
+		private $__template;
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->Group = ClassRegistry::init('Group');
-		$this->User = ClassRegistry::init('OnlineappUser');
-		$this->Cobrand = ClassRegistry::init('Cobrand');
-		$this->Template = ClassRegistry::init('Template');
-		$this->TemplatePage = ClassRegistry::init('TemplatePage');
-		$this->TemplateSection = ClassRegistry::init('TemplateSection');
-		$this->TemplateField = ClassRegistry::init('TemplateField');
-		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
-		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-		$this->Coversheet = ClassRegistry::init('Coversheet');
-		$this->EmailTimeline = ClassRegistry::init('EmailTimeline');
-		$this->CobrandedApplicationAch = ClassRegistry::init('CobrandedApplicationAch');
+		private $__user;
 
-		// load data
-		$this->loadFixtures('Group');
-		$this->loadFixtures('OnlineappCobrand');
-		$this->loadFixtures('OnlineappTemplate');
-		$this->loadFixtures('OnlineappTemplatePage');
-		$this->loadFixtures('OnlineappTemplateSection');
-		$this->loadFixtures('OnlineappTemplateField');
-//		$this->loadFixtures('OnlineappUser');
-		$this->loadFixtures('OnlineappCobrandedApplication');
-		$this->loadFixtures('OnlineappCobrandedApplicationValue');
-		$this->loadFixtures('OnlineappCoversheet');
-		$this->loadFixtures('OnlineappEmailTimeline');
-		$this->loadFixtures('OnlineappCobrandedApplicationAch');
+	/**
+	 * setUp method
+	 *
+	 * @return void
+	 */
+		public function setUp() {
+			parent::setUp();
+			$this->User = ClassRegistry::init('OnlineappUser');
+			$this->Group = ClassRegistry::init('Group');
+			$this->Coversheet = ClassRegistry::init('Coversheet');
+			$this->Cobrand = ClassRegistry::init('Cobrand');
+			$this->Template = ClassRegistry::init('Template');
+			$this->TemplatePage = ClassRegistry::init('TemplatePage');
+			$this->TemplateSection = ClassRegistry::init('TemplateSection');
+			$this->TemplateField = ClassRegistry::init('TemplateField');
+			$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
+			$this->CobrandedApplicationAch = ClassRegistry::init('CobrandedApplicationAch');
+			$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
+			$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
 
-		$this->__template = $this->Template->find(
-			'first',
-			array(
-				'conditions' => array(
-					'name' => 'Template used to test afterSave of app values',
+			// load data
+//			$this->loadFixtures('OnlineappUser');
+			$this->loadFixtures('Group');
+			$this->loadFixtures('OnlineappCobrand');
+			$this->loadFixtures('OnlineappTemplate');
+			$this->loadFixtures('OnlineappTemplatePage');
+			$this->loadFixtures('OnlineappTemplateSection');
+			$this->loadFixtures('OnlineappTemplateField');
+			$this->loadFixtures('OnlineappCobrandedApplication');
+			$this->loadFixtures('OnlineappCobrandedApplicationValue');
+			$this->loadFixtures('OnlineappCobrandedApplicationAch');
+			$this->loadFixtures('OnlineappEmailTimelineSubject');
+			$this->loadFixtures('OnlineappEmailTimeline');
+
+			$this->__template = $this->Template->find(
+				'first',
+				array(
+					'conditions' => array(
+						'name' => 'Template used to test afterSave of app values',
+					)
 				)
-			)
-		);
+			);
 
-//		$this->User->id = $this->User->find('first', array('fields' => 'id'));
-//		$this->User->saveField('template_id', $this->__template['Template']['id']);
-//		$this->__user = $this->User->find('first');
+			//$this->User->create(
+//			$this->User->deleteAll(true, false);
+			$user =	array(
+				'id' => 1,
+					'email' => 'testing@axiapayments.com',
+					'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
+					'group_id' => 1,
+					'created' => '2014-01-24 11:02:22',
+					'modified' => '2014-01-24 11:02:22',
+					'token' => 'sometokenvalue',
+					'token_used' => '2014-01-24 11:02:22',
+					'token_uses' => 1,
+					'firstname' => 'testuser1firstname',
+					'lastname' => 'testuser1lastname',
+					'extension' => 1,
+					'active' => 1,
+					'api_password' => 'notset',
+					'api_enabled' => 1,
+					'template_id' => $this->__template['Template']['id'],
+			);
 
-		$this->User->create(
-			array(
-				'email' => 'testing@axiapayments.com',
-				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
-				'group_id' => 1,
-				'created' => '2014-01-24 11:02:22',
-				'modified' => '2014-01-24 11:02:22',
-				'token' => 'sometokenvalue',
-				'token_used' => '2014-01-24 11:02:22',
-				'token_uses' => 1,
-				'firstname' => 'testuser1firstname',
-				'lastname' => 'testuser1lastname',
-				'extension' => 1,
-				'active' => 1,
-				'api_password' => 'notset',
-				'api_enabled' => 1,
-				'api' => 1,
-				'cobrand_id' => 2,
-				'template_id' => $this->__template['Template']['id'],
-			)
-		);
-		$this->__user = $this->User->save();
- 	}
+			$this->__user = $this->User->save($user);
 
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		$this->CobrandedApplicationValue->deleteAll(true, false);
-		$this->CobrandedApplication->deleteAll(true, false);
-		$this->User->delete($this->__user['OnlineappUser']['id']);
-		$this->Group->deleteAll(true, false);
-		$this->TemplateField->deleteAll(true, false);
-		$this->TemplateSection->deleteAll(true, false);
-		$this->TemplatePage->deleteAll(true, false);
-		$this->Template->deleteAll(true, false);
-		$this->Cobrand->deleteAll(true, false);
-		$this->Coversheet->deleteAll(true, false);
-		$this->EmailTimeline->deleteAll(true, false);
-		$this->CobrandedApplicationAch->deleteAll(true, false);
+			$this->loadFixtures('OnlineappCoversheet');
+		}
 
-		unset($this->CobrandedApplication);
-		unset($this->CobrandedApplicationValue);
-		unset($this->TemplateField);
-		unset($this->TemplateSection);
-		unset($this->TemplatePage);
-		unset($this->Template);
-		unset($this->Cobrand);
-		unset($this->User);
-		unset($this->Group);
-		unset($this->Coversheet);
-		unset($this->EmailTimeline);
-		unset($this->CobrandedApplicationAch);
+	/**
+	 * tearDown method
+	 *
+	 * @return void
+	 */
+		public function tearDown() {
+			$this->Coversheet->deleteAll(true, false);
+			$this->OnlineappEmailTimeline->deleteAll(true, false);
+			$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
+			$this->CobrandedApplicationAch->deleteAll(true, false);
+			$this->CobrandedApplicationValue->deleteAll(true, false);
+			$this->CobrandedApplication->deleteAll(true, false);
+			$this->User->delete($this->__user['OnlineappUser']['id']);
+			$this->Group->deleteAll(true, false);
+			$this->TemplateField->deleteAll(true, false);
+			$this->TemplateSection->deleteAll(true, false);
+			$this->TemplatePage->deleteAll(true, false);
+			$this->Template->deleteAll(true, false);
+			$this->Cobrand->deleteAll(true, false);
+			unset($this->Coversheet);
+			unset($this->CobrandedApplicationAch);
+			unset($this->CobrandedApplicationValue);
+			unset($this->CobrandedApplication);
+			unset($this->TemplateField);
+			unset($this->TemplateSection);
+			unset($this->TemplatePage);
+			unset($this->Template);
+			unset($this->Cobrand);
+			unset($this->User);
+			unset($this->Group);
+			unset($this->EmailTimeline);
+			unset($this->EmailTimelineSubject);
 
-		parent::tearDown();
-	}
+			parent::tearDown();
+		}
 
 	public function testValidation() {
 		// we need the application in order to add a new application value
@@ -248,7 +250,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 					break;
 
 				//case 15: // lengthoftime - [#+] [year|month|day]s
-				//case 16: // creditcard - 
+				//case 16: // creditcard -
 
 				case 17: // url       - http(s)?://domain.com
 					$this->__testInvalidAndValidAppValues('url', $appValue, 'leters are not a valid url', 'http://www.somewhere.com');
@@ -270,34 +272,39 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 
 		// for each app value, test the beforeSave validation step
 		$this->CobrandedApplication->delete($this->CobrandedApplication->id);
-		$this->User->delete($this->User->id);
+		//$this->User->delete($this->User->id);
 		$this->Template->delete($this->Template->id);
 	}
 
 	public function testSaveAppValueWithUnknownFieldType() {
 		// create a new application from template with id 4
-		// or find the template with a name = 'Template used to test afterSave of app values'
-		$applictionData = array(
+		// find the template with a name = 'Template used to test afterSave of app values'
+		// find the template field with an id of 35 "Unknown Type for testing"
+		$templateFieldId = 35;
+		$applicationData = array(
 			'user_id' => $this->__user['OnlineappUser']['id'],
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
 
-		$this->CobrandedApplication->create($applictionData);
+		$this->CobrandedApplication->create($applicationData);
 		$cobrandedApplication = $this->CobrandedApplication->save();
+
 		$applicationAndValues = $this->CobrandedApplicationValue->find(
-			'all',
+			'first',
 			array(
-				'conditions' => array('cobranded_application_id' => $this->CobrandedApplication->id)
+				'conditions' => array('cobranded_application_id' => $this->CobrandedApplication->id,
+					'template_field_id' => '35')
 			)
 		);
 
 		// lastly, test trying to save 'Unknown Type for testing'
-		$unknownFieldType = $applicationAndValues[count($applicationAndValues)-1];
-		$unknownFieldType['CobrandedApplicationValue']['value'] = 'a new value';
 
+		$applicationAndValues['CobrandedApplicationValue']['value'] = 'a new value';
 		$this->setExpectedException('Exception', 'Unknown field type, cannot validate it.', 1);
-		$this->CobrandedApplicationValue->save($unknownFieldType['CobrandedApplicationValue']);
+		$this->CobrandedApplicationValue->save($applicationAndValues['CobrandedApplicationValue']);
+
+
 	}
 
 	public function testApplicationValueEncryption() {
@@ -406,7 +413,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		// try to modify and save the value - this should not work
 		// otherwise values will get stored with masking
 		$applicationValue['CobrandedApplicationValue']['value'] .= '123';
-		
+
 		// try to update
 		$result = $this->CobrandedApplicationValue->save($applicationValue);
 
