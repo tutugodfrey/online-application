@@ -92,11 +92,13 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		);
 		// now different types
 		$options['type'] = 1;
+		$minYear = date('Y') - 100;
+		$maxYear = date('Y') + 2;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">' .
 				'<div class="input text">' .
 					'<label for="merge_field_name">name*</label>' .
-					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" minYear="1916" maxYear="2018" data-inputmask="&#039;alias&#039;: &#039;mm/dd/yyyy&#039;, &#039;placeholder&#039;: &#039;mm/dd/yyyy&#039;" type="text"/>' .
+					'<input name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" minYear="' . $minYear . '" maxYear="' . $maxYear . '" data-inputmask="&#039;alias&#039;: &#039;mm/dd/yyyy&#039;, &#039;placeholder&#039;: &#039;mm/dd/yyyy&#039;" type="text"/>' .
 				'</div>' .
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
