@@ -17,6 +17,17 @@ var moving = new Array();
 var dir = new Array();
 /************************************************************/
 
+/*Disable enter key from all online app form inputs except textarea input where enter is needed for new lines*/
+$("document").ready(function(){
+    if ($("form#onlineapp").length !== 0) {
+        $(document).on("keypress", ":input:not(textarea)", function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+            }
+        });
+    }
+});
+
 /************************************************************
 *This funtion searches for action menus currently displayed and hides them
 *then displays only the one that the user clicks on by calling the functions
