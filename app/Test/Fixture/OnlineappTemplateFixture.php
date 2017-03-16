@@ -15,6 +15,8 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 		'cobrand_id' => array('type' => 'integer', 'null' => true),
 		'created' => array('type' => 'datetime', 'null' => false),
 		'modified' => array('type' => 'datetime', 'null' => false),
+		'rightsignature_template_guid' => array('type' => 'string', 'null' => true),
+		'rightsignature_install_template_guid' => array('type' => 'string', 'null' => true),
 		'owner_equity_threshold' => array('type' => 'integer', 'null' => true),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id')

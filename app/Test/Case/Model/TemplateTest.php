@@ -9,7 +9,8 @@ class TemplateTest extends CakeTestCase {
 	public $autoFixtures = false;
 
 	public $fixtures = array(
-		'app.group',
+		'app.onlineappUser',
+		'app.onlineappGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -25,7 +26,7 @@ class TemplateTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Group = ClassRegistry::init('Group');
-		$this->User = ClassRegistry::init('OnlineappUser');
+		$this->User = ClassRegistry::init('User');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -35,7 +36,8 @@ class TemplateTest extends CakeTestCase {
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
-		$this->loadFixtures('Group');
+		$this->loadFixtures('OnlineappUser');
+		$this->loadFixtures('OnlineappGroup');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -55,7 +57,7 @@ class TemplateTest extends CakeTestCase {
 
 		$this->User->create(
 			array(
-				'email' => 'testing@axiapayments.com',
+				'email' => 'testing@axiatech.com',
 				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
 				'group_id' => 1,
 				'created' => '2014-01-24 11:02:22',
@@ -80,7 +82,7 @@ class TemplateTest extends CakeTestCase {
 	public function tearDown() {
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
-		$this->User->delete($this->__user['OnlineappUser']['id']);
+		$this->User->delete($this->__user['User']['id']);
 		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);

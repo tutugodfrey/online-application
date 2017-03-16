@@ -17,8 +17,12 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 	 * @var array
 	 */
 		public $fixtures = array(
-//		'app.onlineappUser',
-			'app.group',
+			'app.onlineappUser',
+			'app.onlineappUsersTemplate',
+			'app.onlineappUsersCobrand',
+			'app.onlineappUsersManager',
+			'app.merchant',
+			'app.onlineappGroup',
 			'app.onlineappCobrand',
 			'app.onlineappTemplate',
 			'app.onlineappTemplatePage',
@@ -43,7 +47,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 	 */
 		public function setUp() {
 			parent::setUp();
-			$this->User = ClassRegistry::init('OnlineappUser');
+			$this->User = ClassRegistry::init('User');
 			$this->Group = ClassRegistry::init('Group');
 			$this->Coversheet = ClassRegistry::init('Coversheet');
 			$this->Cobrand = ClassRegistry::init('Cobrand');
@@ -54,12 +58,16 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 			$this->CobrandedApplicationAch = ClassRegistry::init('CobrandedApplicationAch');
-			$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
-			$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
+			$this->OnlineappEmailTimelineSubject = ClassRegistry::init('EmailTimelineSubject');
+			$this->OnlineappEmailTimeline = ClassRegistry::init('EmailTimeline');
 
 			// load data
-//			$this->loadFixtures('OnlineappUser');
-			$this->loadFixtures('Group');
+			$this->loadFixtures('OnlineappUser');
+			$this->loadFixtures('OnlineappUsersTemplate');
+			$this->loadFixtures('OnlineappUsersCobrand');
+			$this->loadFixtures('OnlineappUsersManager');
+			$this->loadFixtures('Merchant');
+			$this->loadFixtures('OnlineappGroup');
 			$this->loadFixtures('OnlineappCobrand');
 			$this->loadFixtures('OnlineappTemplate');
 			$this->loadFixtures('OnlineappTemplatePage');
@@ -118,7 +126,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			$this->CobrandedApplicationAch->deleteAll(true, false);
 			$this->CobrandedApplicationValue->deleteAll(true, false);
 			$this->CobrandedApplication->deleteAll(true, false);
-			$this->User->delete($this->__user['OnlineappUser']['id']);
+			$this->User->delete($this->__user['User']['id']);
 			$this->Group->deleteAll(true, false);
 			$this->TemplateField->deleteAll(true, false);
 			$this->TemplateSection->deleteAll(true, false);
@@ -188,7 +196,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
 		$applicationData = array(
-			'user_id' => $this->__user['OnlineappUser']['id'],
+			'user_id' => $this->__user['User']['id'],
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
@@ -282,7 +290,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		// find the template field with an id of 35 "Unknown Type for testing"
 		$templateFieldId = 35;
 		$applicationData = array(
-			'user_id' => $this->__user['OnlineappUser']['id'],
+			'user_id' => $this->__user['User']['id'],
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);

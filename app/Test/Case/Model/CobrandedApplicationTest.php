@@ -7,7 +7,7 @@ App::uses('CobrandedApplication', 'Model');
  */
 class CobrandedApplicationTest extends CakeTestCase {
 
-	public $dropTables = false;
+	public $dropTables = true;
 
 	public $autoFixtures = false;
 
@@ -17,7 +17,11 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.group',
+		'app.onlineappApip',
+		'app.onlineappApiLog',
+		'app.onlineappEpayment',
+		'app.onlineappUser',
+		'app.onlineappGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -28,7 +32,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.onlineappCobrandedApplicationAch',
 		'app.onlineappCoversheet',
 		'app.onlineappEmailTimelineSubject',
-		'app.onlineappEmailTimeline'
+		'app.onlineappEmailTimeline',
+		'app.onlineappUsersManager',
+		'app.onlineappUsersCobrand',
+		'app.onlineappUsersTemplate',
+		'app.merchant',
 	);
 
 	private $__template;
@@ -45,7 +53,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Group = ClassRegistry::init('Group');
-		$this->User = ClassRegistry::init('OnlineappUser');
+		$this->User = ClassRegistry::init('User');
 		$this->Coversheet = ClassRegistry::init('Coversheet');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
@@ -55,11 +63,16 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 		$this->CobrandedApplicationAch = ClassRegistry::init('CobrandedApplicationAch');
-		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
-		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
+		$this->EmailTimelineSubject = ClassRegistry::init('EmailTimelineSubject');
+		$this->EmailTimeline = ClassRegistry::init('EmailTimeline');
+		$this->Merchant = ClassRegistry::init('Merchant');
 
 		// load data
-		$this->loadFixtures('Group');
+		$this->loadFixtures('OnlineappEpayment');
+		$this->loadFixtures('OnlineappApip');
+		$this->loadFixtures('OnlineappApiLog');
+		$this->loadFixtures('OnlineappUser');
+		$this->loadFixtures('OnlineappGroup');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -70,6 +83,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappCobrandedApplicationAch');
 		$this->loadFixtures('OnlineappEmailTimelineSubject');
 		$this->loadFixtures('OnlineappEmailTimeline');
+		$this->loadFixtures('OnlineappUsersManager');
+		$this->loadFixtures('OnlineappUsersCobrand');
+		$this->loadFixtures('OnlineappUsersTemplate');
+		$this->loadFixtures('Merchant');
 
 		$this->__template = $this->Template->find(
 			'first',
@@ -103,8 +120,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->__user = $this->User->save($user);
 		$cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
 		$this->CobrandedApplication->id = $cobrandedApplication['CobrandedApplication']['id'];
-		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['OnlineappUser']['id']);
-
+		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['User']['id']);
+		
 		$this->loadFixtures('OnlineappCoversheet');
 	}
 
@@ -115,12 +132,12 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function tearDown() {
 		$this->Coversheet->deleteAll(true, false);
-		$this->OnlineappEmailTimeline->deleteAll(true, false);
-		$this->OnlineappEmailTimelineSubject->deleteAll(true, false);
+		$this->EmailTimeline->deleteAll(true, false);
+		$this->EmailTimelineSubject->deleteAll(true, false);
 		$this->CobrandedApplicationAch->deleteAll(true, false);
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
-		$this->User->delete($this->__user['OnlineappUser']['id']);
+		$this->User->delete($this->__user['User']['id']);
 		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
@@ -622,7 +639,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
 		$applictionData = array(
-			'user_id' => $this->__user['OnlineappUser']['id'],
+			'user_id' => $this->__user['User']['id'],
 			'template_id' => $this->__template['Template']['id'],
 			'uuid' => String::uuid(),
 		);
@@ -631,7 +648,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$cobrandedApplication = $this->CobrandedApplication->save();
 
 		$coversheet = array(
-			'user_id' => $this->__user['OnlineappUser']['id'],
+			'user_id' => $this->__user['User']['id'],
 			'status' => 'saved',
 			'created' => '2016-09-16 14:56:40',
 			'modified' => '2016-09-16 14:56:40',
@@ -1064,10 +1081,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
-				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
+				'conditions' => array('CobrandedApplication.user_id' => $this->__user['User']['id']),
 			)
 		);
-		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id [' . $this->__user['User']['id'] . ']');
 
 		// set expected results
 		$expectedValidationErrors = array(
@@ -1079,7 +1096,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		);
 
 		// set knowns
-		$user = $this->__user['OnlineappUser'];
+		$user = $this->__user['User'];
 		// update the template_id to be 5
 		$user['template_id'] = 5;
 
@@ -1096,11 +1113,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
-				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
+				'conditions' => array('CobrandedApplication.user_id' => $this->__user['User']['id']),
 			)
 		);
 
-		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+		$this->assertEquals(1, count($applications), 'Expected to find 1 application for user with id [' . $this->__user['User']['id'] . ']');
 
 		// this time use good data
 		$fieldsData['required_text_from_api_without_default'] = 'any text will do';
@@ -1173,11 +1190,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$applications = $this->CobrandedApplication->find(
 			'all',
 			array(
-				'conditions' => array('CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']),
+				'conditions' => array('CobrandedApplication.user_id' => $this->__user['User']['id']),
 			)
 		);
 
-		$this->assertEquals(2, count($applications), 'Expect to find two applications for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+		$this->assertEquals(2, count($applications), 'Expect to find two applications for user with id [' . $this->__user['User']['id'] . ']');
 
 		$templateData = $this->CobrandedApplication->getTemplateAndAssociatedValues($applications[0]['CobrandedApplication']['id']);
 		$templateField = $templateData['Template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'][0];
@@ -1255,7 +1272,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			),
 		);
 
-		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['OnlineappUser']);
+		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['User']);
 		$this->assertTrue($actualResponse['success'], 'createOnlineappForUser did not create an application');
 		$this->assertNotNull($actualResponse['cobrandedApplication']['id'], 'createOnlineappForUser should return a cobranded application id that is not null');
 
@@ -1263,7 +1280,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse['cobrandedApplication']['id'] = $actualResponse['cobrandedApplication']['id'] + 1;
 		$uuid = String::uuid();
 		$expectedResponse['cobrandedApplication']['uuid'] = $uuid;
-		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['OnlineappUser'], $uuid);
+		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['User'], $uuid);
 		$this->assertEquals($expectedResponse, $actualResponse, 'createOnlineappForUser response did not match the expected');
 	}
 
@@ -1276,18 +1293,18 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
+					'CobrandedApplication.template_id' => $this->__user['User']['template_id']
 				),
 			)
 		);
-		$this->assertEquals(0, count($apps), 'Expected to find no apps for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+		$this->assertEquals(0, count($apps), 'Expected to find no apps for user with id [' . $this->__user['User']['id'] . ']');
 
 		// create an app
 		$this->CobrandedApplication->create(
 			array(
 				'uuid' => String::uuid(),
-				'user_id' => $this->__user['OnlineappUser']['id'],
-				'template_id' => $this->__user['OnlineappUser']['template_id'],
+				'user_id' => $this->__user['User']['id'],
+				'template_id' => $this->__user['User']['template_id'],
 			)
 		);
 		$this->CobrandedApplication->save();
@@ -1295,34 +1312,34 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
-				//	'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.template_id' => $this->__user['User']['template_id']
+				//	'CobrandedApplication.user_id' => $this->__user['User']['id']
 				),
 			)
 		);
 
 		// should now have 1 app
-		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+		$this->assertEquals(1, count($apps), 'Expected to find one app for user with id [' . $this->__user['User']['id'] . ']');
 
 		// update the values
 		$expectedApp = $apps[0];
 		$this->__setSomeValuesBasedOnType($expectedApp);
 
 		// next, copy this app
-		$this->CobrandedApplication->copyApplication($expectedApp['CobrandedApplication']['id'], $this->__user['OnlineappUser']['id']);
+		$this->CobrandedApplication->copyApplication($expectedApp['CobrandedApplication']['id'], $this->__user['User']['id']);
 
 		$apps = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
-				//	'CobrandedApplication.user_id' => $this->__user['OnlineappUser']['id']
+					'CobrandedApplication.template_id' => $this->__user['User']['template_id']
+				//	'CobrandedApplication.user_id' => $this->__user['User']['id']
 				),
 			)
 		);
 
 		// should now have 2 apps
-		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+		$this->assertEquals(2, count($apps), 'Expected to find two apps for user with id [' . $this->__user['User']['id'] . ']');
 
 		// and they should have the same user_id and template_id
 		$this->assertEquals(
@@ -1348,21 +1365,21 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// make sure copy works when passing template_id
 		$this->CobrandedApplication->copyApplication(
 			$expectedApp['CobrandedApplication']['id'],
-			$this->__user['OnlineappUser']['id'],
-			$this->__user['OnlineappUser']['template_id']
+			$this->__user['User']['id'],
+			$this->__user['User']['template_id']
 		);
 
 		$apps = $this->CobrandedApplication->find(
 			'all',
 			array(
 				'conditions' => array(
-					'CobrandedApplication.template_id' => $this->__user['OnlineappUser']['template_id']
+					'CobrandedApplication.template_id' => $this->__user['User']['template_id']
 				),
 			)
 		);
 
 		// should now have 3 apps
-		$this->assertEquals(3, count($apps), 'Expected to find three apps for user with id [' . $this->__user['OnlineappUser']['id'] . ']');
+		$this->assertEquals(3, count($apps), 'Expected to find three apps for user with id [' . $this->__user['User']['id'] . ']');
 
 		$response = $this->CobrandedApplication->copyApplication(null, null, 999999);
 		$this->assertFalse($response, 'copyApplication with bad template_id should fail.');
