@@ -110,13 +110,17 @@
 	<div id='countTST'></div>
    <!-- Session notification Dialog Box -->
    <div id="msg_fader">&nbsp;</div>
-   <div id="session_box" style='height: 5.5cm'>
-       <h2><span class="label label-danger">Session Expiring Soon!</span></h2><br />
-      <p style="color:black ">Session will expire in <span id="sessCountDn">$nbsp;</span>
-           <br />All unsaved work will be lost upon session expiration.
-		   <br /><br /><span class="label label-success" style="font-size: 10pt">Click or hit any key continue.</span>
-	</p>
-   </div>
+  <div id="session_box" class="col-md-12">
+    <div class="panel panel-danger">
+      <div class="panel-heading text-center"><strong>Session Expiring Soon!</strong></div>
+      <div class="panel-body">
+         Session will expire in <span id="sessCountDn">&nbsp;</span>
+         <br/>Unsaved work will be lost.
+         <br/><span style="font-size: 10pt"><strong>Click or hit any key continue.</strong></span>
+      </div> 
+    </div>
+  </div>
+
     <!-- End Session notification Dialog Box -->
     <!--  span id="loginBtn" class="btn">Need to login?</span -->
     <div id="container">
