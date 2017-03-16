@@ -1,54 +1,17 @@
 <?php $this->Html->addCrumb(__('Cobrand'), '/admin/cobrands'); ?>
 
 <div class="templates form">
-<?php echo $this->Form->create('Template'); ?>
+<?php echo $this->Form->create('Template', array(
+		'inputDefaults' => array(
+			'wrapInput' => false,
+		),
+		'class' => 'form-inline'
+	)); ?>
 	<fieldset>
 		<legend><?php echo String::insert(__('Edit Template for ":cobrand_name"'), array('cobrand_name' => $cobrand['Cobrand']['partner_name'])); ?></legend>
 	<?php
 		echo $this->Form->input('id');
-		echo $this->Form->input('name');
-
-		echo "<br>";
-
-		$cobrandImage = $this->Html->image($cobrand['Cobrand']['cobrand_logo_url'], array('height' => '50px'));
-		echo $this->Form->input(
-			'logo_position',
-			array(
-				'options' => $logoPositionTypes,
-				'empty' => __('(choose one)'),
-				'between' => $cobrandImage
-			)
-		);
-		
-		echo "<br>";
-
-		$brandImage = $this->Html->image($cobrand['Cobrand']['brand_logo_url'], array('height' => '50px'));
-		echo $this->Form->input(
-			'include_brand_logo',
-			array(
-				'before' => $brandImage
-			)
-		);
-
-		echo $this->Form->input('description');
-		
-		echo $this->Form->input('rightsignature_template_guid',
-    		array(
-    			'type' => 'select',
-    			'label' => 'Rightsignature Template Guid',
-        		'options' => $templateList,
-    		)
-		);
-
-		echo $this->Form->input('rightsignature_install_template_guid',
-    		array(
-    			'type' => 'select',
-    			'label' => 'Rightsignature Install Template Guid',
-        		'options' => $installTemplateList,
-    		)
-		);
-
-		echo $this->Form->input('owner_equity_threshold');
+		echo $this->element('Templates/templateFields');
 		echo $this->Form->hidden('cobrand_id');
 	?>
 	</fieldset>

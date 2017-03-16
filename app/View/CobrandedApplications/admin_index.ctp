@@ -125,34 +125,36 @@
 						)
 					);
 				}
-				if (isset($cobrandedApplication['Coversheet']['id'])) {
-					echo $this->Html->link(' ',
-						array(
-							'controller' => 'Coversheets',
-							'action' => 'edit',
-							$cobrandedApplication['Coversheet']['id'],
-							'admin' => false
-						),
-						array(
-							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
-							'title' => __('Edit Cover Sheet')
-						)
-					);
-				} else {
-					echo $this->Html->link(' ',
-						array(
-							'controller' => 'Coversheets',
-							'action' => 'add',
-							$cobrandedApplication['CobrandedApplication']['id'],
-							$cobrandedApplication['User']['id'],
-							'admin' => false
-						),
-						array(
-							'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
-							'title' => __('Create Cover Sheet')
-						)
-					);
-				}
+				if ($cobrandedApplication['Template']['requires_coversheet']) {
+					if (isset($cobrandedApplication['Coversheet']['id'])) {
+							echo $this->Html->link(' ',
+								array(
+									'controller' => 'Coversheets',
+									'action' => 'edit',
+									$cobrandedApplication['Coversheet']['id'],
+									'admin' => false
+								),
+								array(
+									'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
+									'title' => __('Edit Cover Sheet')
+								)
+							);
+						} else {
+							echo $this->Html->link(' ',
+								array(
+									'controller' => 'Coversheets',
+									'action' => 'add',
+									$cobrandedApplication['CobrandedApplication']['id'],
+									$cobrandedApplication['User']['id'],
+									'admin' => false
+								),
+								array(
+									'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
+									'title' => __('Create Cover Sheet')
+								)
+							);
+						}
+					}
 				if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
 				echo $this->Html->link(' ',
 					array(
