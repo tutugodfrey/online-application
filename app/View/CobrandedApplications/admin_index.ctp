@@ -4,10 +4,9 @@
 		<tr>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.id', 'ID'); ?></th>
 			<th><?php echo $this->Paginator->sort('User.firstname', 'User Name'); ?></th>
+			<th><?php echo $this->Paginator->sort('Cobrand.partner_name', 'Partner Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.template_id', 'Template'); ?></th>
 			<th><?php echo $this->Paginator->sort('Dba.value', 'DBA'); ?></th>
-			<th><?php echo $this->Paginator->sort('CorpName.value', 'Corp Name'); ?></th>
-			<th><?php echo $this->Paginator->sort('CorpContact.value', 'Corp Contact'); ?></th>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.status', 'Status'); ?></th>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.modified', 'Modified'); ?></th>
 			<th><?php echo 'Actions'; ?></th>
@@ -32,15 +31,16 @@
 				<?php echo $cobrandedApplication['User']['firstname'] . ' ' . $cobrandedApplication['User']['lastname']; ?>
 			</td>
 			<td>
+				<?php echo $cobrandedApplication['Cobrand']['partner_name']; ?>
+			</td>
+			<td>
 				<?php echo $cobrandedApplication['Template']['name']; ?>
 			</td>
 			<td><?php echo $cobrandedApplication['Dba']['value']; ?>&nbsp;</td>
-			<td><?php echo $cobrandedApplication['CorpName']['value']; ?>&nbsp;</td>
-			<td><?php echo $cobrandedApplication['CorpContact']['value']; ?>&nbsp;</td>
 			<td>
 	<?php 
-		if ($cobrandedApplication['CobrandedApplication']['status'] == 'completed'
-		|| $cobrandedApplication['CobrandedApplication']['status'] == 'signed') {
+		if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED
+		|| $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
 			echo $this->Html->link(
 				$cobrandedApplication['CobrandedApplication']['status'],
 				array(
@@ -57,7 +57,7 @@
 			</td>
 			<td><?php echo $this->Time->format('m/d/y h:i A', $cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td><div class="btn-group"><?php
-				if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
+				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
 				echo $this->Html->link(' ',
 					array(
 						'action' => 'export',
@@ -71,7 +71,7 @@
 				}
 				echo $this->Html->link(' ',
 					array(
-						'action' => 'copy',
+						'action' => 'add',
 						$cobrandedApplication['CobrandedApplication']['id']
 					),
 					array(
@@ -90,16 +90,16 @@
 					)
 				);
 
-				$values_map = array();
-				$values_map['Owner1Email'] = $cobrandedApplication['Owner1Email']['value'];
-				$values_map['Owner2Email'] = $cobrandedApplication['Owner2Email']['value'];
-				$values_map['EMail'] = $cobrandedApplication['EMail']['value'];
-				$values_map['LocEMail'] = $cobrandedApplication['LocEMail']['value'];
+				$valuesMap = array();
+				$valuesMap['Owner1Email'] = $cobrandedApplication['Owner1Email']['value'];
+				$valuesMap['Owner2Email'] = $cobrandedApplication['Owner2Email']['value'];
+				$valuesMap['EMail'] = $cobrandedApplication['EMail']['value'];
+				$valuesMap['LocEMail'] = $cobrandedApplication['LocEMail']['value'];
 
 				echo $this->element('cobranded_applications/email_select_modal',
 					array(
 						'cobranded_application_id' => $cobrandedApplication['CobrandedApplication']['id'],
-						'values_map' => $values_map
+						'valuesMap' => $valuesMap
 					)
 				);
 
@@ -107,23 +107,23 @@
 					array(
 						'type' => 'button',
 						'data-toggle' => 'modal',
-						'data-target' => '#myModal_'.$cobrandedApplication['CobrandedApplication']['id'],
+						'data-target' => '#myModal_' . $cobrandedApplication['CobrandedApplication']['id'],
 						'class' => 'btn btn-info btn-sm glyphicon glyphicon-send',
 						'title' => __('Email App For Field Completion')
 					)
 				);
 
-				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed') {
-				echo $this->Html->link(' ',
-					array(
-						'action' => 'install_sheet_var',
-						$cobrandedApplication['CobrandedApplication']['id']
-					),
-					array(
-						'class' => 'btn btn-default btn-sm glyphicon glyphicon-file',
-						'title' => __('Install Sheet')
-					)
-				);
+				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['merchant_id'])) {
+					echo $this->Html->link(' ',
+						array(
+							'action' => 'install_sheet_var',
+							$cobrandedApplication['CobrandedApplication']['id']
+						),
+						array(
+							'class' => 'btn btn-default btn-sm glyphicon glyphicon-file',
+							'title' => __('Install Sheet')
+						)
+					);
 				}
 				if (isset($cobrandedApplication['Coversheet']['id'])) {
 					echo $this->Html->link(' ',

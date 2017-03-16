@@ -179,12 +179,12 @@ var motoQuestionnaireCheck = function(){
 };
 
 var totalStartUpFees = function() {
-	var creditAppFee = parseFloat($("[name=CreditAppFee]").val());
-	var creditEquipmentFee = parseFloat($("[name=CreditEquipmentFee]").val());
-	var creditExpediteFee = parseFloat($("[name=CreditExpediteFee]").val());
-	var creditReprogramFee = parseFloat($("[name=CreditReprogramFee]").val());
-	var creditVirtualTrainingFee = parseFloat($("[name=CreditVirtualTrainingFee]").val());
-	var creditMobileSetupFee = parseFloat($("[name=CreditMobileSetupFee]").val());
+	var creditAppFee = ($("[name=CreditAppFee]").length)? parseFloat($("[name=CreditAppFee]").val().replace(/,/g, '')) : false ;
+	var creditEquipmentFee = ($("[name=CreditEquipmentFee]").length)? parseFloat($("[name=CreditEquipmentFee]").val().replace(/,/g, '')) : false;
+	var creditExpediteFee = ($("[name=CreditExpediteFee]").length)? parseFloat($("[name=CreditExpediteFee]").val().replace(/,/g, '')) : false;
+	var creditReprogramFee = ($("[name=CreditReprogramFee]").length)? parseFloat($("[name=CreditReprogramFee]").val().replace(/,/g, '')) : false;
+	var creditVirtualTrainingFee = ($("[name=CreditVirtualTrainingFee]").length)? parseFloat($("[name=CreditVirtualTrainingFee]").val().replace(/,/g, '')) : false;
+	var creditMobileSetupFee = ($("[name=CreditMobileSetupFee]").length)? parseFloat($("[name=CreditMobileSetupFee]").val().replace(/,/g, '')) : false;
 
 	if (!creditAppFee) {creditAppFee = 0;}
 	if (!creditEquipmentFee) {creditEquipmentFee = 0;}
@@ -195,9 +195,33 @@ var totalStartUpFees = function() {
 
 	var newTotal = creditAppFee + creditEquipmentFee + creditExpediteFee + creditReprogramFee + creditVirtualTrainingFee + creditMobileSetupFee;
 
-	newTotal = newTotal.toFixed(2);
+	newTotal = newTotal.toFixed(3);
 	
 	$("[label*='Start Up Fees'][name='Total']").val(newTotal);
+	$("[label*='Start Up Fees'][name='Total']").trigger('change');
+}
+
+var achHideOrShow = function() {
+	var selectedVal = $('input[name=ACH-]:checked').attr('id');
+
+	if (selectedVal == 'ACH-Yes') {
+		$('label[for="AnnualCheckVolume"]').show();
+		$('label[for="AnnualCheckVolume"]').next().show();
+		$('#AnnualCheckVolume').show();
+
+		$('label[for="TotalSalesVolume"]').show();
+		$('label[for="TotalSalesVolume"]').next().show();
+		$('#TotalSalesVolume').show();
+	}
+	else {
+		$('label[for="AnnualCheckVolume"]').hide();
+		$('label[for="AnnualCheckVolume"]').next().hide();
+		$('#AnnualCheckVolume').hide();
+
+		$('label[for="TotalSalesVolume"]').hide();
+		$('label[for="TotalSalesVolume"]').next().hide();
+		$('#TotalSalesVolume').hide();
+	}
 }
 
 $(document).ready(function() {
@@ -286,6 +310,11 @@ $(document).ready(function() {
 	$("[name='CreditReprogramFee']").on('blur', totalStartUpFees);
 	$("[name='CreditVirtualTrainingFee']").on('blur', totalStartUpFees);
 	$("[name='CreditMobileSetupFee']").on('blur', totalStartUpFees);
+
+	$('#ACH-Yes').on('change', achHideOrShow);
+	$('#ACH-No').on('change', achHideOrShow);
+
+	achHideOrShow();
 });
 
 

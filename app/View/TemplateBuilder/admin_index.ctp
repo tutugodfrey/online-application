@@ -95,8 +95,23 @@ if (!empty($template) && $template) {
                     )
                 );
                 echo $this->Form->input('description', array('style' => 'width:500px; height:30px;'));
-                echo $this->Form->input('rightsignature_template_guid', array('style' => 'width:500px; height:30px;'));
-                echo $this->Form->input('rightsignature_install_template_guid', array('style' => 'width:500px; height:30px;'));
+
+                echo $this->Form->input('rightsignature_template_guid',
+                    array(
+                        'type' => 'select',
+                        'label' => 'Rightsignature Template Guid',
+                        'options' => $templateList,
+                    )
+                );
+
+                echo $this->Form->input('rightsignature_install_template_guid',
+                    array(
+                        'type' => 'select',
+                        'label' => 'Rightsignature Install Template Guid',
+                        'options' => $installTemplateList,
+                    )
+                );
+
                 echo $this->Form->input('owner_equity_threshold', array('style' => 'width:500px; height:30px;'));     
 
                 echo "<table cellpadding='0' cellspacing='0' border='1'>";

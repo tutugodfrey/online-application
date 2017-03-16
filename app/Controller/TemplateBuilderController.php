@@ -35,6 +35,25 @@ class TemplateBuilderController extends AppController {
 
 			$this->request->data = $this->Session->read('requestData');
 			$this->set('template', $template);
+
+			$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+			
+			$client = $this->CobrandedApplication->createRightSignatureClient();
+			$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
+
+			$templates = array();
+			$installTemplates = array();
+
+			foreach ($results as $guid => $filename) {
+				if (preg_match('/install/i', $filename)) {
+					$installTemplates[$guid] = $filename;
+				} else {
+					$templates[$guid] = $filename;
+				}
+			}
+
+			$this->set('templateList', $templates);
+			$this->set('installTemplateList', $installTemplates);
 		}
 
 		$this->Session->delete('requestData');
@@ -137,7 +156,14 @@ class TemplateBuilderController extends AppController {
     		$this->Template->create();
     		$newTemplateData = $this->Template->save($newTemplate);
 
-    		if (!is_array($newTemplateData)) {
+    		if (!empty($this->Template->validationErrors)) {
+    			$response['msg'] = '';
+
+    			foreach ($this->Template->validationErrors as $key => $value) {
+					$response['msg'] .= $key.': '.$value[0].'<br>';				
+				}
+
+    			$response['success'] = false;
     			$this->Session->setFlash(__('The template could not be saved. Please, try again.'));
     		} else {
 				$pageIdMap = array();
@@ -229,12 +255,8 @@ class TemplateBuilderController extends AppController {
 					}
 				}
 			}
-		} else {
-			$this->Session->setFlash(__($response['msg']));
 		}
 
-		if ($response['success'] == true) {
-			$this->set('response', $response['msg']);
-		}
+		$this->set('response', $response['msg']);
 	}
 }

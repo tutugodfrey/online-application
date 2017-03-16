@@ -70,37 +70,35 @@ class TemplateFieldHelper extends Helper {
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
-		
-			case 9:  // 'phoneUS',       //  9 - (###) ###-####
+
+			case 9: // 'phoneUS',       //  9 - (###) ###-####
 			case 12: // 'ssn',           // 12 - ###-##-####
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
 			case 18: // 'number'         // 18 - (#)+.(#)+
 			case 19: // 'digits',        // 19 - (#)+
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				if ($field['type'] == 1) {
-//					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
-				} else if ($field['type'] == 2) {
-//					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
-				} else if ($field['type'] == 9) {
+					//$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
+				} elseif ($field['type'] == 9) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'phoneUS');
 					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'mask': '(999)999-9999', 'placeholder': '(###)###-####'");
-				} else if ($field['type'] == 12) {
+				} elseif ($field['type'] == 12) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'ssn');
 					$fieldOptions = Hash::insert($fieldOptions, 'placeholder', '###-##-####');
-				} else if ($field['type'] == 13) {
+				} elseif ($field['type'] == 13) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'zipcodeUS');
 					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'mask': '99999[-9999]', 'placeholder': '#####-####', 'greedy': false");
-				} else if ($field['type'] == 18) {
+				} elseif ($field['type'] == 18) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
-				} else if ($field['type'] == 19) {
+				} elseif ($field['type'] == 19) {
 					$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'digits');
 				}
-				
+
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
-			case 1:  // 'date'
+			case 1: // 'date'
 				$year = null;
 				$month = null;
 				$day = null;
@@ -112,7 +110,7 @@ class TemplateFieldHelper extends Helper {
 				}
 
 				if ($year != null && $month != null && $day != null) {
-					$fieldOptions = Hash::insert($fieldOptions, 'value', $month.'-'.$day.'-'.$year);
+					$fieldOptions = Hash::insert($fieldOptions, 'value', $month . '-' . $day . '-' . $year);
 				}
 
 				if ($field['name'] == 'Date of Birth') {
@@ -122,23 +120,15 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'minYear', date('Y') - 100);
 					$fieldOptions = Hash::insert($fieldOptions, 'maxYear', date('Y') + 2);
 				}
-		
+
 				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'mm/dd/yyyy', 'placeholder': 'mm/dd/yyyy'");
 
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
-			case 2:  // 'time'
-				$hour = null;
-				$minute = null;
-				$meridian = null;
+			case 2: // 'time'
 
-				if (preg_match('/(\d{2}):(\d{2}) (\w{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
-					$hour = $matches[1];
-					$minute = $matches[2];
-					$meridian = $matches[3];
-				}
-
+				$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'time12h');
 				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'hh:mm t', 'placeholder': 'hh:mm xm'");
 
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
@@ -149,7 +139,7 @@ class TemplateFieldHelper extends Helper {
 					$fieldOptions = Hash::insert($fieldOptions, 'checked', 'checked');
 				}
 				$retVal = $retVal . $this->Html->div('checkbox',
-					$this->Form->checkbox($field['name'], $fieldOptions).
+					$this->Form->checkbox($field['name'], $fieldOptions) .
 					$this->Form->label($fieldId, $label)
 				);
 				break;
@@ -157,7 +147,7 @@ class TemplateFieldHelper extends Helper {
 			case 4: // radio group (inline)
 				$radioOptionsString = $field['default_value'];
 				$lis = "";
-				$defaultValues = split(',', $field['default_value']);
+				$defaultValues = explode(',', $field['default_value']);
 				$index = 0;
 				foreach ($field['CobrandedApplicationValues'] as $radioOption) {
 					$disabled = '';
@@ -172,8 +162,8 @@ class TemplateFieldHelper extends Helper {
 					}
 
 					if (array_key_exists($index, $defaultValues)) {
-						$nameValuePair = split('::', $defaultValues[$index]);
-						$lis = $lis.$this->Html->tag('li',
+						$nameValuePair = explode('::', $defaultValues[$index]);
+						$lis = $lis . $this->Html->tag('li',
 							$this->Html->tag('label',
 								$this->Html->tag(
 									'input',
@@ -181,6 +171,7 @@ class TemplateFieldHelper extends Helper {
 									array(
 										'type' => 'radio',
 										'name' => $field['merge_field_name'],
+										'id' => $radioOption['name'],
 										'data-value-id' => $radioOption['id'],
 										'checked' => ($radioOption['value'] == null ? '' : 'checked'),
 										'disabled' => $disabled,
@@ -192,8 +183,8 @@ class TemplateFieldHelper extends Helper {
 					}
 					$index = $index + 1;
 				}
-				$retVal = $retVal.
-					$this->Form->label($label, null, array('for' => $field['merge_field_name'])).
+				$retVal = $retVal .
+					$this->Form->label($label, null, array('for' => $field['merge_field_name'])) .
 					$this->Html->tag('ul', $lis, array('class' => 'list-inline'));
 				break;
 
@@ -204,25 +195,25 @@ class TemplateFieldHelper extends Helper {
 				$fieldOptions = Hash::insert($fieldOptions, 'min', 0);
 				$fieldOptions = Hash::insert($fieldOptions, 'max', 100);
 
-				$retVal = $retVal . '<fieldset id="'.$cleanFieldId.'" class="percent">';
-				$retVal = $retVal . '<legend>'.$field['name'].' <span class="small">(total must equal 100%)</span></legend>';
+				$retVal = $retVal . '<fieldset id="' . $cleanFieldId . '" class="percent">';
+				$retVal = $retVal . '<legend>' . $field['name'] . ' <span class="small">(total must equal 100%)</span></legend>';
 
 				foreach ($field['CobrandedApplicationValues'] as $percentOption) {
 					$label = $percentOption['name'];
-					$defaultValues = split(',', $field['default_value']);
+					$defaultValues = explode(',', $field['default_value']);
 
 					foreach ($defaultValues as $val) {
 						if (preg_match('/\{(.+)\}/', $val, $matches)) {
 							$val = preg_replace('/\{.+\}/', '', $val);
 						}
 
-						$nameValuePair = split('::', $val);
+						$nameValuePair = explode('::', $val);
 
-						if (($field['merge_field_name'].$nameValuePair[1]) == $percentOption['name']) {
-							$label = $nameValuePair[0];	
+						if (($field['merge_field_name'] . $nameValuePair[1]) == $percentOption['name']) {
+							$label = $nameValuePair[0];
 						}
 					}
-					
+
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'name', $percentOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $percentOption['id']);
@@ -232,8 +223,8 @@ class TemplateFieldHelper extends Helper {
 
 					$retVal = $retVal . $this->Html->tag(
 						'div',
-						$this->Html->tag('label', $label, array('for' => $percentOption['name'])).
-						$this->Html->tag('input', '', $fieldOptions).
+						$this->Html->tag('label', $label, array('for' => $percentOption['name'])) .
+						$this->Html->tag('input', '', $fieldOptions) .
 						$this->Html->tag('span', '%', array('class' => 'input-group-addon col-md-1')),
 						array('class' => 'input-group col-md-12')
 					);
@@ -246,7 +237,7 @@ class TemplateFieldHelper extends Helper {
 						'name' => $cleanFieldId . '_Total',
 						'disabled' => 'disabled',
 						'onclick' => 'return false;',
-						'class' => 'col-md-'.$field['width'],
+						'class' => 'col-md-' . $field['width'],
 						'required' => $requiredProp
 					)
 				);
@@ -262,13 +253,13 @@ class TemplateFieldHelper extends Helper {
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 
-				$retVal = $retVal . '<fieldset id="' . $cleanFieldId .'" class="fees">';
+				$retVal = $retVal . '<fieldset id="' . $cleanFieldId . '" class="fees">';
 				$retVal = $retVal . "<legend>" . $field['name'] . "</legend>";
-				$defaultValues = split(',', $field['default_value']);
+				$defaultValues = explode(',', $field['default_value']);
 
 				$index = 0;
 				foreach ($field['CobrandedApplicationValues'] as $feeOption) {
-					$nameValuePair = split('::', $defaultValues[$index]);
+					$nameValuePair = explode('::', $defaultValues[$index]);
 					$fieldOptions = Hash::insert($fieldOptions, 'name', $feeOption['name']);
 					$fieldOptions = Hash::insert($fieldOptions, 'id', $nameValuePair[1]);
 					$fieldOptions = Hash::insert($fieldOptions, 'data-value-id', $feeOption['id']);
@@ -277,7 +268,7 @@ class TemplateFieldHelper extends Helper {
 					$requiredProp = ($field['required'] && $requireRequired) ? true : false;
 					$fieldOptions = Hash::insert($fieldOptions, 'required', $requiredProp);
 
-					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'placeholder': '0'");
+					$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 3, 'digitsOptional': true");
 
 					$tmpLabel = $nameValuePair[0];
 
@@ -285,7 +276,7 @@ class TemplateFieldHelper extends Helper {
 						$tmpLabel .= '*';
 					}
 
-					$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $tmpLabel, $nameValuePair[1]);
+					$retVal = $retVal . $this->__buildMoneyField($fieldOptions, $tmpLabel, $nameValuePair[1]);
 					$index = $index + 1;
 				}
 				$retVal = $retVal . "</fieldset>";
@@ -297,8 +288,8 @@ class TemplateFieldHelper extends Helper {
 
 			// 'money',         // 10 - $###.##
 			case 10:
-				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0'");
-				$retVal = $retVal.$this->__buildMoneyField($fieldOptions, $label, $fieldId);
+				$fieldOptions = Hash::insert($fieldOptions, "data-inputmask", "'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': true");
+				$retVal = $retVal . $this->__buildMoneyField($fieldOptions, $label, $fieldId);
 				break;
 			// 'percent',       // 11 - (0-100)%
 			case 11:
@@ -307,10 +298,10 @@ class TemplateFieldHelper extends Helper {
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-2');
 				$fieldOptions = Hash::insert($fieldOptions, 'min', '0');
 				$fieldOptions = Hash::insert($fieldOptions, 'max', '100');
-				$retVal = $retVal.$this->Html->tag(
+				$retVal = $retVal . $this->Html->tag(
 					'div',
-					$this->Html->tag('label', $label, array('for' => $fieldId)).
-					$this->Html->tag('input', '', $fieldOptions).
+					$this->Html->tag('label', $label, array('for' => $fieldId)) .
+					$this->Html->tag('input', '', $fieldOptions) .
 					$this->Html->tag('span', '%', array('class' => 'input-group-addon col-md-1')),
 					array('class' => 'input-group col-md-9')
 				);
@@ -324,7 +315,7 @@ class TemplateFieldHelper extends Helper {
 				break;
 
 			// 'lengthoftime',  // 15 - [#+] [year|month|day]s
-			// 'creditcard',    // 16 - 
+			// 'creditcard',    // 16 -
 
 			case 17: // 'url'            // 17 - http(s)?://...
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'url');
@@ -335,11 +326,11 @@ class TemplateFieldHelper extends Helper {
 			case 20: // 'select'         // 20
 				$radioOptionsString = $field['default_value'];
 				$radioOptions = array();
-				foreach (split(',', $radioOptionsString) as $keyValuePairStr) {
+				foreach (explode(',', $radioOptionsString) as $keyValuePairStr) {
 					if (preg_match('/\{default\}/i', $keyValuePairStr)) {
 						$keyValuePairStr = preg_replace('/\{default\}/i', '', $keyValuePairStr);
 					}
-					$keyValuePair = split('::', $keyValuePairStr);
+					$keyValuePair = explode('::', $keyValuePairStr);
 					$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
 				}
 				$fieldOptions = Hash::insert($fieldOptions, 'empty', __('--'));
@@ -349,8 +340,8 @@ class TemplateFieldHelper extends Helper {
 
 			case 21: // textarea
 				$fieldOptions = Hash::insert($fieldOptions, 'rows', 7);
-				$retVal = $retVal.
-					$this->Html->tag('label', $field['name'], array('for', $fieldId)).
+				$retVal = $retVal .
+					$this->Html->tag('label', $field['name'], array('for', $fieldId)) .
 					$this->Form->textarea($field['name'], $fieldOptions);
 				break;
 
@@ -358,7 +349,7 @@ class TemplateFieldHelper extends Helper {
 				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 				$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
-				$retVal = $retVal.$this->Form->input($field['name'], $fieldOptions);
+				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
 
 			default:
@@ -372,15 +363,15 @@ class TemplateFieldHelper extends Helper {
 
 	private function __buildMoneyField($fieldOptions, $label, $fieldId) {
 		$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
-		$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
+		//$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');
 		$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-9');
 
 		$fieldId = preg_replace('/\{.*\}$/', '', $fieldId);
-		
-		$retVal = $this->Html->tag('label', $label, array('for' => $fieldId)).
+
+		$retVal = $this->Html->tag('label', $label, array('for' => $fieldId)) .
 		$this->Html->tag(
 			'div',
-			$this->Html->tag('span', '$', array('class' => 'input-group-addon col-md-1')).
+			$this->Html->tag('span', '$', array('class' => 'input-group-addon col-md-1')) .
 			$this->Html->tag('input', '', $fieldOptions),
 			array('class' => 'input-group col-md-12')
 		);

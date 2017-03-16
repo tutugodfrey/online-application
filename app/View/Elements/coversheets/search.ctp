@@ -2,8 +2,9 @@
 			echo $this->Form->create('Coversheet', 
 				array(
 					'url' => array_merge(
-						array('action' => 'admin_index'),
-						$this->params['pass']
+						array(
+							'action' => 'admin_index'),
+							$this->params['pass']
 					),
 					'inputDefaults' => array(
 						'div' => 'form-group',

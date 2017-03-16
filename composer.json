@@ -16,7 +16,7 @@
 			"app/Plugin/Search": ["cakedc/search"],
 			"app/Plugin/Utils": ["cakedc/utils"],
 			"app/Plugin/DebugKit": ["cakephp/debug_kit"],
-			"app/Plugin/BoostCake": ["slywalker/boost_cake"]
+			"app/Plugin/BoostCake": ["slywalker/boost_cake"],
 			"app/Plugin/Upload": ["josegonzalez/cakephp-upload"]
 		}
 	},

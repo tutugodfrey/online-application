@@ -7,17 +7,47 @@
 	<?php
 		echo $this->Form->input('id');
 		echo $this->Form->input('name');
+
+		echo "<br>";
+
+		$cobrandImage = $this->Html->image($cobrand['Cobrand']['cobrand_logo_url'], array('height' => '50px'));
 		echo $this->Form->input(
 			'logo_position',
 			array(
 				'options' => $logoPositionTypes,
-				'empty' => __('(choose one)')
+				'empty' => __('(choose one)'),
+				'between' => $cobrandImage
 			)
 		);
-		echo $this->Form->input('include_brand_logo');
+		
+		echo "<br>";
+
+		$brandImage = $this->Html->image($cobrand['Cobrand']['brand_logo_url'], array('height' => '50px'));
+		echo $this->Form->input(
+			'include_brand_logo',
+			array(
+				'before' => $brandImage
+			)
+		);
+
 		echo $this->Form->input('description');
-		echo $this->Form->input('rightsignature_template_guid');
-		echo $this->Form->input('rightsignature_install_template_guid');
+		
+		echo $this->Form->input('rightsignature_template_guid',
+    		array(
+    			'type' => 'select',
+    			'label' => 'Rightsignature Template Guid',
+        		'options' => $templateList,
+    		)
+		);
+
+		echo $this->Form->input('rightsignature_install_template_guid',
+    		array(
+    			'type' => 'select',
+    			'label' => 'Rightsignature Install Template Guid',
+        		'options' => $installTemplateList,
+    		)
+		);
+
 		echo $this->Form->input('owner_equity_threshold');
 		echo $this->Form->hidden('cobrand_id');
 	?>

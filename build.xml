@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="axia_app_2" default="build-parallel">
 	<target name="build"
-		depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+		depends="prepare,phpunit,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpcb"/>
 
 	<target name="build-parallel"
-		depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
+		depends="prepare,phpunit,lint,tools-parallel,phpcb"/>
 
 	<target name="tools-parallel" description="Run tools in parallel">
 		<parallel threadCount="2">
 		<sequential>
 			<antcall target="prepare"/>
+			<antcall target="phpunit"/>
 			<antcall target="pdepend"/>
 			<antcall target="phpmd-ci"/>
 		</sequential>
@@ -50,6 +51,11 @@
 		<mkdir dir="${basedir}/app/webroot/coverage"/>
 		<mkdir dir="${basedir}/app/webroot/code-browser"/>
 		<mkdir dir="${basedir}/app/webroot/api"/>
+		<copy file="/var/lib/jenkins/project_config/onlineapp_database.php" tofile="${basedir}/app/Config/database.php"/>
+		<copy file="/var/lib/jenkins/project_config/onlineapp_core.php" tofile="${basedir}/app/Config/core.php"/>
+		<exec executable="/usr/local/bin/composer" dir="${basedir}">
+			<arg line="self-update"/>
+		</exec>
 		<exec executable="/usr/local/bin/composer" dir="${basedir}">
 			<arg line="install"/>
 		</exec>
@@ -150,7 +156,7 @@
 	<target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate">
 		<exec executable="bash" failonerror="true" dir="${basedir}/app">
 			<arg value="-c"/>
-			<arg value="Console/cake test app AllTests --stderr --log-junit '../build/reports/junit.xml' --coverage-html 'webroot/coverage' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml'"/>
+			<arg value="Console/cake test --stderr --testdox --log-junit '../build/reports/junit.xml' --coverage-html 'webroot/coverage' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml' app AllTests"/>
 		</exec>
 	</target>
 

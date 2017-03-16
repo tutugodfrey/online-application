@@ -96,6 +96,22 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 		),
 		array(
 			'cobranded_application_id' => 1,
+			'template_field_id' => 34,
+			'name' => 'Owner2Email',
+			'value' => 'testing@axiapayments.com',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 35,
+			'name' => 'Owner2Name',
+			'value' => 'Owner2NameTest',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 1,
 			'template_field_id' => 36,
 			'name' => 'TextField1',
 			'value' => 'text field 1',
@@ -147,6 +163,14 @@ class OnlineappCobrandedApplicationValueFixture extends CakeTestFixture {
 			'template_field_id' => 42,
 			'name' => 'CorpContact',
 			'value' => 'Corporate Contact',
+			'created' => '2014-01-23 17:28:15',
+			'modified' => '2014-01-23 17:28:15'
+		),
+		array(
+			'cobranded_application_id' => 3,
+			'template_field_id' => 43,
+			'name' => 'Terminal2-',
+			'value' => 'true',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
 		),

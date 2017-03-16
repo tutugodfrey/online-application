@@ -36,24 +36,63 @@
 <?php
 $i = 0;
 foreach ($users as $user):
-  // Skip items for reps when it doesn't belong to them
-            echo "\t\t<td>\n\t\t\t" . ($user['User']['active'] === true ? $this->Html->image('green_orb.gif',array('alt' => 'Active')) : $this->Html->image('red_orb.png',array('alt' => 'Inactive'))) . " \n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $user['User']['id'] . " \n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $user['User']['firstname'] . " \n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $user['User']['lastname'] . " \n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $user['User']['email'] . " \n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $user['User']['extension'] . " \n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . $this->Html->link($user['Group']['name'], array('controller' => 'groups', 'action' => 'view', $user['User']['group_id'])) . "\n\t\t</td>\n";
-            echo "\t\t<td>\n\t\t\t" . ($user['Template']['name'] == null ? '' : $user['Template']['name']). "\n\t\t</td>\n";
-      
-    echo "\t\t<td class=\"actions\">\n";
-//      echo "\t\t\t" . $this->Html->link(__('View'), array('action' => 'view', 'admin' => true, $user['User']['id'])) . "\n";
-    echo $this->BoostCakeHtml->link(' ', array('action' => 'edit', $user['User']['id']), array('role' => 'button', 'class' => 'glyphicon glyphicon-edit', 'title' => __('Edit User'))) . ' ';
-//    echo "\t\t\t" . $this->Html->link(__('Edit'), array('action' => 'edit', 'admin' => true, $user['User']['id'])) . "\n";
-      echo "\t\t\t" . $this->Html->link(__('Create Token'), array('action' => 'token', 'admin' => true, $user['User']['id'])) . "\n";
-    echo "\t\t\t" . $this->BoostCakeForm->postLink(__(' '), array('action' => 'delete', $user['User']['id']),array('role' => 'button', 'class' => 'glyphicon glyphicon-trash', 'title' => __('Delete User')) , __('Are you sure you want to delete').' #' . $user['User']['id']) . "\n";
-    echo "\t\t</td>\n";
-  echo "\t</tr>\n";
+	// Skip items for reps when it doesn't belong to them
+	echo "\t\t<td>\n\t\t\t" . ($user['User']['active'] === true ?
+		$this->Html->image('green_orb.gif',
+			array('alt' => 'Active')
+		) :
+		$this->Html->image('red_orb.png',
+			array(
+				'alt' => 'Inactive')
+			)
+		) . " \n\t\t</td>\n";
+	echo "\t\t<td>\n\t\t\t" . $user['User']['id'] . " \n\t\t</td>\n";
+	echo "\t\t<td>\n\t\t\t" . $user['User']['firstname'] . " \n\t\t</td>\n";
+	echo "\t\t<td>\n\t\t\t" . $user['User']['lastname'] . " \n\t\t</td>\n";
+	echo "\t\t<td>\n\t\t\t" . $user['User']['email'] . " \n\t\t</td>\n";
+	echo "\t\t<td>\n\t\t\t" . $user['User']['extension'] . " \n\t\t</td>\n";
+	echo "\t\t<td>\n\t\t\t" . $this->Html->link($user['Group']['name'],
+		array(
+			'controller' => 'groups',
+			'action' => 'view',
+			$user['User']['group_id']
+		)
+	) . "\n\t\t</td>\n";
+	echo "\t\t<td>\n\t\t\t" . ($user['Template']['name'] == null ? '' : $user['Template']['name']) . "\n\t\t</td>\n";
+
+	echo "\t\t<td class=\"actions\">\n";
+	echo $this->BoostCakeHtml->link(' ',
+		array(
+			'action' => 'edit',
+			$user['User']['id']
+		),
+		array(
+			'role' => 'button',
+			'class' => 'glyphicon glyphicon-edit',
+			'title' => __('Edit User')
+		)
+	) . ' ';
+	echo "\t\t\t" . $this->Html->link(__('Create Token'),
+		array(
+			'action' => 'token',
+			'admin' => true,
+			$user['User']['id']
+		)
+	) . "\n";
+	echo "\t\t\t" . $this->BoostCakeForm->postLink(__(' '),
+		array(
+			'action' => 'delete',
+			$user['User']['id']
+		),
+		array(
+			'role' => 'button',
+			'class' => 'glyphicon glyphicon-trash',
+			'title' => __('Delete User')
+		),
+		__('Are you sure you want to delete') . ' #' . $user['User']['id']
+	) . "\n";
+	echo "\t\t</td>\n";
+	echo "\t</tr>\n";
 
 endforeach;
 echo "\n";
@@ -66,15 +105,89 @@ echo "\n";
 <div class="actions">
   <h3><?php echo __('Actions'); ?></h3>
   <ul>
-    <li><?php echo $this->Html->link('New User', array('action' => 'add', 'admin' => true)); ?></li>
-    <li><?php echo ($this->request->action == 'admin_index' ? $this->Html->link('Show All Users', array('action' => 'all', 'admin' => true)) : 
-                    $this->Html->link('Show Active Users', array('action' => 'index', 'admin' => true))); ?></li>
-    <li><?php echo $this->Html->link('Bulk Edit Users', array('action' => 'bulk_edit', 'admin' => true)); ?></li>                
-    <li><?php echo $this->Html->link('List Applications', array('controller' => 'applications', 'action' => 'index', 'admin' => true)); ?></li>
-    <li><?php echo $this->Html->link('List Settings', array('controller' => 'settings', 'action' => 'index', 'admin' => true)); ?></li>
-    <li><?php echo $this->Html->link('List IP Restrictions', array('controller' => 'apips', 'action' => 'index', 'admin' => true)); ?></li>
-    <li><?php echo $this->Html->link('List Groups', array('controller' => 'groups', 'action' => 'index', 'admin' => true)); ?></li>
-    <? echo $this->Element('users/search'); ?>
+	<li>
+		<?php
+			echo $this->Html->link('New User',
+				array(
+					'action' => 'add',
+					'admin' => true
+				)
+			);
+		?>
+	</li>
+	<li>
+		<?php
+			echo ($queryString == '1' ?
+				$this->Html->link('Show Active Users',
+					array(
+						'action' => 'index',
+						'admin' => true
+					)
+				) :
+				$this->Html->link('Show All Users',
+					array(
+						'action' => '?all=1',
+						'admin' => true
+					)
+				)
+			);
+		?>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link('Bulk Edit Users',
+				array(
+					'action' => 'bulk_edit',
+					'admin' => true
+				)
+			);
+		?>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link('List Applications',
+				array(
+					'controller' => 'applications',
+					'action' => 'index',
+					'admin' => true
+				)
+			);
+		?>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link('List Settings',
+				array(
+					'controller' => 'settings',
+					'action' => 'index',
+					'admin' => true
+				)
+			);
+		?>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link('List IP Restrictions',
+				array(
+					'controller' => 'apips',
+					'action' => 'index',
+					'admin' => true
+				)
+			);
+		?>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link('List Groups',
+				array(
+					'controller' => 'groups',
+					'action' => 'index',
+					'admin' => true
+				)
+			);
+		?>
+	</li>
+    <?php echo $this->Element('users/search'); ?>
   </ul>
 </div>
 

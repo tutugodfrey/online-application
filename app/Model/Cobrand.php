@@ -1,5 +1,7 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('Folder', 'Utility');
+
 /**
  * Cobrand Model
  *
@@ -95,5 +97,11 @@ class Cobrand extends AppModel {
 		);
 
 		return $templateIds;
+	}
+
+	public function getExistingLogos() {
+		$dir = new Folder(WWW_ROOT . 'img');
+		$files = $dir->find('.*', true);
+		return $files;
 	}
 }

@@ -10,6 +10,7 @@ App::uses('TemplatePage', 'Model');
 class TemplatePageTest extends CakeTestCase {
 
 	public $dropTables = false;
+	public $autoFixtures = false;
 
 	public $fixtures = array(
 		'app.onlineappCobrand',
@@ -17,9 +18,11 @@ class TemplatePageTest extends CakeTestCase {
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
+		'app.onlineappCobrandedApplication',
+		'app.onlineappCobrandedApplicationValue',
 	);
 
-	public $autoFixtures = false;
+
 
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
@@ -36,19 +39,32 @@ class TemplatePageTest extends CakeTestCase {
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
 		$this->TemplateField = ClassRegistry::init('TemplateField');
+		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
+		$this->loadFixtures('OnlineappTemplateSection');
+		$this->loadFixtures('OnlineappTemplateField');
+		$this->loadFixtures('OnlineappCobrandedApplication');
+		$this->loadFixtures('OnlineappCobrandedApplicationValue');
 	}
 
 	public function tearDown() {
+		$this->CobrandedApplicationValue->deleteAll(true, false);
+		$this->CobrandedApplication->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
 		$this->TemplatePage->deleteAll(true, false);
 		$this->Template->deleteAll(true, false);
 		$this->Cobrand->deleteAll(true, false);
+
+		unset($this->CobrandedApplicationValue);
+		unset($this->CobrandedApplication);
+		unset($this->TemplateField);
+		unset($this->TemplateSection);
 		unset($this->TemplatePage);
 		unset($this->Template);
 		unset($this->Cobrand);
@@ -276,7 +292,7 @@ class TemplatePageTest extends CakeTestCase {
 		$second_page = $this->TemplatePage->findById(2);
 		$second_page['TemplatePage']['order'] = 0;
 		$this->TemplatePage->save($second_page);
-		
+
 		// make sure the order values are what we expect
 		$first_page = $this->TemplatePage->findById(1);
 		$this->assertEquals(1, $first_page['TemplatePage']['order']);
@@ -299,7 +315,7 @@ class TemplatePageTest extends CakeTestCase {
 		$second_page = $this->TemplatePage->findById(2);
 		$second_page['TemplatePage']['order'] = 2;
 		$this->TemplatePage->save($second_page);
-		
+
 		// make sure the order values are what we expect
 		$first_page = $this->TemplatePage->findById(1);
 		$this->assertEquals(0, $first_page['TemplatePage']['order']);

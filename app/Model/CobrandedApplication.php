@@ -14,6 +14,12 @@ App::uses('HttpSocket', 'Network/Http');
 class CobrandedApplication extends AppModel {
 
 	const RIGHTSIGNATURE_NO_TEMPLATE_ERROR = "error! The signature template has not been configured";
+	const CORRAL_ACH_TEMPLATE_GUID = "a_10508841_8c16eeeefe42498e9eaf13bc5ca13ba7";
+	const STATUS_SAVED = "saved";
+	const STATUS_VALIDATE = "validate";
+	const STATUS_PENDING = "pending";
+	const STATUS_COMPLETED = "completed";
+	const STATUS_SIGNED = "signed";
 
 /**
  * Table to use
@@ -88,7 +94,7 @@ class CobrandedApplication extends AppModel {
 
 /**
  * belongsTo association
- * 
+ *
  * @var array
  */
 	public $belongsTo = array(
@@ -171,8 +177,9 @@ class CobrandedApplication extends AppModel {
 /**
  * afterSave
  *
- * @params
- *     $created boolean
+ * @param bool $created True if save created a new record
+ * @param array $options Options passed from Model::save()
+ * @return null
  */
 	public function afterSave($created, $options = array()) {
 		if ($created === true) {
@@ -198,16 +205,16 @@ class CobrandedApplication extends AppModel {
 						switch ($field['type']) {
 							case 4: // 'radio':
 								// split default_value on ',' and append split[1] to the merge_field_name
-								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
+								foreach (explode(',', $field['default_value']) as $keyValuePairStr) {
 									$multiTypeHasDefault = false;
-			
+
 									if (preg_match('/\{default\}/i', $keyValuePairStr)) {
 										$keyValuePairStr = preg_replace('/\{default\}/i', '', $keyValuePairStr);
 										$multiTypeHasDefault = true;
 									}
 
-									$keyValuePair = split('::', $keyValuePairStr);
-									$name = $field['merge_field_name'].$keyValuePair[1];
+									$keyValuePair = explode('::', $keyValuePairStr);
+									$name = $field['merge_field_name'] . $keyValuePair[1];
 
 									$newApplicationValue = array(
 										'cobranded_application_id' => $applicationId,
@@ -226,16 +233,16 @@ class CobrandedApplication extends AppModel {
 							case 5: // 'percents':
 							case 7: // 'fees':
 								// split default_value on ',' and append split[1] to the merge_field_name
-								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
+								foreach (explode(',', $field['default_value']) as $keyValuePairStr) {
 									$multiTypeDefaultVal = null;
-			
+
 									if (preg_match('/\{(.+)\}/', $keyValuePairStr, $matches)) {
 										$keyValuePairStr = preg_replace('/\{.+\}/', '', $keyValuePairStr);
 										$multiTypeDefaultVal = $matches[1];
 									}
 
-									$keyValuePair = split('::', $keyValuePairStr);
-									$name = $field['merge_field_name'].$keyValuePair[1];
+									$keyValuePair = explode('::', $keyValuePairStr);
+									$name = $field['merge_field_name'] . $keyValuePair[1];
 
 									$newApplicationValue = array(
 										'cobranded_application_id' => $applicationId,
@@ -257,13 +264,13 @@ class CobrandedApplication extends AppModel {
 								break;
 
 							case 20: // 'select':
-							    $multiTypeHasDefault = false;
+								$multiTypeHasDefault = false;
 
-							    // split default_value on ','
-								foreach (split(',', $field['default_value']) as $keyValuePairStr) {
+								// split default_value on ','
+								foreach (explode(',', $field['default_value']) as $keyValuePairStr) {
 									if (preg_match('/\{default\}/i', $keyValuePairStr)) {
 										$keyValuePairStr = preg_replace('/\{default\}/i', '', $keyValuePairStr);
-										$keyValuePair = split('::', $keyValuePairStr);
+										$keyValuePair = explode('::', $keyValuePairStr);
 
 										$multiTypeHasDefault = true;
 
@@ -307,12 +314,13 @@ class CobrandedApplication extends AppModel {
 			}
 		}
 	}
-	
+
 /**
  * getTemplateAndAssociatedValues
  *
- * @params
- *     $applicationId integer
+ * @param uuid $applicationId Application Unique Identifier
+ * @param int $userId User Identification Number
+ * @return mixed Result of find Operation
  */
 	public function getTemplateAndAssociatedValues($applicationId, $userId = null) {
 		$application = $this->find(
@@ -370,8 +378,8 @@ class CobrandedApplication extends AppModel {
 /**
  * getApplicationValue
  *
- * @params
- *     $valueId integer
+ * @param int $valueId Cobranded Application Value ID
+ * @return mixed Result of the find operation
  */
 	public function getApplicationValue($valueId) {
 		if (is_null($this->CobrandedApplicationValue)) {
@@ -383,8 +391,8 @@ class CobrandedApplication extends AppModel {
 /**
  * saveApplicationValue
  *
- * @params
- *     $date array
+ * @param array $data array of application keys and values to be saved
+ * @return mixed response from the save operation
  */
 	public function saveApplicationValue($data) {
 		$response = array('success' => false);
@@ -393,7 +401,7 @@ class CobrandedApplication extends AppModel {
 		$appValue = $this->getApplicationValue($data['id']);
 
 		// if the value is different
-		if ($appValue['CobrandedApplicationValue']['value'] != $data['value']) {
+		if ($appValue['CobrandedApplicationValue']['value'] !== $data['value']) {
 			$appValue['CobrandedApplicationValue']['value'] = $data['value'];
 			if ($this->CobrandedApplicationValue->save($appValue)) {
 				// value saved
@@ -414,7 +422,7 @@ class CobrandedApplication extends AppModel {
 							$radioOption['CobrandedApplicationValue']['value'] = null;
 							if (!$this->CobrandedApplicationValue->save($radioOption)) {
 								$response['success'] = false;
-								$response['msg'] = 'failed to update application value with id ['.$radioOption['id'].'], to a value of null.';
+								$response['msg'] = 'failed to update application value with id [' . $radioOption['id'] . '], to a value of null.';
 							}
 						}
 					}
@@ -424,7 +432,7 @@ class CobrandedApplication extends AppModel {
 				$response = Hash::insert(
 					$response,
 					'msg',
-					'failed to update application value with id ['.$data['id'].'], value ['.$data['value'].'].'
+					'failed to update application value with id [' . $data['id'] . '], value [' . $data['value'] . '].'
 				);
 			}
 		} else {
@@ -432,22 +440,20 @@ class CobrandedApplication extends AppModel {
 			$response = Hash::insert(
 				$response,
 				'msg',
-				'failed to update application value with id ['.$data['id'].'] because the value did not change'
+				'failed to update application value with id [' . $data['id'] . '] because the value did not change'
 			);
 		}
 
 		return $response;
 	}
 
-
 /**
  * createOnlineappForUser
  *
- * @param 
- *     $user object
- *     $uuid string [optional]
- * 
- * @returns
+ * @param int $user object
+ * @param uuid $uuid [optional] application unique identifier
+ *
+ * @return
  *     $response array(
  *         success [true|false] depending on if the onlineapp was created
  *         cobrandedApplicationId int
@@ -477,10 +483,9 @@ class CobrandedApplication extends AppModel {
 		return $response;
 	}
 
-
 /**
  * saveFields
- * 
+ *
  * 	create an application for $user
  *  populate it with the passed $fieldsData
  *  if is the $fieldsData valid then save it
@@ -488,12 +493,11 @@ class CobrandedApplication extends AppModel {
  *      compile a list of the problems,
  *      send the response back and
  *      delete the cobranded application that was created
- * 
- * @params
- *     $user model
- *     $fieldData array
- * 
- * @returns
+ *
+ * @param int $user user identification number
+ * @param array $fieldsData array of fields data to be saved
+ *
+ * @return
  *     $response array
  */
 	public function saveFields($user, $fieldsData) {
@@ -571,7 +575,7 @@ class CobrandedApplication extends AppModel {
 						if (!empty($templateField['default_value'])) {
 							$defaultValue = $templateField['default_value'];
 							$Model = ClassRegistry::init($defaultValue);
-				
+
 							foreach ($value as $key => $val) {
 								$val['cobranded_application_id'] = $newApp['CobrandedApplication']['id'];
 								$Model->create($val);
@@ -581,7 +585,7 @@ class CobrandedApplication extends AppModel {
 									$errors['invalid record'] = $val;
 									unset($errors['invalid record']['cobranded_application_id']);
 									foreach ($Model->validationErrors as $key => $value) {
-										$errors["$key"] = $value;					
+										$errors["$key"] = $value;
 									}
 									array_push($response['validationErrors'], $errors);
 								}
@@ -604,14 +608,14 @@ class CobrandedApplication extends AppModel {
 								)
 							)
 						);
-						
+
 						foreach ($radioOptions as $radioOption) {
 							if ($radioOption['CobrandedApplicationValue']['id'] != $appValue['CobrandedApplicationValues']['id']) {
 								// udpate the value to null
 								$radioOption['CobrandedApplicationValue']['value'] = null;
 								if (!$this->CobrandedApplicationValue->save($radioOption)) {
-									$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'failed to update application value with id ['.
-										$radioOption['CobrandedApplicationValue']['id'].'], to a value of null.');
+									$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'failed to update application value with id [' .
+										$radioOption['CobrandedApplicationValue']['id'] . '], to a value of null.');
 								}
 							}
 						}
@@ -644,13 +648,13 @@ class CobrandedApplication extends AppModel {
 									$tmpValue = $appValue['CobrandedApplicationValues']['value'];
 
 									if (preg_match('/([0-9]{3})-?([0-9]{2})-?([0-9]{4})/', $tmpValue, $matches)) {
-										$tmpValue = $matches[1]."-".$matches[2]."-".$matches[3];
+										$tmpValue = $matches[1] . "-" . $matches[2] . "-" . $matches[3];
 										$appValue['CobrandedApplicationValues']['value'] = $tmpValue;
 									}
 							}
-	
+
 							// is the value valid?
-							$validValue =  $this->CobrandedApplicationValues->validApplicationValue($appValue['CobrandedApplicationValues'], $templateField['type'], $templateField);
+							$validValue = $this->CobrandedApplicationValues->validApplicationValue($appValue['CobrandedApplicationValues'], $templateField['type'], $templateField);
 							if ($validValue) {
 								// save it
 								$this->CobrandedApplicationValues->save($appValue);
@@ -699,7 +703,7 @@ class CobrandedApplication extends AppModel {
 			);
 
 			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
-			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true) . $createAppResponse['cobrandedApplication']['uuid'];
 			$response['response_url_type'] = $cobrand['Cobrand']['response_url_type'];
 			$response['partner_name'] = $cobrand['Cobrand']['partner_name'];
 
@@ -732,25 +736,25 @@ class CobrandedApplication extends AppModel {
 								array('validate' => false)
 							);
 
-							$response['application_url'] = Router::url('/cobranded_applications/sign_rightsignature_document', true).'?guid='.$createResponse['document']['guid'];
+							$response['application_url'] = Router::url('/cobranded_applications/sign_rightsignature_document', true) . '?guid=' . $createResponse['document']['guid'];
 						} else {
 							$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $createResponse);
 						}
 					} else {
 						$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $getTemplateResponse);
 					}
-	
+
 					break;
 
 				case 3: // return online app url
-					$response['application_url'] = Router::url('/cobranded_applications/edit/', true).$createAppResponse['cobrandedApplication']['uuid'];
+					$response['application_url'] = Router::url('/cobranded_applications/edit/', true) . $createAppResponse['cobrandedApplication']['uuid'];
 					break;
 
 				default: // return nothing
 					break;
 			}
 		}
-		
+
 		$response['success'] = (count($response['validationErrors']) == 0);
 
 		if ($response['success'] == false) {
@@ -765,10 +769,10 @@ class CobrandedApplication extends AppModel {
 /**
  * buildExportData
  *
- * @params
- *     $appId int
- *     $keys array
- *     $values array
+ * @param int $appId Cobranded Application ID
+ * @param array &$keys array of keys for the values to be exported
+ * @param array &$values array of values to be exported
+ * @return array
  */
 	public function buildExportData($appId, &$keys = '', &$values = '') {
 		$options = array(
@@ -780,7 +784,7 @@ class CobrandedApplication extends AppModel {
 
 		$keys = '"MID"';
 		$values = '""';
-		$referrals = array('','','');
+		$referrals = array('', '', '');
 
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 
@@ -799,29 +803,29 @@ class CobrandedApplication extends AppModel {
 				$app['CobrandedApplicationValues'][$appKey]['name'] == 'QTY - PP2') {
 
 				// skip me
-			} else if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Business" ||
+			} elseif ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Business" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Owner/Officer" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Phone") {
 
-				$referrals[0] = $referrals[0].' '.$app['CobrandedApplicationValues'][$appKey]['value'];
+				$referrals[0] = $referrals[0] . ' ' . $app['CobrandedApplicationValues'][$appKey]['value'];
 				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Phone") {
 					$keys = $this->__addKey($keys, 'Referral1');
 					$values = $this->__addValue($values, $referrals[0]);
 				}
-			} else if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Business" ||
+			} elseif ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Business" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Owner/Officer" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Phone") {
 
-				$referrals[1] = $referrals[1].' '.$app['CobrandedApplicationValues'][$appKey]['value'];
+				$referrals[1] = $referrals[1] . ' ' . $app['CobrandedApplicationValues'][$appKey]['value'];
 				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Phone") {
 					$keys = $this->__addKey($keys, 'Referral2');
 					$values = $this->__addValue($values, $referrals[1]);
 				}
-			} else if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Business" ||
+			} elseif ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Business" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Owner/Officer" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Phone") {
 
-				$referrals[2] = $referrals[2].' '.$app['CobrandedApplicationValues'][$appKey]['value'];
+				$referrals[2] = $referrals[2] . ' ' . $app['CobrandedApplicationValues'][$appKey]['value'];
 				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Phone") {
 					$keys = $this->__addKey($keys, 'Referral3');
 					$values = $this->__addValue($values, $referrals[2]);
@@ -858,8 +862,8 @@ class CobrandedApplication extends AppModel {
 		unset($this->TemplateField);
 
 		// add "oaID", "api", "aggregated" to the end of the keys and values
-		$keys = $keys.',"oaID","api","aggregated"';
-		$values = $values.',"'.$app['CobrandedApplication']['id'].'","",""';
+		$keys = $keys . ',"oaID","api","aggregated"';
+		$values = $values . ',"' . $app['CobrandedApplication']['id'] . '","",""';
 
 		if (!empty($app['CobrandedApplicationAches'])) {
 			foreach ($app['CobrandedApplicationAches'] as $index => $array) {
@@ -868,23 +872,34 @@ class CobrandedApplication extends AppModel {
 						$val = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 									base64_decode($val), 'cbc', Configure::read('Cryptable.iv')));
 					}
-					$keys = $this->__addKey($keys, 'AddlACH-'.$key.'-'.$index);
+					$keys = $this->__addKey($keys, 'AddlACH-' . $key . '-' . $index);
 					$values = $this->__addValue($values, $val);
 				}
+			}
+		}
+
+		if (!empty($app['Coversheet'])) {
+			foreach ($app['Coversheet'] as $key => $val) {
+				if ($key == 'id' || $key == 'cobranded_application_id') {
+					continue;
+				}
+				$keys = $this->__addKey($keys, $key);
+				$values = $this->__addValue($values, $val);
 			}
 		}
 	}
 
 /**
  * copyApplication
- * 
- * @params
- *     $appId int
- *     $userId int
- * @retuns
+ *
+ * @param int $appId Cobranded Application ID
+ * @param int $userId User ID
+ * @param int $templateId Template ID
+ *
+ * @return
  *     true|false depending on if the application was copied or not
  */
-	public function copyApplication($appId, $userId) {
+	public function copyApplication($appId, $userId, $templateId = null) {
 		// create a new application for $userId
 		// need to look up the template_id from the appId
 		$app = $this->find(
@@ -898,18 +913,26 @@ class CobrandedApplication extends AppModel {
 			)
 		);
 
+		$lookupId = null;
+
+		if ($templateId != null) {
+			$lookupId = $templateId;
+		} else {
+			$lookupId = $app['CobrandedApplication']['template_id'];
+		}
+
 		$this->create(
 			array(
 				'user_id' => $userId,
 				'uuid' => String::uuid(),
-				'template_id' => $app['CobrandedApplication']['template_id'],
+				'template_id' => $lookupId,
 				'status' => 'saved'
 			)
 		);
 
 		if ($this->save()) {
 			$newApp = $this->read();
-			
+
 			// copy each value over
 			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 				if ($app['CobrandedApplicationValues'][$key]['name'] == 'Unknown Type for testing') {
@@ -938,17 +961,17 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
- * findAppsByEmail 
- * 
- * @params
- *     $email string
- *     $id integer
- * @returns
+ * findAppsByEmail
+ *
+ * @param string $email email address
+ * @param int $id application id
+ *
+ * @return
  *     $response array
  */
 	public function findAppsByEmail($email, $id = null) {
 		$conditions[] = array('CobrandedApplicationValue.value' => $email);
-		
+
 		// should probably check the state too
 		if (isset($id)) {
 			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
@@ -998,27 +1021,27 @@ class CobrandedApplication extends AppModel {
 					'Template.id',
 					'Merchant.merchant_id',
 					'Coversheet.id'
-				), 
+				),
 				'order' => 'CobrandedApplication.created desc'
 			)
 		);
 
 		return $apps;
 	}
-	
+
 /**
  * sendFieldCompletionEmail
- * 
- * @params
- *     $email string
- *     $id integer
- * @returns
+ *
+ * @param string $email email address
+ * @param int $id application id
+ *
+ * @return
  *     $response array
  */
 	public function sendFieldCompletionEmail($email, $id = null) {
 		$response = array(
 			'success' => false,
-			'msg' => 'Failed to send email to ['.$email.']. Please contact your rep.',
+			'msg' => 'Failed to send email to [' . $email . ']. Please contact your rep.',
 		);
 
 		$apps = $this->findAppsByEmail($email, $id);
@@ -1029,10 +1052,10 @@ class CobrandedApplication extends AppModel {
 				$cav = $this->CobrandedApplicationValue->find(
 					'first', array(
 						'conditions' => array(
-							'CobrandedApplicationValue.name' => 'Owner1Email', 
+							'CobrandedApplicationValue.name' => 'Owner1Email',
 							'CobrandedApplicationValue.cobranded_application_id' => $id
-						), 
-						'recursive' => -1, 
+						),
+						'recursive' => -1,
 						'fields' => array('CobrandedApplicationValue.id')
 					)
 				);
@@ -1048,7 +1071,7 @@ class CobrandedApplication extends AppModel {
 		} else {
 			// send the email
 			$timestamp = time();
-			$link = Router::url('/cobranded_applications/index/', true).urlencode($email)."/{$timestamp}";
+			$link = Router::url('/cobranded_applications/index/', true) . urlencode($email) . "/{$timestamp}";
 
 			$args = array(
 				'from' => array('newapps@axiapayments.com' => 'Axia Online Applications'),
@@ -1056,7 +1079,7 @@ class CobrandedApplication extends AppModel {
 				'subject' => 'Your Axia Applications',
 				'format' => 'text',
 				'template' => 'retrieve_applications',
-				'viewVars' => array('email'=>$email, 'link'=>$link)
+				'viewVars' => array('email' => $email, 'link' => $link)
 			);
 
 			$response = $this->sendEmail($args);
@@ -1094,11 +1117,10 @@ class CobrandedApplication extends AppModel {
 
 /**
  * sendNewApiApplicationEmail
- * 
- * @params
- *     $args array
- * @returns
- *     $response array
+ *
+ * @param array $args array of arguments to control how the email is sent
+ *
+ * @return $response array
  */
 
 	public function sendNewApiApplicationEmail($args) {
@@ -1119,10 +1141,10 @@ class CobrandedApplication extends AppModel {
 
 		if (key_exists('cobrand', $args)) {
 			$viewVars['cobrand'] = $args['cobrand'];
-		} 
+		}
 
 		$viewVars['link'] = '';
-		
+
 		if (key_exists('link', $args)) {
 			$viewVars['link'] = $args['link'];
 		}
@@ -1149,11 +1171,10 @@ class CobrandedApplication extends AppModel {
 
 /**
  * sendApplicationForSigningEmail
- * 
- * @params
- *     $applicationId int
- * @returns
- *     $response array
+ *
+ * @param int $applicationId Cobranded Application Id
+ *
+ * @return $response array
  */
 	public function sendApplicationForSigningEmail($applicationId) {
 		$response = array(
@@ -1175,13 +1196,13 @@ class CobrandedApplication extends AppModel {
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
 
 		if (!empty($valuesMap['Owner1Email'])) {
-			$owners['owner1']['email'] = $valuesMap['Owner1Email'];	
+			$owners['owner1']['email'] = $valuesMap['Owner1Email'];
 		}
 		if (!empty($valuesMap['Owner1Name'])) {
-			$owners['owner1']['fullname'] = $valuesMap['Owner1Name'];	
+			$owners['owner1']['fullname'] = $valuesMap['Owner1Name'];
 		}
 		if (!empty($valuesMap['Owner2Email'])) {
-			$owners['owner2']['email'] = $valuesMap['Owner2Email'];	
+			$owners['owner2']['email'] = $valuesMap['Owner2Email'];
 		}
 		if (!empty($valuesMap['Owner2Name'])) {
 			$owners['owner2']['fullname'] = $valuesMap['Owner2Name'];
@@ -1192,7 +1213,7 @@ class CobrandedApplication extends AppModel {
 
 		foreach ($owners as $key => $val) {
 			$response['msg'] = '';
-			
+
 			$ownerEmail = '';
 			if (isset($owners[$key]['email'])) {
 				$ownerEmail = $owners[$key]['email'];
@@ -1206,14 +1227,26 @@ class CobrandedApplication extends AppModel {
 			if (!empty($ownerEmail)) {
 				$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 				$to = $ownerEmail;
-				$subject = $dbaBusinessName.' - Merchant Application';
+				$subject = $dbaBusinessName . ' - Merchant Application';
 				$format = 'both';
 				$template = 'email_app';
 				$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 				$viewVars = array();
-				$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+				$viewVars['url'] = "https://" . $hostname . "/cobranded_applications/sign_rightsignature_document?guid=" . $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 				$viewVars['ownerName'] = $ownerFullname;
 				$viewVars['merchant'] = $dbaBusinessName;
+
+				$this->Cobrand = ClassRegistry::init('Cobrand');
+				$cobrand = $this->Cobrand->find(
+					'first',
+					array(
+						'conditions' => array(
+							'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+						)
+					)
+				);
+
+				$viewVars['brandLogo'] = $cobrand['Cobrand']['brand_logo_url'];
 
 				$args = array(
 					'from' => $from,
@@ -1242,11 +1275,10 @@ class CobrandedApplication extends AppModel {
 
 /**
  * sendForCompletion
- * 
- * @params
+ *
+ * @param int $applicationId Cobranded Application Id
  *     $applicationId int
- * @returns
- *     $response array
+ * @return $response array
  */
 	public function sendForCompletion($applicationId) {
 		if (!$this->exists($applicationId)) {
@@ -1277,7 +1309,7 @@ class CobrandedApplication extends AppModel {
 		if (!empty($valuesMap['Owner1Email'])) {
 			$ownerEmail = $valuesMap['Owner1Email'];
 		}
-			
+
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = $ownerEmail;
 		$subject = 'Your Axia Applications';
@@ -1289,7 +1321,7 @@ class CobrandedApplication extends AppModel {
 		$viewVars['dba'] = $dbaBusinessName;
 		$viewVars['fullname'] = $ownerName;
 		$viewVars['hash'] = $hash;
-		$viewVars['link'] = "https://".$hostname."/cobranded_applications/edit/".$hash;
+		$viewVars['link'] = "https://" . $hostname . "/cobranded_applications/edit/" . $hash;
 		$viewVars['ownerName'] = $ownerName;
 
 		$args = array(
@@ -1302,7 +1334,7 @@ class CobrandedApplication extends AppModel {
 		);
 
 		$response = $this->sendEmail($args);
-		
+
 		unset($args);
 
 		if ($response['success'] == true) {
@@ -1322,13 +1354,13 @@ class CobrandedApplication extends AppModel {
 
 /**
  * repNotifySignedEmail
- * 
- * @params
- *     $applicationId int
- * @returns
- *     $response array
+ *
+ * @param int $applicationId Cobranded Application Id
+ * @param string $optionalTemplate optional template to use
+ *
+ * @return $response array
  */
-	public function repNotifySignedEmail($applicationId) {
+	public function repNotifySignedEmail($applicationId, $optionalTemplate = null) {
 		if (!$this->exists($applicationId)) {
 			$response = array(
 				'success' => false,
@@ -1336,7 +1368,7 @@ class CobrandedApplication extends AppModel {
 			);
 			return $response;
 		}
-		
+
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -1346,16 +1378,20 @@ class CobrandedApplication extends AppModel {
 		if (!empty($valuesMap['DBA'])) {
 			$dbaBusinessName = $valuesMap['DBA'];
 		}
-			
+
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = $cobrandedApplication['User']['email'];
-		$subject = $dbaBusinessName.' - Online Application Signed';
+		$subject = $dbaBusinessName . ' - Online Application Signed';
 		$format = 'text';
 		$template = 'rep_notify_signed';
 		$viewVars = array();
 		$viewVars['rep'] = $cobrandedApplication['User']['email'];
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['link'] = Router::url('/users/login', true);
+
+		if ($optionalTemplate != null) {
+			$template = $optionalTemplate;
+		}
 
 		$args = array(
 			'from' => $from,
@@ -1381,11 +1417,10 @@ class CobrandedApplication extends AppModel {
 
 /**
  * submitForReviewEmail
- * 
- * @params
- *     $applicationId int
- * @returns
- *     $response array
+ *
+ * @param int $applicationId Cobranded Application Id
+ *
+ * @return $response array
  */
 	public function submitForReviewEmail($applicationId) {
 		if (!$this->exists($applicationId)) {
@@ -1395,7 +1430,7 @@ class CobrandedApplication extends AppModel {
 			);
 			return $response;
 		}
-		
+
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -1408,7 +1443,7 @@ class CobrandedApplication extends AppModel {
 
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = $cobrandedApplication['User']['email'];
-		$subject = $dbaBusinessName.' - Online Application Merchant Portion Completed';
+		$subject = $dbaBusinessName . ' - Online Application Merchant Portion Completed';
 		$format = 'text';
 		$template = 'rep_notify';
 		$viewVars = array();
@@ -1441,9 +1476,10 @@ class CobrandedApplication extends AppModel {
 /**
  * sendRightsignatureInstallSheetEmail
  *
- * @params
- *     $applicationId int
- *     $email string
+ * @param int $applicationId Cobranded Application Id
+ * @param string $email email address for the user that should recieve the email
+ *
+ * @return mixed response message
  */
 	public function sendRightsignatureInstallSheetEmail($applicationId, $email) {
 		if (!$this->exists($applicationId)) {
@@ -1453,7 +1489,7 @@ class CobrandedApplication extends AppModel {
 			);
 			return $response;
 		}
-		
+
 		$this->id = $applicationId;
 		$cobrandedApplication = $this->read();
 
@@ -1468,18 +1504,30 @@ class CobrandedApplication extends AppModel {
 		if (!empty($valuesMap['CorpContact'])) {
 			$ownerName = $valuesMap['CorpContact'];
 		}
-			
+
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = $email;
-		$subject = $dbaBusinessName.' - Install Sheet';
+		$subject = $dbaBusinessName . ' - Install Sheet';
 		$format = 'both';
 		$template = 'email_install_var';
 		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 		$viewVars = array();
 		$viewVars['ownerName'] = $ownerName;
 		$viewVars['merchant'] = $dbaBusinessName;
-		$viewVars['url'] = "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".
+		$viewVars['url'] = "https://" . $hostname . "/cobranded_applications/sign_rightsignature_document?guid=" .
 			$cobrandedApplication['CobrandedApplication']['rightsignature_install_document_guid'];
+
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+		$cobrand = $this->Cobrand->find(
+			'first',
+			array(
+				'conditions' => array(
+					'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+				)
+			)
+		);
+
+		$viewVars['brandLogo'] = $cobrand['Cobrand']['brand_logo_url'];
 
 		$args = array(
 			'from' => $from,
@@ -1505,11 +1553,10 @@ class CobrandedApplication extends AppModel {
 
 /**
  * sendEmail
- * 
- * @params
- *     $args array
- * @returns
- *     $response array
+ *
+ * @param array $args arguments to control how the email should be composed
+ *
+ * @return $response array
  */
 	public function sendEmail($args) {
 		$response = array(
@@ -1532,8 +1579,7 @@ class CobrandedApplication extends AppModel {
 		if (key_exists('to', $args)) {
 			if (Validation::email($args['to'])) {
 				$this->CakeEmail->to($args['to']);
-			}
-			else {
+			} else {
 				$response['msg'] = 'invalid email address submitted.';
 				return $response;
 			}
@@ -1569,17 +1615,16 @@ class CobrandedApplication extends AppModel {
 			$response['success'] = true;
 			$response['msg'] = '';
 		}
-	
+
 		return $response;
 	}
 
 /**
  * createNewApiApplicationEmailTimelineEntry
- * 
- * @params
- *     $args array
- * @returns
- *     $response array
+ *
+ * @param array $args arguments that dictate the information for the timeline entry
+ *
+ * @return $response array
  */
 	public function createNewApiApplicationEmailTimelineEntry($args) {
 		$args['email_timeline_subject_id'] = EmailTimeline::NEW_API_APPLICATION;
@@ -1590,11 +1635,10 @@ class CobrandedApplication extends AppModel {
 
 /**
  * createEmailTimelineEntry
- * 
- * @params
- *     $args array
- * @returns
- *     $response array
+ *
+ * @param array $args arguments that dictate the information for the timeline entry
+ *
+ * @return $response array
  */
 	public function createEmailTimelineEntry($args) {
 		$response = array(
@@ -1603,12 +1647,12 @@ class CobrandedApplication extends AppModel {
 		);
 
 		$EmailTimeline = ClassRegistry::init('EmailTimeline');
-		
+
 		if (!key_exists('cobranded_application_id', $args)) {
 			$response['msg'] = 'cobranded_application_id argument is missing.';
 			return $response;
 		}
-	
+
 		if (!key_exists('email_timeline_subject_id', $args)) {
 			$response['msg'] = 'email_timeline_subject_id argument is missing.';
 			return $response;
@@ -1641,22 +1685,21 @@ class CobrandedApplication extends AppModel {
 
 /**
  * getRightSignatureTemplate
- * 
- * @params
- *     $client object
- *     $templateGuid string
- * @returns
- *     $response array
+ *
+ * @param object $client RightSignature OAuth Client Object
+ * @param string $templateGuid RightSignature template GUID
+ *
+ * @return $response array
  */
 	public function getRightSignatureTemplate($client, $templateGuid) {
-		$response = $client->post('/api/templates/'.$templateGuid.'/prepackage.json',
+		$response = $client->post('/api/templates/' . $templateGuid . '/prepackage.json',
 			"<?xml version='1.0' encoding='UTF-8'?><callback_location></callback_location>");
 		return $response;
 	}
 
 /**
  * createRightSignatureDocument
- * 
+ *
  * @params
  *     $client object
  *     $applicationXml string
@@ -1670,7 +1713,7 @@ class CobrandedApplication extends AppModel {
 
 /**
  * extendRightSignatureDocumentLife
- * 
+ *
  * @params
  *     $client object
  *     $documentGuid string
@@ -1678,13 +1721,44 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function extendRightSignatureDocumentLife($client, $documentGuid) {
-		$response = $client->post('/api/documents/'.$documentGuid.'/extend_expiration.xml');
+		$response = $client->post('/api/documents/' . $documentGuid . '/extend_expiration.xml');
 		return $response;
 	}
 
 /**
+ * getRightSignatureTemplates
+ *
+ * @params
+ *     $client object
+ * @returns
+ *     $templates array
+ */
+	public function getRightSignatureTemplates($client) {
+		$page = 1;
+		$totalPages = 99;
+
+		$templates = array();
+
+		while ($page <= $totalPages) {
+			$response = $client->signAndSendRequest("GET", "/api/templates.json?page=" . $page);
+			$response = json_decode($response, true);
+			$totalPages = $response['page']['total_pages'];
+
+			foreach ($response['page']['templates'] as $arr) {
+				$filename = $arr['filename'];
+				$guid = $arr['guid'];
+				$templates[$guid] = $filename;
+			}
+			$page++;
+		}
+
+		array_multisort($templates);
+		return $templates;
+	}
+
+/**
  * getRightSignatureTemplateDetails
- * 
+ *
  * @params
  *     $client object
  *     $templateGuid string
@@ -1692,7 +1766,7 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function getRightSignatureTemplateDetails($client, $templateGuid) {
-		$response = $client->signAndSendRequest("GET", '/api/templates/'.$templateGuid.'.json');
+		$response = $client->signAndSendRequest("GET", '/api/templates/' . $templateGuid . '.json');
 		return $response;
 	}
 
@@ -1707,13 +1781,13 @@ class CobrandedApplication extends AppModel {
  */
 	public function getRightSignatureSignerLinks($client, $documentGuid) {
 		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
-		$response = $client->getSignerLinks($documentGuid, "https://".$hostname."/cobranded_applications/sign_rightsignature_document?guid=".$documentGuid);
+		$response = $client->getSignerLinks($documentGuid, "https://" . $hostname . "/cobranded_applications/sign_rightsignature_document?guid=" . $documentGuid);
 		return $response;
 	}
 
 /**
  * createRightSignatureClient
- * 
+ *
  * @params
  *     none
  * @returns
@@ -1721,7 +1795,7 @@ class CobrandedApplication extends AppModel {
  */
 	public function createRightSignatureClient() {
 		App::import('Vendor', 'oauth', array('file' => 'OAuth' . DS . 'rightsignature.php'));
-		
+
 		$rightsignature = new RightSignature('J7PQlPSlm3jaa2DbfCP989mIFrKRHUH1NqcjJugT', 'ZAYx4jEy6BVYPuad4kPQAw6lTrOxAeqWU8DGT6A1');
 		$rightsignature->request_token = new OAuthConsumer('v1cfHXdnHbD8in6ruqsb3MDVbuhdtZMaHTKVw1XI', 'tTyOsXYMAgoPQY5NXlsB9sKAYRZXsuLIcBzTiOpB', 1);
 		$rightsignature->access_token = new OAuthConsumer('FvpRze1k6JbP7HHm64IxQiWLHL9p0Jl4pw3x7PBP', 'cHrzepxhF7t9QMyO8CGUJlbSg4Lon23JEVYnD70Z', 1);
@@ -1732,16 +1806,17 @@ class CobrandedApplication extends AppModel {
 
 /**
  * createRightSignatureApplicationXml
- * 
+ *
  * @params
  *     $applicationId int
  *     $sender string
  *     $rightSignatureTemplate array
  *     $subject string
+ *     $terminalType string
  * @returns
  *     $xml string
  */
-	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate, $subject = null) {
+	public function createRightSignatureApplicationXml($applicationId, $sender, $rightSignatureTemplate, $subject = null, $terminalType = null) {
 		$cobrandedApplication = $this->find(
 			'first',
 			array(
@@ -1775,7 +1850,7 @@ class CobrandedApplication extends AppModel {
 		$owner2Fullname = '';
 		$dbaBusinessName = '';
 
-		$owner1Email= '';
+		$owner1Email = '';
 		$owner2Email = '';
 
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
@@ -1798,56 +1873,56 @@ class CobrandedApplication extends AppModel {
 
 		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 
-		$xml  = "<?xml version='1.0' encoding='UTF-8'?>\n";
+		$xml = "<?xml version='1.0' encoding='UTF-8'?>\n";
 		$xml .= "	<template>\n";
-		$xml .= "		<guid>".$rightSignatureTemplate['guid']."</guid>\n";
+		$xml .= "		<guid>" . $rightSignatureTemplate['guid'] . "</guid>\n";
 		if ($subject == null) {
-			$xml .= "		<subject>".htmlspecialchars($dbaBusinessName)." Axia Merchant Application</subject>\n";
+			$xml .= "		<subject>" . htmlspecialchars($dbaBusinessName) . " Axia Merchant Application</subject>\n";
 		} else {
-			$xml .= "		<subject>".htmlspecialchars($dbaBusinessName)." ".$subject."</subject>\n";
+			$xml .= "		<subject>" . htmlspecialchars($dbaBusinessName) . " " . $subject . "</subject>\n";
 		}
-		$xml .= "		<description>Sent for signature by ".$sender."</description>\n";
+		$xml .= "		<description>Sent for signature by " . $sender . "</description>\n";
 		$xml .= "		<action>send</action>\n";
 		$xml .= "		<expires_in>10 days</expires_in>\n";
 		$xml .= "		<roles>\n";
 
-        if ($subject == 'Axia Install Sheet - VAR') {
-        	if (!empty($owner1Fullname)) {
-        		$xml .= "			<role role_name='Signor'>\n";
-        		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
-        		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
-        		$xml .= "				<locked>true</locked>\n";
-        		$xml .= "			</role>\n";
-        	}
-        } else {
+		if ($subject == 'Axia Install Sheet - VAR') {
+			if (!empty($owner1Fullname)) {
+				$xml .= "			<role role_name='Signer'>\n";
+				$xml .= "				<name>" . htmlspecialchars($owner1Fullname ) . "</name>\n";
+				$xml .= "				<email>" . htmlspecialchars('noemail@rightsignature.com') . "</email>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</role>\n";
+			}
+		} else {
 			if (!empty($owner1Fullname) && !empty($owner1Email)) {
 				$xml .= "			<role role_name='Owner/Officer 1 PG'>\n";
-        		$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
-        		$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
-        		$xml .= "				<locked>true</locked>\n";
-	        	$xml .= "			</role>\n";
-    	    	$xml .= "			<role role_name='Owner/Officer 1'>\n";
-				$xml .= "				<name>".htmlspecialchars($owner1Fullname )."</name>\n";
-				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+				$xml .= "				<name>" . htmlspecialchars($owner1Fullname ) . "</name>\n";
+				$xml .= "				<email>" . htmlspecialchars('noemail@rightsignature.com') . "</email>\n";
+				$xml .= "				<locked>true</locked>\n";
+				$xml .= "			</role>\n";
+				$xml .= "			<role role_name='Owner/Officer 1'>\n";
+				$xml .= "				<name>" . htmlspecialchars($owner1Fullname ) . "</name>\n";
+				$xml .= "				<email>" . htmlspecialchars('noemail@rightsignature.com') . "</email>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</role>\n";
 			}
 
-	        if (!empty($owner2Fullname) && !empty($owner2Email)) {
+			if (!empty($owner2Fullname) && !empty($owner2Email)) {
 				$xml .= "			<role role_name='Owner/Officer 2 PG'>\n";
-				$xml .= "				<name>".htmlspecialchars($owner2Fullname)."</name>\n";
-				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+				$xml .= "				<name>" . htmlspecialchars($owner2Fullname) . "</name>\n";
+				$xml .= "				<email>" . htmlspecialchars('noemail@rightsignature.com') . "</email>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</role>\n";
 				$xml .= "			<role role_name='Owner/Officer 2'>\n";
-				$xml .= "				<name>".htmlspecialchars($owner2Fullname)."</name>\n";
-				$xml .= "				<email>".htmlspecialchars('noemail@rightsignature.com')."</email>\n";
+				$xml .= "				<name>" . htmlspecialchars($owner2Fullname) . "</name>\n";
+				$xml .= "				<email>" . htmlspecialchars('noemail@rightsignature.com') . "</email>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</role>\n";
-    	    }
-    	}
+			}
+		}
 
-		$xml .= "		</roles>\n";		
+		$xml .= "		</roles>\n";
 		$xml .= "		<merge_fields>\n";
 
 		foreach ($rightSignatureTemplate['merge_fields'] as $mergeField) {
@@ -1891,50 +1966,48 @@ class CobrandedApplication extends AppModel {
 				// we send different elements for multi option types
 				if ($fieldType == 3 || $fieldType == 4) {
 					if ($appValue['CobrandedApplicationValues']['value'] == 'true') {
-						$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
+						$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . "'>\n";
 						$xml .= "				<value>X</value>\n";
 						$xml .= "				<locked>true</locked>\n";
 						$xml .= "			</merge_field>\n";
 					}
 				} else {
-					$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-					$xml .= "				<value>".htmlspecialchars($appValue['CobrandedApplicationValues']['value'])."</value>\n";
+					$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . "'>\n";
+					$xml .= "				<value>" . htmlspecialchars($appValue['CobrandedApplicationValues']['value']) . "</value>\n";
 					$xml .= "				<locked>true</locked>\n";
 					$xml .= "			</merge_field>\n";
 				}
 			}
 
 			if ($mergeField['name'] == "SystemType") {
-				$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-				foreach ($cobrandedApplication['Merchant']['EquipmentProgramming'] as $programming) {
-					$xml .= "				<value>".htmlspecialchars($programming['terminal_type'])."</value>\n";
-				}
+				$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . "'>\n";
+				$xml .= "				<value>" . htmlspecialchars($terminalType) . "</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
 
 			if ($mergeField['name'] == "MID") {
-				$xml .= "			<merge_field merge_field_name='".$mergeField['name']."'>\n";
-				$xml .= "				<value>".htmlspecialchars($cobrandedApplication['Merchant']['merchant_id'])."</value>\n";
+				$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . "'>\n";
+				$xml .= "				<value>" . htmlspecialchars($cobrandedApplication['Merchant']['merchant_id']) . "</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
-			
+
 			if ($mergeField['name'] == "Customer Service") {
-				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
-				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . " Checkbox'>\n";
+				$xml .= "				<value>" . htmlspecialchars('x') . "</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
 			if ($mergeField['name'] == "Product Shipment") {
-				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
-				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . " Checkbox'>\n";
+				$xml .= "				<value>" . htmlspecialchars('x') . "</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
 			if ($mergeField['name'] == "Handling of Returns") {
-				$xml .= "			<merge_field merge_field_name='".$mergeField['name']." Checkbox'>\n";
-				$xml .= "				<value>".htmlspecialchars('x')."</value>\n";
+				$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . " Checkbox'>\n";
+				$xml .= "				<value>" . htmlspecialchars('x') . "</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
@@ -1943,15 +2016,15 @@ class CobrandedApplication extends AppModel {
 		if ($subject == 'Axia Install Sheet - VAR') {
 			$xml .= "			<merge_field merge_field_name='Phone#'>\n";
 			if ($cobrandedApplication['User']['extension'] != "") {
-				$xml .= "				<value>".htmlspecialchars('877.875.6114' . " x " . $cobrandedApplication['User']['extension'])."</value>\n";
+				$xml .= "				<value>" . htmlspecialchars('877.875.6114' . " x " . $cobrandedApplication['User']['extension']) . "</value>\n";
 			} else {
-				$xml .= "				<value>".htmlspecialchars('877.875.6114')."</value>\n";
+				$xml .= "				<value>" . htmlspecialchars('877.875.6114') . "</value>\n";
 			}
 			$xml .= "				<locked>true</locked>\n";
 			$xml .= "			</merge_field>\n";
 
 			$xml .= "			<merge_field merge_field_name='RepFax#'>\n";
-			$xml .= "				<value>".htmlspecialchars('877.875.5135')."</value>\n";
+			$xml .= "				<value>" . htmlspecialchars('877.875.5135') . "</value>\n";
 			$xml .= "				<locked>true</locked>\n";
 			$xml .= "			</merge_field>\n";
 		}
@@ -1959,12 +2032,12 @@ class CobrandedApplication extends AppModel {
 		$now = date('m/d/Y');
 
 		$xml .= "			<merge_field merge_field_name='Application Date'>\n";
-		$xml .= "				<value>".htmlspecialchars($now)."</value>\n";
+		$xml .= "				<value>" . htmlspecialchars($now) . "</value>\n";
 		$xml .= "				<locked>true</locked>\n";
 		$xml .= "			</merge_field>\n";
 
 		$xml .= "		</merge_fields>\n";
-		$xml .= "		<callback_location>http://".$hostname."/cobranded_applications/document_callback</callback_location>\n";
+		$xml .= "		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>\n";
 		$xml .= "	</template>\n";
 
 		return $xml;
@@ -1972,7 +2045,7 @@ class CobrandedApplication extends AppModel {
 
 /**
  * buildCobrandedApplicationValuesMap
- * 
+ *
  * @params
  *     $cobrandedApplicationValues array
  *
@@ -1991,7 +2064,7 @@ class CobrandedApplication extends AppModel {
 
 /**
  * validateCobrandedApplication
- * 
+ *
  * @params
  *     $cobrandedApplication array
  *     $source string
@@ -2010,27 +2083,33 @@ class CobrandedApplication extends AppModel {
 		$methodofSalesPage;
 		$methodofSalesTotal = 0;
 		$methodofSalesCardNotPresentInternet = 0;
- 		$methodofSalesCardNotPresentKeyed = 0;
- 		$methodofSalesCardPresentImprint = 0;
- 		$methodofSalesCardPresentSwiped = 0;
+		$methodofSalesCardNotPresentKeyed = 0;
+		$methodofSalesCardPresentImprint = 0;
+		$methodofSalesCardPresentSwiped = 0;
 
- 		$productSoldDirectPage;
+		$productSoldDirectPage;
 		$productSoldDirectTotal = 0;
- 		$productSoldDirectToGovernment = 0;
- 		$productSoldDirectToCustomer = 0;
- 		$productSoldDirectToBusiness = 0;
+		$productSoldDirectToGovernment = 0;
+		$productSoldDirectToCustomer = 0;
+		$productSoldDirectToBusiness = 0;
 
- 		$percentOfPayPage;
+		$percentOfPayPage;
 		$percentOfPayTotal = 0;
- 		$percentFullPayUpFront = 0;
- 		$percentPartialPayUpFront = 0;
- 		$percentAndWithin = 0;
- 		$percentPayReceivedAfter = 0;
+		$percentFullPayUpFront = 0;
+		$percentPartialPayUpFront = 0;
+		$percentAndWithin = 0;
+		$percentPayReceivedAfter = 0;
 
- 		$ownerEquityPage;
- 		$ownerEquityTotal = 0;
- 		$owner1Equity = 0;
- 		$owner2Equity = 0;
+		$ownerEquityPage;
+		$ownerEquityTotal = 0;
+		$owner1Equity = 0;
+		$owner2Equity = 0;
+
+		$autocloseTime1Page;
+		$merchantDoesAutoclose = false;
+		$autocloseTime;
+
+		$ach = false;
 
 		foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
 			if ($tmpVal['name'] == 'OwnerType-NonProfit' && $tmpVal['value'] == true) {
@@ -2088,6 +2167,18 @@ class CobrandedApplication extends AppModel {
 			if ($tmpVal['name'] == 'Owner2Equity') {
 				$owner2Equity = $tmpVal['value'];
 			}
+
+			if ($tmpVal['name'] == 'DoYouUseAutoclose-Autoclose') {
+				$merchantDoesAutoclose = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'Autoclose Time 1') {
+				$autocloseTime = $tmpVal['value'];
+			}
+
+			if ($tmpVal['name'] == 'ACH-Yes' && $tmpVal['value'] == true) {
+				$ach = true;
+			}
 		}
 
 		$methodofSalesTotal = $methodofSalesCardNotPresentInternet + $methodofSalesCardNotPresentKeyed + $methodofSalesCardPresentImprint + $methodofSalesCardPresentSwiped;
@@ -2096,7 +2187,7 @@ class CobrandedApplication extends AppModel {
 
 		$productSoldDirectTotal = $productSoldDirectToGovernment + $productSoldDirectToCustomer + $productSoldDirectToBusiness;
 
-		$percentOfPayTotal =  $percentFullPayUpFront + $percentPartialPayUpFront + $percentPayReceivedAfter + $percentAndWithin;
+		$percentOfPayTotal = $percentFullPayUpFront + $percentPartialPayUpFront + $percentPayReceivedAfter + $percentAndWithin;
 
 		$ownerEquityTotal = $owner1Equity + $owner2Equity;
 
@@ -2138,6 +2229,10 @@ class CobrandedApplication extends AppModel {
 						$ownerEquityPage = $pageOrder;
 					}
 
+					if ($templateField['merge_field_name'] == 'Autoclose Time 1') {
+						$autocloseTime1Page = $pageOrder;
+					}
+
 					// Owner2 information should be required if Owner1Equity < owner_equity_threshold
 					if ($owner1Equity < $template['Template']['owner_equity_threshold']) {
 						if ($templateField['merge_field_name'] == 'Owner2Name' ||
@@ -2173,6 +2268,16 @@ class CobrandedApplication extends AppModel {
 							continue;
 						}
 
+						// don't validate if ach is not true
+						if ($templateField['merge_field_name'] == 'AnnualCheckVolume' && $ach != true) {
+							continue;
+						}
+
+						// don't validate if ach is not true
+						if ($templateField['merge_field_name'] == 'TotalSalesVolume' && $ach != true) {
+							continue;
+						}
+
 						if ($templateField['type'] == 4) {
 							$found = false;
 							foreach ($cobrandedApplication['CobrandedApplicationValues'] as $tmpVal) {
@@ -2192,10 +2297,10 @@ class CobrandedApplication extends AppModel {
 								$errorArray = array();
 								$errorArray['fieldName'] = $fieldName;
 								$errorArray['mergeFieldName'] = $mergeFieldName;
-								$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+								$errorArray['msg'] = 'Required field is empty: ' . $fieldName;
 								$errorArray['page'] = $pageOrder;
 								$errorArray['rep_only'] = $templateField['rep_only'];
-							
+
 								$response['validationErrorsArray'][] = $errorArray;
 							}
 						} else {
@@ -2206,7 +2311,7 @@ class CobrandedApplication extends AppModel {
 									$found = false;
 									if (empty($tmpVal['value']) == false || preg_match('/\d+/', $tmpVal['value'])) {
 										// is the value valid?
-										$validValue =  $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
+										$validValue = $this->CobrandedApplicationValue->validApplicationValue($tmpVal, $templateField['type'], $templateField);
 										if ($validValue == true) {
 											$found = true;
 
@@ -2242,10 +2347,10 @@ class CobrandedApplication extends AppModel {
 									$errorArray = array();
 									$errorArray['fieldName'] = $fieldName;
 									$errorArray['mergeFieldName'] = $mergeFieldName;
-									$errorArray['msg'] = 'Required field is empty: '.$fieldName;
+									$errorArray['msg'] = 'Required field is empty: ' . $fieldName;
 									$errorArray['page'] = $pageOrder;
 									$errorArray['rep_only'] = $templateField['rep_only'];
-							
+
 									$response['validationErrorsArray'][] = $errorArray;
 
 									if ($templateField['merge_field_name'] == 'Owner2Name' ||
@@ -2270,7 +2375,7 @@ class CobrandedApplication extends AppModel {
 			}
 		}
 
-		if ($methodofSalesTotal != 100 && $source == 'ui') {
+		if (isset($methodofSalesPage) && $methodofSalesTotal != 100 && $source == 'ui') {
 			// update our validationErrors array
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'MethodofSales_Total', 'does not equal 100');
 
@@ -2279,11 +2384,11 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'MethodofSales_Total';
 			$errorArray['msg'] = 'Method of Sales Total does not equal 100';
 			$errorArray['page'] = $methodofSalesPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
-		if ($productSoldDirectTotal != 100 && $source == 'ui') {
+		if (isset($productSoldDirectPage) && $productSoldDirectTotal != 100 && $source == 'ui') {
 			// update our validationErrors array
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'ofProductSold_Total', 'does not equal 100');
 
@@ -2292,7 +2397,7 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'ofProductSold_Total';
 			$errorArray['msg'] = '% of Product Sold Total does not equal 100';
 			$errorArray['page'] = $productSoldDirectPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
@@ -2305,7 +2410,7 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'PercentFullPayUpFront';
 			$errorArray['msg'] = '';
 			$errorArray['page'] = $percentOfPayPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentPartialPayUpFront', 'less than 100');
@@ -2315,7 +2420,7 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'PercentPartialPayUpFront';
 			$errorArray['msg'] = '';
 			$errorArray['page'] = $percentOfPayPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentAndWithin', 'less than 100');
@@ -2325,7 +2430,7 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'PercentAndWithin';
 			$errorArray['msg'] = '';
 			$errorArray['page'] = $percentOfPayPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'PercentPayReceivedAfter', 'less than 100');
@@ -2335,7 +2440,7 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'PercentPayReceivedAfter';
 			$errorArray['msg'] = '';
 			$errorArray['page'] = $percentOfPayPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
@@ -2348,7 +2453,7 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'Owner1Equity';
 			$errorArray['msg'] = 'owner equity is greater than 100%';
 			$errorArray['page'] = $ownerEquityPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 
 			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner2Equity', 'owner equity is greater than 100%');
@@ -2358,20 +2463,33 @@ class CobrandedApplication extends AppModel {
 			$errorArray['mergeFieldName'] = 'Owner2Equity';
 			$errorArray['msg'] = 'owner equity is greater than 100%';
 			$errorArray['page'] = $ownerEquityPage;
-							
+
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
 		if ($owner1Equity < $template['Template']['owner_equity_threshold'] && $owner2FieldsNotComplete == true) {
 			// update our validationErrors array
-			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%');
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Owner1Equity', 'Combined Ownership Needs to Exceed ' . $template['Template']['owner_equity_threshold'] . '%');
 
 			$errorArray = array();
 			$errorArray['fieldName'] = 'Owner 1 Equity';
 			$errorArray['mergeFieldName'] = 'Owner1Equity';
-			$errorArray['msg'] = 'Combined Ownership Needs to Exceed '.$template['Template']['owner_equity_threshold'].'%';
+			$errorArray['msg'] = 'Combined Ownership Needs to Exceed ' . $template['Template']['owner_equity_threshold'] . '%';
 			$errorArray['page'] = $ownerEquityPage;
-							
+
+			$response['validationErrorsArray'][] = $errorArray;
+		}
+
+		if ($merchantDoesAutoclose == true && $autocloseTime == '') {
+			// update our validationErrors array
+			$response['validationErrors'] = Hash::insert($response['validationErrors'], 'Autoclose Time 1', 'is empty');
+
+			$errorArray = array();
+			$errorArray['fieldName'] = 'Autoclose Time 1';
+			$errorArray['mergeFieldName'] = 'Autoclose Time 1';
+			$errorArray['msg'] = 'Autoclose Time 1 is empty';
+			$errorArray['page'] = $autocloseTime1Page;
+
 			$response['validationErrorsArray'][] = $errorArray;
 		}
 
@@ -2382,13 +2500,35 @@ class CobrandedApplication extends AppModel {
 
 		return $response;
 	}
-	
+
+/**
+ * getRightsignatureTemplateGuid
+ *
+ * @params
+ *     $cobrandName string
+ *     $type string
+ *
+ * @returns
+ *     $guid string
+ */
+	public function getRightsignatureTemplateGuid($cobrandName = null, $type = null) {
+		$guid = null;
+
+		if ($cobrandName == 'Corral' && $type == 'ach') {
+			// Corral AxiaMed Vericheck Merchant Agreement
+			$guid = self::CORRAL_ACH_TEMPLATE_GUID;
+				//'a_9862353_e947fd71b87a43539a4e06a95c184ce6';
+		}
+
+		return $guid;
+	}
+
 /**
  * Return options array to be used for custom pagination and filtering
  *
  * @return array
  */
-	
+
 	protected function _findIndex($state, $query, $results = array()) {
 		if ($state === 'before') {
 			$query['fields'] = array(
@@ -2401,6 +2541,8 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.status',
 				'CobrandedApplication.rightsignature_install_document_guid',
 				'CobrandedApplication.rightsignature_install_status',
+				'Cobrand.id',
+				'Cobrand.partner_name',
 				'Template.id',
 				'Template.name',
 				'User.id',
@@ -2414,7 +2556,8 @@ class CobrandedApplication extends AppModel {
 				'Owner1Email.value',
 				'Owner2Email.value',
 				'EMail.value',
-				'LocEMail.value'
+				'LocEMail.value',
+				'Merchant.merchant_id'
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
@@ -2473,7 +2616,14 @@ class CobrandedApplication extends AppModel {
 					'conditions' => array(
 						'CobrandedApplication.template_id = Template.id',
 					),
-				),				
+				),
+				array('table' => 'onlineapp_cobrands',
+					'alias' => 'Cobrand',
+					'type' => 'LEFT',
+					'conditions' => array(
+						"Template.cobrand_id = Cobrand.id",
+					),
+				),
 				array('table' => 'onlineapp_users',
 					'alias' => 'User',
 					'type' => 'LEFT',
@@ -2488,15 +2638,22 @@ class CobrandedApplication extends AppModel {
 						'CobrandedApplication.id = Coversheet.cobranded_application_id',
 					),
 				),
+				array('table' => 'merchant',
+					'alias' => 'Merchant',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CobrandedApplication.id = Merchant.cobranded_application_id',
+					),
+				),
 			);
-			//Because we are using a key value store for the application values instead of abiding by cake conventions 
-			//we have to manipulate the count parameters to get the appropriate results 
+			//Because we are using a key value store for the application values instead of abiding by cake conventions
+			//we have to manipulate the count parameters to get the appropriate results
 			if (!empty($query['operation']) && $query['operation'] === 'count') {
 				if (isset($query['sort'])) {
 					unset($query['sort']);
 				}
 				return $query;
-				
+
 			}
 			return $query;
 		}
@@ -2511,7 +2668,7 @@ class CobrandedApplication extends AppModel {
  * or if it has been signed it will be considered expired and visible only to
  * logged in users.
  *
- * @param string $uuid
+ * @param string $uuid cobranded application uuid
  * @return bool
  */
 
@@ -2528,14 +2685,15 @@ class CobrandedApplication extends AppModel {
 				'recursive' => -1
 			)
 		);
-		if ((CakeTime::wasWithinLast('30 days', 
+		if ((CakeTime::wasWithinLast('30 days',
 			$application['CobrandedApplication']['modified'])) &&
 			$application['CobrandedApplication']['status'] !== 'signed') {
-		
+
 			return false;
 		}
 		return true;
 	}
+
 /**
  * Array of Arguments to be used by the search plugin
  */
@@ -2556,9 +2714,12 @@ class CobrandedApplication extends AppModel {
 				'OR' => array(
 					'Dba.value ILIKE' => '%' . $filter . '%',
 					'CorpName.value ILIKE' => '%' . $filter . '%',
-					'CorpContact.value ILIKE' => '%' . $filter . '%', 
-					'User.email ILIKE' => '%' . $filter . '%',
-					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '% '. $filter .'%',	
+					'CorpContact.value ILIKE' => '%' . $filter . '%',
+					'Owner1Email.value ILIKE' => '%' . $filter . '%',
+					'Owner1Email.value ILIKE' => '%' . $filter . '%',
+					'EMail.value ILIKE' => '%' . $filter . '%',
+					'LocEMail.value ILIKE' => '%' . $filter . '%',
+					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '% ' . $filter . '%',
 				)
 			);
 		return $conditions;
@@ -2566,65 +2727,46 @@ class CobrandedApplication extends AppModel {
 
 /**
  * Work-a-round for sorting on aliased columns that have been custom joined
- * without this code we are unable to properly sort all columns in the 
+ * without this code we are unable to properly sort all columns in the
  * cobrandedApplications/admin/index
  * namely DBA, CorpName, CorpContact
- * 
+ *
  * @param array $query
  * @return array
  * @see Model::find()
- */	
-	function beforeFind($query) {
+ */
+	public function beforeFind($query) {
 		parent::beforeFind($query);
-		if(empty($query['order']['0']) && isset($query['sort'])){
+		if (empty($query['order']['0']) && isset($query['sort'])) {
 			$query['order']['0'] = array($query['sort'] => $query['direction']);
 		} return $query;
-	}
-/**
- * Return list of user_id and username for use in ajax searches
- *
- * @return array
- */
-	public function findUserByUsername($searchStr, $active) {
-		$dbCol = 'username';
-			$searchStr = '%' . $searchStr;
-
-		return $this->find('list', array('recursive' => -1,
-			'conditions' => array(
-				$dbCol . ' ILIKE' => $searchStr,
-				'active' => $active
-			),
-			'fields' => array($this->alias . '.' . $dbCol),
-			'limit' => 10
-			)
-		);
 	}
 
 /**
  * __addKey
- * 
+ *
  * @params
  *     $keys array
  *     $newKey string
  */
 	private function __addKey($keys, $newKey) {
-		return $keys.',"'.$newKey.'"';
+		return $keys . ',"' . $newKey . '"';
 	}
 
 /**
  * __addValue
- * 
+ *
  * @params
  *     $values array
  *     $newValue string
  */
 	private function __addValue($values, $newValue) {
-		return $values.',"'.trim($newValue).'"';
+		return $values . ',"' . trim($newValue) . '"';
 	}
 
 /**
  * __addApplicationValue
- * 
+ *
  * @params
  *     $applicationValueData array
  */
@@ -2636,7 +2778,7 @@ class CobrandedApplication extends AppModel {
 
 /**
  * __startsWith
- * 
+ *
  * @params
  *     $haystack string
  *     $needle string

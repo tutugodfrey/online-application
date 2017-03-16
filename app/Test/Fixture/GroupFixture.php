@@ -20,8 +20,8 @@ class GroupFixture extends CakeTestFixture {
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => true, 'length' => 50),
-		'created' => array('type' => 'datetime', 'null' => false),
-		'modified' => array('type' => 'datetime', 'null' => false),
+		'created' => array('type' => 'datetime', 'null' => true),
+		'modified' => array('type' => 'datetime', 'null' => true),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id')
 		),

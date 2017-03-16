@@ -20,7 +20,7 @@ class CobrandTest extends CakeTestCase {
 		parent::setUp();
 		$this->Template = ClassRegistry::init('Template');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
-		
+
 		// mock filesystem
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
@@ -39,10 +39,75 @@ class CobrandTest extends CakeTestCase {
 		$expected[1] = 'Partner Name 1';
 		$expected[2] = 'Partner Name 2';
 		$expected[3] = 'Partner Name 3';
+		$expected[4] = 'Corral';
 
 		$result = $this->Cobrand->getList();
 
 		$this->assertEquals($expected, $result);
+	}
+
+	public function testSetLogoUrl() {
+		$cobrand = $this->Cobrand->find('first',
+			array(
+				'conditions' => array(
+					'id' => 1
+				)
+			)
+		);
+
+		$expected = array(
+			'id' => 1,
+			'partner_name' => 'Partner Name 1',
+			'partner_name_short' => 'PN1',
+			'cobrand_logo_url' => 'PN1 logo_url',
+			'description' => 'Cobrand "Partner Name 1" description goes here.',
+			'created' => '2007-03-18 10:41:31',
+			'modified' => '2007-03-18 10:41:31',
+			'response_url_type' => null,
+			'brand_logo_url' => 'PN1 logo_url'
+		);
+
+		$result = $this->Cobrand->setLogoUrl($cobrand);
+		$this->assertEquals($expected, $result['Cobrand']);
+
+		$expected = array(
+			'id' => 1,
+			'partner_name' => 'Partner Name 1',
+			'partner_name_short' => 'PN1',
+			'cobrand_logo_url' => '/img/cobrand_logo_test',
+			'description' => 'Cobrand "Partner Name 1" description goes here.',
+			'created' => '2007-03-18 10:41:31',
+			'modified' => '2007-03-18 10:41:31',
+			'response_url_type' => null,
+			'brand_logo_url' => '/img/brand_logo_test',
+			'cobrand_logo' => array(
+				'name' => 'cobrand_logo_test'
+			),
+			'brand_logo' => array(
+				'name' => 'brand_logo_test'
+			)
+		);
+
+		$cobrand['Cobrand']['cobrand_logo']['name'] = 'cobrand_logo_test';
+		$cobrand['Cobrand']['brand_logo']['name'] = 'brand_logo_test';
+
+		$result = $this->Cobrand->setLogoUrl($cobrand);
+		$this->assertEquals($expected, $result['Cobrand']);
+	}
+
+	public function testGetTemplateIds() {
+		$expected = array(
+			'1' => '1',
+			'2' => '2'
+		);
+
+		$result = $this->Cobrand->getTemplateIds(1);
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testGetExistingLogos() {
+		$result = $this->Cobrand->getExistingLogos();
+		$this->assertTrue(!empty($result));
 	}
 
 	public function testValidation() {

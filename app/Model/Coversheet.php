@@ -63,14 +63,6 @@ class Coversheet extends AppModel {
             'rule' => array('equipment_payment'),
             'message' => 'Please Enter Lease Terms'
         ),
-        'setup_referrer' => array(
-            'rule' => array('referrer'),
-            'message' => 'Type and Percentage Required'
-        ),
-        'setup_reseller' => array(
-            'rule' => array('reseller'),
-            'message' => 'Type and Percentage Required'
-        ),
         'cp_encrypted_sn' => array(
             'rule' => array('debit'),
             'message' => 'Please select Encryption Method'
@@ -333,7 +325,7 @@ class Coversheet extends AppModel {
         }
     }
 
-    public function sendCoversheet($id = null) {
+    public function sendCoversheet($id = null, $args = array()) {
         if ($id) {
             $this->id = $id;
             $data = $this->findById($id);
@@ -373,6 +365,10 @@ class Coversheet extends AppModel {
             $from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
             $to = EmailTimeline::UNDERWRITING_EMAIL;
 
+            if ($args['to']) {
+                $to = $args['to'];
+            }
+
             $subject = $dbaBusinessName.' - Coversheet';
             $format = 'html';
             $template = 'email_coversheet';
@@ -398,7 +394,7 @@ class Coversheet extends AppModel {
             if ($response['success'] == true) {
                 $args['cobranded_application_id'] = $data['CobrandedApplication']['id'];
                 $args['email_timeline_subject_id'] = EmailTimeline::COVERSHEET_TO_UW;
-                $args['recipient'] = EmailTimeline::UNDERWRITING_EMAIL;
+                $args['recipient'] = $to;
                 $response = $this->CobrandedApplication->createEmailTimelineEntry($args);
 
                 if ($response['success'] == true) {

@@ -6,9 +6,9 @@ class User extends AppModel {
 	//Group Constants
 	const ADMIN_GROUP_ID = 1;
 	const REPRESENTATIVE_GROUP_ID = 2;
-	const API_GROUP_ID = 3;    
+	const API_GROUP_ID = 3;
 	const MANAGER_GROUP_ID = 4;
-	
+
 	const ADMIN = 'admin';
 	const REP = 'rep';
 	const API = 'api';
@@ -162,6 +162,36 @@ class User extends AppModel {
 				'associationForeignKey' => 'template_id',
 		),
 	);
+
+/**
+ * Array of Arguments to be used by the search plugin
+ */
+	public $filterArgs = array(
+		'search' => array('type' => 'query', 'method' => 'orConditions'),
+	);
+
+
+/**
+ * Return conditions to be used when searching for users
+ *
+ * @return array
+ */
+	public function orConditions($data = array()) {
+		$criteria = $data['search']; 
+		$criteria = '%' . $criteria . '%';
+		$conditions = array(
+			'OR' => array(
+				'User.firstname ILIKE' => $criteria,
+				'User.lastname ILIKE' => $criteria,
+				'User.fullname ILIKE' => $criteria,
+				'User.email ILIKE' => $criteria,
+				'CAST(User.extension AS TEXT) ILIKE' => $criteria,
+				'CAST(User.id AS TEXT) ILIKE' => $criteria,
+			)
+		);
+		return $conditions;
+	}
+
 
 	function bindNode($user) {
 		return array('model' => 'Group', 'foreign_key' => $user['User']['group_id']);
