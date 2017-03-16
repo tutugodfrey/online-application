@@ -57,7 +57,7 @@ class TemplateTest extends CakeTestCase {
 
 		$this->User->create(
 			array(
-				'email' => 'testing@axiapayments.com',
+				'email' => 'testing@axiatech.com',
 				'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
 				'group_id' => 1,
 				'created' => '2014-01-24 11:02:22',
@@ -82,7 +82,7 @@ class TemplateTest extends CakeTestCase {
 	public function tearDown() {
 		$this->CobrandedApplicationValue->deleteAll(true, false);
 		$this->CobrandedApplication->deleteAll(true, false);
-		$this->User->delete($this->__user['OnlineappUser']['id']);
+		$this->User->delete($this->__user['User']['id']);
 		$this->Group->deleteAll(true, false);
 		$this->TemplateField->deleteAll(true, false);
 		$this->TemplateSection->deleteAll(true, false);
