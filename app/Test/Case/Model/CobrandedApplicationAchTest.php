@@ -7,7 +7,7 @@ App::uses('CobrandedApplicationAch', 'Model');
  */
 class CobrandedApplicationAchTest extends CakeTestCase {
 
-	public $dropTables = false;
+	public $dropTables = true;
 	public $autoFixtures = false;
 
 	/**

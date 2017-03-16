@@ -9,7 +9,8 @@ class TemplateTest extends CakeTestCase {
 	public $autoFixtures = false;
 
 	public $fixtures = array(
-		'app.group',
+		'app.onlineappUser',
+		'app.onlineappGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -25,7 +26,7 @@ class TemplateTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Group = ClassRegistry::init('Group');
-		$this->User = ClassRegistry::init('OnlineappUser');
+		$this->User = ClassRegistry::init('User');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -35,7 +36,8 @@ class TemplateTest extends CakeTestCase {
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 		// load data
-		$this->loadFixtures('Group');
+		$this->loadFixtures('OnlineappUser');
+		$this->loadFixtures('OnlineappGroup');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
