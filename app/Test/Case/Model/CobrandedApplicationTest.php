@@ -222,6 +222,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'rightsignature_template_guid' => null,
 				'rightsignature_install_template_guid' => null,
 				'owner_equity_threshold' => 50,
+				'requires_coversheet' => false,
 				'Cobrand' => array(
 					'id' => (int)1,
 					'partner_name' => 'Partner Name 1',
@@ -1942,6 +1943,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'Template' => array(
 						'id' => 1,
 						'name' => 'Template 1 for PN1',
+						'requires_coversheet' => false
 					),
 					'User' => array(
 						'id' => 1,

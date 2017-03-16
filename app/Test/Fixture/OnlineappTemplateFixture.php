@@ -18,6 +18,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 		'rightsignature_template_guid' => array('type' => 'string', 'null' => true),
 		'rightsignature_install_template_guid' => array('type' => 'string', 'null' => true),
 		'owner_equity_threshold' => array('type' => 'integer', 'null' => true),
+		'requires_coversheet' => array('type' => 'boolean', 'default' => true),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id')
 		),
@@ -37,7 +38,8 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'logo_position' => 0,
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
-			'owner_equity_threshold' => 50
+			'owner_equity_threshold' => 50,
+			'requires_coversheet' => false
 		),
 		array(
 			'name' => 'Template 2 for PN1',
