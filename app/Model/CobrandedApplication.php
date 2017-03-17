@@ -2545,6 +2545,7 @@ class CobrandedApplication extends AppModel {
 				'Cobrand.partner_name',
 				'Template.id',
 				'Template.name',
+				'Template.requires_coversheet',
 				'User.id',
 				'User.firstname',
 				'User.lastname',

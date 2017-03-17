@@ -17,8 +17,8 @@ class EpaymentTest extends CakeTestCase {
 	public $fixtures = array(
 		'app.onlineappApip',
 		'app.onlineappApplication',
-		'app.user',
-		'app.group',
+		'app.onlineappUser',
+		'app.onlineappGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplate_page',

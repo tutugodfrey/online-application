@@ -5,65 +5,18 @@
             echo "map['".$key."'] = '".$val."';";
         }
     ?>
-
-    $(document).ready(function(){
-        $("#TemplateBuilderBaseCobrand").prepend("<option value=''>Select Base Cobrand</option>").val('');
-        $('#TemplateBuilderBaseTemplate')[0].options.length = 0;
-        $("#TemplateBuilderBaseTemplate").prepend("<option value=''>Select Base Template</option>").val('');
-
-        $("#TemplateBuilderBaseCobrand").on('change', function() {
-            $('#TemplateBuilderBaseTemplate')[0].options.length = 0;
-            $("#TemplateBuilderBaseTemplate").prepend("<option value=''>Select Base Template</option>").val('');
-
-            value = $("#TemplateBuilderBaseCobrand").val();
-
-            $.ajax({
-                url: "/cobrands/get_template_ids/"+value,
-                data: value,
-                success: function(response){
-                    if (response.length != 0) {
-                        response = $.parseJSON(response)
-                        $.each(response, function(key, val) {
-                            name = map[val];
-                            $('#TemplateBuilderBaseTemplate').append('<option value="'+val+'">'+name+'</option>');
-                        });
-                    }
-                },
-                cache: false
-            });
-        });
-    });
-
-    var checkCheckbox = function(arg) {
-        $('#'+arg).prop('checked', true);
-    };
-
-    var checkAll = function() {   
-        var checked = $("#check_all").is(":checked");
-        var pattern = /^template_page.+/;
-
-        $('input[type=checkbox]').each(function () {
-            var id = $(this).attr('id');
-            if (pattern.test(id)) {
-                if (checked) {
-                    $(this).prop('checked', true);
-                }
-                else {
-                    $(this).prop('checked', false);
-                }
-            }
-        });
-    };
-
 </script>
-
+<script type="text/javascript" src="/js/templateBuilder.js"></script>
 <?php
 
 if (!empty($template) && $template) {
     echo "<div>";
         echo "<br><br>";
                 echo $this->Form->create('TemplateBuilder',
-                    array(
+                    array(                        
+                        'inputDefaults' => array(
+                            'wrapInput' => false,
+                        ),
                         'url' => '/admin/template_builder/add',
                         'class' => 'form-inline'
                     )
@@ -78,41 +31,7 @@ if (!empty($template) && $template) {
                     )
                 );
                 echo "<br><br>";
-
-                echo "New Template:<br><br>";
-                echo $this->Form->input('name', array('style' => 'width:500px; height:30px;'));
-                echo $this->Form->input(
-                    'logo_position',
-                    array(
-                        'options' => $logoPositionTypes,
-                        'empty' => __('(choose one)')
-                    )
-                );
-                echo $this->Form->input('include_brand_logo',
-                    array(
-                        'label' => 'Include Brand Logo',
-                        'type' => 'checkbox'
-                    )
-                );
-                echo $this->Form->input('description', array('style' => 'width:500px; height:30px;'));
-
-                echo $this->Form->input('rightsignature_template_guid',
-                    array(
-                        'type' => 'select',
-                        'label' => 'Rightsignature Template Guid',
-                        'options' => $templateList,
-                    )
-                );
-
-                echo $this->Form->input('rightsignature_install_template_guid',
-                    array(
-                        'type' => 'select',
-                        'label' => 'Rightsignature Install Template Guid',
-                        'options' => $installTemplateList,
-                    )
-                );
-
-                echo $this->Form->input('owner_equity_threshold', array('style' => 'width:500px; height:30px;'));     
+                echo $this->element('Templates/templateFields');     
 
                 echo "<table cellpadding='0' cellspacing='0' border='1'>";
 

@@ -6,7 +6,6 @@ App::uses('TemplateFieldHelper', 'View/Helper');
 App::uses('SessionHelper', 'View/Helper');
 
 class TemplateFieldHelperTest extends CakeTestCase {
-
 	public function setUp() {
 		parent::setUp();
 		$Controller = new Controller();
@@ -116,7 +115,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'user-required-rep_only-2-name-id-merg_field_name-1'
 		);
 		$options['type'] = 3;
-		$options['values'] = array('true', '');
+		$options['values'] = array('true','');
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">' .
 				'<div class="checkbox">' .
@@ -130,7 +129,7 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		);
 		$options['type'] = 4;
 		$options['default_value'] = 'name1::value1,name2::value2';
-		$options['values'] = array('', 'true');
+		$options['values'] = array('','true');
 		$this->assertEquals(
 				'<div class="col-md-1" title="only the rep will see this">' .
 					'<label for="merge_field_name">Name*</label>' .
@@ -156,22 +155,22 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">' .
 				'<fieldset id="name" class="percent">' .
 					'<legend>name <span class="small">(total must equal 100%)</span></legend>' .
-					'<div class="input-group col-md-12">' .
-						'<label for="name1">name1</label>' .
+						'<div class="input-group col-md-12">' .
+							'<label for="name1">name1</label>' .
 							'<input label="name*" name="name1" id="name1" required="required" type="number" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" data-value-id="id1" value="" class="col-xs-12 col-sm-12 col-md-9 percent"></input>' .
 							'<span class="input-group-addon col-md-1">%</span>' .
-					'</div>' .
-					'<div class="input-group col-md-12">' .
-						'<label for="name2">name2</label>' .
+						'</div>' .
+						'<div class="input-group col-md-12">' .
+							'<label for="name2">name2</label>' .
 							'<input label="name*" name="name2" id="name2" required="required" type="number" onblur="$.event.trigger({type: &quot;percentOptionBlur&quot;, origin: this, totalFieldId: &quot;#name_Total&quot;, &quot;fieldset_id&quot;: &quot;name&quot;});" min="0" max="100" data-value-id="id2" value="" class="col-xs-12 col-sm-12 col-md-9 percent"></input>' .
 							'<span class="input-group-addon col-md-1">%</span>' .
-					'</div>' .
-					'<div class="input text">' .
-						'<label for="name_Total">Total</label>' .
+						'</div>' .
+						'<div class="input text">' .
+							'<label for="name_Total">Total</label>' .
 							'<input name="name_Total" id="name_Total" disabled="disabled" onclick="return false;" class="col-md-1" required="required" type="text"/>' .
-					'</div>' .
-				'</fieldset>' .
-			'</div>',
+						'</div>' .
+					'</fieldset>' .
+				'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-5-name-id-merg_field_name-1'
 		);
@@ -186,19 +185,19 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['type'] = 7;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">' .
-			'<fieldset id="merge_field_name" class="fees">' .
-			'<legend>name</legend>' .
-			'<label for="value1">name1*</label>' .
-			'<div class="input-group col-md-12">' .
-			'<span class="input-group-addon col-md-1">$</span>' .
-			'<input label="name*" name="name1" id="value1" required="required" type="text" class="col-md-9" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 3, &#039;digitsOptional&#039;: true"></input>' .
-			'</div>' .
-			'<label for="value2">name2*</label>' .
-			'<div class="input-group col-md-12">' .
-			'<span class="input-group-addon col-md-1">$</span>' .
-			'<input label="name*" name="name2" id="value2" required="required" type="text" class="col-md-9" data-value-id="id2" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 3, &#039;digitsOptional&#039;: true"></input>' .
-			'</div>' .
-			'</fieldset>' .
+				'<fieldset id="merge_field_name" class="fees">' .
+					'<legend>name</legend>' .
+					'<label for="value1">name1*</label>' .
+					'<div class="input-group col-md-12">' .
+						'<span class="input-group-addon col-md-1">$</span>' .
+						'<input label="name*" name="name1" id="value1" required="required" type="text" class="col-md-9" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 3, &#039;digitsOptional&#039;: true"></input>' .
+					'</div>' .
+					'<label for="value2">name2*</label>' .
+					'<div class="input-group col-md-12">' .
+						'<span class="input-group-addon col-md-1">$</span>' .
+						'<input label="name*" name="name2" id="value2" required="required" type="text" class="col-md-9" data-value-id="id2" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 3, &#039;digitsOptional&#039;: true"></input>' .
+					'</div>' .
+				'</fieldset>' .
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-7-name-id-merg_field_name-1'
@@ -223,11 +222,11 @@ class TemplateFieldHelperTest extends CakeTestCase {
 		$options['type'] = 10;
 		$this->assertEquals(
 			'<div class="col-md-1" title="only the rep will see this">' .
-			'<label for="merge_field_name">name*</label>' .
-			'<div class="input-group col-md-12">' .
-			'<span class="input-group-addon col-md-1">$</span>' .
-			'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: true" type="text" class="col-md-9"></input>' .
-			'</div>' .
+				'<label for="merge_field_name">name*</label>' .
+				'<div class="input-group col-md-12">' .
+					'<span class="input-group-addon col-md-1">$</span>' .
+					'<input label="name*" name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1" value="" data-inputmask="&#039;alias&#039;: &#039;numeric&#039;, &#039;groupSeparator&#039;: &#039;,&#039;, &#039;autoGroup&#039;: true, &#039;digits&#039;: 2, &#039;digitsOptional&#039;: true" type="text" class="col-md-9"></input>' .
+				'</div>' .
 			'</div>',
 			$this->TemplateFieldHelper->buildField($this->__buildFieldObject($options), true),
 			'user-required-rep_only-10-name-id-merg_field_name-1'
@@ -317,10 +316,10 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			'<div class="col-md-1" title="only the rep will see this">' .
 				'<div class="input select">' .
 					'<label for="merge_field_name">name*</label>' .
-					'<select name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1">' . "\n" .
-						'<option value="">--</option>' . "\n" .
-						'<option value="value1">name1</option>' . "\n" .
-						'<option value="value2">name2</option>' . "\n" .
+					'<select name="merge_field_name" id="merge_field_name" required="required" data-value-id="id1">' ."\n".
+						'<option value="">--</option>' ."\n".
+						'<option value="value1">name1</option>' ."\n".
+						'<option value="value2">name2</option>' ."\n".
 					'</select>' .
 				'</div>' .
 			'</div>',
@@ -364,8 +363,8 @@ class TemplateFieldHelperTest extends CakeTestCase {
 			$textField,
 			'CobrandedApplicationValues',
 			array(
-				array('name' => 'name1', 'id' => 'id1', 'value' => $value0),
-				array('name' => 'name2', 'id' => 'id2', 'value' => $value1),
+				array('name' => 'name1', 'id'=>'id1', 'value' => $value0),
+				array('name' => 'name2', 'id'=>'id2', 'value' => $value1),
 			)
 		);
 		return $textField;
