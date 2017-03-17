@@ -153,7 +153,7 @@
 		</exec>
 	</target>
 
-	<target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate">
+	<target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders">
 		<exec executable="bash" failonerror="true" dir="${basedir}/app">
 			<arg value="-c"/>
 			<arg value="Console/cake test --stderr --testdox --log-junit '../build/reports/junit.xml' --coverage-html 'webroot/coverage' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml' app AllTests"/>
