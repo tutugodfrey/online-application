@@ -81,14 +81,14 @@
 		</apply>
 	</target>
 
-	<target name="migrate">
+	<!--target name="migrate">
 		<exec executable="${basedir}/app/Console/cake" failonerror="true">
 			<arg line="Migrations.migration status -c test -i test"/>
 		</exec>
 		<exec executable="${basedir}/app/Console/cake" failonerror="true">
 			<arg line="Migrations.migration run all -c test -i test"/>
 		</exec>
-	</target>
+	</target-->
 
 	<target name="phploc"
 		description="Measure project size using PHPLOC">
