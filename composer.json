@@ -1,7 +1,7 @@
 {
 	"name": "online-application",
 	"require": {
-		"cakedc/migrations": "dev-master",
+		"cakedc/migrations": "2.4.1",
 		"cakedc/search": "dev-master",
 		"cakedc/utils": "dev-master",
 		"cakephp/cakephp": "2.6.*",
