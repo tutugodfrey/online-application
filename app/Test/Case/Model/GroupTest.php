@@ -6,7 +6,9 @@ App::uses('Group', 'Model');
  *
  */
 class GroupTest extends CakeTestCase {
-  public $autoFixtures = false;
+
+	public $autoFixtures = false;
+
 /**
  * Fixtures
  *
@@ -26,7 +28,6 @@ class GroupTest extends CakeTestCase {
 		'app.onlineappApi_log',
 		'app.onlineappUsers_manager',
 		'app.onlineappCoversheet',
-		'app.onlineappMultipass',
 		'app.merchant',
 		'app.equipment_programming',
 		'app.timeline_entry',
@@ -56,5 +57,6 @@ class GroupTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
-	public function testValidation() {}
+	public function testValidation() {
+	}
 }
