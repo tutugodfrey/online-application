@@ -10,6 +10,7 @@ App::uses('TemplatePage', 'Model');
 class TemplatePageTest extends CakeTestCase {
 
 	public $dropTables = false;
+
 	public $autoFixtures = false;
 
 	public $fixtures = array(
@@ -21,8 +22,6 @@ class TemplatePageTest extends CakeTestCase {
 		'app.onlineappCobrandedApplication',
 		'app.onlineappCobrandedApplicationValue',
 	);
-
-
 
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
@@ -73,8 +72,8 @@ class TemplatePageTest extends CakeTestCase {
 	}
 
 	public function testGetCobrand() {
-		$template_id = 1;
-		$expected_cobrand = array(
+		$templateId = 1;
+		$expectedCobrand = array(
 			'id' => 1,
 			'partner_name' => 'Partner Name 1',
 			'partner_name_short' => 'PN1',
@@ -85,11 +84,11 @@ class TemplatePageTest extends CakeTestCase {
 			'response_url_type' => null,
 			'brand_logo_url' => 'PN1 logo_url',
 		);
-		$returned_cobrand = $this->TemplatePage->getCobrand($template_id);
-		$this->assertEquals($expected_cobrand, $returned_cobrand);
+		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
 
-		$template_id = 3;
-		$expected_cobrand = array(
+		$templateId = 3;
+		$expectedCobrand = array(
 			'id' => 2,
 			'partner_name' => 'Partner Name 2',
 			'partner_name_short' => 'PN2',
@@ -100,13 +99,13 @@ class TemplatePageTest extends CakeTestCase {
 			'response_url_type' => null,
 			'brand_logo_url' => 'PN2 logo_url',
 		);
-		$returned_cobrand = $this->TemplatePage->getCobrand($template_id);
-		$this->assertEquals($expected_cobrand, $returned_cobrand);
+		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
 	}
 
-	public function testGetCobrand_afterRead() {
+	public function testGetCobrandAfterRead() {
 		// now test the case when we set the id
-		$expected_cobrand = array (
+		$expectedCobrand = array (
 			'id' => 1,
 			'partner_name' => 'Partner Name 1',
 			'partner_name_short' => 'PN1',
@@ -119,13 +118,13 @@ class TemplatePageTest extends CakeTestCase {
 		);
 
 		$this->TemplatePage->id = 2;
-		$templatePage = $this->TemplatePage->read();
-		$this->assertEquals($expected_cobrand, $this->TemplatePage->getCobrand());
+		$this->TemplatePage->read();
+		$this->assertEquals($expectedCobrand, $this->TemplatePage->getCobrand());
 	}
 
 	public function testGetTemplate() {
-		$template_id = 1;
-		$expected_template = array(
+		$templateId = 1;
+		$expectedtemplate = array(
 			'id' => 1,
 			'name' => 'Template 1 for PN1',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -136,13 +135,14 @@ class TemplatePageTest extends CakeTestCase {
 			'include_brand_logo' => true,
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
-			'owner_equity_threshold' => 50
+			'owner_equity_threshold' => 50,
+			'requires_coversheet' => false
 		);
-		$returned_template = $this->TemplatePage->getTemplate($template_id);
-		$this->assertEquals($expected_template, $returned_template);
+		$returnedtemplate = $this->TemplatePage->getTemplate($templateId);
+		$this->assertEquals($expectedtemplate, $returnedtemplate);
 
-		$template_id = 2;
-		$expected_template = array(
+		$templateId = 2;
+		$expectedtemplate = array(
 			'id' => 2,
 			'name' => 'Template 2 for PN1',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -153,13 +153,14 @@ class TemplatePageTest extends CakeTestCase {
 			'include_brand_logo' => true,
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
-			'owner_equity_threshold' => 50
+			'owner_equity_threshold' => 50,
+			'requires_coversheet' => null
 		);
-		$returned_template = $this->TemplatePage->getTemplate($template_id);
-		$this->assertEquals($expected_template, $returned_template);
+		$returnedtemplate = $this->TemplatePage->getTemplate($templateId);
+		$this->assertEquals($expectedtemplate, $returnedtemplate);
 
-		$template_id = 3;
-		$expected_template = array(
+		$templateId = 3;
+		$expectedtemplate = array(
 			'id' => 3,
 			'name' => 'Template 1 for PN2',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -170,14 +171,15 @@ class TemplatePageTest extends CakeTestCase {
 			'include_brand_logo' => true,
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
-			'owner_equity_threshold' => 50
+			'owner_equity_threshold' => 50,
+			'requires_coversheet' => null
 		);
-		$returned_template = $this->TemplatePage->getTemplate($template_id);
-		$this->assertEquals($expected_template, $returned_template);
+		$returnedtemplate = $this->TemplatePage->getTemplate($templateId);
+		$this->assertEquals($expectedtemplate, $returnedtemplate);
 	}
 
 	public function testValidation() {
-		$expected_validationErrors = array(
+		$expectedValidationErrors = array(
 			'name' => array('Template page name cannot be empty'),
 			'template_id' => array('Invalid cobrand_id value used'),
 			'order' => array('Invalid order value used'),
@@ -185,14 +187,14 @@ class TemplatePageTest extends CakeTestCase {
 
 		$this->TemplatePage->create(array('name' => '', 'template_id' => '', 'order' => ''));
 		$this->assertFalse($this->TemplatePage->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplatePage->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplatePage->validationErrors);
 
 		// go right path
-		$expected_validationErrors = array();
+		$expectedValidationErrors = array();
 
 		$this->TemplatePage->create(array('name' => 'name', 'template_id' => 1, 'order' => 0));
 		$this->assertTrue($this->TemplatePage->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplatePage->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplatePage->validationErrors);
 	}
 
 	public function testSaveNew() {
@@ -226,113 +228,113 @@ class TemplatePageTest extends CakeTestCase {
 		$this->TemplatePage->create();
 		if ($this->TemplatePage->save($pageData, array('validate' => false))) {
 			// should have 2 pages now but the new page should be first; order == 0.
-			$expected_order_value = 0;
+			$expectedOrderValue = 0;
 			// re-read the template object add associations
 			$template = $this->Template->read();
 			$templatePages = $template['TemplatePages'];
-			$this->assertEquals($expected_order_value, $templatePages[0]['order'], 'New pages get inserted before the "Validate Application" page.');
+			$this->assertEquals($expectedOrderValue, $templatePages[0]['order'], 'New pages get inserted before the "Validate Application" page.');
 		}
 	}
 
-	public function testReordering_LastToFirst() {
+	public function testReorderingLastToFirst() {
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 
 		// move the third field to the front of the list
-		$third_page['TemplatePage']['order'] = 0;
-		$this->TemplatePage->save($third_page);
+		$thirdPage['TemplatePage']['order'] = 0;
+		$this->TemplatePage->save($thirdPage);
 
 		// check the order values
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(0, $third_page['TemplatePage']['order']);
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(1, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(2, $second_page['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(0, $thirdPage['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(1, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(2, $secondPage['TemplatePage']['order']);
 	}
 
-	public function testReordering_FirstToLast() {
+	public function testReorderingFirstToLast() {
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 
 		// move the third back to the end now
-		$first_page = $this->TemplatePage->findById(1);
-		$first_page['TemplatePage']['order'] = 2;
-		$this->TemplatePage->save($first_page);
+		$firstPage = $this->TemplatePage->findById(1);
+		$firstPage['TemplatePage']['order'] = 2;
+		$this->TemplatePage->save($firstPage);
 
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(2, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(0, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(1, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(2, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(0, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(1, $thirdPage['TemplatePage']['order']);
 	}
 
-	public function testReordering_MiddleToFirst() {
+	public function testReorderingMiddleToFirst() {
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 
 		// move the third back to the end now
-		$second_page = $this->TemplatePage->findById(2);
-		$second_page['TemplatePage']['order'] = 0;
-		$this->TemplatePage->save($second_page);
+		$secondPage = $this->TemplatePage->findById(2);
+		$secondPage['TemplatePage']['order'] = 0;
+		$this->TemplatePage->save($secondPage);
 
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(1, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(0, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(1, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(0, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 	}
 
-	public function testReordering_MiddleToLast() {
+	public function testReorderingMiddleToLast() {
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 
 		// move the third back to the end now
-		$second_page = $this->TemplatePage->findById(2);
-		$second_page['TemplatePage']['order'] = 2;
-		$this->TemplatePage->save($second_page);
+		$secondPage = $this->TemplatePage->findById(2);
+		$secondPage['TemplatePage']['order'] = 2;
+		$this->TemplatePage->save($secondPage);
 
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(2, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(1, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(2, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(1, $thirdPage['TemplatePage']['order']);
 	}
 
-	public function testDelete_FirstPage() {
+	public function testDeleteFirstPage() {
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 
 		// delete the first one
 		$this->TemplatePage->delete(1);
@@ -340,21 +342,21 @@ class TemplatePageTest extends CakeTestCase {
 		$this->assertEquals(array(), $this->TemplatePage->findById(1), 'Page with id == [1] has not been deleted.');
 
 		// re-check the order
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(0, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(1, $third_page['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(0, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(1, $thirdPage['TemplatePage']['order']);
 		// make sure 1 is gone
 	}
 
-	public function testDelete_MiddlePage() {
+	public function testDeleteMiddlePage() {
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 
 		// delete one in the middle; id = 2
 		$this->TemplatePage->delete(2);
@@ -362,20 +364,20 @@ class TemplatePageTest extends CakeTestCase {
 		$this->assertEquals(array(), $this->TemplatePage->findById(2), 'Page with id == [2] has not been deleted.');
 
 		// recheck the order
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(1, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(1, $thirdPage['TemplatePage']['order']);
 	}
 
-	public function testDelete_LastPage() {
+	public function testDeleteLastPage() {
 		// make sure the order values are what we expect
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
-		$third_page = $this->TemplatePage->findById(3);
-		$this->assertEquals(2, $third_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
+		$thirdPage = $this->TemplatePage->findById(3);
+		$this->assertEquals(2, $thirdPage['TemplatePage']['order']);
 
 		// delete the last page
 		$this->TemplatePage->delete(3);
@@ -383,10 +385,10 @@ class TemplatePageTest extends CakeTestCase {
 		$this->assertEquals(array(), $this->TemplatePage->findById(3), 'Page with id == [3] has not been deleted.');
 
 		// recheck the order
-		$first_page = $this->TemplatePage->findById(1);
-		$this->assertEquals(0, $first_page['TemplatePage']['order']);
-		$second_page = $this->TemplatePage->findById(2);
-		$this->assertEquals(1, $second_page['TemplatePage']['order']);
+		$firstPage = $this->TemplatePage->findById(1);
+		$this->assertEquals(0, $firstPage['TemplatePage']['order']);
+		$secondPage = $this->TemplatePage->findById(2);
+		$this->assertEquals(1, $secondPage['TemplatePage']['order']);
 	}
 
 	public function testNameEditable() {

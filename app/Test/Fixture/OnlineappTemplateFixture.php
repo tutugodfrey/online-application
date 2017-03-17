@@ -32,6 +32,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
  */
 	public $records = array(
 		array(
+			'id' => 1,
 			'name' => 'Template 1 for PN1',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 			'cobrand_id' => 1,
@@ -42,6 +43,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'requires_coversheet' => false
 		),
 		array(
+			'id' => 2,
 			'name' => 'Template 2 for PN1',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 			'cobrand_id' => 1,
@@ -51,6 +53,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'owner_equity_threshold' => 50
 		),
 		array(
+			'id' => 3,
 			'name' => 'Template 1 for PN2',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 			'cobrand_id' => 2,
@@ -60,6 +63,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'owner_equity_threshold' => 50
 		),
 		array(
+			'id' => 4,
 			'name' => 'Template used to test afterSave of app values',
 			'description' => '',
 			'cobrand_id' => 2,
@@ -69,6 +73,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'owner_equity_threshold' => 50
 		),
 		array(
+			'id' => 5,
 			'name' => 'Template used to test getFields',
 			'description' => '',
 			'cobrand_id' => 2,
@@ -78,6 +83,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'owner_equity_threshold' => 50
 		),
 		array(
+			'id' => 6,
 			'name' => 'Template 1 for Corral',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 			'cobrand_id' => 4,

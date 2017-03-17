@@ -21,6 +21,7 @@ class TemplateTest extends CakeTestCase {
 	);
 
 	private $__template;
+
 	private $__user;
 
 	public function setUp() {
@@ -112,7 +113,7 @@ class TemplateTest extends CakeTestCase {
 	}
 
 	public function testGetCobrand() {
-		$expected_cobrand = array(
+		$expectedCobrand = array(
 			'Cobrand' => array (
 				'id' => 1,
 				'partner_name' => 'Partner Name 1',
@@ -125,10 +126,10 @@ class TemplateTest extends CakeTestCase {
 				'brand_logo_url' => 'PN1 logo_url',
 			),
 		);
-		$returned_cobrand = $this->Template->getCobrand(1);
-		$this->assertEquals($expected_cobrand, $returned_cobrand);
+		$returnedCobrand = $this->Template->getCobrand(1);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
 
-		$expected_cobrand = array(
+		$expectedCobrand = array(
 			'Cobrand' => array (
 				'id' => 2,
 				'partner_name' => 'Partner Name 2',
@@ -141,10 +142,10 @@ class TemplateTest extends CakeTestCase {
 				'brand_logo_url' => 'PN2 logo_url',
 			),
 		);
-		$returned_cobrand = $this->Template->getCobrand(2);
-		$this->assertEquals($expected_cobrand, $returned_cobrand);
+		$returnedCobrand = $this->Template->getCobrand(2);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
 
-		$expected_cobrand = array(
+		$expectedCobrand = array(
 			'Cobrand' => array (
 				'id' => 3,
 				'partner_name' => 'Partner Name 3',
@@ -157,36 +158,36 @@ class TemplateTest extends CakeTestCase {
 				'brand_logo_url' => 'PN3 logo_url',
 			),
 		);
-		$returned_cobrand = $this->Template->getCobrand(3);
-		$this->assertEquals($expected_cobrand, $returned_cobrand);
+		$returnedCobrand = $this->Template->getCobrand(3);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
 	}
 
 	public function testValidation() {
-		$expected_validationErrors = array(
+		$expectedValidationErrors = array(
 			'name' => array('Template name cannot be empty'),
 			'logo_position' => array('Logo position value not selected'),
 		);
 
 		$this->Template->create(array('name' => '', 'logo_position' => ''));
 		$this->assertFalse($this->Template->validates());
-		$this->assertEquals($expected_validationErrors, $this->Template->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->Template->validationErrors);
 
 		// test non-numeric cobrand_id
-		$expected_validationErrors = array(
+		$expectedValidationErrors = array(
 			'cobrand_id' => array('Invalid cobrand_id value used'),
 			'logo_position' => array('Logo position value not selected'),
 		);
 		$this->Template->create(array('name' => 'template name', 'cobrand_id' => 'abcd', 'logo_position' => ''));
 		$this->assertFalse($this->Template->validates());
-		$this->assertEquals($expected_validationErrors, $this->Template->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->Template->validationErrors);
 
 		// test the go right path
-		$expected_validationErrors = array();
+		$expectedValidationErrors = array();
 		$newTemplateData = array('name' => 'template name', 'cobrand_id' => 1, 'logo_position' => 0);
 		$this->Template->create($newTemplateData);
 		$this->Template->save($newTemplateData);
 		$this->assertTrue($this->Template->validates());
-		$this->assertEquals($expected_validationErrors, $this->Template->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->Template->validationErrors);
 
 		$createdTemplate = $this->Template->read();
 		$this->assertEquals(1, count($createdTemplate['TemplatePages']), "we should have a new template with a 'Validate Application' page");
@@ -849,17 +850,18 @@ class TemplateTest extends CakeTestCase {
 
 	public function testBeforeDelete() {
 		$expectedTemplate = array(
-			'id' => (int) 5,
+			'id' => (int)5,
 			'name' => 'Template used to test getFields',
-			'logo_position' => (int) 0,
+			'logo_position' => (int)0,
 			'include_brand_logo' => true,
 			'description' => '',
-			'cobrand_id' => (int) 2,
+			'cobrand_id' => (int)2,
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
-			'owner_equity_threshold' => 50
+			'owner_equity_threshold' => 50,
+			'requires_coversheet' => null
 		);
 		$actualTemplate = $this->Template->find(
 			'first',
