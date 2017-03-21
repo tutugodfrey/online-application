@@ -25,7 +25,8 @@ echo $this->Form->input('logo_position', $logoPosAttr);
 $brLogoAttributes['wrapInput'] = 'col col-md-12';
 echo $this->Form->input('include_brand_logo', $brLogoAttributes);
 $rCoverSheetAttr =  array('type' => 'checkbox', 'wrapInput' => 'col col-md-12');
-if (empty($this->request->data)) {
+if (empty(Hash::extract($this->request->data, '{s}.requires_coversheet'))) {
+	//default checked state for new data
 	$rCoverSheetAttr['checked'] = true;
 }
 echo $this->Form->input('requires_coversheet', $rCoverSheetAttr);
