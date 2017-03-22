@@ -24,7 +24,7 @@ class TemplateSection extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Template section name cannot be empty'),
 		),
 		'width' => array(
@@ -38,7 +38,7 @@ class TemplateSection extends AppModel {
 			'message' => array('Invalid page_id value used'),
 		),
 		'order' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Invalid order value used'),
 		),
 	);
