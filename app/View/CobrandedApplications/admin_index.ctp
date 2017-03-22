@@ -95,14 +95,12 @@
 				$valuesMap['Owner2Email'] = $cobrandedApplication['Owner2Email']['value'];
 				$valuesMap['EMail'] = $cobrandedApplication['EMail']['value'];
 				$valuesMap['LocEMail'] = $cobrandedApplication['LocEMail']['value'];
-
 				echo $this->element('cobranded_applications/email_select_modal',
 					array(
 						'cobranded_application_id' => $cobrandedApplication['CobrandedApplication']['id'],
 						'valuesMap' => $valuesMap
 					)
 				);
-
 				echo $this->Form->button(' ',
 					array(
 						'type' => 'button',

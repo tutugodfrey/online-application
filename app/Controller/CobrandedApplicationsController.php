@@ -49,7 +49,7 @@ class CobrandedApplicationsController extends AppController {
 		'submit_for_review' => array('*')
 	);
 
-	public $helper = array('TemplateField');
+	public $helpers = array('TemplateField', 'Js');
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -358,18 +358,12 @@ class CobrandedApplicationsController extends AppController {
  *
  */
 	public function retrieve() {
-		$error = '';
-		if ($this->request->is('post')) {
-			// did we get a valid email?
-			$email = '';
-
+		if ($this->request->is('post') || $this->request->is('ajax')) {
 			if ($this->request->data['CobrandedApplication']['emailText']) {
 				$email = $this->request->data['CobrandedApplication']['emailText'];
-			}
-			else if ($this->request->data['CobrandedApplication']['emailList']) {
+			} elseif ($this->request->data['CobrandedApplication']['emailList']) {
 				$email = $this->request->data['CobrandedApplication']['emailList'];
 			}
-
 
 			if (isset($this->request->data['CobrandedApplication']['id'])) {
 				$id = $this->request->data['CobrandedApplication']['id'];
@@ -380,25 +374,20 @@ class CobrandedApplicationsController extends AppController {
 			if (Validation::email($email)) {
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email, $id);
 				if ($response['success'] == true) {
-					$this->set('dba', $response['dba']);
-					$this->set('email', $response['email']);
-					$this->set('fullname', $response['fullname']);
-					$this->render('retrieve_thankyou');
+					$message = "{$response['dba']} application sent to {$response['fullname']} at {$response['email']}";
+					$class = ' alert-success';
 				} else {
-					$error = $response['msg'];
+					$class = ' alert-danger';
+					$message = $response['msg'];
 				}
 			} else {
-				$error = 'Invalid email address submitted.';
+				$class = ' alert-danger';
+				$message = 'Invalid email address submitted.';
 			}
 		}
 
-		if ($this->RequestHandler->isAjax()) {
-			if ($error != '') {
-				throw new BadRequestException(__($error));
-			}
-		}
-
-		$this->set('error', $error);
+		$this->set(compact('message', 'class'));
+		$this->render('/Elements/Flash/customAlert1', 'ajax');
 	}
 
 /**
