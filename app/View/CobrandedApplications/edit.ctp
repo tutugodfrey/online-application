@@ -97,12 +97,6 @@
 					<div id="actionButtons" align="right">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo $this->element('cobranded_applications/email_select_modal',
-									array(
-										'cobranded_application_id' => $this->request->data['CobrandedApplication']['id']
-									)
-								);
-
 								echo "<input type='button' data-toggle='modal' data-target='#myModal_".$this->request->data['CobrandedApplication']['id']."' value='Email For Field Completion'><br/>";
 								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'><br/>";
 
@@ -281,6 +275,22 @@
 		</section>
 	</div>
 </div>
+<?php 
+if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+	$cAppVals = Hash::get($this->request->data, 'CobrandedApplicationValues');
+	$custEmails['Owner1Email'] = Hash::extract($cAppVals, '{n}[name=Owner1Email].value');
+	$custEmails['Owner2Email'] = Hash::extract($cAppVals, '{n}[name=Owner2Email].value');
+	$custEmails['EMail'] = Hash::extract($cAppVals, '{n}[name=EMail].value');
+	$custEmails['LocEMail'] = Hash::extract($cAppVals, '{n}[name=LocEMail].value');
+	$custEmails = array_combine(array_keys($custEmails), Hash::extract($custEmails, "{s}.0"));
+	echo $this->element('cobranded_applications/email_select_modal',
+		array(
+			'cobranded_application_id' => $this->request->data['CobrandedApplication']['id'],
+			'valuesMap' => $custEmails
+		)
+	);
+}
+?>
 
 <script type="text/javascript" src="/js/jquery-validate.1.11.11.js"></script>
 <script type="text/javascript" src="/js/jquery-validate-additional-methods.js"></script>

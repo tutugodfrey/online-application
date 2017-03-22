@@ -8,21 +8,22 @@ $(document).ready(function(){
             $("#TemplateBuilderBaseTemplate").prepend("<option value=''>Select Base Template</option>").val('');
 
             value = $("#TemplateBuilderBaseCobrand").val();
-
-            $.ajax({
-                url: "/cobrands/get_template_ids/"+value,
-                data: value,
-                success: function(response){
-                    if (response.length != 0) {
-                        response = $.parseJSON(response)
-                        $.each(response, function(key, val) {
-                            name = map[val];
-                            $('#TemplateBuilderBaseTemplate').append('<option value="'+val+'">'+name+'</option>');
-                        });
-                    }
-                },
-                cache: false
-            });
+            if ($("#TemplateBuilderBaseCobrand option:selected").index() > 0){
+                $.ajax({
+                    url: "/cobrands/get_template_ids/"+value,
+                    data: value,
+                    success: function(response){
+                        if (response.length != 0) {
+                            response = $.parseJSON(response)
+                            $.each(response, function(key, val) {
+                                name = map[val];
+                                $('#TemplateBuilderBaseTemplate').append('<option value="'+val+'">'+name+'</option>');
+                            });
+                        }
+                    },
+                    cache: false
+                });
+            }
         });
     });
 
