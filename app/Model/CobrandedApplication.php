@@ -461,7 +461,7 @@ class CobrandedApplication extends AppModel {
 	public function createOnlineappForUser($user, $uuid = null) {
 		$response = array('success' => false, 'cobrandedApplication' => array('id' => null, 'uuid' => null));
 		if (is_null($uuid)) {
-			$uuid = String::uuid();
+			$uuid = CakeText::uuid();
 		}
 
 		$this->create(
@@ -924,7 +924,7 @@ class CobrandedApplication extends AppModel {
 		$this->create(
 			array(
 				'user_id' => $userId,
-				'uuid' => String::uuid(),
+				'uuid' => CakeText::uuid(),
 				'template_id' => $lookupId,
 				'status' => 'saved'
 			)

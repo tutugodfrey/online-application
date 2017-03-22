@@ -577,7 +577,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->CobrandedApplication->create(
 				array(
 					'user_id' => $this->Session->read('Auth.User.id'),
-					'uuid' => String::uuid()
+					'uuid' => CakeText::uuid()
 				)
 			);
 			$this->request->data = $this->CobrandedApplication->data;

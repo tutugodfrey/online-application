@@ -37,8 +37,8 @@ class UsersController extends AppController {
 			$this->Session->setFlash('This User already has Valid API Credentials!');
 			$this->redirect('/admin/users');
 		} else {
-			$token = sha1(String::uuid());
-			$password = substr(sha1(String::uuid()), 5, 14);
+			$token = sha1(CakeText::uuid());
+			$password = substr(sha1(CakeText::uuid()), 5, 14);
 
 			$this->User->set(array('token' => $token, 'api_password' => $password, 'api_enabled' => true, 'api' => true));
 			if (!$this->User->save()) {

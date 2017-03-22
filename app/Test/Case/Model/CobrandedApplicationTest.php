@@ -181,7 +181,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedValidationErrors = array();
 		$this->CobrandedApplication->create(
 			array(
-				'uuid' => String::uuid(),
+				'uuid' => CakeText::uuid(),
 				'user_id' => 1,
 				'template_id' => 1,
 			)
@@ -642,7 +642,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$applictionData = array(
 			'user_id' => $this->__user['User']['id'],
 			'template_id' => $this->__template['Template']['id'],
-			'uuid' => String::uuid(),
+			'uuid' => CakeText::uuid(),
 		);
 
 		$this->CobrandedApplication->create($applictionData);
@@ -1279,7 +1279,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// next pass a uuid and guess at the id (id++)
 		$expectedResponse['cobrandedApplication']['id'] = $actualResponse['cobrandedApplication']['id'] + 1;
-		$uuid = String::uuid();
+		$uuid = CakeText::uuid();
 		$expectedResponse['cobrandedApplication']['uuid'] = $uuid;
 		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['User'], $uuid);
 		$this->assertEquals($expectedResponse, $actualResponse, 'createOnlineappForUser response did not match the expected');
@@ -1303,7 +1303,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// create an app
 		$this->CobrandedApplication->create(
 			array(
-				'uuid' => String::uuid(),
+				'uuid' => CakeText::uuid(),
 				'user_id' => $this->__user['User']['id'],
 				'template_id' => $this->__user['User']['template_id'],
 			)

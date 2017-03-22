@@ -23,7 +23,7 @@ class TemplatePage extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'required' => true,
 			'message' => array('Template page name cannot be empty')
 		),

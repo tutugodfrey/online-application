@@ -33,8 +33,8 @@ class User extends AppModel {
 			),
 		),
 		'pwd' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -43,7 +43,7 @@ class User extends AppModel {
 			),
 		),
 		'password_confirm' => array(
-			'required'=>'notEmpty',
+			'required'=>'notBlank',
 			'match'=>array(
 			'rule' => 'validatePasswdConfirm',
 			'message' => 'Passwords do not match'

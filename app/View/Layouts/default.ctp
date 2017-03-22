@@ -177,7 +177,7 @@
 
                     if (strlen($cobrand_logo_url) == 0) {
                       // no logo specified... use brand logo on the left
-                      echo String::insert(
+                      echo CakeText::insert(
                         '<div class="row">' .
                         '<div class="col-md-12">:brand_logo</div>' .
                         '</div>',
@@ -188,7 +188,7 @@
                     } elseif ($include_brand_logo == true) {
                       // only one way to display this combination
                       if ($cobrand_logo_position < 3) {
-                        echo String::insert(
+                        echo CakeText::insert(
                           '<div class="row">' .
                           '<div class="col-md-6">:cobrand_logo</div>' .
                           '<div class="col-md-6">:brand_logo</div>' .
@@ -200,7 +200,7 @@
                         );
                       }
                       else {
-                        echo String::insert(
+                        echo CakeText::insert(
                           '<div class="row">' .
                           '<div class="col-md-6">:brand_logo</div>' .
                           '</div>',
@@ -213,7 +213,7 @@
                       // position the logo left,center or right
                       $logo_position = $cobrand_logo_position;
                       if ($logo_position < 3) {
-                        echo String::insert(
+                        echo CakeText::insert(
                           '<div class="row">' .
                           '<div class="col-md-12 text-:position">:cobrand_logo</div>' .
                           '</div>',

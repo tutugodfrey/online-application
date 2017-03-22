@@ -2,7 +2,7 @@
 $this->Html->addCrumb(__('Cobrands'), '/admin/cobrands');
 $this->Html->addCrumb(
 	__('Templates'),
-	String::insert(
+	CakeText::insert(
 		'/admin/cobrands/:cobrand_id/templates',
 		array('cobrand_id' => $cobrand['id'])
 	)
@@ -12,7 +12,7 @@ $this->Html->addCrumb(
 <div class="templatePages form">
 <?php echo $this->Form->create('TemplatePage'); ?>
 	<fieldset>
-		<legend><?php echo String::insert(__('Edit Template Page for ":template_name"'), array("template_name" => $template['name'])); ?></legend>
+		<legend><?php echo CakeText::insert(__('Edit Template Page for ":template_name"'), array("template_name" => $template['name'])); ?></legend>
 	<?php
 		echo $this->Form->input('id');
 		echo $this->Form->input('name', array('disabled' => $nameDisabled));

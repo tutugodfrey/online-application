@@ -3,8 +3,8 @@ class Apip extends AppModel {
        public $useTable = 'onlineapp_apips';
     public $validate = array(
         'ip_address' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
+            'notBlank' => array(
+                'rule' => array('notBlank'),
                 //'message' => 'Your custom message here',
                 //'allowEmpty' => false,
                 //'required' => false,

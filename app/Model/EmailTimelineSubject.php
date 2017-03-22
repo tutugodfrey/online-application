@@ -5,8 +5,8 @@ class EmailTimelineSubject extends AppModel {
     public $useTable = 'onlineapp_email_timeline_subjects';
     public $validate = array(
         'subject' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
+            'notBlank' => array(
+                'rule' => array('notBlank'),
             //'message' => 'Your custom message here',
             //'allowEmpty' => false,
             //'required' => false,

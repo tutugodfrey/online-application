@@ -2,14 +2,14 @@
 $this->Html->addCrumb(__('Cobrands'), '/admin/cobrands');
 $this->Html->addCrumb(
 	__('Templates'),
-	String::insert(
+	CakeText::insert(
 		'/admin/cobrands/:cobrand_id/templates',
 		array('cobrand_id' => $cobrand['id'])
 	)
 );
 $this->Html->addCrumb(
 	__('Pages'),
-	String::insert(
+	CakeText::insert(
 		'/admin/templates/:template_id/templatepages',
 		array('template_id' => $template['id'])
 	)
@@ -20,7 +20,7 @@ $this->Html->addCrumb(
 <?php echo $this->Form->create('TemplateSection'); ?>
 	<fieldset>
 		<legend>
-		<?php echo String::insert(__('Add Template Section for ":template_page_name" '), array("template_page_name" => $templatePage['name'])); ?></legend>
+		<?php echo CakeText::insert(__('Add Template Section for ":template_page_name" '), array("template_page_name" => $templatePage['name'])); ?></legend>
 	<?php
 		echo $this->Form->input('name');
 		echo $this->Form->input('width', array('min' => 1, 'max' => 12));

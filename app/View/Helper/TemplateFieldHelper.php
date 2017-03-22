@@ -46,7 +46,7 @@ class TemplateFieldHelper extends Helper {
 			$fieldOptions = Hash::insert($fieldOptions, 'disabled', 'disabled');
 		}
 
-		$retVal = $retVal . String::insert(
+		$retVal = $retVal . CakeText::insert(
 			'<div class="col-md-:width:api_field":title>',
 			array(
 				'width' => $field['width'],

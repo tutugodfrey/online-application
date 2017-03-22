@@ -2,21 +2,21 @@
 $this->Html->addCrumb(__('Cobrands'), '/admin/cobrands');
 $this->Html->addCrumb(
 	__('Templates'),
-	String::insert(
+	CakeText::insert(
 		'/admin/cobrands/:cobrand_id/templates',
 		array('cobrand_id' => $cobrand['id'])
 	)
 );
 $this->Html->addCrumb(
 	__('Pages'),
-	String::insert(
+	CakeText::insert(
 		'/admin/templates/:template_id/templatepages',
 		array('template_id' => $template['id'])
 	)
 );
 $this->Html->addCrumb(
 	__('Sections'),
-	String::insert(
+	CakeText::insert(
 		'/admin/templatepages/:template_page_id/templatesections',
 		array('template_page_id' => $templatePage['id'])
 	)
@@ -26,7 +26,7 @@ $this->Html->addCrumb(
 <div class="TemplateFields index">
 	<h2><?php echo __('Fields for:'); ?></h2>
 	<?php
-		echo String::insert(__(
+		echo CakeText::insert(__(
 			':partner_name > :template_name > :template_page_name > :template_section_name'),
 			array(
 				"partner_name" => $cobrand["partner_name"],
@@ -61,14 +61,14 @@ $this->Html->addCrumb(
 			<td><?php echo h($fieldTypes[$templateField['TemplateField']['type']]); ?>&nbsp;</td>
 			<td><?php echo $templateField['TemplateField']['required'] == 1 ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'required')) : ''; ?>&nbsp;</td>
 			<td><?php echo h($sourceTypes[$templateField['TemplateField']['source']]); ?>&nbsp;</td>
-			<td title="<?php echo $templateField['TemplateField']['default_value']; ?>"><?php echo String::truncate($templateField['TemplateField']['default_value'], 10); ?>&nbsp;</td>
+			<td title="<?php echo $templateField['TemplateField']['default_value']; ?>"><?php echo CakeText::truncate($templateField['TemplateField']['default_value'], 10); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['merge_field_name']); ?>&nbsp;</td>
 			<td><?php echo $templateField['TemplateField']['encrypt'] == 1 ? $this->Html->tag('span', '', array('class' => 'glyphicon glyphicon-ok', 'title' => 'encrypted')) : ''; ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['created']); ?>&nbsp;</td>
 			<td><?php echo h($templateField['TemplateField']['modified']); ?>&nbsp;</td>
 			<td class="actions">
-				<?php echo $this->Html->link(__('Edit'), String::insert($list_url . '/edit/:template_section_id', array('template_section_id' => $templateField['TemplateField']['id']))); ?>
-				<?php echo $this->Form->postLink(__('Delete'), String::insert($list_url . '/delete/:id', array('id' => $templateField['TemplateField']['id'])), null, __('Are you sure you want to delete # %s?', $templateField['TemplateField']['id'])); ?>
+				<?php echo $this->Html->link(__('Edit'), CakeText::insert($list_url . '/edit/:template_section_id', array('template_section_id' => $templateField['TemplateField']['id']))); ?>
+				<?php echo $this->Form->postLink(__('Delete'), CakeText::insert($list_url . '/delete/:id', array('id' => $templateField['TemplateField']['id'])), null, __('Are you sure you want to delete # %s?', $templateField['TemplateField']['id'])); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>
