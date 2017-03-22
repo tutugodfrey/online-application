@@ -198,7 +198,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$applicationData = array(
 			'user_id' => $this->__user['User']['id'],
 			'template_id' => $this->__template['Template']['id'],
-			'uuid' => String::uuid(),
+			'uuid' => CakeText::uuid(),
 		);
 		$this->CobrandedApplication->create($applicationData);
 		$cobrandedApplication = $this->CobrandedApplication->save();
@@ -292,7 +292,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$applicationData = array(
 			'user_id' => $this->__user['User']['id'],
 			'template_id' => $this->__template['Template']['id'],
-			'uuid' => String::uuid(),
+			'uuid' => CakeText::uuid(),
 		);
 
 		$this->CobrandedApplication->create($applicationData);

@@ -6,7 +6,7 @@
 		<?php
 		echo $this->Html->tag(
 			'h1',
-			String::insert(
+			CakeText::insert(
 				"Preview of ':template_name' Template for ':partner_name'",
 				array(
 					'template_name' => $template['Template']['name'],
@@ -26,7 +26,7 @@
 
 		if (strlen($template['Cobrand']['cobrand_logo_url']) == 0) {
 			// no logo specified... use brand logo on the left
-			echo String::insert(
+			echo CakeText::insert(
 				'<div class="row">' .
 					'<div class="col-md-12">:brand_logo</div>' .
 				'</div>',
@@ -36,7 +36,7 @@
 			);
 		} elseif ($template['Template']['include_brand_logo'] == true) {
 			// only one way to display this combination
-			echo String::insert(
+			echo CakeText::insert(
 				'<div class="row">' .
 					'<div class="col-md-6">:cobrand_logo</div>' .
 					'<div class="col-md-6">:brand_logo</div>' .
@@ -50,7 +50,7 @@
 			// position the logo left,center or right
 			$logo_position = $template['Template']['logo_position'];
 			if ($logo_position < 3) {
-				echo String::insert(
+				echo CakeText::insert(
 					'<div class="row">' .
 						'<div class="col-md-12 text-:position">:cobrand_logo</div>' .
 					'</div>',

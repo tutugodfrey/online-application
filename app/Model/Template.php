@@ -322,7 +322,7 @@ class Template extends AppModel {
 	}
 
 	private function __buildMergeFieldName($pageName, $sectionName, $fieldName) {
-		return String::insert(
+		return CakeText::insert(
 			":pageName_:sectionName_:fieldName",
 			array(
 				'pageName' => $this->__getFLOEW($pageName),

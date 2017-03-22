@@ -78,7 +78,7 @@ class CsvHelper extends AppHelper {
  */
 	public function clear() {
 		$this->line = array();
-		$this->bufferFile = APP . 'tmp' . DS . 'cache' . DS . 'maxmemory-' . String::uuid() . '-'. (5 * 1024 * 1024);
+		$this->bufferFile = APP . 'tmp' . DS . 'cache' . DS . 'maxmemory-' . CakeText::uuid() . '-'. (5 * 1024 * 1024);
 		$this->buffer = fopen($this->bufferFile, 'a+'); 
 	}
 

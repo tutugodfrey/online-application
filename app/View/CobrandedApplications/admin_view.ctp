@@ -13,7 +13,7 @@
 		</dd>
 		<dt><?php echo __('template'); ?></dt>
 		<dd>
-			<?php echo $this->Html->link($cobrandedApplication['Template']['name'], String::insert('/admin/templates/:id/templatepages', array('id' => $cobrandedApplication['Template']['id']))); ?>
+			<?php echo $this->Html->link($cobrandedApplication['Template']['name'], CakeText::insert('/admin/templates/:id/templatepages', array('id' => $cobrandedApplication['Template']['id']))); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Uuid'); ?></dt>
