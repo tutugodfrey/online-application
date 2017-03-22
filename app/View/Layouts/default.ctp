@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/onlineAppControls.js"></script>
     <script type="text/javascript" src="/js/uiContols.js"></script>
 
     <!-- Latest compiled and minified CSS -->

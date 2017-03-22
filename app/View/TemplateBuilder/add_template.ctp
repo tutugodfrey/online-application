@@ -1,27 +1,27 @@
-<script type="text/javascript">
-    <?php
-        echo "var map = {};";
-        foreach ($templates as $key => $val) {
-            echo "map['".$key."'] = '".$val."';";
-        }
-    ?>
-</script>
-<script type="text/javascript" src="/js/templateBuilder.js"></script>
 <?php
 
-if (!empty($template) && $template) {
+if (!empty($response['errors'])) {
+	echo $this->Html->tag('div',implode('<br/>', $response['errors']),
+		array('class' => 'alert alert-danger'));
+	echo "<script type='text/javascript'>$('body').scrollTop(0);</script>";
+}
+?>
+<?php
     echo "<div>";
         echo "<br><br>";
                 echo $this->Form->create('TemplateBuilder',
-                    array(                        
+                    array(
+                    	'default' => false,//prevent default submit this form is ajax only
+                    	'id' => 'templateBuilderMainForm',
                         'inputDefaults' => array(
                             'wrapInput' => false,
                         ),
-                        'url' => '/admin/template_builder/add',
+                        'url' => '/admin/template_builder/add_template',
                         'class' => 'form-inline'
                     )
                 );
-
+                echo $this->Form->hidden('TemplateBuilder.mainBuilderForm', array('value' => true));
+                echo $this->Form->hidden('TemplateBuilder.selected_template_id');
                 echo $this->Form->input(
                     'new_template_cobrand_id',
                     array(
@@ -181,35 +181,23 @@ if (!empty($template) && $template) {
                 echo "</table>";
                 echo "<br>";
         
-            echo $this->Form->end('Submit');
+            echo $this->Form->end(array('label' =>'Submit', 'onClick' => "$(this).hide();$('<img src=\'/img/refreshing.gif\'/>').appendTo( '#templateBuilderMainForm')"));
     echo "</div>";
-}
-else {
-    echo "<div class='cobrandedApplications form'>";
-    echo $this->Form->create('TemplateBuilder');
-        echo "<fieldset>";
-            echo "<legend>Choose Base Template</legend>";
-            echo $this->Form->input(
-                'base_cobrand',
-                array(
-                    'options' => $cobrands,
-                    'label' => false,
-                    'type' => 'select'
-                )
-            );
-            echo "<br>";
 
-            echo $this->Form->input(
-                'base_template',
-                array(
-                    'options' => $templates,
-                    'label' => false,
-                    'type' => 'select'
-                )
-            );
-            echo "<br>";
-        echo "</fieldset>";
-        echo $this->Form->end('Submit');
-    echo "</div>";
-}
+
+$data = $this->Js->get('#templateBuilderMainForm')->serializeForm(array('isForm' => true, 'inline' => true));
+$this->Js->get('#templateBuilderMainForm')->event(
+   'submit',
+   $this->Js->request(
+    array('action' => 'add_template', 'controller' => 'TemplateBuilder'),
+    array(
+        'update' => '#tmpltBldrContainer',
+        'data' => $data,
+        'async' => true,    
+        'dataExpression'=>true,
+        'method' => 'POST'
+    )
+  )
+);
+echo $this->Js->writeBuffer();
 ?>
