@@ -973,7 +973,7 @@ class CobrandedApplication extends AppModel {
 		$conditions[] = array('CobrandedApplicationValue.value' => $email);
 
 		// should probably check the state too
-		if (isset($id)) {
+		if (!empty($id)) {
 			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
 			$conditions[]['CobrandedApplicationValue.name'] = 'Owner1Email';
 		}
@@ -1047,7 +1047,7 @@ class CobrandedApplication extends AppModel {
 		$apps = $this->findAppsByEmail($email, $id);
 
 		if (count($apps) == 0) {
-			if (isset($id)) {
+			if (!empty($id)) {
 				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 				$cav = $this->CobrandedApplicationValue->find(
 					'first', array(
