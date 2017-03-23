@@ -41,16 +41,17 @@
 	<?php 
 		if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED
 		|| $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-			echo $this->Html->link(
-				$cobrandedApplication['CobrandedApplication']['status'],
-				array(
-					'controller' => 'cobrandedApplications',
-					'action' => 'app_status',
-					$cobrandedApplication['CobrandedApplication']['id'],
-					'admin' => true
-				)
-			) . "\n\t\t\n";
+			$stsPopoverId = "app_status_{$cobrandedApplication['CobrandedApplication']['id']}";
+			echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], '#', array('id' => $stsPopoverId, 
+				'onClick' => "getAppStatus('{$cobrandedApplication['CobrandedApplication']['id']}')", 
+				'data-toggle' => 'popover','data-trigger' => 'focus'));
+	?>
+			<script>
+				setElementPopOver('<?php echo $stsPopoverId; ?>');
+			</script>
+	<?php
 		} else {
+			
 			echo $cobrandedApplication['CobrandedApplication']['status'];
 		}
 	?>&nbsp;

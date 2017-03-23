@@ -788,7 +788,7 @@ class CobrandedApplicationsController extends AppController {
 			} else {
 				$this->Session->setFlash($extension['error']['message']);
 			}
-			$this->redirect('app_status/' . $id);
+			$this->redirect($this->referer());
 		}
 
 		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
