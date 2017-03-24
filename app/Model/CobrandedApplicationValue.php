@@ -49,8 +49,8 @@ class CobrandedApplicationValue extends AppModel {
 			),
 		),
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
 				'message' => 'Name is required',
 				'allowEmpty' => false,
 				'required' => true,

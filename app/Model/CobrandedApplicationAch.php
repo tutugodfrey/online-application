@@ -39,8 +39,8 @@ class CobrandedApplicationAch extends AppModel {
 			),
 		),
 		'auth_type' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
 				'message' => 'auth type is required',
 				'allowEmpty' => false,
 				'required' => true,
@@ -59,8 +59,8 @@ class CobrandedApplicationAch extends AppModel {
 			'message' => 'account number is invalid'
 		),
 		'bank_name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
 				'message' => 'bank name is required',
 				'allowEmpty' => false,
 				'required' => true,

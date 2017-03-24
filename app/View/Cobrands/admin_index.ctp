@@ -49,7 +49,7 @@
 						 array(),
 						"Delete " . $cobrand['Cobrand']['partner_name'] . " Cobrand and associated Templates?"
 				); ?>
-				<?php echo $this->Html->link(__('List Templates'), String::insert('/admin/cobrands/:id/templates', array('id' => $cobrand['Cobrand']['id']))); ?>
+				<?php echo $this->Html->link(__('List Templates'), CakeText::insert('/admin/cobrands/:id/templates', array('id' => $cobrand['Cobrand']['id']))); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

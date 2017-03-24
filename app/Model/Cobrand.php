@@ -34,15 +34,15 @@ class Cobrand extends AppModel {
 
 	public $validate = array(
 		'partner_name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
 				'required' => true,
 				'message' => 'Partner name cannot be empty'
 			),
 		),
 		'partner_name_short' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
 				'required' => true,
 				'message' => 'Short partner name cannot be empty'
 			),

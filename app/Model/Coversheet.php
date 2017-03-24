@@ -20,7 +20,7 @@ class Coversheet extends AppModel {
             'message' => 'Required'
         ),
         'setup_tier_select' => array(
-            'rule' => 'notEmpty',
+            'rule' => 'notBlank',
             'message' => 'Please select a Tier'
         ),
         'setup_equipment_terminal' => array(
@@ -32,7 +32,7 @@ class Coversheet extends AppModel {
             'message' => 'Equipment Type: Select One'
         ),
         'setup_install' => array(
-            'rule' => 'notEmpty',
+            'rule' => 'notBlank',
             'message' => 'Someone has got to perform the install'
          ),
         'setup_tier3' => array(

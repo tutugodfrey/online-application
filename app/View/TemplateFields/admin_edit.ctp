@@ -2,21 +2,21 @@
 $this->Html->addCrumb(__('Cobrands'), '/admin/cobrands');
 $this->Html->addCrumb(
 	__('Templates'),
-	String::insert(
+	CakeText::insert(
 		'/admin/cobrands/:cobrand_id/templates',
 		array('cobrand_id' => $cobrand['id'])
 	)
 );
 $this->Html->addCrumb(
 	__('Pages'),
-	String::insert(
+	CakeText::insert(
 		'/admin/templates/:template_id/templatepages',
 		array('template_id' => $template['id'])
 	)
 );
 $this->Html->addCrumb(
 	__('sections'),
-	String::insert(
+	CakeText::insert(
 		'/admin/templatepages/:template_page_id/templatesections',
 		array('template_page_id' => $templatePage['id'])
 	)
@@ -26,7 +26,7 @@ $this->Html->addCrumb(
 <div class="templateFields form container">
 <?php echo $this->Form->create('TemplateField', array('novalidate' => true)); ?>
 	<fieldset>
-		<legend><?php echo String::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?></legend>
+		<legend><?php echo CakeText::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?></legend>
 	<?php
 		echo '<div class="row">';
 		echo $this->Form->input('name', array('div' => 'col-md-12'));
