@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/onlineAppControls.js"></script>
     <script type="text/javascript" src="/js/uiContols.js"></script>
 
     <!-- Latest compiled and minified CSS -->
@@ -110,13 +111,17 @@
 	<div id='countTST'></div>
    <!-- Session notification Dialog Box -->
    <div id="msg_fader">&nbsp;</div>
-   <div id="session_box" style='height: 5.5cm'>
-       <h2><span class="label label-danger">Session Expiring Soon!</span></h2><br />
-      <p style="color:black ">Session will expire in <span id="sessCountDn">$nbsp;</span>
-           <br />All unsaved work will be lost upon session expiration.
-		   <br /><br /><span class="label label-success" style="font-size: 10pt">Click or hit any key continue.</span>
-	</p>
-   </div>
+  <div id="session_box" class="col-md-12">
+    <div class="panel panel-danger">
+      <div class="panel-heading text-center"><strong>Session Expiring Soon!</strong></div>
+      <div class="panel-body">
+         Session will expire in <span id="sessCountDn">&nbsp;</span>
+         <br/>Unsaved work will be lost.
+         <br/><span style="font-size: 10pt"><strong>Click or hit any key continue.</strong></span>
+      </div> 
+    </div>
+  </div>
+
     <!-- End Session notification Dialog Box -->
     <!--  span id="loginBtn" class="btn">Need to login?</span -->
     <div id="container">
@@ -172,7 +177,7 @@
 
                     if (strlen($cobrand_logo_url) == 0) {
                       // no logo specified... use brand logo on the left
-                      echo String::insert(
+                      echo CakeText::insert(
                         '<div class="row">' .
                         '<div class="col-md-12">:brand_logo</div>' .
                         '</div>',
@@ -183,7 +188,7 @@
                     } elseif ($include_brand_logo == true) {
                       // only one way to display this combination
                       if ($cobrand_logo_position < 3) {
-                        echo String::insert(
+                        echo CakeText::insert(
                           '<div class="row">' .
                           '<div class="col-md-6">:cobrand_logo</div>' .
                           '<div class="col-md-6">:brand_logo</div>' .
@@ -195,7 +200,7 @@
                         );
                       }
                       else {
-                        echo String::insert(
+                        echo CakeText::insert(
                           '<div class="row">' .
                           '<div class="col-md-6">:brand_logo</div>' .
                           '</div>',
@@ -208,7 +213,7 @@
                       // position the logo left,center or right
                       $logo_position = $cobrand_logo_position;
                       if ($logo_position < 3) {
-                        echo String::insert(
+                        echo CakeText::insert(
                           '<div class="row">' .
                           '<div class="col-md-12 text-:position">:cobrand_logo</div>' .
                           '</div>',

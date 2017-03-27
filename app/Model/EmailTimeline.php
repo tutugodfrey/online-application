@@ -23,8 +23,8 @@ class EmailTimeline extends AppModel {
     
     public $validate = array(
         'onlineapp_applications_id' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
+            'notBlank' => array(
+                'rule' => array('notBlank'),
             //'message' => 'Your custom message here',
             //'allowEmpty' => false,
             //'required' => false,
@@ -33,8 +33,8 @@ class EmailTimeline extends AppModel {
             ),
         ),
         'cobranded_application_id' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
+            'notBlank' => array(
+                'rule' => array('notBlank'),
             //'message' => 'Your custom message here',
             //'allowEmpty' => false,
             //'required' => false,

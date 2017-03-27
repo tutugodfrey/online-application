@@ -19,7 +19,7 @@ class Template extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Template name cannot be empty'),
 		),
 		'cobrand_id' => array(
@@ -27,7 +27,7 @@ class Template extends AppModel {
 			'message' => array('Invalid cobrand_id value used'),
 		),
 		'logo_position' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Logo position value not selected'),
 		),
 	);
@@ -322,7 +322,7 @@ class Template extends AppModel {
 	}
 
 	private function __buildMergeFieldName($pageName, $sectionName, $fieldName) {
-		return String::insert(
+		return CakeText::insert(
 			":pageName_:sectionName_:fieldName",
 			array(
 				'pageName' => $this->__getFLOEW($pageName),

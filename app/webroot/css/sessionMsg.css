@@ -28,15 +28,15 @@
 
 #session_box,#loading_box {
 	font: 13px Verdana;
-    width: 310px;
+    color: black;
+    width: 300px;
     height: 168px;
-    vertical-align: baseline;        
-    background: white;
+    vertical-align: baseline;
     position: fixed;
     top: 50%;
     left: 50%;
     margin: -100px 0 0 -160px;
-    padding: 5px 0 0 10px;
+    padding: 5px 5px 5px 10px;
     z-index: 10;
     display: none;
 }

@@ -32,11 +32,11 @@ App::uses('AppController', 'Controller');
 class PagesController extends AppController {
 
 /**
- * Controller name
+ * helpter name
  *
- * @var string
+ * @var array
  */
-
+	public $helpers = array('Js');
 /**
  * This controller does not use a model
  *

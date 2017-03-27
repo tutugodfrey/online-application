@@ -65,8 +65,8 @@ class TemplateFieldTest extends CakeTestCase {
 	}
 
 	public function testGetCobrand() {
-		$section_id = 1;
-		$expected_cobrand = array(
+		$sectionId = 1;
+		$expectedCobrand = array(
 			'id' => 1,
 			'partner_name' => 'Partner Name 1',
 			'partner_name_short' => 'PN1',
@@ -77,13 +77,13 @@ class TemplateFieldTest extends CakeTestCase {
 			'response_url_type' => null,
 			'brand_logo_url' => 'PN1 logo_url',
 		);
-		$returned_cobrand = $this->TemplateField->getCobrand($section_id);
-		$this->assertEquals($expected_cobrand, $returned_cobrand);
+		$returnedCobrand = $this->TemplateField->getCobrand($sectionId);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
 	}
 
 	public function testGetTemplate() {
-		$section_id = 1;
-		$expected_template = array(
+		$sectionId = 1;
+		$expectedTemplate = array(
 			'id' => 1,
 			'name' => 'Template 1 for PN1',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -94,16 +94,17 @@ class TemplateFieldTest extends CakeTestCase {
 			'include_brand_logo' => true,
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
-			'owner_equity_threshold' => 50
+			'owner_equity_threshold' => 50,
+			'requires_coversheet' => false
 		);
 
-		$returned_template = $this->TemplateField->getTemplate($section_id);
-		$this->assertEquals($expected_template, $returned_template);
+		$returnedTemplate = $this->TemplateField->getTemplate($sectionId);
+		$this->assertEquals($expectedTemplate, $returnedTemplate);
 	}
 
 	public function testGetTemplatePage() {
-		$section_id = 1;
-		$expected_template_page = array(
+		$sectionId = 1;
+		$expectedTemplatePage = array(
 			'id' => 1,
 			'name' => 'Page 1',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -114,13 +115,13 @@ class TemplateFieldTest extends CakeTestCase {
 			'rep_only' => false,
 		);
 
-		$returned_template_page = $this->TemplateField->getTemplatePage($section_id);
-		$this->assertEquals($expected_template_page, $returned_template_page);
+		$returnedTemplatePage = $this->TemplateField->getTemplatePage($sectionId);
+		$this->assertEquals($expectedTemplatePage, $returnedTemplatePage);
 	}
 
 	public function testGetTemplateSection() {
-		$section_id = 1;
-		$expected_template_section = array(
+		$sectionId = 1;
+		$expectedTemplateSection = array(
 			'id' => 1,
 			'name' => 'Page Section 1',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -132,12 +133,12 @@ class TemplateFieldTest extends CakeTestCase {
 			'width' => 12,
 		);
 
-		$returned_template_section = $this->TemplateField->getTemplateSection($section_id);
-		$this->assertEquals($expected_template_section, $returned_template_section);
+		$returnedTemplateSection = $this->TemplateField->getTemplateSection($sectionId);
+		$this->assertEquals($expectedTemplateSection, $returnedTemplateSection);
 	}
 
 	public function testValidation() {
-		$expected_validationErrors = array(
+		$expectedValidationErrors = array(
 			'name' => array('Template field name cannot be empty'),
 			'width' => array('Invalid width value used, please select a number between 1 and 12'),
 			'type' => array('Template field type cannot be empty'),
@@ -147,7 +148,7 @@ class TemplateFieldTest extends CakeTestCase {
 			'section_id' => array('Invalid section_id value used'),
 		);
 
-		$new_field_data = array(
+		$newFieldData = array(
 			'name' => '',
 			'width' => '',
 			'type' => '',
@@ -158,12 +159,12 @@ class TemplateFieldTest extends CakeTestCase {
 			'section_id' => '',
 		);
 
-		$this->TemplateField->create($new_field_data);
+		$this->TemplateField->create($newFieldData);
 		$this->assertFalse($this->TemplateField->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplateField->validationErrors);
 
 		// go right
-		$new_field_data = array(
+		$newFieldData = array(
 			'name' => 'required text field from user w/o default',
 			'width' => 6,
 			'type' => 0, // (text|)
@@ -173,13 +174,13 @@ class TemplateFieldTest extends CakeTestCase {
 			'order' => 0,
 			'section_id' => 1,
 		);
-		$expected_validationErrors = array();
-		$this->TemplateField->create($new_field_data);
+		$expectedValidationErrors = array();
+		$this->TemplateField->create($newFieldData);
 		$this->asserttrue($this->TemplateField->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplateField->validationErrors);
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
-		$new_field_data = array(
+		$newFieldData = array(
 			'name' => 'required text field from user w/o default',
 			'width' => 6,
 			'type' => 4, // (radio)
@@ -189,13 +190,13 @@ class TemplateFieldTest extends CakeTestCase {
 			'order' => 0,
 			'section_id' => 1,
 		);
-		$expected_validationErrors = array();
-		$this->TemplateField->create($new_field_data);
+		$expectedValidationErrors = array();
+		$this->TemplateField->create($newFieldData);
 		$this->asserttrue($this->TemplateField->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplateField->validationErrors);
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
-		$new_field_data = array(
+		$newFieldData = array(
 			'name' => 'required text field from user w/o default',
 			'width' => 6,
 			'type' => 5, // (radio)
@@ -205,13 +206,13 @@ class TemplateFieldTest extends CakeTestCase {
 			'order' => 0,
 			'section_id' => 1,
 		);
-		$expected_validationErrors = array();
-		$this->TemplateField->create($new_field_data);
+		$expectedValidationErrors = array();
+		$this->TemplateField->create($newFieldData);
 		$this->asserttrue($this->TemplateField->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplateField->validationErrors);
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
-		$new_field_data = array(
+		$newFieldData = array(
 			'name' => 'required text field from user w/o default',
 			'width' => 6,
 			'type' => 7, // (radio)
@@ -221,13 +222,13 @@ class TemplateFieldTest extends CakeTestCase {
 			'order' => 0,
 			'section_id' => 1,
 		);
-		$expected_validationErrors = array();
-		$this->TemplateField->create($new_field_data);
+		$expectedValidationErrors = array();
+		$this->TemplateField->create($newFieldData);
 		$this->asserttrue($this->TemplateField->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplateField->validationErrors);
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
-		$new_field_data = array(
+		$newFieldData = array(
 			'name' => 'required text field from user w/o default',
 			'width' => 6,
 			'type' => 20, // (radio)
@@ -237,14 +238,14 @@ class TemplateFieldTest extends CakeTestCase {
 			'order' => 0,
 			'section_id' => 1,
 		);
-		$expected_validationErrors = array();
-		$this->TemplateField->create($new_field_data);
+		$expectedValidationErrors = array();
+		$this->TemplateField->create($newFieldData);
 		$this->asserttrue($this->TemplateField->validates());
-		$this->assertEquals($expected_validationErrors, $this->TemplateField->validationErrors);
+		$this->assertEquals($expectedValidationErrors, $this->TemplateField->validationErrors);
 	}
 
 	public function testSaveNew() {
-		$template_field_data = array(
+		$templateFieldData = array(
 			'TemplateField' => array(
 				'name' => 'testSaveNew',
 				'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
@@ -256,20 +257,19 @@ class TemplateFieldTest extends CakeTestCase {
 				'section_id' => 1,
 			)
 		);
-		$this->TemplateField->save($template_field_data, array('validate' => false));
-		$expected_order_value = 4; // there are three fields already
-		$this->assertEquals($expected_order_value, $this->TemplateField->field('order'));
+		$this->TemplateField->save($templateFieldData, array('validate' => false));
+		$expectedOrderValue = 4; // there are three fields already
+		$this->assertEquals($expectedOrderValue, $this->TemplateField->field('order'));
 
 		// add another field
-		$template_field_data['TemplateField']['name'] = 'another field';
+		$templateFieldData['TemplateField']['name'] = 'another field';
 		$this->TemplateField->create();
-		$this->TemplateField->save($template_field_data, array('validate' => false));
-		$expected_order_value = $expected_order_value + 1;
-		$this->assertEquals($expected_order_value, $this->TemplateField->field('order'));
+		$this->TemplateField->save($templateFieldData, array('validate' => false));
+		$expectedOrderValue = $expectedOrderValue + 1;
+		$this->assertEquals($expectedOrderValue, $this->TemplateField->field('order'));
 	}
 
-	
-	public function testReordering_LastToFirst() {
+	public function testReorderingLastToFirst() {
 		// make sure the order values are what we expect
 		$first = $this->TemplateField->findById(1);
 		$this->assertEquals(0, $first['TemplateField']['order']);
@@ -292,7 +292,7 @@ class TemplateFieldTest extends CakeTestCase {
 		$this->assertEquals(2, $second['TemplateField']['order']);
 	}
 
-	public function testReordering_FirstToLast() {
+	public function testReorderingFirstToLast() {
 		// make sure the order values are what we expect
 		$first = $this->TemplateField->findById(1);
 		$this->assertEquals(0, $first['TemplateField']['order']);
@@ -315,7 +315,7 @@ class TemplateFieldTest extends CakeTestCase {
 		$this->assertEquals(1, $third['TemplateField']['order']);
 	}
 
-	public function testReordering_MiddleToFirst() {
+	public function testReorderingMiddleToFirst() {
 		// make sure the order values are what we expect
 		$first = $this->TemplateField->findById(1);
 		$this->assertEquals(0, $first['TemplateField']['order']);
@@ -328,7 +328,7 @@ class TemplateFieldTest extends CakeTestCase {
 		$second = $this->TemplateField->findById(2);
 		$second['TemplateField']['order'] = 0;
 		$this->TemplateField->save($second);
-		
+
 		// make sure the order values are what we expect
 		$first = $this->TemplateField->findById(1);
 		$this->assertEquals(1, $first['TemplateField']['order']);
@@ -338,7 +338,7 @@ class TemplateFieldTest extends CakeTestCase {
 		$this->assertEquals(2, $third['TemplateField']['order']);
 	}
 
-	public function testReordering_MiddleToLast() {
+	public function testReorderingMiddleToLast() {
 		// make sure the order values are what we expect
 		$first = $this->TemplateField->findById(1);
 		$this->assertEquals(0, $first['TemplateField']['order']);
@@ -351,7 +351,7 @@ class TemplateFieldTest extends CakeTestCase {
 		$second = $this->TemplateField->findById(2);
 		$second['TemplateField']['order'] = 2;
 		$this->TemplateField->save($second);
-		
+
 		// make sure the order values are what we expect
 		$first = $this->TemplateField->findById(1);
 		$this->assertEquals(0, $first['TemplateField']['order']);

@@ -55,7 +55,7 @@ class TemplateField extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Template field name cannot be empty'),
 		),
 		'width' => array(
@@ -65,11 +65,11 @@ class TemplateField extends AppModel {
 			)
 		),
 		'type' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Template field type cannot be empty'),
 		),
 		'source' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Template field source cannot be empty'),
 		),
 		'merge_field_name' => array(
@@ -77,7 +77,7 @@ class TemplateField extends AppModel {
 			'message' => array('Template field merge_field_name cannot be empty'),
 		),
 		'order' => array(
-			'rule' => array('notempty'),
+			'rule' => array('notBlank'),
 			'message' => array('Invalid order value used'),
 		),
 		'section_id' => array(

@@ -15,7 +15,7 @@ class NestedResourceController extends AppController {
 	protected $_controllerName;
 
 	protected function _getParentListUrl() {
-		return strtolower(String::insert(
+		return strtolower(CakeText::insert(
 			':admin/:parentControllerName',
 			array(
 				"admin" => ($this->_restrictToAdmin === true ? '/admin' : ''),
@@ -24,7 +24,7 @@ class NestedResourceController extends AppController {
 	}
 
 	protected function _getListUrl() {
-		return strtolower(String::insert(
+		return strtolower(CakeText::insert(
 			':admin/:parentControllerName/:parent_controller_id/:controller_name',
 			array(
 				"admin" => ($this->_restrictToAdmin === true ? "/admin" : ""),

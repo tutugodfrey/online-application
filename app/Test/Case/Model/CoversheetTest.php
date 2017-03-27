@@ -17,7 +17,7 @@ class CoversheetTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.group',
+		'app.onlineappGroup',
 		'app.onlineappCoversheet',
 		'app.onlineappUser',
 		'app.onlineappCobrand',
@@ -40,7 +40,7 @@ class CoversheetTest extends CakeTestCase {
 		parent::setUp();
 		$this->Group = ClassRegistry::init('Group');
 		$this->Coversheet = ClassRegistry::init('Coversheet');
-		$this->User = ClassRegistry::init('OnlineappUser');
+		$this->User = ClassRegistry::init('User');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -48,15 +48,15 @@ class CoversheetTest extends CakeTestCase {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('OnlineappEmailTimelineSubject');
-		$this->OnlineappEmailTimeline = ClassRegistry::init('OnlineappEmailTimeline');
+		$this->OnlineappEmailTimelineSubject = ClassRegistry::init('EmailTimelineSubject');
+		$this->OnlineappEmailTimeline = ClassRegistry::init('EmailTimeline');
 
 		$this->Coversheet->validator()->remove('cp_encrypted_sn');
 		$this->Coversheet->validator()->remove('cp_pinpad_ra_attached');
 		$this->Coversheet->validator()->remove('moto_online_chd');
 
 		// load data
-		$this->loadFixtures('Group');
+		$this->loadFixtures('OnlineappGroup');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');

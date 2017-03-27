@@ -2,7 +2,7 @@
 $this->Html->addCrumb(__('Cobrands'), '/admin/cobrands');
 $this->Html->addCrumb(
 	__('Templates'),
-	String::insert(
+	CakeText::insert(
 		'/admin/cobrands/:cobrand_id/templates',
 		array('cobrand_id' => $cobrand['id'])
 	)
@@ -12,7 +12,7 @@ $this->Html->addCrumb(
 <div class="templatePages index">
 	<h2><?php echo __('Pages for:'); ?></h2>
 	<?php
-		echo String::insert(__(
+		echo CakeText::insert(__(
 			':partner_name > :template_name'),
 			array(
 				"partner_name" => $cobrand["partner_name"],
@@ -37,9 +37,9 @@ $this->Html->addCrumb(
 			<td><?php echo h($templatePage['TemplatePage']['created']); ?>&nbsp;</td>
 			<td><?php echo h($templatePage['TemplatePage']['modified']); ?>&nbsp;</td>
 			<td class="actions">
-				<?php echo $this->Html->link(__('Edit'), String::insert($list_url . '/edit/:id', array('id' => $templatePage['TemplatePage']['id']))); ?>
-				<?php echo $this->Form->postLink(__('Delete'), String::insert($list_url . '/delete/:id', array('id' => $templatePage['TemplatePage']['id'])), null, __('Are you sure you want to delete # %s?', $templatePage['TemplatePage']['id'])); ?>
-				<?php echo $this->Html->link(__('List Sections'), String::insert('/admin/templatepages/:template_page_id/templatesections', array('template_page_id' => $templatePage['TemplatePage']['id']))); ?>
+				<?php echo $this->Html->link(__('Edit'), CakeText::insert($list_url . '/edit/:id', array('id' => $templatePage['TemplatePage']['id']))); ?>
+				<?php echo $this->Form->postLink(__('Delete'), CakeText::insert($list_url . '/delete/:id', array('id' => $templatePage['TemplatePage']['id'])), null, __('Are you sure you want to delete # %s?', $templatePage['TemplatePage']['id'])); ?>
+				<?php echo $this->Html->link(__('List Sections'), CakeText::insert('/admin/templatepages/:template_page_id/templatesections', array('template_page_id' => $templatePage['TemplatePage']['id']))); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>

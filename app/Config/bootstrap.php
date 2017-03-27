@@ -25,7 +25,8 @@
  */
 
 // Setup a 'default' cache configuration for use in the application.
-Cache::config('default', array('engine' => 'Apc'));
+App::uses('MemcachedEngine', 'Memcached.Lib/Cache/Engine');
+Cache::config('default', array('engine' => 'Memcached'));
 require APP . 'Vendor/autoload.php';
 spl_autoload_unregister(array('App', 'load'));
 spl_autoload_register(array('App', 'load'), true, true);

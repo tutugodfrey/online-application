@@ -1,74 +1,27 @@
-<script type="text/javascript">
-    <?php
-        echo "var map = {};";
-        foreach ($templates as $key => $val) {
-            echo "map['".$key."'] = '".$val."';";
-        }
-    ?>
-
-    $(document).ready(function(){
-        $("#TemplateBuilderBaseCobrand").prepend("<option value=''>Select Base Cobrand</option>").val('');
-        $('#TemplateBuilderBaseTemplate')[0].options.length = 0;
-        $("#TemplateBuilderBaseTemplate").prepend("<option value=''>Select Base Template</option>").val('');
-
-        $("#TemplateBuilderBaseCobrand").on('change', function() {
-            $('#TemplateBuilderBaseTemplate')[0].options.length = 0;
-            $("#TemplateBuilderBaseTemplate").prepend("<option value=''>Select Base Template</option>").val('');
-
-            value = $("#TemplateBuilderBaseCobrand").val();
-
-            $.ajax({
-                url: "/cobrands/get_template_ids/"+value,
-                data: value,
-                success: function(response){
-                    if (response.length != 0) {
-                        response = $.parseJSON(response)
-                        $.each(response, function(key, val) {
-                            name = map[val];
-                            $('#TemplateBuilderBaseTemplate').append('<option value="'+val+'">'+name+'</option>');
-                        });
-                    }
-                },
-                cache: false
-            });
-        });
-    });
-
-    var checkCheckbox = function(arg) {
-        $('#'+arg).prop('checked', true);
-    };
-
-    var checkAll = function() {   
-        var checked = $("#check_all").is(":checked");
-        var pattern = /^template_page.+/;
-
-        $('input[type=checkbox]').each(function () {
-            var id = $(this).attr('id');
-            if (pattern.test(id)) {
-                if (checked) {
-                    $(this).prop('checked', true);
-                }
-                else {
-                    $(this).prop('checked', false);
-                }
-            }
-        });
-    };
-
-</script>
-
 <?php
 
-if (!empty($template) && $template) {
+if (!empty($response['errors'])) {
+	echo $this->Html->tag('div',implode('<br/>', $response['errors']),
+		array('class' => 'alert alert-danger'));
+	echo "<script type='text/javascript'>$('body').scrollTop(0);</script>";
+}
+?>
+<?php
     echo "<div>";
         echo "<br><br>";
                 echo $this->Form->create('TemplateBuilder',
                     array(
-                        'url' => '/admin/template_builder/add',
+                    	'default' => false,//prevent default submit this form is ajax only
+                    	'id' => 'templateBuilderMainForm',
+                        'inputDefaults' => array(
+                            'wrapInput' => false,
+                        ),
+                        'url' => '/admin/template_builder/add_template',
                         'class' => 'form-inline'
                     )
                 );
-
+                echo $this->Form->hidden('TemplateBuilder.mainBuilderForm', array('value' => true));
+                echo $this->Form->hidden('TemplateBuilder.selected_template_id');
                 echo $this->Form->input(
                     'new_template_cobrand_id',
                     array(
@@ -78,41 +31,7 @@ if (!empty($template) && $template) {
                     )
                 );
                 echo "<br><br>";
-
-                echo "New Template:<br><br>";
-                echo $this->Form->input('name', array('style' => 'width:500px; height:30px;'));
-                echo $this->Form->input(
-                    'logo_position',
-                    array(
-                        'options' => $logoPositionTypes,
-                        'empty' => __('(choose one)')
-                    )
-                );
-                echo $this->Form->input('include_brand_logo',
-                    array(
-                        'label' => 'Include Brand Logo',
-                        'type' => 'checkbox'
-                    )
-                );
-                echo $this->Form->input('description', array('style' => 'width:500px; height:30px;'));
-
-                echo $this->Form->input('rightsignature_template_guid',
-                    array(
-                        'type' => 'select',
-                        'label' => 'Rightsignature Template Guid',
-                        'options' => $templateList,
-                    )
-                );
-
-                echo $this->Form->input('rightsignature_install_template_guid',
-                    array(
-                        'type' => 'select',
-                        'label' => 'Rightsignature Install Template Guid',
-                        'options' => $installTemplateList,
-                    )
-                );
-
-                echo $this->Form->input('owner_equity_threshold', array('style' => 'width:500px; height:30px;'));     
+                echo $this->element('Templates/templateFields');     
 
                 echo "<table cellpadding='0' cellspacing='0' border='1'>";
 
@@ -262,35 +181,23 @@ if (!empty($template) && $template) {
                 echo "</table>";
                 echo "<br>";
         
-            echo $this->Form->end('Submit');
+            echo $this->Form->end(array('label' =>'Submit', 'onClick' => "$(this).hide();$('<img src=\'/img/refreshing.gif\'/>').appendTo( '#templateBuilderMainForm')"));
     echo "</div>";
-}
-else {
-    echo "<div class='cobrandedApplications form'>";
-    echo $this->Form->create('TemplateBuilder');
-        echo "<fieldset>";
-            echo "<legend>Choose Base Template</legend>";
-            echo $this->Form->input(
-                'base_cobrand',
-                array(
-                    'options' => $cobrands,
-                    'label' => false,
-                    'type' => 'select'
-                )
-            );
-            echo "<br>";
 
-            echo $this->Form->input(
-                'base_template',
-                array(
-                    'options' => $templates,
-                    'label' => false,
-                    'type' => 'select'
-                )
-            );
-            echo "<br>";
-        echo "</fieldset>";
-        echo $this->Form->end('Submit');
-    echo "</div>";
-}
+
+$data = $this->Js->get('#templateBuilderMainForm')->serializeForm(array('isForm' => true, 'inline' => true));
+$this->Js->get('#templateBuilderMainForm')->event(
+   'submit',
+   $this->Js->request(
+    array('action' => 'add_template', 'controller' => 'TemplateBuilder'),
+    array(
+        'update' => '#tmpltBldrContainer',
+        'data' => $data,
+        'async' => true,    
+        'dataExpression'=>true,
+        'method' => 'POST'
+    )
+  )
+);
+echo $this->Js->writeBuffer();
 ?>

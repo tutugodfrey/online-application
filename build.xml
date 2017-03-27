@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="axia_app_2" default="build-parallel">
 	<target name="build"
-		depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+		depends="prepare,phpunit,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpcb"/>
 
 	<target name="build-parallel"
-		depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
+		depends="prepare,phpunit,lint,tools-parallel,phpcb"/>
 
 	<target name="tools-parallel" description="Run tools in parallel">
 		<parallel threadCount="2">
 		<sequential>
 			<antcall target="prepare"/>
+			<antcall target="phpunit"/>
 			<antcall target="pdepend"/>
 			<antcall target="phpmd-ci"/>
 		</sequential>
@@ -23,7 +24,7 @@
 	<target name="build-smoke"
 		description="Jenkin's target for smoke builds; prepare, migrate, phpunit">
 		<antcall target="prepare"/>
-		<antcall target="migrate"/>
+		<!--antcall target="migrate"/-->
 		<antcall target="phpunit"/>
 	</target>
 
@@ -80,14 +81,14 @@
 		</apply>
 	</target>
 
-	<target name="migrate">
+	<!--target name="migrate">
 		<exec executable="${basedir}/app/Console/cake" failonerror="true">
 			<arg line="Migrations.migration status -c test -i test"/>
 		</exec>
 		<exec executable="${basedir}/app/Console/cake" failonerror="true">
 			<arg line="Migrations.migration run all -c test -i test"/>
 		</exec>
-	</target>
+	</target-->
 
 	<target name="phploc"
 		description="Measure project size using PHPLOC">
@@ -152,7 +153,7 @@
 		</exec>
 	</target>
 
-	<target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders, migrate">
+	<target name="phpunit" description="Run unit tests with PHPUnit" depends="ensure-tmp-folders">
 		<exec executable="bash" failonerror="true" dir="${basedir}/app">
 			<arg value="-c"/>
 			<arg value="Console/cake test --stderr --testdox --log-junit '../build/reports/junit.xml' --coverage-html 'webroot/coverage' --coverage-clover '../build/reports/coverage-clover.xml' --configuration '../phpunit.xml' app AllTests"/>

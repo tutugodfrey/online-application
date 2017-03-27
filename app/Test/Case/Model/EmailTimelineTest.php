@@ -6,7 +6,9 @@ App::uses('EmailTimeline', 'Model');
  *
  */
 class EmailTimelineTest extends CakeTestCase {
-  public $autoFixtures = false;
+
+	public $autoFixtures = false;
+
 /**
  * Fixtures
  *
@@ -15,8 +17,8 @@ class EmailTimelineTest extends CakeTestCase {
 	public $fixtures = array(
 		'app.onlineappApip',
 		'app.onlineappApplication',
-		'app.user',
-		'app.group',
+		'app.onlineappUser',
+		'app.onlineappGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplate_page',
@@ -26,7 +28,6 @@ class EmailTimelineTest extends CakeTestCase {
 		'app.onlineappApi_log',
 		'app.onlineappUsers_manager',
 		'app.onlineappCoversheet',
-		'app.onlineappMultipass',
 		'app.merchant',
 		'app.equipment_programming',
 		'app.timeline_entry',
@@ -56,5 +57,6 @@ class EmailTimelineTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
-	public function testValidation() {}
+	public function testValidation() {
+	}
 }

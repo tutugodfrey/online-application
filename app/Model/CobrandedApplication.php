@@ -461,7 +461,7 @@ class CobrandedApplication extends AppModel {
 	public function createOnlineappForUser($user, $uuid = null) {
 		$response = array('success' => false, 'cobrandedApplication' => array('id' => null, 'uuid' => null));
 		if (is_null($uuid)) {
-			$uuid = String::uuid();
+			$uuid = CakeText::uuid();
 		}
 
 		$this->create(
@@ -924,7 +924,7 @@ class CobrandedApplication extends AppModel {
 		$this->create(
 			array(
 				'user_id' => $userId,
-				'uuid' => String::uuid(),
+				'uuid' => CakeText::uuid(),
 				'template_id' => $lookupId,
 				'status' => 'saved'
 			)
@@ -973,7 +973,7 @@ class CobrandedApplication extends AppModel {
 		$conditions[] = array('CobrandedApplicationValue.value' => $email);
 
 		// should probably check the state too
-		if (isset($id)) {
+		if (!empty($id)) {
 			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
 			$conditions[]['CobrandedApplicationValue.name'] = 'Owner1Email';
 		}
@@ -1047,7 +1047,7 @@ class CobrandedApplication extends AppModel {
 		$apps = $this->findAppsByEmail($email, $id);
 
 		if (count($apps) == 0) {
-			if (isset($id)) {
+			if (!empty($id)) {
 				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 				$cav = $this->CobrandedApplicationValue->find(
 					'first', array(
@@ -2545,6 +2545,7 @@ class CobrandedApplication extends AppModel {
 				'Cobrand.partner_name',
 				'Template.id',
 				'Template.name',
+				'Template.requires_coversheet',
 				'User.id',
 				'User.firstname',
 				'User.lastname',
