@@ -9,12 +9,13 @@ App::uses('TemplatePage', 'Model');
  */
 class TemplatePageTest extends CakeTestCase {
 
-	public $dropTables = false;
+	
 
 	public $autoFixtures = false;
 
 	public $fixtures = array(
 		'app.onlineappCobrand',
+		'app.onlineappUser',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
@@ -34,6 +35,7 @@ class TemplatePageTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Cobrand = ClassRegistry::init('Cobrand');
+		$this->User = ClassRegistry::init('User');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
@@ -43,6 +45,7 @@ class TemplatePageTest extends CakeTestCase {
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
+		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
@@ -211,10 +214,7 @@ class TemplatePageTest extends CakeTestCase {
 		);
 		$this->Template->create();
 		$this->Template->save($templateData);
-		$template = $this->Template->read();
-		// expect there to be one page already
-		$expectedPageCount = 1;
-		$this->assertEquals($expectedPageCount, count($template['TemplatePages']), 'Newly created templates should have 1 page');
+		$template = $this->Template->read();		
 
 		// add another page
 		$pageData = array(

@@ -6,7 +6,7 @@ App::uses('Apip', 'Model');
  *
  */
 class ApipTest extends CakeTestCase {
-  public $dropTables = true;
+  
   public $autoFixtures = false;
 /**
  * Fixtures

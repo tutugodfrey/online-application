@@ -9,7 +9,7 @@ class CoversheetTest extends CakeTestCase {
 
 	public $autoFixtures = false;
 
-	public $dropTables = false;
+	
 
 /**
  * Fixtures
