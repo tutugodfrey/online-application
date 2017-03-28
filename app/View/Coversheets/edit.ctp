@@ -1,4 +1,7 @@
 <div class='container'>
+<br />
+    <div class='panel panel-primary'>
+    <div class=" panel-heading"><h4 class="text-center panel-title"><?php echo __(ucfirst($this->action) . ' Coversheet'); ?></h4></div>
     <div class='row'>
         <div class='col-xs-12'>
             <?php echo $this->Html->css('coversheet', null, array('inline' => false)); ?>
@@ -212,7 +215,6 @@
             <?php echo $this->Form->create('Coversheet', array('novalidate' => true));?>
 		      <?php $attributes = array('hiddenField' => false); ?>
             	<fieldset>
-            		<legend><?php echo __('Add %s', __('Coversheet')); ?></legend>
             	       <?php echo $this->Form->hidden('id'); ?>
                             <table class="table table-condensed">
                                 <tr>
@@ -1382,4 +1384,5 @@
             ?>
         </div>
     </div>
+    </div>    
 </div>    

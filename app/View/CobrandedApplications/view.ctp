@@ -30,17 +30,21 @@
 	</dl>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php
-			echo $this->Html->link(
-				__('Edit Application'),
-				array(
-					'action' => 'edit',
-					$cobrandedApplication['CobrandedApplication']['uuid']
-				)
-			);
-			?>
-		</li>
-	</ul>
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		 <div class="panel-body">
+		<ul>
+			<li><?php
+				echo $this->Html->link(
+					__('Edit Application'),
+					array(
+						'action' => 'edit',
+						$cobrandedApplication['CobrandedApplication']['uuid']
+					)
+				);
+				?>
+			</li>
+		</ul>
+			</div>
+	</div>
 </div>
