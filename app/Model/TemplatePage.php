@@ -62,7 +62,7 @@ class TemplatePage extends AppModel {
 		}
 		// look it up
 		$parentTemplate = $this->Template->findById($templateId);
-		$cobrand = $parentTemplate['Cobrand'];
+		$cobrand = Hash::get($parentTemplate, 'Cobrand');
 
 		// is this the way to access another model?
 		return $cobrand;
@@ -70,7 +70,8 @@ class TemplatePage extends AppModel {
 
 	public function getTemplate($templateId, $includeAssc = false) {
 		$this->Template->id = $templateId;
-		$template = $this->Template->read();
+		$template = $this->Template->find('first', array('conditions' => array('Template.id' => $templateId)));
+
 		if (empty($template)) {
 			return $template;
 		}
@@ -89,7 +90,7 @@ class TemplatePage extends AppModel {
 		// make sure 'Validate Application' page is the last page
 		// we have to have $this->data to perform our task
 		$template = $this->getTemplate($this->data['TemplatePage']['template_id'], true);
-		$pages = $template['TemplatePages'];
+		$pages = Hash::get($template, 'TemplatePages');
 		$validateAppPageIndex = 0;
 		$pagesCount = count($pages);
 		if ($pagesCount > 1) {

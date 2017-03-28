@@ -4,12 +4,13 @@ App::uses('Template', 'Model');
 
 class TemplateTest extends CakeTestCase {
 
-	public $dropTables = false;
-
 	public $autoFixtures = false;
 
 	public $fixtures = array(
 		'app.onlineappUser',
+		'app.onlineappUsersCobrand',
+		'app.onlineappUsersTemplate',
+		'app.onlineappUsersManager',
 		'app.onlineappGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
@@ -28,6 +29,7 @@ class TemplateTest extends CakeTestCase {
 		parent::setUp();
 		$this->Group = ClassRegistry::init('Group');
 		$this->User = ClassRegistry::init('User');
+		$this->UsersManager = ClassRegistry::init('UsersManager');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
@@ -38,6 +40,9 @@ class TemplateTest extends CakeTestCase {
 
 		// load data
 		$this->loadFixtures('OnlineappUser');
+		$this->loadFixtures('OnlineappUsersCobrand');
+		$this->loadFixtures('OnlineappUsersTemplate');
+		$this->loadFixtures('OnlineappUsersManager');
 		$this->loadFixtures('OnlineappGroup');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
@@ -188,18 +193,6 @@ class TemplateTest extends CakeTestCase {
 		$this->Template->save($newTemplateData);
 		$this->assertTrue($this->Template->validates());
 		$this->assertEquals($expectedValidationErrors, $this->Template->validationErrors);
-
-		$createdTemplate = $this->Template->read();
-		$this->assertEquals(1, count($createdTemplate['TemplatePages']), "we should have a new template with a 'Validate Application' page");
-		$createdTemplatePage = $createdTemplate['TemplatePages'][0];
-		$this->TemplatePage->id = $createdTemplatePage['id'];
-		$createdTemplatePage = $this->TemplatePage->read();
-		$this->assertEquals(4, count($createdTemplatePage['TemplateSections']), "The new page should have some sections");
-
-		// deleting the template will delete the associated children (sections and fields)
-		$this->TemplatePage->delete($createdTemplatePage['TemplatePage']['id']);
-		$createdTemplatePage = $this->TemplatePage->read();
-		$this->assertEquals(0, count($createdTemplatePage['TemplateSections']), "The new page should have no sections");
 	}
 
 	public function testGetTemplateApiFields() {

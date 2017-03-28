@@ -14,7 +14,7 @@ class CobrandTest extends CakeTestCase {
 
 	public $autoFixtures = false;
 
-	public $dropTables = false;
+	
 
 	public function setUp() {
 		parent::setUp();
