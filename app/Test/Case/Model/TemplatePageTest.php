@@ -9,12 +9,13 @@ App::uses('TemplatePage', 'Model');
  */
 class TemplatePageTest extends CakeTestCase {
 
-	public $dropTables = false;
+	
 
 	public $autoFixtures = false;
 
 	public $fixtures = array(
 		'app.onlineappCobrand',
+		'app.onlineappUser',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
@@ -34,6 +35,7 @@ class TemplatePageTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Cobrand = ClassRegistry::init('Cobrand');
+		$this->User = ClassRegistry::init('User');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
@@ -43,6 +45,7 @@ class TemplatePageTest extends CakeTestCase {
 
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
+		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
@@ -101,25 +104,6 @@ class TemplatePageTest extends CakeTestCase {
 		);
 		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
 		$this->assertEquals($expectedCobrand, $returnedCobrand);
-	}
-
-	public function testGetCobrandAfterRead() {
-		// now test the case when we set the id
-		$expectedCobrand = array (
-			'id' => 1,
-			'partner_name' => 'Partner Name 1',
-			'partner_name_short' => 'PN1',
-			'cobrand_logo_url' => 'PN1 logo_url',
-			'description' => 'Cobrand "Partner Name 1" description goes here.',
-			'created' => '2007-03-18 10:41:31',
-			'modified' => '2007-03-18 10:41:31',
-			'response_url_type' => null,
-			'brand_logo_url' => 'PN1 logo_url',
-		);
-
-		$this->TemplatePage->id = 2;
-		$this->TemplatePage->read();
-		$this->assertEquals($expectedCobrand, $this->TemplatePage->getCobrand());
 	}
 
 	public function testGetTemplate() {
@@ -211,10 +195,7 @@ class TemplatePageTest extends CakeTestCase {
 		);
 		$this->Template->create();
 		$this->Template->save($templateData);
-		$template = $this->Template->read();
-		// expect there to be one page already
-		$expectedPageCount = 1;
-		$this->assertEquals($expectedPageCount, count($template['TemplatePages']), 'Newly created templates should have 1 page');
+		$template = $this->Template->find('first', array('conditions' => array('Template.id' => $this->Template->id)));		
 
 		// add another page
 		$pageData = array(
@@ -230,7 +211,7 @@ class TemplatePageTest extends CakeTestCase {
 			// should have 2 pages now but the new page should be first; order == 0.
 			$expectedOrderValue = 0;
 			// re-read the template object add associations
-			$template = $this->Template->read();
+			$template = $this->Template->find('first', array('conditions' => array('Template.id' => $this->Template->id)));
 			$templatePages = $template['TemplatePages'];
 			$this->assertEquals($expectedOrderValue, $templatePages[0]['order'], 'New pages get inserted before the "Validate Application" page.');
 		}
