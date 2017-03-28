@@ -18,9 +18,9 @@ var dir = new Array();
 /************************************************************/
 
 /*Disable enter key from all online app form inputs except textarea input where enter is needed for new lines*/
-$("document").ready(function(){
-    if ($("form#onlineapp").length !== 0) {
-        $(document).on("keypress", ":input:not(textarea)", function(event) {
+jQuery("document").ready(function(){
+    if (jQuery("form#onlineapp").length !== 0) {
+        jQuery(document).on("keypress", ":input:not(textarea)", function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
             }
