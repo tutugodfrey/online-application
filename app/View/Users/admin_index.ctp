@@ -19,19 +19,19 @@
 ?>
 
 
-<div class="users index">
-<h2>Users</h2>
-<table cellpadding="0" cellspacing="0">
+<div class="users  panel panel-default index">
+<div class="panel-heading"><u><strong>Users</strong></u></div>
+<table class="table talbe-condensed table-hover">
   <tr>
-    <th><?php echo $this->Paginator->sort('active', 'Status'); ?></th>
-    <th><?php echo $this->Paginator->sort('id', 'ID'); ?></th>
-    <th><?php echo $this->Paginator->sort('firstname', 'Firstname'); ?></th>
-    <th><?php echo $this->Paginator->sort('lastname', 'Lastname'); ?></th>
-    <th><?php echo $this->Paginator->sort('email', 'Email'); ?></th>
-    <th><?php echo $this->Paginator->sort('extension', 'Ext'); ?></th>
-    <th><?php echo $this->Paginator->sort('group_id', 'Group'); ?></th>
-    <th><?php echo $this->Paginator->sort('template_id', 'Template'); ?></th>
-    <th><?php echo __('Actions');?></th>
+	<th><?php echo $this->Paginator->sort('active', 'Status'); ?></th>
+	<th><?php echo $this->Paginator->sort('id', 'ID'); ?></th>
+	<th><?php echo $this->Paginator->sort('firstname', 'Firstname'); ?></th>
+	<th><?php echo $this->Paginator->sort('lastname', 'Lastname'); ?></th>
+	<th><?php echo $this->Paginator->sort('email', 'Email'); ?></th>
+	<th><?php echo $this->Paginator->sort('extension', 'Ext'); ?></th>
+	<th><?php echo $this->Paginator->sort('group_id', 'Group'); ?></th>
+	<th><?php echo $this->Paginator->sort('template_id', 'Template'); ?></th>
+	<th><?php echo __('Actions');?></th>
   </tr>
 <?php
 $i = 0;
@@ -103,91 +103,97 @@ echo "\n";
 
 </div>
 <div class="actions">
-  <h3><?php echo __('Actions'); ?></h3>
-  <ul>
-	<li>
-		<?php
-			echo $this->Html->link('New User',
-				array(
-					'action' => 'add',
-					'admin' => true
-				)
-			);
-		?>
-	</li>
-	<li>
-		<?php
-			echo ($queryString == '1' ?
-				$this->Html->link('Show Active Users',
-					array(
-						'action' => 'index',
-						'admin' => true
-					)
-				) :
-				$this->Html->link('Show All Users',
-					array(
-						'action' => '?all=1',
-						'admin' => true
-					)
-				)
-			);
-		?>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link('Bulk Edit Users',
-				array(
-					'action' => 'bulk_edit',
-					'admin' => true
-				)
-			);
-		?>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link('List Applications',
-				array(
-					'controller' => 'applications',
-					'action' => 'index',
-					'admin' => true
-				)
-			);
-		?>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link('List Settings',
-				array(
-					'controller' => 'settings',
-					'action' => 'index',
-					'admin' => true
-				)
-			);
-		?>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link('List IP Restrictions',
-				array(
-					'controller' => 'apips',
-					'action' => 'index',
-					'admin' => true
-				)
-			);
-		?>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link('List Groups',
-				array(
-					'controller' => 'groups',
-					'action' => 'index',
-					'admin' => true
-				)
-			);
-		?>
-	</li>
-    <?php echo $this->Element('users/search'); ?>
-  </ul>
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		 <div class="panel-body">
+			  <ul>
+				<li>
+				<?php echo $this->Element('users/search'); ?>
+				</li>
+				<li>
+					<?php
+						echo $this->Html->link('New User',
+							array(
+								'action' => 'add',
+								'admin' => true
+							)
+						);
+					?>
+				</li>
+				<li>
+					<?php
+						echo ($queryString == '1' ?
+							$this->Html->link('Show Active Users',
+								array(
+									'action' => 'index',
+									'admin' => true
+								)
+							) :
+							$this->Html->link('Show All Users',
+								array(
+									'action' => '?all=1',
+									'admin' => true
+								)
+							)
+						);
+					?>
+				</li>
+				<li>
+					<?php
+						echo $this->Html->link('Bulk Edit Users',
+							array(
+								'action' => 'bulk_edit',
+								'admin' => true
+							)
+						);
+					?>
+				</li>
+				<li>
+					<?php
+						echo $this->Html->link('List Applications',
+							array(
+								'controller' => 'applications',
+								'action' => 'index',
+								'admin' => true
+							)
+						);
+					?>
+				</li>
+				<li>
+					<?php
+						echo $this->Html->link('List Settings',
+							array(
+								'controller' => 'settings',
+								'action' => 'index',
+								'admin' => true
+							)
+						);
+					?>
+				</li>
+				<li>
+					<?php
+						echo $this->Html->link('List IP Restrictions',
+							array(
+								'controller' => 'apips',
+								'action' => 'index',
+								'admin' => true
+							)
+						);
+					?>
+				</li>
+				<li>
+					<?php
+						echo $this->Html->link('List Groups',
+							array(
+								'controller' => 'groups',
+								'action' => 'index',
+								'admin' => true
+							)
+						);
+					?>
+				</li>
+			  </ul>
+		</div>	
+	</div>	
 </div>
 

@@ -26,19 +26,23 @@
 ?>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('List').' '.$pluralHumanName, array('action' => 'index'));?></li>
-<?php
-		$done = array();
-		foreach ($associations as $_type => $_data) {
-			foreach ($_data as $_alias => $_details) {
-				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-					echo "\t\t<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' =>'index')) . "</li>\n";
-					$done[] = $_details['controller'];
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		 <div class="panel-body">
+			<ul>
+				<li><?php echo $this->Html->link(__('List').' '.$pluralHumanName, array('action' => 'index'));?></li>
+		<?php
+				$done = array();
+				foreach ($associations as $_type => $_data) {
+					foreach ($_data as $_alias => $_details) {
+						if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
+							echo "\t\t<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' =>'index')) . "</li>\n";
+							$done[] = $_details['controller'];
+						}
+					}
 				}
-			}
-		}
-?>
-	</ul>
+		?>
+			</ul>
+		</div>
+	</div>
 </div>

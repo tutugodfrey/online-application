@@ -443,13 +443,17 @@
 <?php echo $this->Form->end(__('Submit'));?>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
+	<div class="panel panel-info">
+        <div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+         <div class="panel-body">
+        	<ul>
 
-		<li><?php echo $this->Html->link(__('List %s', __('Coversheets')), array('action' => 'index'));?></li>
-		<li><?php echo $this->Html->link(__('List %s', __('Applications')), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List %s', __('Users')), array('controller' => 'users', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
-	</ul>
+        		<li><?php echo $this->Html->link(__('List %s', __('Coversheets')), array('action' => 'index'));?></li>
+        		<li><?php echo $this->Html->link(__('List %s', __('Applications')), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+        		<li><?php echo $this->Html->link(__('New Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
+        		<li><?php echo $this->Html->link(__('List %s', __('Users')), array('controller' => 'users', 'action' => 'index')); ?> </li>
+        		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
+        	</ul>
+        </div>
+    </div>
 </div>
