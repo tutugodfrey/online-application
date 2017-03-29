@@ -7,5 +7,5 @@
 	}
 	echo $this->Form->input('user_id');
 	echo $this->Form->input('ip_address');
-	echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
+	echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
 </div>

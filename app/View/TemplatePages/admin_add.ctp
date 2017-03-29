@@ -21,7 +21,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input('name');
 		echo $this->Form->input('rep_only');
 		echo $this->Form->input('description');
-		echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); 
+		echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
 	?>
 </div>
 </div>

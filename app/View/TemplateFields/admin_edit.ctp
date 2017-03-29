@@ -52,7 +52,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input('encrypt', array('div' => 'col-md-6'));
 		echo $this->Form->hidden('section_id');
 		echo '</div>';
-		echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); 
+		echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
 		?>
 	</div>
 </div>

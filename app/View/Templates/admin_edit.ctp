@@ -9,7 +9,7 @@
 		<?php echo $this->Form->create('Template', array('class' => 'form-inline')); 
 			echo $this->Form->input('id');
 			echo $this->element('Templates/templateFields');
-		 	echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); 
+		 	echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
 		 	?>
 	</div>
 </div>

@@ -54,10 +54,9 @@
 
 </script>
 
-<div class="users form">
+<div class="users panel panel-default form">
+    <div class="panel-heading"><u><strong>Add User:</strong></u></div>
     <?php echo $this->Form->create('User');?>
-    <fieldset>
-        <legend>Add User</legend>
         <?php
         echo $this->Form->input('firstname', array('type' => 'text', 'required' => true));
         echo $this->Form->input('lastname', array('type' => 'text', 'required' => true));
@@ -86,6 +85,5 @@
         echo "<br>";
 
         ?>
-    </fieldset>
-    <?php echo $this->Form->end('Submit'); ?>
+    <?php echo $this->Form->end(array('label' => __('Save user'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
 </div>

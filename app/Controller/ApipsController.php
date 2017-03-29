@@ -14,9 +14,6 @@ class ApipsController extends AppController {
 	public function admin_index() {
 		$this->paginate = array(
 			'contain' => array('User' => array('fields' => array('id', 'fullname'))),
-			'order' => array(
-				'Group.name' => 'ASC',
-			),
 		);
 		$this->set('apips', $this->paginate());
 	}
@@ -40,7 +37,6 @@ class ApipsController extends AppController {
 		}
 		$users = $this->Apip->User->find('list', array('order' => 'fullname ASC'));
 		$this->set('users', $users);
-		$this->set('groups', $this->paginate());
 	}
 }
 ?>

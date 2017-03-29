@@ -31,7 +31,7 @@ $this->Html->addCrumb(
 		echo $this->Form->input('order', array('min' => 0));
 		echo $this->Form->input('description');
 		echo $this->Form->hidden('page_id');
-	 	echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); 
+	 	echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
 	 	?>
 	</div>
 </div>

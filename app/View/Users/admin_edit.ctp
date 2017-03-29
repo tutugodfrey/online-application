@@ -125,7 +125,7 @@ echo $this->Form->input(
 );
 echo "<br>";
 
-echo $this->Form->end('Save User');
+echo $this->Form->end(array('label' => __('Save user'), 'div' => false, 'class' => 'btn btn-sm btn-success'));
 ?>
             </tr>
     </table>

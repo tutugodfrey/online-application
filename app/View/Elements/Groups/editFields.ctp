@@ -14,6 +14,6 @@ if (!empty($this->request->data['Group']['id'])) {
 		echo $this->Form->hidden('id');
 	}
 echo $this->Form->input('name');
-echo $this->Form->end(array('label' => 'Submit', 'class' => 'btn btn-success')); 
+echo $this->Form->end(array('label' => __('Submit'), 'class' => 'btn btn-success')); 
 ?>
 </div>

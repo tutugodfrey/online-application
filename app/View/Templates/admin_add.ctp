@@ -15,7 +15,7 @@
 			echo $this->Form->input('cobrand_id');
 		}
 	?>
-<?php echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
+<?php echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
 </div>
 </div>
 <div class="actions">
