@@ -23,11 +23,15 @@ $this->Html->addCrumb(
 );
 ?>
 
-<div class="templateFields form container">
-<?php echo $this->Form->create('TemplateField', array('novalidate' => true)); ?>
-	<fieldset>
-		<legend><?php echo CakeText::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?></legend>
-	<?php
+<div class="templateFields form panel panel-default">
+	<div class="panel-heading">
+		<strong>
+			<?php echo CakeText::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?>
+		</strong>
+	</div>
+	<div class="panel-body">
+		<?php 
+		echo $this->Form->create('TemplateField', array('novalidate' => true));
 		echo '<div class="row">';
 		echo $this->Form->input('name', array('div' => 'col-md-12'));
 		echo '</div>';
@@ -48,9 +52,9 @@ $this->Html->addCrumb(
 		echo $this->Form->input('encrypt', array('div' => 'col-md-6'));
 		echo $this->Form->hidden('section_id');
 		echo '</div>';
-	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
+		echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
+		?>
+	</div>
 </div>
 <div class="actions">
 	<div class="panel panel-info">

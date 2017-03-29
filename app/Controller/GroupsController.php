@@ -42,6 +42,5 @@ class GroupsController extends AppController {
 		if (!empty($id)) {
 			$this->request->data = $this->Group->find('first', ['conditions' => array('id' => $id)]);
 		}
-		$this->set('groups', $this->paginate());
 	}
 }

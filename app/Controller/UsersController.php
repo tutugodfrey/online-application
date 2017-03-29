@@ -1,8 +1,6 @@
 <?php
 class UsersController extends AppController {
 
-	public $scaffold = 'admin';
-
 	public $permissions = array(
 		'login' => '*',
 		'logout' => '*',
