@@ -23,12 +23,15 @@ $this->Html->addCrumb(
 );
 ?>
 
-<div class="templateFields form">
-<?php echo $this->Form->create('TemplateField'); ?>
-	<fieldset>
-		<legend>
-		<?php echo CakeText::insert(__('Add Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?></legend>
-	<?php
+<div class="templateFields form panel panel-default">
+	<div class="panel-heading">
+		<strong>
+			<?php echo  CakeText::insert(__('Add Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?>
+		</strong>
+	</div>
+	<div class="panel-body">
+<?php 
+		echo $this->Form->create('TemplateField');
 		echo $this->Form->input('name');
 		echo $this->Form->input('width', array('min' => 1, 'max' => 12));
 		echo $this->Form->input('rep_only');
@@ -51,9 +54,8 @@ $this->Html->addCrumb(
 		echo $this->Form->input('merge_field_name');
 		echo $this->Form->input('description');
 		echo $this->Form->input('encrypt');
-	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
+		echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
+	</div>
 </div>
 <div class="actions">
 	<div class="panel panel-info">

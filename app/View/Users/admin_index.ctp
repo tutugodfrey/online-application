@@ -20,7 +20,7 @@
 
 
 <div class="users  panel panel-default index">
-<div class="panel-heading"><u><strong>Users</strong></u></div>
+<div class="panel-heading"><u><strong><?php echo __('Users') ?></strong></u></div>
 <table class="table talbe-condensed table-hover">
   <tr>
 	<th><?php echo $this->Paginator->sort('active', 'Status'); ?></th>
@@ -143,17 +143,6 @@ echo "\n";
 						echo $this->Html->link('Bulk Edit Users',
 							array(
 								'action' => 'bulk_edit',
-								'admin' => true
-							)
-						);
-					?>
-				</li>
-				<li>
-					<?php
-						echo $this->Html->link('List Applications',
-							array(
-								'controller' => 'applications',
-								'action' => 'index',
 								'admin' => true
 							)
 						);

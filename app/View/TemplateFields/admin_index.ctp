@@ -23,10 +23,10 @@ $this->Html->addCrumb(
 );
 ?>
 
-<div class="TemplateFields index">
-	<h2><?php echo __('Fields for:'); ?></h2>
-	<?php
-		echo CakeText::insert(__(
+<div class="TemplateFields  panel panel-default index">
+	<div class="panel-heading">
+		<strong>
+			<?php echo __('Fields for: ') . CakeText::insert(__(
 			':partner_name > :template_name > :template_page_name > :template_section_name'),
 			array(
 				"partner_name" => $cobrand["partner_name"],
@@ -34,8 +34,9 @@ $this->Html->addCrumb(
 				"template_page_name" => $templatePage["name"],
 				"template_section_name" => $templateSection["name"],
 			)
-		);
-	?>
+		); ?>
+		</strong>
+	</div>	
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 			<th><?php echo $this->Paginator->sort('order'); ?></th>

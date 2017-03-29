@@ -29,4 +29,4 @@
 	<?php echo $this->Element('paginatorBottomNav'); ?>
 	</div>
 </div>
-<?php echo $this->Element('Groups/actionsNav'); ?>
+<?php echo $this->Element('actionsNav'); ?>

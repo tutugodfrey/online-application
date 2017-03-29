@@ -26,15 +26,12 @@
 
 </script>
 
-<div class="cobrands form">
-<?php echo $this->Form->create('Cobrand', array('enctype' => 'multipart/form-data')); ?>
-	<fieldset>
-		<legend><?php echo __('Edit Cobrand'); ?></legend>
-	<?php
+<div class="cobrands panel panel-default form">
+	<div class="panel-heading"><u><strong><?php echo __('Edit Cobrand'); ?></strong></u></div>
+<?php echo $this->Form->create('Cobrand', array('enctype' => 'multipart/form-data')); 
 		echo $this->Form->input('id');
 		echo $this->Form->input('partner_name');
 		echo $this->Form->input('partner_name_short');
-
 		echo "<br>";
 
 		if (!empty($this->request->data['Cobrand']['cobrand_logo_url'])) {
@@ -111,9 +108,7 @@
 
 		echo $this->Form->input('description');
 		echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));
-	?>
-	</fieldset>
-	<?php echo $this->Form->end(__('Submit')); ?>	
+		echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>	
 </div>
 <div class="actions">
 	<div class="panel panel-info">

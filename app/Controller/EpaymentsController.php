@@ -1,4 +1,5 @@
 <?php
+App::uses('AppController', 'Controller');
 class EpaymentsController extends AppController {
 
 	//public $components = array ('RequestHandler');
