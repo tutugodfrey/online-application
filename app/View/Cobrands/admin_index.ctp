@@ -1,6 +1,6 @@
-<div class="cobrands index">
-	<h2><?php echo __('Cobrands'); ?></h2>
-	<table cellpadding="0" cellspacing="0">
+<div class="cobrands panel panel-default index">
+	<div class="panel-heading"><u><strong>Cobrands</strong></u></div>
+	<table class="table talbe-condensed table-hover">
 		<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('partner_name'); ?></th>
@@ -57,8 +57,12 @@
 	<?php echo $this->Element('paginatorBottomNav'); ?>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('New Cobrand'), array('action' => 'add')); ?></li>
-	</ul>
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		<div class="panel-body">
+			<ul>
+				<li><?php echo $this->Html->link(__('New Cobrand'), array('action' => 'add')); ?></li>
+			</ul>
+		</div>
+	</div>
 </div>

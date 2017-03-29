@@ -33,8 +33,12 @@
 	<?php echo $this->Element('paginatorBottomNav'); ?>
 </div>
 <div class="actions">
-	<h3>Actions</h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('New Template'), CakeText::insert('/admin/cobrands/:cobrand_id/templates/add', array('cobrand_id' => $cobrand['Cobrand']['id']))); ?></li>
-	</ul>
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		 <div class="panel-body">
+			<ul>
+				<li><?php echo $this->Html->link(__('New Template'), CakeText::insert('/admin/cobrands/:cobrand_id/templates/add', array('cobrand_id' => $cobrand['Cobrand']['id']))); ?></li>
+			</ul>
+		</div>
+	</div>
 </div>

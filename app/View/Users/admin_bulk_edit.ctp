@@ -1,12 +1,16 @@
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link('List Users', array('action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List Applications', array('controller' => 'applications', 'action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List Settings', array('controller' => 'settings', 'action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List IP Restrictions', array('controller' => 'apips', 'action' => 'index', 'admin' => true)); ?></li>
-                <li><?php echo $this->Html->link('List Groups', array('controller' => 'groups', 'action' => 'index', 'admin' => true)); ?></li>
-	</ul>
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		 <div class="panel-body">
+			<ul>
+				<li><?php echo $this->Html->link('List Users', array('action' => 'index', 'admin' => true)); ?></li>
+		                <li><?php echo $this->Html->link('List Applications', array('controller' => 'applications', 'action' => 'index', 'admin' => true)); ?></li>
+		                <li><?php echo $this->Html->link('List Settings', array('controller' => 'settings', 'action' => 'index', 'admin' => true)); ?></li>
+		                <li><?php echo $this->Html->link('List IP Restrictions', array('controller' => 'apips', 'action' => 'index', 'admin' => true)); ?></li>
+		                <li><?php echo $this->Html->link('List Groups', array('controller' => 'groups', 'action' => 'index', 'admin' => true)); ?></li>
+			</ul>
+		</div>
+	</div>
 </div>
 <div class="users index">
 	<h2><?php echo __('Bulk Users Edit');?></h2>

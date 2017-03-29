@@ -1,6 +1,7 @@
 <?php
 class Group extends AppModel {
-       public $useTable = 'onlineapp_groups';
+    public $useTable = 'onlineapp_groups';
+    public $recursive = -1;
     public $validate = array(
         'name' => array(
             'notBlank' => array(
