@@ -17,9 +17,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<div class="<?php echo $pluralVar;?> index">
-<h2><?php echo $pluralHumanName;?></h2>
-<table cellpadding="0" cellspacing="0">
+<div class="<?php echo $pluralVar;?> panel panel-default index">
+<div class="panel-heading"><u><strong><?php echo "$pluralHumanName:";?></strong></u></div>
+<table class="table talbe-condensed table-hover">
 <tr>
 <?php foreach ($scaffoldFields as $_field):?>
 	<th><?php echo $this->Paginator->sort($_field);?></th>
@@ -52,7 +52,6 @@ echo "\n";
 		}
 
 		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t" . $this->Html->link(__('View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey])) . "\n";
 		echo "\t\t\t" . $this->Html->link(__('Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])) . "\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
@@ -61,30 +60,29 @@ endforeach;
 echo "\n";
 ?>
 </table>
-	<p><?php
-	echo $this->Paginator->counter(array(
-		'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%')
-	));
-	?></p>
 	<div class="paging">
-	<?php echo "\t" . $this->Paginator->prev('<< ' . __('previous'), array(), null, array('class' => 'disabled')) . "\n";?>
-	 | <?php echo $this->Paginator->numbers() . "\n"?>
-	<?php echo "\t ". $this->Paginator->next(__('next') .' >>', array(), null, array('class' => 'disabled')) . "\n";?>
+		<?php 
+		echo $this->Element('paginatorBottomNav');
+		?>
 	</div>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-<?php
-		$done = array();
-		foreach ($associations as $_type => $_data) {
-			foreach ($_data as $_alias => $_details) {
-				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-					echo "\t\t<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
-					$done[] = $_details['controller'];
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		 <div class="panel-body">
+			<ul>
+		<?php
+				$done = array();
+				foreach ($associations as $_type => $_data) {
+					foreach ($_data as $_alias => $_details) {
+						if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
+							echo "\t\t<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
+							$done[] = $_details['controller'];
+						}
+					}
 				}
-			}
-		}
-?>
-	</ul>
+		?>
+			</ul>
+		</div>
+	</div>
 </div>

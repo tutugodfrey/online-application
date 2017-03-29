@@ -77,12 +77,12 @@
 
 </script>
 
-<h1>Edit User</h1>
-<div class="users form">
+<div class="users panel panel-default form">
+    <div class="panel-heading"><u><strong>Edit User:</strong></u></div>
     <table cellpadding="0" cellspacing="0">
         <tr>
 <?php
-echo $this->Form->create('User', array('action' => 'edit', 'novalidate' => true));
+echo $this->Form->create('User', array('url' => array('action' => 'edit'), 'novalidate' => true));
 echo $this->Form->input('id', array('type' => 'hidden'));
 echo $this->Form->input('email');
 echo $this->Form->input('pwd', array('label'=> 'Password','type'=>'password', 'value'=>'', 'autocomplete'=>'off'));
@@ -132,13 +132,17 @@ echo $this->Form->end('Save User');
 </div>
 
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link('List Users', array('action' => 'index', 'admin' => true)); ?></li>
-        <li><?php echo $this->Html->link('List Applications', array('controller' => 'applications', 'action' => 'index', 'admin' => true)); ?></li>
-        <li><?php echo $this->Html->link('List Settings', array('controller' => 'settings', 'action' => 'index', 'admin' => true)); ?></li>
-        <li><?php echo $this->Html->link('List IP Restrictions', array('controller' => 'apips', 'action' => 'index', 'admin' => true)); ?></li>
-        <li><?php echo $this->Html->link('List Groups', array('controller' => 'groups', 'action' => 'index', 'admin' => true)); ?></li>
-        <? echo $this->Element('users/search'); ?>
-	</ul>
+    <div class="panel panel-info">
+        <div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+         <div class="panel-body">
+        	<ul>
+                <li><? echo $this->Element('users/search'); ?></li>
+                <li><?php echo $this->Html->link('List Users', array('action' => 'index', 'admin' => true)); ?></li>
+                <li><?php echo $this->Html->link('List Applications', array('controller' => 'applications', 'action' => 'index', 'admin' => true)); ?></li>
+                <li><?php echo $this->Html->link('List Settings', array('controller' => 'settings', 'action' => 'index', 'admin' => true)); ?></li>
+                <li><?php echo $this->Html->link('List IP Restrictions', array('controller' => 'apips', 'action' => 'index', 'admin' => true)); ?></li>
+                <li><?php echo $this->Html->link('List Groups', array('controller' => 'groups', 'action' => 'index', 'admin' => true)); ?></li>
+        	</ul>
+        </div>
+    </div>
 </div>

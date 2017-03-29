@@ -12,7 +12,7 @@
 						'wrapInput' => false,
 						'class' => 'form-control'
 					),
-					'class' => 'well form-inline',
+					'class' => 'well well-sm form-inline col-md-12',
 					'novalidate' => true,
 				)
 			);

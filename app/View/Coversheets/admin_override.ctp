@@ -85,14 +85,18 @@
 <?php echo $this->Form->end(__('Submit'));?>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
+	<div class="panel panel-info">
+		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
+		 <div class="panel-body">
+			<ul>
 
-		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('OnlineappCoversheet.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('OnlineappCoversheet.id'))); ?></li>
-		<li><?php echo $this->Html->link(__('List Onlineapp Coversheets'), array('action' => 'index'));?></li>
-		<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Onlineapp Users'), array('controller' => 'onlineapp_users', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Onlineapp User'), array('controller' => 'onlineapp_users', 'action' => 'add')); ?> </li>
-	</ul>
+				<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('OnlineappCoversheet.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('OnlineappCoversheet.id'))); ?></li>
+				<li><?php echo $this->Html->link(__('List Onlineapp Coversheets'), array('action' => 'index'));?></li>
+				<li><?php echo $this->Html->link(__('List Onlineapp Applications'), array('controller' => 'cobranded_applications', 'action' => 'index')); ?> </li>
+				<li><?php echo $this->Html->link(__('New Onlineapp Application'), array('controller' => 'cobranded_applications', 'action' => 'add')); ?> </li>
+				<li><?php echo $this->Html->link(__('List Onlineapp Users'), array('controller' => 'onlineapp_users', 'action' => 'index')); ?> </li>
+				<li><?php echo $this->Html->link(__('New Onlineapp User'), array('controller' => 'onlineapp_users', 'action' => 'add')); ?> </li>
+			</ul>
+		</div>
+	</div>
 </div>
