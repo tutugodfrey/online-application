@@ -16,18 +16,22 @@ $this->Html->addCrumb(
 );
 ?>
 
-<div class="templateSections index">
-	<h2><?php echo __('Sections for:'); ?></h2>
-	<?php
-		echo CakeText::insert(__(
-			':partner_name > :template_name > :template_page_name'),
-			array(
-				"partner_name" => $cobrand["partner_name"],
-				"template_name" => $template["name"],
-				"template_page_name" => $templatePage["name"],
-			)
-		);
-	?>
+<div class="templateSections panel panel-default index">
+	<div class="panel-heading">
+		<strong>
+			<?php 
+			echo __('Sections for: ') . CakeText::insert(__(
+				':partner_name > :template_name > :template_page_name'),
+				array(
+					"partner_name" => $cobrand["partner_name"],
+					"template_name" => $template["name"],
+					"template_page_name" => $templatePage["name"],
+				)
+			);
+			?>
+		</strong>
+	</div>
+	
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 			<th><?php echo $this->Paginator->sort('order'); ?></th>

@@ -9,11 +9,14 @@ $this->Html->addCrumb(
 );
 ?>
 
-<div class="templatePages form">
-<?php echo $this->Form->create('TemplatePage'); ?>
-	<fieldset>
-		<legend><?php echo CakeText::insert(__('Edit Template Page for ":template_name"'), array("template_name" => $template['name'])); ?></legend>
-	<?php
+<div class="templatePages form panel panel-default">
+	<div class="panel-heading">
+		<strong>
+			<?php echo CakeText::insert(__('Edit Template Page for ":template_name" '), array("template_name" => $template['name'])); ?>
+		</strong>
+	</div>
+	<div class="panel-body">
+<?php   echo $this->Form->create('TemplatePage'); 
 		echo $this->Form->input('id');
 		echo $this->Form->input('name', array('disabled' => $nameDisabled));
 		if ($nameDisabled) {
@@ -26,9 +29,8 @@ $this->Html->addCrumb(
 		}
 		echo $this->Form->input('description');
 		echo $this->Form->hidden('template_id');
-	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
+		echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
+	</div>
 </div>
 <div class="actions">
 	<div class="panel panel-info">

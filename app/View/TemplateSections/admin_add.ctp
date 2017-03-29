@@ -16,19 +16,22 @@ $this->Html->addCrumb(
 );
 ?>
 
-<div class="templateSections form">
-<?php echo $this->Form->create('TemplateSection'); ?>
-	<fieldset>
-		<legend>
-		<?php echo CakeText::insert(__('Add Template Section for ":template_page_name" '), array("template_page_name" => $templatePage['name'])); ?></legend>
-	<?php
+<div class="templateSections form panel panel-default">
+	<div class="panel-heading">
+		<strong>
+			<?php echo CakeText::insert(__('Add Template Section for ":template_page_name" '), array("template_page_name" => $templatePage['name'])); ?>
+		</strong>
+	</div>
+	<div class="panel-body">
+		<?php 
+		echo $this->Form->create('TemplateSection'); 
 		echo $this->Form->input('name');
 		echo $this->Form->input('width', array('min' => 1, 'max' => 12));
 		echo $this->Form->input('rep_only');
 		echo $this->Form->input('description');
-	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
+		echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success'));
+		?>
+</div>
 </div>
 <div class="actions">
 	<div class="panel panel-info">

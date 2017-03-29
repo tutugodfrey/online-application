@@ -9,17 +9,18 @@ $this->Html->addCrumb(
 );
 ?>
 
-<div class="templatePages index">
-	<h2><?php echo __('Pages for:'); ?></h2>
-	<?php
-		echo CakeText::insert(__(
+<div class="templatePages panel panel-default index">
+	<div class="panel-heading">
+		<strong>
+				<?php echo __('Pages for: ') . CakeText::insert(__(
 			':partner_name > :template_name'),
 			array(
 				"partner_name" => $cobrand["partner_name"],
 				"template_name" => $template["name"],
 			)
-		);
-	?>
+		); ?>
+		</strong>
+	</div>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 			<th><?php echo $this->Paginator->sort('order'); ?></th>

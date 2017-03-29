@@ -1,10 +1,13 @@
 <?php $this->Html->addCrumb(__('Cobrand'), '/admin/cobrands'); ?>
 
-<div class="templates form">
-<?php echo $this->Form->create('Template'); ?>
-	<fieldset>
-		<legend><?php echo CakeText::insert(__('Add Template for ":cobrand_name"'), array('cobrand_name' => $cobrand['Cobrand']['partner_name'])); ?></legend>
-
+<div class="templates form  panel panel-default">
+	<div class="panel-heading">
+		<strong>
+			<?php echo CakeText::insert(__('Edit Template for ":cobrand_name"'), array('cobrand_name' => $cobrand['Cobrand']['partner_name'])); ?>
+		</strong>
+	</div>
+	<div class="panel-body">
+<?php echo $this->Form->create('Template', array('class' => 'form-inline')); ?>
 	<?php
 		echo $this->element('Templates/templateFields');
 		// the cobrand_id is injected if we cannot tell what it(cobrand_id) is from the route
@@ -12,8 +15,8 @@
 			echo $this->Form->input('cobrand_id');
 		}
 	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
+<?php echo $this->Form->end(array('label' => 'Submit', 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
+</div>
 </div>
 <div class="actions">
 	<div class="panel panel-info">

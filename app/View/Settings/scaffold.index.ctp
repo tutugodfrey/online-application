@@ -66,6 +66,7 @@ echo "\n";
 		?>
 	</div>
 </div>
+<?php if (!empty($associations)) :?>
 <div class="actions">
 	<div class="panel panel-info">
 		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
@@ -86,3 +87,4 @@ echo "\n";
 		</div>
 	</div>
 </div>
+<?php endif; ?>

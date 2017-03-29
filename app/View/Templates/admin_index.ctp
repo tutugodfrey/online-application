@@ -1,8 +1,13 @@
 <?php $this->Html->addCrumb(__('Cobrand'), '/admin/cobrands'); ?>
 
-<div class="templates index">
-	<h2><?php echo __('Templates for:'); ?></h2>
-	<?php echo CakeText::insert(__(':partner_name'), array("partner_name" => $cobrand['Cobrand']['partner_name'],)); ?>
+<div class="templates panel panel-default index">
+	<div class="panel-heading">
+		<strong>
+		<?php echo __('Templates for: ') . 
+		CakeText::insert(__(':partner_name'), array("partner_name" => $cobrand['Cobrand']['partner_name'],));?>
+		</strong>
+	</div>
+	
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
