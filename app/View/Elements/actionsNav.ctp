@@ -11,8 +11,6 @@
 			<ul>
 				<li><?php echo $this->Html->link(__('List ' . $this->name), array('action' => 'index')); ?></li>
 				<li><?php echo $this->Html->link(__('Add ' . $this->name), array('action' => 'edit')); ?></li>
-				<li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
-				<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
 			</ul>
 
 		</div>

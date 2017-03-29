@@ -1,7 +1,7 @@
 <?php
 App::uses('AppController', 'Controller');
 class ApipsController extends AppController {
-
+	public $scaffold = 'admin';
     function beforeFilter() {
         parent::beforeFilter();
     }
