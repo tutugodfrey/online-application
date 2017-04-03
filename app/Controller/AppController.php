@@ -173,6 +173,34 @@ class AppController extends Controller {
 
             return $this->ApiLog->save($apiLog);
         }
-    } 
+    }
+
+/**
+ * generic delete method to be used by all controllers
+ *
+ * @param string $id Group id
+ * @return void
+ */
+    public function admin_delete($id) {
+        $errClass = array('class' => 'alert alert-danger');
+        $successClass = array('class' => 'alert alert-success');
+        if (!$this->request->is('post')) {
+            $this->Session->setFlash(" - Error 405:  Method Not Allowed!", 'default', $errClass);
+            $this->redirect($this->referer());
+        }
+        $this->{$this->modelClass}->id = $id;
+        if (!$this->{$this->modelClass}->exists()) {
+            $this->Session->setFlash("Error: {$this->modelClass} does not exist!", 'default', $errClass);
+            $this->redirect($this->referer());
+        }
+
+        if($this->{$this->modelClass}->delete()) {
+            $this->Session->setFlash("{$this->modelClass} has been deleted!", 'default', $successClass);
+            $this->redirect($this->referer());
+        } else {
+            $this->Session->setFlash("Error: Could not delete {$this->modelClass}!", 'default', $errClass);
+            $this->redirect($this->referer());
+        }
+    }
 }
 ?>

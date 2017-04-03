@@ -14,7 +14,7 @@ class CobrandsController extends AppController {
 		$this->set('title_for_layout', 'Add Cobrand');
 		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
 		$this->set('existingLogos', $this->Cobrand->getExistingLogos());
-
+		$this->_setViewNavData();
 		if ($this->request->is('post')) {
 			$data = $this->request->data;
 			$data = $this->Cobrand->setLogoUrl($data);
@@ -32,7 +32,7 @@ class CobrandsController extends AppController {
 		
 		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
 		$this->set('existingLogos', $this->Cobrand->getExistingLogos());
-
+		$this->_setViewNavData();
 		$data = $this->Cobrand->find('first', array('conditions' => array('id' => $this->Cobrand->id), 'recursive' => -1));
 		$this->set('cobrand', $data);
 		
@@ -70,6 +70,7 @@ class CobrandsController extends AppController {
 
 		$data = $this->paginate('Cobrand');
 		$this->set('cobrands', $data);
+		$this->_setViewNavData();
 		$this->set('scaffoldFields', array_keys($this->Cobrand->schema()));
 	}
 
@@ -92,5 +93,23 @@ class CobrandsController extends AppController {
 		}
 		
 		echo json_encode($response);
+	}
+
+/**
+ * _setViewNavContent
+ * Utility methid returns an array of urls to use as left navigation items on views
+ *
+ * @param string $showActive string representation of boolean value
+ * @return array
+ */
+	protected function _setViewNavData() {
+		$elVars = array(
+			'navLinks' => array(
+				'Cobrands Index' => Router::url(array('action' => 'index', 'admin' => true)),
+				'Add Cobrand' => Router::url(array('action' => 'add', 'admin' => true)),
+			)
+		);
+
+		$this->set(compact('elVars'));
 	}
 }

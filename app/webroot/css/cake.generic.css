@@ -21,16 +21,7 @@
 	padding:0;
 }
 
-/** General Style Info **/
-body {
-/*	background: #003d4c;*/
-	color: #fff;
-	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
-	/*font-size:90%;*/
-	margin: 0;
-/*	padding-top:10px;
- */
-}
+
 @media (max-width:767px) { body { padding-top:50px; } }
 /*
 a {
@@ -125,13 +116,7 @@ form fieldset {
 /*	background: #003d4c;*/
 	text-decoration: underline;
 }
-#content{
-	background: #fff;
-	clear: both;
-	color: #333;
-	padding: 65px 20px 40px 20px;
-	overflow: auto;
-}
+
 #install{
 	background: #fff;
 	clear: both;

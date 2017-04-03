@@ -18,9 +18,9 @@
     <script type="text/javascript" src="/js/uiContols.js"></script>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <!-- Optional theme -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <!-- Latest compiled and minified JavaScript -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
@@ -29,7 +29,7 @@
         echo $this->Html->css('bootstrapBased');
         if (array_key_exists('admin', $this->request->params) &&
             $this->request->params['admin'] === true) {
-           echo $this->Html->css('cake.generic');
+           // echo $this->Html->css('cake.generic');
             ?>
             <style type="text/css">
                 div#content div.index table {
@@ -240,7 +240,7 @@
               </div>
             <?php endif; ?>
         </div>
-        <div id="content">
+        <div class="content">
             <?php echo $this->Session->flash(); ?>
             <?php echo $this->Session->flash('auth'); ?>
             <?php echo $this->fetch('content'); ?>

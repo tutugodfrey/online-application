@@ -14,7 +14,7 @@ echo $this->Form->create('User', array(
 		)
 ));
 echo $this->Form->input('search', array(
-		'style' => 'height: 26px; font-size: 18px;',
+		'style' => 'height: 22px; font-size: 14px;',
 		'label' => false,
 		'type' => 'text',
 		'placeholder' => 'Search Users')

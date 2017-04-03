@@ -108,8 +108,8 @@ class UsersController extends AppController {
 		//		$groups = $this->User->Group->find('list');
 		//		$templates = $this->User->Template->getList();
 		$users = $this->paginate();
-		$this->set(compact('users', 'queryString'));
-		$this->set('scaffoldFields', array_keys($this->User->schema()));
+		$this->_setViewNavData($queryString);
+		$this->set(compact('users'));
 	}
 
 /**
@@ -125,7 +125,7 @@ class UsersController extends AppController {
 		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('cobrands', $this->Cobrand->getList());
 		$this->set('templates', $this->User->Template->getList());
-
+		$this->_setViewNavData('');
 		if ($this->request->is('post')) {
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
@@ -137,6 +137,7 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('The User Could not Be saved'));
 			}
 		}
+		
 		$this->set(compact('users'));
 	}
 
@@ -199,7 +200,7 @@ class UsersController extends AppController {
 		$this->set('templates', $this->User->Template->getList());
 
 		$userTemplates = $this->User->getTemplates($id);
-
+		$this->_setViewNavData('');
 		$this->set('userTemplates', $userTemplates);
 		$this->set('defaultTemplateId', $user['User']['template_id']);
 
@@ -212,7 +213,7 @@ class UsersController extends AppController {
 				unset($this->request->data['User']['password_confirm']);
 			}
 			if ($this->User->saveAll($this->request->data)) {
-				$this->Session->setFlash("User Saved!");
+				$this->Session->setFlash(__("User Saved!"), 'default', array('class' => 'alert alert-success'));
 				$this->redirect('/admin/users');
 			}
 		}
@@ -262,5 +263,35 @@ class UsersController extends AppController {
 			echo '<option value="">NO TEMPLATES FOR USER</option>';
 		}
 	}
+
+/**
+ * _setViewNavContent
+ * Utility methid returns an array of urls to use as left navigation items on views
+ *
+ * @param string $showActive string representation of boolean value
+ * @return array
+ */
+	protected function _setViewNavData($showActive) {
+		if ($showActive == '1') {
+			$labelActiveInactive = 'Show Active Users';
+			$userIndexUrl = Router::url(array('action' => 'index', 'admin' => true));
+		} else {
+			$labelActiveInactive = 'Show All Users';
+			$userIndexUrl = Router::url(array('action' => '?all=1', 'admin' => true));
+		}
+
+		$elVars = array(
+			'navLinks' => array(
+				'New User' => Router::url(array('action' => 'add', 'admin' => true)),
+				$labelActiveInactive => $userIndexUrl,
+				'Bulk Edit Users' => Router::url(array('action' => 'bulk_edit', 'admin' => true)),
+				'List Settings' => Router::url(array('controller' => 'settings', 'action' => 'index', 'admin' => true)),
+				'List IP Restrictions' => Router::url(array('controller' => 'apips', 'action' => 'index', 'admin' => true)),
+				'List Groups' => Router::url(array('controller' => 'groups', 'action' => 'index', 'admin' => true)),
+			)
+		);
+		$this->set(compact('elVars'));
+	}
+
 }
 // Last Line
