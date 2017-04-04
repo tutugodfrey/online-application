@@ -7,17 +7,19 @@ if (!empty($response['errors'])) {
 }
 ?>
 <?php
-	echo "<div>";
-		echo "<br><br>";
+	echo "<div class='panel panel-default'>";
 				echo $this->Form->create('TemplateBuilder',
 					array(
 						'default' => false,//prevent default submit this form is ajax only
 						'id' => 'templateBuilderMainForm',
 						'inputDefaults' => array(
-							'wrapInput' => false,
+							'div' => 'form-group col-md-12',
+							'label' => array('class' => 'col-md-2 control-label'),
+							'wrapInput' => 'col-md-3',
+							'class' => 'form-control input-sm',
 						),
+						'class' => 'form-horizontal',
 						'url' => '/admin/template_builder/add_template',
-						'class' => 'form-inline'
 					)
 				);
 				echo $this->Form->hidden('TemplateBuilder.mainBuilderForm', array('value' => true));
@@ -30,7 +32,6 @@ if (!empty($response['errors'])) {
 						'type' => 'select'
 					)
 				);
-				echo "<br><br>";
 				echo $this->element('Templates/templateFields');     
 
 				echo "<table cellpadding='0' cellspacing='0' border='1'>";

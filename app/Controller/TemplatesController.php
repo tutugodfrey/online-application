@@ -46,7 +46,6 @@ class TemplatesController extends NestedResourceController {
 				$templates[$guid] = $filename;
 			}
 		}
-
 		$this->set('templateList', $templates);
 		$this->set('installTemplateList', $installTemplates);
 
@@ -100,6 +99,7 @@ class TemplatesController extends NestedResourceController {
 		$data = $this->paginate('Template');
 		$this->set('templates', $data);
 		$this->set('scaffoldFields', array_keys($this->Template->schema()));
+		$this->_setViewNavData();
 		$this->__setCommonViewVariables();
 	}
 
@@ -110,6 +110,7 @@ class TemplatesController extends NestedResourceController {
 	}
 
 	private function __setCommonViewVariables() {
+		$this->_setViewNavData();
 		$this->set('list_url', $this->_getListUrl());
 		$this->set('cobrand', $this->Template->getCobrand($this->_getParentControllerId()));
 		$this->set('logoPositionTypes', $this->Template->logoPositionTypes);
@@ -138,4 +139,24 @@ class TemplatesController extends NestedResourceController {
 		$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
 		$this->set('requireRequiredFields', true);
 	}
+
+
+/**
+ * _setViewNavContent
+ * Utility method sets an array of urls to use as left navigation items on views
+ *
+ * @param string $showActive string representation of boolean value
+ * @return array
+ */
+	protected function _setViewNavData() {
+		$elVars = array(
+			'navLinks' => array(
+				'Templates Index' => $this->_getListUrl(),
+				'New Template' =>$this->_getListUrl() . '/add',
+			)
+		);
+
+		$this->set(compact('elVars'));
+	}
+
 }

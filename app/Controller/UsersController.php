@@ -266,7 +266,7 @@ class UsersController extends AppController {
 
 /**
  * _setViewNavContent
- * Utility methid returns an array of urls to use as left navigation items on views
+ * Utility method sets an array of urls to use as left navigation items on views
  *
  * @param string $showActive string representation of boolean value
  * @return array

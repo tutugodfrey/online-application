@@ -16,7 +16,7 @@
 		<li class="list-group-item panel-heading">
 			<h4 class="panel-title"><strong>Actions</strong></h4>
 		</li>
-		<?php
+		<?php 
 		if (!in_array($this->here, $navLinks)) {
 			$viewName = $this->name . ' ' . Inflector::humanize($this->action);
 			/*Remove the word admin as it might confuse some users*/
