@@ -25,4 +25,11 @@ body {
   padding: 0px 20px 40px 20px;
   overflow: auto;
 }
-
+/* Bootstrap does not dislplay an asterisk to indicate requied fields
+   We must define our own here.
+*/
+form .required label:after {
+  color: #e32;
+  content: '*';
+  display:inline;
+}

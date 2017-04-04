@@ -22,47 +22,63 @@ $this->Html->addCrumb(
 	)
 );
 ?>
+<div class="container-fluid">
+  <div class="row">
+  	<?php
+  	$elVars = array(
+			'navLinks' => array(
+				'List Template Fields' => $list_url,
+				'Add Template Field' => "$list_url/add"
+		)
+	);
+	echo $this->Element('actionsNav', $elVars); ?>
+	<div class="col-sm-9 col-lg-10">
+	  <!-- view page content -->
+		<div class="panel panel-default">
+		<div class="panel-heading">
+			<strong>
+				<?php echo CakeText::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?>
+			</strong>
+		</div>
+		<div class="panel-body">
+			<?php 
+			echo $this->Form->create('TemplateField', array(
+					'novalidate' => true,
+					'inputDefaults' => array(
+						'div' => 'form-group col-md-12',
+						'label' => array('class' => 'col-md-2 control-label'),
+						'wrapInput' => 'col-md-4',
+						'class' => 'form-control input-sm',
+					),
+					'class' => 'form-horizontal',
+				));
 
-<div class="templateFields form panel panel-default">
-	<div class="panel-heading">
-		<strong>
-			<?php echo CakeText::insert(__('Edit Template Field for ":template_section_name" '), array("template_section_name" => $templateSection['name'])); ?>
-		</strong>
-	</div>
-	<div class="panel-body">
-		<?php 
-		echo $this->Form->create('TemplateField', array('novalidate' => true));
-		echo '<div class="row">';
-		echo $this->Form->input('name', array('div' => 'col-md-12'));
-		echo '</div>';
-		echo '<div class="row">';
-		echo $this->Form->input('order', array('min' => 0, 'div' => 'col-md-3'));
-		echo $this->Form->input('width', array('min' => 1, 'max' => 12, 'div' => 'col-md-3'));
-		echo $this->Form->input('type', array('options' => $fieldTypes, 'div' => 'col-md-2'));
-		echo $this->Form->input('source', array('options' => $sourceTypes, 'div' => 'col-md-2'));
-		echo '</div>';
-		echo '<div class="row">';
-		echo $this->Form->input('rep_only', array('div' => 'col-md-6'));
-		echo $this->Form->input('required', array('div' => 'col-md-6'));
-		echo '</div>';
-		echo '<div class="row">';
-		echo $this->Form->input('default_value', array('type' => 'textarea', 'escape' => false, 'div' => 'col-md-12'));
-		echo $this->Form->input('merge_field_name', array('div' => 'col-md-12'));
-		echo $this->Form->input('description', array('div' => 'col-md-12'));
-		echo $this->Form->input('encrypt', array('div' => 'col-md-6'));
-		echo $this->Form->hidden('section_id');
-		echo '</div>';
-		echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
-		?>
-	</div>
-</div>
-<div class="actions">
-	<div class="panel panel-info">
-		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
-		 <div class="panel-body">
-			<ul>
-				<li><?php echo $this->Html->link(__('Cancel'), $list_url); ?></li>
-			</ul>
+			echo $this->Form->input('name');
+
+			echo $this->Form->input('order', array('min' => 0, 'div' => 'form-group col-md-3',
+					'wrapInput' => 'col-md-12', 'label' => array('class' => 'col-md-5')
+				));
+			echo $this->Form->input('width', array('div' => 'form-group col-md-3', 
+					'options' => array_combine(range(1,12),range(1,12)),
+					'wrapInput' => 'col-md-12', 'label' => array('class' => 'col-md-5')
+				));
+			echo $this->Form->input('type', array('options' => $fieldTypes, 'div' => 'form-group col-md-3',
+					'wrapInput' => 'col-md-12', 'label' => array('class' => 'col-md-5')
+				));
+			echo $this->Form->input('source', array('options' => $sourceTypes, 'div' => 'form-group col-md-3',
+					'wrapInput' => 'col-md-12', 'label' => array('class' => 'col-md-5')
+				));
+			echo $this->Form->input('rep_only', array('label'=> array('class' => 'col-md-9 control-label') ,'type' => 'checkbox', 'class' => null));
+			echo $this->Form->input('required', array('label'=> array('class' => 'col-md-9 control-label') ,'type' => 'checkbox', 'class' => null));
+			echo $this->Form->input('default_value', array('type' => 'textarea', 'escape' => false));
+			echo $this->Form->input('merge_field_name');
+			echo $this->Form->input('description');
+			echo $this->Form->input('encrypt', array('label'=> array('class' => 'col-md-9 control-label') ,'type' => 'checkbox', 'class' => null));
+			echo $this->Form->hidden('section_id');
+			echo $this->Form->end(array('label' => __('Submit'), 'div' => 'form-group col-md-12', 'class' => 'btn btn-sm btn-success')); 
+			?>
+		</div>
 		</div>
 	</div>
+  </div>
 </div>

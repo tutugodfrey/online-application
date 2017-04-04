@@ -25,10 +25,10 @@ class TemplatesController extends NestedResourceController {
 			$data['Template']['cobrand_id'] = $this->_getParentControllerId();
 			$this->Template->create();
 			if ($this->Template->save($data)) {
-				$this->Session->setFlash("Template Saved!");
+				$this->_success("Template Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to add your template'));
+			$this->_failure(__('Unable to add your template'));
 		}
 
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
@@ -80,10 +80,10 @@ class TemplatesController extends NestedResourceController {
 			// we know the cobrand_id from the uri
 			$data['Template']['cobrand_id'] = $this->_getParentControllerId();
 			if ($this->Template->saveAll($data)) {
-				$this->Session->setFlash("Template Saved!");
+				$this->_success("Template Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to update your template'));
+			$this->_failure(__('Unable to update your template'));
 		}
 
 		$this->__setCommonViewVariables();
@@ -105,7 +105,7 @@ class TemplatesController extends NestedResourceController {
 
 	public function admin_delete($idToDelete) {
 		$this->Template->delete($idToDelete);
-		$this->Session->setFlash("Template Deleted!");
+		$this->_success("Template Deleted!");
 		$this->redirect($this->_getListUrl());
 	}
 

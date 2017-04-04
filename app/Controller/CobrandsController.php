@@ -20,10 +20,10 @@ class CobrandsController extends AppController {
 			$data = $this->Cobrand->setLogoUrl($data);
 			$this->Cobrand->create();
 			if ($this->Cobrand->save($data)) {
-				$this->Session->setFlash("Cobrand Saved!");
+				$this->_success("Cobrand Saved!");
 				$this->redirect($this->_listUrl);
 			}
-			$this->Session->setFlash(__('Unable to add your cobrand'));
+			$this->_failure(__('Unable to add your cobrand'));
 		}
 	}
 
@@ -52,11 +52,11 @@ class CobrandsController extends AppController {
 			$this->request->data = $this->Cobrand->setLogoUrl($this->request->data);
 
 			if ($this->Cobrand->saveAll($this->request->data)) {
-				$this->Session->setFlash("Cobrand Saved!");
+				$this->_success("Cobrand Saved!");
 				return $this->redirect($this->_listUrl);
 			}
-			
-			$this->Session->setFlash(__('Unable to update your cobrand'));
+
+			$this->_failure(__('Unable to update your cobrand'));
 		}
 	}
 
@@ -76,7 +76,7 @@ class CobrandsController extends AppController {
 
 	public function admin_delete($idToDelete) {
 		$this->Cobrand->delete($idToDelete);
-		$this->Session->setFlash("Cobrand Deleted!");
+		$this->_success("Cobrand Deleted!");
 		$this->redirect($this->_listUrl);
 	}
 
