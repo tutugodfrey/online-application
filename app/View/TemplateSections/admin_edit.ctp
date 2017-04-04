@@ -15,33 +15,46 @@ $this->Html->addCrumb(
 	)
 );
 ?>
-<div class="templateSections form panel panel-default">
-	<div class="panel-heading">
-		<strong>
-			<?php echo CakeText::insert(__('Edit Template Section for ":template_page_name" '), array("template_page_name" => $templatePage['name'])); ?>
-		</strong>
-	</div>
-	<div class="panel-body">
-		<?php 
-		echo $this->Form->create('TemplateSection');
-		echo $this->Form->input('id');
-		echo $this->Form->input('name');
-		echo $this->Form->input('width', array('min' => 1, 'max' => 12));
-		echo $this->Form->input('rep_only');
-		echo $this->Form->input('order', array('min' => 0));
-		echo $this->Form->input('description');
-		echo $this->Form->hidden('page_id');
-	 	echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
-	 	?>
-	</div>
-</div>
-<div class="actions">
-	<div class="panel panel-info">
-		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
-		 <div class="panel-body">
-			<ul>
-				<li><?php echo $this->Html->link(__('Cancel'), $list_url); ?></li>
-			</ul>
+<div class="container-fluid">
+  <div class="row">
+  	<?php
+  	$elVars = array(
+  			'navLinks' => array(
+  				'List Template Sections' => $list_url,
+  				'Add Template Section' => "$list_url/add"
+			)
+  		);
+	echo $this->Element('actionsNav', $elVars); ?>
+	<div class="col-sm-9 col-lg-10">
+	  <!-- view page content -->
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<strong>
+					<?php echo CakeText::insert(__('Edit Template Section for ":template_page_name" '), array("template_page_name" => $templatePage['name'])); ?>
+				</strong>
+			</div>
+			<div class="panel-body">
+				<?php 
+				echo $this->Form->create('TemplateSection', array(
+						'inputDefaults' => array(
+							'div' => 'form-group col-md-12',
+							'label' => array('class' => 'col-md-2 control-label'),
+							'wrapInput' => 'col-md-4',
+							'class' => 'form-control input-sm',
+						),
+						'class' => 'form-horizontal',
+					));
+				echo $this->Form->input('id');
+				echo $this->Form->input('name');
+				echo $this->Form->input('width', array('min' => 1, 'max' => 12));
+				echo $this->Form->input('rep_only', array('label'=> array('class' => 'col-md-9 control-label') ,'type' => 'checkbox', 'class' => null));
+				echo $this->Form->input('order', array('min' => 0));
+				echo $this->Form->input('description');
+				echo $this->Form->hidden('page_id');
+			 	echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); 
+			 	?>
+			</div>
 		</div>
 	</div>
+  </div>
 </div>

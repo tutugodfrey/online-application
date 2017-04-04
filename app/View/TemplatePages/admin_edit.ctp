@@ -13,7 +13,8 @@ $this->Html->addCrumb(
   	<?php
   	$elVars = array(
   			'navLinks' => array(
-  				'Template Pages Index' => $list_url
+  				'Template Pages Index' => $list_url,
+  				'Add Template Page' => "$list_url/add"
 			)
   		);
 	echo $this->Element('actionsNav', $elVars); ?>
