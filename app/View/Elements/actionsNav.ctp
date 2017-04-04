@@ -3,10 +3,12 @@
 *
 * This navigation element should only be used for existing controller actions and corresponding views.
 * The view should position the navbar using the standard Bootstrap grid system in a .container-fluid.
+* The nav item that corresponds to the page currently in view will be automagically added 
+* (if not in $navLinks array) and activated.
 *
 * @var array $navLinks containing nav link descriptions and corresponding urls e.g. array('Link Label' => 'url')
 * @var array $htmlContent to render anything other than a link set the well formed HTML content in this numerically indexed varible.
-*					It will be displayed at the top
+*			HTML content will be displayed contiguously starting at the top of the nav.
 */
  ?>
 <?php $attributes = array('class' => "list-group-item");?>
@@ -18,7 +20,7 @@
 		</li>
 		<?php 
 		if (!in_array($this->here, $navLinks)) {
-			$viewName = $this->name . ' ' . Inflector::humanize($this->action);
+			$viewName = Inflector::humanize(Inflector::tableize($this->name)) . ' ' . Inflector::humanize($this->action);
 			/*Remove the word admin as it might confuse some users*/
 			$viewName = str_replace('Admin', '', $viewName);
 			$navLinks = array_merge(array($viewName => $this->here), $navLinks);
@@ -33,7 +35,7 @@
 			foreach ($navLinks as $desc => $url) {
 				if ($url === $this->here) {
 					$activeNavAttr['class'] = $attributes['class'] . ' list-group-item-success';
-					echo $this->Html->link(__($desc), '#', $activeNavAttr);
+					echo $this->Html->tag('li', __($desc), $activeNavAttr);
 				} else {
 					echo $this->Html->link(__($desc), $url, $attributes);
 				}

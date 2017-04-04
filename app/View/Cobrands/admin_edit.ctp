@@ -57,7 +57,7 @@
 							  <div class="col-sm-offset-2 col-sm-6 col-md-3">
 								<div class="thumbnail">
 									<div class="caption text-center">
-									<strong>Existing Logo</strong>
+									<strong>Existing Cobrand Logo</strong>
 									</div>
 								' . $this->Html->image($this->request->data['Cobrand']['cobrand_logo_url'], array(
 									'onError' => "this.onerror=null; this.src='/img/no-image.png';",
@@ -101,7 +101,19 @@
 
 				if (!empty($this->request->data['Cobrand']['brand_logo_url'])) {
 					$label = 'Replace Brand Logo';
-					echo '<strong>Existing Brand Logo</strong><br/>' . $this->Html->image($this->request->data['Cobrand']['brand_logo_url'], array('height' => '50px'));
+					echo '<div class="row">
+							  <div class="col-sm-offset-2 col-sm-6 col-md-3">
+								<div class="thumbnail">
+									<div class="caption text-center">
+									<strong>Existing Brand Logo</strong>
+									</div>
+								' . $this->Html->image($this->request->data['Cobrand']['brand_logo_url'], array(
+									'onError' => "this.onerror=null; this.src='/img/no-image.png';",
+									'class' => 'thumbnail col-md-offset-3', 
+									'height' => '75px')) . '
+								</div>
+							  </div>
+							</div>';
 				} else {
 					$label = 'Upload Brand Logo';
 				}
