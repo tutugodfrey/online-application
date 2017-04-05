@@ -1,6 +1,6 @@
-<div class="epayments panel panel-default index">
+<div class="panel panel-default">
 	<div class="panel-heading"><u><strong><?php echo __('Epayments') ?></strong></u></div>
-	<table cellpadding="0" cellspacing="0">
+	<table class="table table-condensed table-striped table-hover">
 	<thead>
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
