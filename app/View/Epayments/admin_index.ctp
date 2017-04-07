@@ -28,7 +28,8 @@
 		<td><?php echo h($epayment['Epayment']['date_boarded']); ?>&nbsp;</td>
 		<td><?php echo h($epayment['Epayment']['date_retrieved']); ?>&nbsp;</td>
 		<td class="actions">
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $epayment['Epayment']['id']), array('confirm' => __('Are you sure you want to delete # %s?', $epayment['Epayment']['id']))); ?>
+			<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+				array('action' => 'delete', $epayment['Epayment']['id']), array('escape' => false,'confirm' => __('Are you sure you want to delete # %s?', $epayment['Epayment']['id']))); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

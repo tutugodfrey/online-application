@@ -78,8 +78,10 @@ $this->Html->addCrumb(
 					<td><?php echo h($templateField['TemplateField']['created']); ?>&nbsp;</td>
 					<td><?php echo h($templateField['TemplateField']['modified']); ?>&nbsp;</td>
 					<td class="actions">
-						<?php echo $this->Html->link(__('Edit'), CakeText::insert($list_url . '/edit/:template_section_id', array('template_section_id' => $templateField['TemplateField']['id']))); ?>
-						<?php echo $this->Form->postLink(__('Delete'), CakeText::insert($list_url . '/delete/:id', array('id' => $templateField['TemplateField']['id'])), null, __('Are you sure you want to delete # %s?', $templateField['TemplateField']['id'])); ?>
+						<?php echo $this->Html->link($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+							CakeText::insert($list_url . '/edit/:template_section_id', array('template_section_id' => $templateField['TemplateField']['id'])), array('escape' => false)); ?>
+						<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+							CakeText::insert($list_url . '/delete/:id', array('id' => $templateField['TemplateField']['id'])), array('escape' => false), __('Are you sure you want to delete # %s?', $templateField['TemplateField']['id'])); ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>

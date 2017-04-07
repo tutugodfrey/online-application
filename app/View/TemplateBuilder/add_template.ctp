@@ -165,7 +165,9 @@ if (!empty($response['errors'])) {
 				echo "</table>";
 				echo "<br>";
 		
-			echo $this->Form->end(array('label' =>'Submit', 'onClick' => "$(this).hide();$('<img src=\'/img/refreshing.gif\'/>').appendTo( '#templateBuilderMainForm')"));
+			echo $this->Form->end(array('label' =>'Submit',
+				'class' => 'btn btn-success btn-lg center-block',
+				'onClick' => "$(this).hide();$('<img src=\'/img/refreshing.gif\'/>').appendTo( '#templateBuilderMainForm')"));
 	echo "</div>";
 
 

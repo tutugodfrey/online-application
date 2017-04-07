@@ -54,7 +54,7 @@
 								'empty' => 'none'
 							)
 						);
-						echo $this->Form->input('cobrand_logo', array('type' => 'file'));
+						echo $this->Form->input('cobrand_logo', array('class' => null, 'type' => 'file'));
 						echo $this->Form->input('cobrand_logo_url');
 						echo $this->Form->input(
 							'brand_logo_select',
@@ -66,7 +66,7 @@
 							)
 						);
 
-						echo $this->Form->input('brand_logo', array('type' => 'file'));
+						echo $this->Form->input('brand_logo', array('class' => null, 'type' => 'file'));
 						echo $this->Form->input('brand_logo_url');
 						echo $this->Form->input('description');
 						echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));

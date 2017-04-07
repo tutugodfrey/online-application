@@ -52,17 +52,9 @@ $this->Html->addCrumb(
 					'class' => 'form-horizontal',
 				));
 			echo $this->Form->input('name');
-			echo $this->Form->input('width', array('div' => 'form-group col-md-3', 
-					'options' => array_combine(range(1,12),range(1,12)),
-					'wrapInput' => 'col-md-12', 'label' => array('class' => 'col-md-5')
-				));
-			echo $this->Form->input('type', array('options' => $fieldTypes, 'div' => 'form-group col-md-3',
-					'wrapInput' => 'col-md-12', 'label' => array('class' => 'col-md-5')
-				));
-			echo $this->Form->input('source', array('options' => $sourceTypes, 'div' => 'form-group col-md-3',
-					'wrapInput' => 'col-md-12', 'label' => array('class' => 'col-md-5')
-				));
-
+			echo $this->Form->input('width', array('options' => array_combine(range(1,12),range(1,12))));
+			echo $this->Form->input('type', array('options' => $fieldTypes));
+			echo $this->Form->input('source', array('options' => $sourceTypes));
 			echo $this->Form->input('rep_only', array('label'=> array('class' => 'col-md-9 control-label') ,'type' => 'checkbox', 'class' => null));
 			echo $this->Form->input('required', array('label'=> array('class' => 'col-md-9 control-label') ,'type' => 'checkbox', 'class' => null));
 			echo $this->Form->input('default_value');

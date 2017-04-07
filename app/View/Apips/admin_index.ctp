@@ -1,9 +1,10 @@
 <div class="container-fluid">
   <div class="row">
-  	<?php
+  	<?php 
 	  	$elVars = array(
 			'navLinks' => array(
-				'Add New API IP restriction' => Router::url(array('action' => 'edit'))
+				'API IP Restrictions List' => $this->here,
+				'Add New API IP Restriction' => Router::url(array('action' => 'edit'))
 		)
 	);
 	echo $this->Element('actionsNav', $elVars); ?>
@@ -29,8 +30,12 @@
 					</td>
 					<td><?php echo h($apip['Apip']['ip_address']); ?>&nbsp;</td>
 					<td class="actions">
-						<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $apip['Apip']['id'])); ?>
-						<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $apip['Apip']['id']), array('confirm' => __('Are you sure you want to delete # %s?', $apip['Apip']['id']))); ?>
+						<?php echo $this->Html->link($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+							array('action' => 'edit', $apip['Apip']['id']),
+							array('escape' => false)
+							); ?>
+						<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+							array('action' => 'delete', $apip['Apip']['id']), array('escape' => false, 'confirm' => __('Are you sure you want to delete # %s?', $apip['Apip']['id']))); ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>

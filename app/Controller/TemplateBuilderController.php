@@ -43,7 +43,7 @@ class TemplateBuilderController extends AppController {
 				if (empty($response['errors'])) {
 					$redirectUrl = Router::url(array('controller' => 'Admin', 'action' => 'index'));
 					$this->set('redirectUrl', $redirectUrl);
-					$this->Session->setFlash('Successfully created a new template!', 'default', array('class' => 'alert alert-success'));
+					$this->_success('Successfully created a new template!');
 					$this->render('/Elements/Ajax/nonAjaxRedirect', 'ajax');
 					return;
 				}

@@ -25,8 +25,12 @@
 						<td><?php echo h($emailTimelineSubject['EmailTimelineSubject']['id']); ?>&nbsp;</td>
 						<td><?php echo h($emailTimelineSubject['EmailTimelineSubject']['subject']); ?>&nbsp;</td>
 						<td class="actions">
-							<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $emailTimelineSubject['EmailTimelineSubject']['id'])); ?>
-							<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $emailTimelineSubject['EmailTimelineSubject']['id']), array('confirm' => __('Are you sure you want to delete # %s?', $emailTimelineSubject['EmailTimelineSubject']['id']))); ?>
+							<?php echo $this->Html->link($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+								array('action' => 'edit', $emailTimelineSubject['EmailTimelineSubject']['id']),
+								array('escape' => false)); ?>
+							<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+								array('action' => 'delete', $emailTimelineSubject['EmailTimelineSubject']['id']),
+								array('escape' => false, 'confirm' => __('Are you sure you want to delete # %s?', $emailTimelineSubject['EmailTimelineSubject']['id']))); ?>
 						</td>
 					</tr>
 				<?php endforeach; ?>

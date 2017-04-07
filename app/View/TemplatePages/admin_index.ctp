@@ -49,8 +49,12 @@ $this->Html->addCrumb(
 					<td><?php echo h($templatePage['TemplatePage']['created']); ?>&nbsp;</td>
 					<td><?php echo h($templatePage['TemplatePage']['modified']); ?>&nbsp;</td>
 					<td class="actions">
-						<?php echo $this->Html->link(__('Edit'), CakeText::insert($list_url . '/edit/:id', array('id' => $templatePage['TemplatePage']['id']))); ?>
-						<?php echo $this->Form->postLink(__('Delete'), CakeText::insert($list_url . '/delete/:id', array('id' => $templatePage['TemplatePage']['id'])), null, __('Are you sure you want to delete # %s?', $templatePage['TemplatePage']['id'])); ?>
+						<?php echo $this->Html->link($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+						CakeText::insert($list_url . '/edit/:id', array('id' => $templatePage['TemplatePage']['id'])),
+						array('escape' => false)); ?>
+						<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+						CakeText::insert($list_url . '/delete/:id', array('id' => $templatePage['TemplatePage']['id'])), array('escape' => false), 
+						__('Are you sure you want to delete # %s?', $templatePage['TemplatePage']['id'])); ?>
 						<?php echo $this->Html->link(__('List Sections'), CakeText::insert('/admin/templatepages/:template_page_id/templatesections', array('template_page_id' => $templatePage['TemplatePage']['id']))); ?>
 					</td>
 				</tr>

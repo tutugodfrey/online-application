@@ -23,23 +23,39 @@
 					<td><?php echo h($cobrand['Cobrand']['partner_name']); ?></td>
 					<td><?php echo h($cobrand['Cobrand']['partner_name_short']); ?></td>
 					<td><?php
+
 						$cobrand_logo_url = $cobrand['Cobrand']['cobrand_logo_url'];
 						$pos = strpos($cobrand_logo_url, '/');
 						if ($pos === false) {
 							echo h($cobrand_logo_url);
 						} else {
+							$popCoBrImgId = 'popCoBrImg' . $cobrand['Cobrand']['id'];							
 							// assume it is a url
-							echo $this->Html->link($cobrand_logo_url);
+							echo $this->Html->link($cobrand_logo_url, 'javascript:void(0)',
+								array('id' => $popCoBrImgId,
+									'data-toggle' => 'popover','data-trigger' => 'focus',
+									'onClick' => "$('#popOvrContentForpopCoBrImg" . 
+										$cobrand['Cobrand']['id'] . "').html('<img width=\"200\" src=" . $cobrand_logo_url . " onError=\"this.onerror=null; this.src=\'/img/no-image.png\';\">')")
+							);
+							echo "<script>setElementPopOver('" . $popCoBrImgId . "')</script>";
 						}
 					?></td>
 					<td><?php
+
 						$brand_logo_url = $cobrand['Cobrand']['brand_logo_url'];
 						$pos = strpos($brand_logo_url, '/');
 						if ($pos === false) {
 							echo h($brand_logo_url);
 						} else {
+							$poprandImgId = 'popBrandImg' . $cobrand['Cobrand']['id'];							
 							// assume it is a url
-							echo $this->Html->link($brand_logo_url);
+							echo $this->Html->link($brand_logo_url, 'javascript:void(0)',
+								array('id' => $poprandImgId,
+									'data-toggle' => 'popover','data-trigger' => 'focus',
+									'onClick' => "$('#popOvrContentForpopBrandImg" . 
+										$cobrand['Cobrand']['id'] . "').html('<img width=\"200\" src=" . $brand_logo_url . " onError=\"this.onerror=null; this.src=\'/img/no-image.png\';\">')")
+							);
+							echo "<script>setElementPopOver('" . $poprandImgId . "')</script>";
 						}
 					?></td>
 					<td><?php echo h($cobrand['Cobrand']['description']); ?></td>
@@ -50,14 +66,17 @@
 					}
 					?></td>
 					<td class="actions">
-						<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $cobrand['Cobrand']['id'])); ?>
 						<?php echo $this->Html->link(
-							__('Delete'), 
+							$this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')), 
+							array('action' => 'edit', $cobrand['Cobrand']['id']), 
+							array('escape' => false)); ?>
+						<?php echo $this->Html->link(
+							$this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')), 
 							array(
 								'action' => 'delete', 
 								$cobrand['Cobrand']['id']
 							),
-								 array(),
+								 array('escape' => false),
 								"Delete " . $cobrand['Cobrand']['partner_name'] . " Cobrand and associated Templates?"
 						); ?>
 						<?php echo $this->Html->link(__('List Templates'), CakeText::insert('/admin/cobrands/:id/templates', array('id' => $cobrand['Cobrand']['id']))); ?>

@@ -34,8 +34,13 @@
 					<td><?php echo h($template['Template']['created']); ?>&nbsp;</td>
 					<td><?php echo h($template['Template']['modified']); ?>&nbsp;</td>
 					<td class="actions">
-						<?php echo $this->Html->link(__('Edit'), CakeText::insert($list_url . '/edit/:id', array('id' => $template['Template']['id']))); ?>
-						<?php echo $this->Form->postLink(__('Delete'), CakeText::insert($list_url . '/delete/:template_id', array('template_id' => $template['Template']['id'])), null, __('Are you sure you want to delete the template named "%s"?', $template['Template']['name'])); ?>
+						<?php echo $this->Html->link($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+							CakeText::insert($list_url . '/edit/:id', array('id' => $template['Template']['id'])), 
+							array('escape' => false)
+							); ?>
+						<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+							CakeText::insert($list_url . '/delete/:template_id', array('template_id' => $template['Template']['id'])), array('escape' => false),
+							__('Are you sure you want to delete the template named "%s"?', $template['Template']['name'])); ?>
 						<?php echo $this->Html->link(__('List Pages'), CakeText::insert('/admin/templates/:template_id/templatepages', array('template_id' => $template['Template']['id']))); ?>
 						<?php echo $this->Html->link(__('Preview'), CakeText::insert('/admin/templates/preview/:template_id', array('template_id' => $template['Template']['id'])), array('target' => '_blank')); ?>
 					</td>

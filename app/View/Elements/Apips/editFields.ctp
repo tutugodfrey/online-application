@@ -3,15 +3,15 @@
   	<?php
   	$elVars = array(
 		'navLinks' => array(
-			'List API IP Sections' => Router::url(array('action' => 'index')),
-			'Add API IP Sections' => Router::url(array('action' => 'edit'))
+			'Edit/Add API IP Restriction' => $this->here,
+			'List API IP Restrictions' => Router::url(array('action' => 'index')),
 		)
 	);
 	echo $this->Element('actionsNav', $elVars); ?>
 	<div class="col-sm-9 col-lg-10">
 	  <!-- view page content -->
 		<div class="panel panel-default">
-			<div class="panel-heading"><u><strong><?php echo __('Add/Edit API IP restriction')?></strong></u></div>
+			<div class="panel-heading"><u><strong><?php echo __('Add/Edit API IP Restriction')?></strong></u></div>
 			<div class="panel-body">
 				<?php 
 				echo $this->Form->create('Apip', array(

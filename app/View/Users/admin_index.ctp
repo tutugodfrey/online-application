@@ -69,35 +69,35 @@
 			echo "\t\t<td>\n\t\t\t" . (empty($user['Template']['name']) ? '' : $user['Template']['name']) . "\n\t\t</td>\n";
 
 			echo "\t\t<td class=\"actions\">\n";
-			echo $this->BoostCakeHtml->link(' ',
+			echo $this->BoostCakeHtml->link(
+				$this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
 				array(
 					'action' => 'edit',
 					$user['User']['id']
 				),
 				array(
-					'role' => 'button',
-					'class' => 'glyphicon glyphicon-edit',
+					'escape' => false,
 					'title' => __('Edit User')
 				)
 			) . ' ';
+			echo "\t\t\t" . $this->BoostCakeForm->postLink(
+				$this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+				array(
+					'action' => 'delete',
+					$user['User']['id']
+				),
+				array(
+					'escape' => false,
+					'title' => __('Delete User')
+				),
+				__('Are you sure you want to delete') . ' #' . $user['User']['id']
+			) . "\n";
 			echo "\t\t\t" . $this->Html->link(__('Create Token'),
 				array(
 					'action' => 'token',
 					'admin' => true,
 					$user['User']['id']
 				)
-			) . "\n";
-			echo "\t\t\t" . $this->BoostCakeForm->postLink(__(' '),
-				array(
-					'action' => 'delete',
-					$user['User']['id']
-				),
-				array(
-					'role' => 'button',
-					'class' => 'glyphicon glyphicon-trash',
-					'title' => __('Delete User')
-				),
-				__('Are you sure you want to delete') . ' #' . $user['User']['id']
 			) . "\n";
 			echo "\t\t</td>\n";
 			echo "\t</tr>\n";

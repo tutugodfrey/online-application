@@ -25,38 +25,31 @@ class User extends AppModel {
 		'email' => array(
 			'email' => array(
 				'rule' => array('email'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'pwd' => array(
 			'notBlank' => array(
 				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'password_confirm' => array(
-			'required'=>'notBlank',
-			'match'=>array(
-			'rule' => 'validatePasswdConfirm',
-			'message' => 'Passwords do not match'
-		   )
+			'required' => 'notBlank',
+			'match' => array(
+				'rule' => 'validatePasswdConfirm',
+				'message' => 'Passwords do not match'
+			)
+		),
+		'template_id' => array(
+			'rule' => 'hasDefaultTemplate',
+			'message' => 'Please specify a default Template.',
+		),
+		'Template' => array(
+			'rule' => 'templatesMatchCobrand',
+			'message' => 'One or more of the selected templates do not belong to the selected cobrands.',
 		),
 		'group_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 	);
@@ -206,6 +199,43 @@ class User extends AppModel {
 	}
 
 /**
+ * hasDefaultTemplate
+ * Custom validation rule
+ *
+ * @param array $data template_id data
+ * @return boolean
+ */
+	public function hasDefaultTemplate($data) {
+		if (!empty($this->data['User']['Template'])) {
+			return (!empty($data['template_id']));
+		}
+		return true;
+	}
+
+/**
+ * templatesMatchCobrand
+ * Custom validation rule checks for any Templates for which no corresponding cobrands were selected
+ *
+ * @param array $data submitted data
+ * @return boolean
+ */
+	public function templatesMatchCobrand($data) {
+		if (!empty($this->data[$this->alias]['Template'])) {
+			$selectedTemplateIds = $this->data[$this->alias]['Template'];
+			$actualTmpltAndCob = $this->Template->find('all', array(
+					'fields' => array('Template.id', 'Cobrand.id'),
+					'conditions' => array('Template.id' => $selectedTemplateIds),
+					'contain' => array('Cobrand'),
+				));
+			$actualCbrandIds = Hash::extract($actualTmpltAndCob, '{n}.Cobrand.id');
+			$misMatchingCobrands = array_diff($actualCbrandIds, $this->data[$this->alias]['Cobrand']);
+			return empty($misMatchingCobrands);
+
+		}
+		return true;
+	}
+
+/**
  * 
  * @param type $token
  * @return boolean
@@ -263,6 +293,20 @@ class User extends AppModel {
 
 		return $assignedManagerIds;
 	}
+
+	public function getAssignedManagersList($userId){
+		$assignedManagers =  $this->find(
+			'list',
+			array(
+				'conditions' => array('id' => $this->getAssignedManagerIds($userId)),
+				'fields' => array('id', 'fullname'),
+				'order' => array('fullname')
+			)
+		);
+		return $assignedManagers;
+	}
+
+
 /**
  * Get an array of all the assigned user ids to a specific user
  */
@@ -327,6 +371,21 @@ class User extends AppModel {
 		return $id;
 	}
 
+
+
+	public function beforeValidate($options = array()) {
+		//Modify any HABTM data structures so that the data can be validated
+		//This is the required data structure for HABTM validation
+		foreach (array_keys($this->hasAndBelongsToMany) as $model){
+			if(isset($this->data[$model][$model])){
+				$this->data[$this->name][$model] = $this->data[$model][$model];
+				unset($this->data[$model]);
+			}
+		}
+		return true;
+	}
+
+
 	public function beforeSave($options = array()) {
 		parent::beforeSave($options);
 		if (!empty($this->data[$this->alias]['pwd'])) {
@@ -334,6 +393,15 @@ class User extends AppModel {
 		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
 			$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
+		}
+
+		//Modify any HABTM data structures so that the data can be saved
+		//This is the required data structure for saving HABTM data
+		foreach (array_keys($this->hasAndBelongsToMany) as $model){
+			if(isset($this->data[$this->name][$model])){
+				$this->data[$model][$model] = $this->data[$this->name][$model];
+				unset($this->data[$this->name][$model]);
+			}
 		}
 		return true;
 	}
@@ -343,9 +411,9 @@ class User extends AppModel {
 		// cobrands selected, otherwise delete those user template records
 
 		if (!empty($this->data['Template']['Template'])) {
-    		$this->Template = ClassRegistry::init('Template');
-    	
-    		$templates = $this->Template->find(
+			$this->Template = ClassRegistry::init('Template');
+		
+			$templates = $this->Template->find(
 				'all',
 				array(
 					'fields' => array(
@@ -362,28 +430,28 @@ class User extends AppModel {
 			}
 
 			$usersCobrands = $this->data['Cobrand']['Cobrand'];
-    		$usersTemplates = $this->data['Template']['Template'];
+			$usersTemplates = $this->data['Template']['Template'];
 
-    		foreach ($usersTemplates as $userTemplateId) {
-    			$assocCobrandId = $templateToCobrandMap[$userTemplateId];
-    			$flag = false;
-    			if (!empty($usersCobrands)) {
-    				foreach ($usersCobrands as $userCobrandId) {
-    					if ($userCobrandId == $assocCobrandId) {
-    						$flag = true;
-    					}
-    				}
-    			}
-    			if ($flag == false) {
-    				// get rid of the onlineapp_users_onlineapp_templates record
-    				// we don't have an associated cobrand selected by the user
-    				$this->UserTemplate->deleteAll(array(
-    					'UserTemplate.user_id' => $this->data['User']['id'],
-    					'UserTemplate.template_id' => $userTemplateId
-    				), false);
-    			}
-    		}
-    	}
+			foreach ($usersTemplates as $userTemplateId) {
+				$assocCobrandId = $templateToCobrandMap[$userTemplateId];
+				$flag = false;
+				if (!empty($usersCobrands)) {
+					foreach ($usersCobrands as $userCobrandId) {
+						if ($userCobrandId == $assocCobrandId) {
+							$flag = true;
+						}
+					}
+				}
+				if ($flag == false) {
+					// get rid of the onlineapp_users_onlineapp_templates record
+					// we don't have an associated cobrand selected by the user
+					$this->UserTemplate->deleteAll(array(
+						'UserTemplate.user_id' => $this->data['User']['id'],
+						'UserTemplate.template_id' => $userTemplateId
+					), false);
+				}
+			}
+		}
 	}
 
 	public function afterFind($results, $primary = false) {
@@ -498,5 +566,36 @@ class User extends AppModel {
 		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
 		return $templates;
 	}
+
+	/**
+	 * getEditViewData
+	 * 
+	 * @param integer $id a user id
+	 * @return array
+	 */
+	 public function getEditViewData($id) {
+		$data = $this->find('first', array(
+				'conditions' => array('User.id' => $id),
+				'contain' => array(
+					'Manager' => array('fields' => array('id', 'fullname')),
+					'AssignedRepresentative' => array('fields' => array('id', 'fullname')),
+					'Cobrand' => array('fields' => array('id', 'partner_name')),
+					'Template' => array('fields' => array('id', 'name')),
+				),
+			));
+		return $data;
+	 }
+/**
+ * getCombinedCobrandTemplateList
+ *
+ * @param mixed $templateIds string|array of template ids
+ * @return array of ids as keys and [Cobrand-Template] names as values
+ */
+	public function getCombinedCobrandTemplateList($templateIds) {
+		$conditions['conditions'] = array('Template.id' => $templateIds);
+		$tmplts = $this->Template->getTemplatesAndCobrands($conditions);
+		return $this->Template->setCobrandsTemplatesList($tmplts);
+	}
+
 }
 ?>

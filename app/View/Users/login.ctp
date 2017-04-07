@@ -33,7 +33,8 @@ echo $this->Form->create('BoostCake', array(
 ));
 echo $this->Form->input('User.email', array(
 		'placeholder' => 'Email',
-		'autofocus' => 'autofocus'
+		'autofocus' => 'autofocus',
+		'required' => false
 	));
 	echo $this->Form->input('User.password', array(
 		'placeholder' => 'Password'

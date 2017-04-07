@@ -29,8 +29,14 @@
 				<td><?php echo h($group['Group']['created']); ?>&nbsp;</td>
 				<td><?php echo h($group['Group']['modified']); ?>&nbsp;</td>
 				<td class="actions">
-					<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $group['Group']['id'])); ?>
-					<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $group['Group']['id']), array('confirm' => __('Are you sure you want to delete # %s?', $group['Group']['id']))); ?>
+					<?php echo $this->Html->link(
+						$this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+						array('action' => 'edit', $group['Group']['id']),
+						array('escape' => false)
+						); ?>
+					<?php echo $this->Form->postLink(
+						$this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+						array('action' => 'delete', $group['Group']['id']), array('escape' => false, 'confirm' => __('Are you sure you want to delete # %s?', $group['Group']['id']))); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>

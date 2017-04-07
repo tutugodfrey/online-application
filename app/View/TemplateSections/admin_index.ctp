@@ -61,8 +61,10 @@ $this->Html->addCrumb(
 					<td><?php echo h($templateSection['TemplateSection']['created']); ?>&nbsp;</td>
 					<td><?php echo h($templateSection['TemplateSection']['modified']); ?>&nbsp;</td>
 					<td class="actions">
-						<?php echo $this->Html->link(__('Edit'), CakeText::insert($list_url . '/edit/:template_section_id', array('template_section_id' => $templateSection['TemplateSection']['id']))); ?>
-						<?php echo $this->Form->postLink(__('Delete'), CakeText::insert($list_url . '/delete/:id', array('id' => $templateSection['TemplateSection']['id'])), null, __('Are you sure you want to delete # %s?', $templateSection['TemplateSection']['id'])); ?>
+						<?php echo $this->Html->link($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+						CakeText::insert($list_url . '/edit/:template_section_id', array('template_section_id' => $templateSection['TemplateSection']['id'])), array('escape' => false)); ?>
+						<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+							CakeText::insert($list_url . '/delete/:id', array('id' => $templateSection['TemplateSection']['id'])), array('escape' => false), __('Are you sure you want to delete # %s?', $templateSection['TemplateSection']['id'])); ?>
 						<?php echo $this->Html->link(__('List Fields'), CakeText::insert('/admin/templatesections/:template_section_id/templatefields', array('template_section_id' => $templateSection['TemplateSection']['id']))); ?>
 					</td>
 				</tr>

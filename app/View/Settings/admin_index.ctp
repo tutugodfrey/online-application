@@ -20,7 +20,8 @@
 				<td><?php echo h($setting['Setting']['value']); ?>&nbsp;</td>
 				<td><?php echo h($setting['Setting']['description']); ?>&nbsp;</td>
 				<td class="actions">
-					<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $setting['Setting']['key'])); ?>
+					<?php echo $this->Html->link($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-pencil')),
+						array('action' => 'edit', $setting['Setting']['key']), array('escape' => false)); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
