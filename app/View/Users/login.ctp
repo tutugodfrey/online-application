@@ -9,12 +9,12 @@
 		)
 	);
 ?>
-<h3>Login</h3>
-<?php
-echo $this->Session->flash('auth');
-?>
+<h3 class='text-center' >Login</h3>
 <?php
 
+?>
+<?php
+echo $this->Session->flash();
 echo $this->Form->create('BoostCake', array(
 	'inputDefaults' => array(
 		'div' => 'form-group',
