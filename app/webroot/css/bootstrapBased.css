@@ -15,11 +15,6 @@
   display: inline-block;
   max-width: 200px;
 }
-/* The fixed navbar will overlay other content, there must be padding on the top of the <body>.
-http://getbootstrap.com/components/#navbar-fixed-top */
-body { 
-  padding-top: 70px; 
-}
 
 .content{
   padding: 0px 20px 40px 20px;

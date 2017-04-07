@@ -44,8 +44,14 @@ class User extends AppModel {
 			'message' => 'Please specify a default Template.',
 		),
 		'Template' => array(
-			'rule' => 'templatesMatchCobrand',
-			'message' => 'One or more of the selected templates do not belong to the selected cobrands.',
+			'withCobrandsNotEmpty' => array(
+				'rule' => 'withCobrandsNotEmpty',
+				'message' => 'Cobrands were selected, please also select a Template.',
+			),
+			'templatesMatchCobrand' => array(
+				'rule' => 'templatesMatchCobrand',
+				'message' => 'One or more of the selected templates do not belong to the selected cobrands.',
+			),
 		),
 		'group_id' => array(
 			'numeric' => array(
@@ -208,6 +214,20 @@ class User extends AppModel {
 	public function hasDefaultTemplate($data) {
 		if (!empty($this->data['User']['Template'])) {
 			return (!empty($data['template_id']));
+		}
+		return true;
+	}
+
+/**
+ * withCobrandsNotEmpty
+ * Custom validation rule
+ *
+ * @param array $data template_id data
+ * @return boolean
+ */
+	public function withCobrandsNotEmpty($data) {
+		if (!empty($this->data['User']['Cobrand'])) {
+			return (!empty($this->data['User']['Template']));
 		}
 		return true;
 	}

@@ -1,25 +1,20 @@
 <div  style="width: 350px; margin-left: auto; margin-right: auto">
+<?php
+	echo $this->Html->image(
+		'logo.png',
+		array(
+			'alt'=> __('Axia'),
+			'border' => '0',
+			'class' => 'center-block'
+		)
+	);
+?>
 <h3>Login</h3>
 <?php
 echo $this->Session->flash('auth');
-//echo $this->Form->create('User');
-//echo $this->Form->create('User', array('url' => array('controller' => 'users', 'action' =>'login')));
-/*echo $this->Form->create('BoostCake', array(
-	'inputDefaults' => array(
-		'div' => 'form-group',
-		'labal' => false,
-		'wrapInput' => false,
-		'class' => 'control-label'
-	),
-	'class' => 'well form-horizontal'
-));
-echo $this->Form->input('User.email', array('placeholder' => 'Email', 'autofocus'=>'autofocus'));
-echo $this->Form->input('User.password', array('placeholder' => 'Password'));
-echo $this->Form->submit('Login', array('div' => 'form-group', 'class' => 'btn btn-default'));
-echo $this->Form->end();
-*/
 ?>
 <?php
+
 echo $this->Form->create('BoostCake', array(
 	'inputDefaults' => array(
 		'div' => 'form-group',

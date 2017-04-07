@@ -20,7 +20,12 @@
 		</li>
 		<?php 
 		if (!in_array($this->here, $navLinks)) {
-			$viewName = Inflector::humanize(Inflector::tableize($this->name)) . ' ' . Inflector::humanize($this->action);
+			$viewName = Inflector::humanize(Inflector::tableize($this->name));
+			if ($this->action === 'admin_index') {
+				$viewName .= ' List';
+			} else {
+				$viewName .= ' ' . Inflector::humanize($this->action);
+			}
 			/*Remove the word admin as it might confuse some users*/
 			$viewName = str_replace('Admin', '', $viewName);
 			$navLinks = array_merge(array($viewName => $this->here), $navLinks);
