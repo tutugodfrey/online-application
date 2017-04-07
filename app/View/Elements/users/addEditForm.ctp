@@ -35,7 +35,7 @@ echo $this->Html->tag('div', null, array('class' => 'col-md-6'));
 		echo $this->Form->label('User.token_used', 'Token Used On', array('class' => 'col-md-4 control-label'));
 		echo $this->Form->dateTime('token_used', 'MDY', '12', array(
 			'wrapInput' => 'col-md-7',
-			'class' => 'input-sm',
+			'class' => null,
 			'maxYear' => date('Y') + 2,
 			'empty' => true));
 		echo $this->Html->tag('/div');
