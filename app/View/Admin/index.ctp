@@ -1,4 +1,14 @@
-<br/><br/><br/><br/><br/>
+<br/>
+<?php
+	echo $this->Html->image(
+		'logo.png',
+		array(
+			'alt'=> __('Axia'),
+			'class' => 'center-block'
+		)
+	);
+?>
+<br/><br/>
 <div class='col-md-6 col-md-offset-3'>
 <div class='panel panel-primary'>
   <div class="panel-heading"><h4 class="panel-title"><?php echo __('Axia Admin'); ?></h4></div>

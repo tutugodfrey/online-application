@@ -29,7 +29,6 @@
 				echo $this->Html->css('bootstrapBased');
 				if (array_key_exists('admin', $this->request->params) &&
 						$this->request->params['admin'] === true) {
-					 // echo $this->Html->css('cake.generic');
 						?>
 						<style type="text/css">
 								div#content div.index table {
