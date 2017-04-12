@@ -1,3 +1,5 @@
+<!--Load status popover css customizations-->
+<link rel="stylesheet" type="text/css" href="/css/app_status_popover.css">
 <div class="CobrandedApplications">
 	<h2><?php echo $this->Element('cobranded_applications/search'); ?></h2>
 	<table class="table table-condensed table-hover">
@@ -41,15 +43,11 @@
 	<?php 
 		if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED
 		|| $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-			$stsPopoverId = "app_status_{$cobrandedApplication['CobrandedApplication']['id']}";
-			echo $this->Html->link($cobrandedApplication['CobrandedApplication']['status'], '#', array('id' => $stsPopoverId, 
-				'onClick' => "getAppStatus('{$cobrandedApplication['CobrandedApplication']['id']}')", 
-				'data-toggle' => 'popover','data-trigger' => 'focus'));
-	?>
-			<script>
-				setElementPopOver('<?php echo $stsPopoverId; ?>');
-			</script>
-	<?php
+
+			echo $this->Element('cobranded_applications/appStatusPopOver', array(
+					'appId' => $cobrandedApplication['CobrandedApplication']['id'],
+					'appStatus' => $cobrandedApplication['CobrandedApplication']['status']
+				));
 		} else {
 			
 			echo $cobrandedApplication['CobrandedApplication']['status'];

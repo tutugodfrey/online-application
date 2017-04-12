@@ -1,3 +1,5 @@
+<!--Load status popover css customizations-->
+<link rel="stylesheet" type="text/css" href="/css/app_status_popover.css">
 <div class="Coversheets">
 	<h2><?php echo$this->Element('coversheets/search');?></h2>
 	<table cellpadding="0" cellspacing="0">
@@ -35,7 +37,20 @@
 			<?php echo $coversheet['User']['firstname'] . ' ' . $coversheet['User']['lastname']; ?>
 		</td>
 		<td><?php echo $coversheet['Coversheet']['status']; ?>&nbsp;</td>
-                <td><?php echo $coversheet['CobrandedApplication']['status']; ?>&nbsp;</td>
+        <td>
+        	<?php 
+        	if ($coversheet['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED ||
+        		$coversheet['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
+
+				echo $this->Element('cobranded_applications/appStatusPopOver', array(
+					'appId' => $coversheet['CobrandedApplication']['id'],
+					'appStatus' => $coversheet['CobrandedApplication']['status']
+				));
+			} else {
+				echo $coversheet['CobrandedApplication']['status'];
+			}
+			?>
+        </td>
 
 		<td class="actions">
                     <?php if ($this->Session->read('Auth.User.group') == 'admin'): ?>
