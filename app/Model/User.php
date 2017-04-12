@@ -461,7 +461,8 @@ class User extends AppModel {
 /**
  * arrayDiff
  * Checks for difference between existing data in the database and the data passed to function
- * 
+ *
+ * @todo ****This method is not in used and should be removed in the near future********
  * @param array $change Array of users data
  * @return array
  */
@@ -503,7 +504,6 @@ class User extends AppModel {
 		}
 		$user = Hash::expand($user);
 		$changedUsers = Hash::diff($change, $user);
-debug($changedUsers);
 		return $changedUsers;
 	}
 
