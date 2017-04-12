@@ -40,6 +40,8 @@ class UserTest extends CakeTestCase {
 		$this->Group = ClassRegistry::init('Group');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
+		$this->UsersTemplate = ClassRegistry::init('UsersTemplate');
+		$this->UsersTemplate = ClassRegistry::init('UsersCobrand');
 
 		// load data
 		$this->loadFixtures('OnlineappUser');
@@ -65,6 +67,7 @@ class UserTest extends CakeTestCase {
 		unset($this->Group);
 		unset($this->Cobrand);
 		unset($this->Template);
+		unset($this->UsersTemplate);
 		parent::tearDown();
 	}
 
@@ -340,9 +343,7 @@ class UserTest extends CakeTestCase {
 /**
  * testBeforeSave
  *
- * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
+ * @covers User::beforeSave()
  * @return void
  */
 	public function testBeforeSave() {
@@ -366,12 +367,43 @@ class UserTest extends CakeTestCase {
 /**
  * testAfterSave
  *
- * @covers User::__construct
- * @covers User::filterArgs property
  * @covers User::virtualFields property
  * @return void
  */
-	public function testAfterSave() {}
+	public function testAfterSave() {
+		//Set HABTM data structure
+		$user = array(
+			'User' => array(
+				'id' => 1,
+			),
+			'Cobrand' => array(
+				'Cobrand' => array(1)
+			),
+			'Template' => array(
+				'Template' => array(
+					1,
+					2,
+				//this template does not belong to cobrand with id 1
+				//should be removed afterSave
+					3
+				)
+			),
+		);
+		//save new Cobrands/Templates for user
+		$this->User->saveAll($user);
+		$savedData = $this->User->find('first', array(
+			'conditions' => array('User.id' => 1),
+			'fields' => array('User.id'),
+			'contain' => array(
+				'Cobrand' => array('fields' => array('Cobrand.id')),
+				'Template' => array('fields' => array('Template.id'))
+			)
+		));
+
+		$expected = array(1, 2);
+		$actual = Hash::extract($savedData, 'Template.{n}.id');
+		$this->assertSame($expected, $actual);
+	}
 
 /**
  * testAfterFind
@@ -381,36 +413,83 @@ class UserTest extends CakeTestCase {
  * @covers User::virtualFields property
  * @return void
  */
-	public function testAfterFind() {}
+	public function testAfterFind() {
+		$users = $this->User->find('all', array(
+			'recursive' => -1,
+			'fields' => array('template_id')
+		));
 
-/**
- * testArrayDiff
- *
- * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
- * @return void
- */
-	public function testArrayDiff() {}
+		//all users shold have their templates inserted on afterFind
+		//despite recursive = -1
+		foreach ($users as $idx => $data) {
+			$this->assertArrayHasKey('Template', $data);
+		}
+	}
 
 /**
  * testGetCobrandIds
- * * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
+ *
+ * @covers User::getCobrandIds
  * @return void
  */
-	public function testGetCobrandIds() {}
+	public function testGetCobrandIds() {
+		//Set HABTM data structure
+		$user = array(
+			'User' => array(
+				'id' => 1,
+			),
+			'Cobrand' => array(
+				'Cobrand' => array(1, 2)
+			),
+			'Template' => array(
+				'Template' => array(
+					1,
+					2,
+					3
+				)
+			),
+		);
+		//save new Cobrands/Templates for user
+		$this->User->saveAll($user);
+		$expected = array(1, 2);
+		$actual = $this->User->getCobrandIds(1);
+		$this->assertSame($expected, $actual);
+	}
 
 /**
  * testGetTemplates
  *
- * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
+ * @covers User::getTemplates
  * @return void
  */
-	public function testGetTemplates() {}
+	public function testGetTemplates() {
+		//Set HABTM data structure
+		$user = array(
+			'User' => array(
+				'id' => 1,
+			),
+			'Cobrand' => array(
+				'Cobrand' => array(1, 2)
+			),
+			'Template' => array(
+				'Template' => array(
+					1,
+					2,
+					3
+				)
+			),
+		);
+		//save new Cobrands/Templates for user
+		$this->User->saveAll($user);
 
+		$expected = array(
+			1 => 'Partner Name 1 - Template 1 for PN1',
+			2 => 'Partner Name 1 - Template 2 for PN1',
+			3 => 'Partner Name 2 - Template 1 for PN2'
+		);
 
+		$actual = $this->User->getTemplates($user['User']['id']);
+		ksort($actual);//sort for consistency
+		$this->assertSame($expected, $actual);
+	}
 }

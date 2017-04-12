@@ -503,7 +503,7 @@ class User extends AppModel {
 		}
 		$user = Hash::expand($user);
 		$changedUsers = Hash::diff($change, $user);
-
+debug($changedUsers);
 		return $changedUsers;
 	}
 
