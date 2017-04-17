@@ -39,7 +39,7 @@ class CoversheetsController extends AppController {
                 
             if ($this->Coversheet->save()) {
                 $id = $this->Coversheet->id;
-                $this->_success(__('New Coversheet #$id has been created'));
+                $this->_success(__("New Coversheet #$id has been created"));
                 $this->redirect('/coversheets/edit/' . $this->Coversheet->id);
             } else {
 				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
@@ -190,7 +190,7 @@ class CoversheetsController extends AppController {
                     }
 				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                 } else {
-				    $this->_failure(__('The coversheet $id could not be validated. Please, try again.'));
+				    $this->_failure(__("The coversheet $id could not be validated. Please, try again."));
                     $errors = $this->Coversheet->validationErrors;
                     $this->set('errors', $errors);
                     if (array_key_exists('cp_encrypted_sn', $errors) || array_key_exists('cp_pinpad_ra_attached', $errors) || array_key_exists('cp_check_guarantee_info', $errors) || array_key_exists('cp_pos_contact', $errors)) {

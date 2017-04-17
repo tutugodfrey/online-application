@@ -699,7 +699,7 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->CobrandedApplication->delete()) {
 			$this->_success(__("Application $id deleted"), array('action' => 'index'));
 		}
-		$this->_failure(__('Application $id was not deleted'), array('action' => 'index'));
+		$this->_failure(__("Application $id was not deleted"), array('action' => 'index'));
 	}
 
 /**
@@ -925,7 +925,7 @@ class CobrandedApplicationsController extends AppController {
 				}
 			} else {
 				$url = "/edit/" . $cobrandedApplication['CobrandedApplication']['uuid'];
-				$this->_failure(__('Error! Could not send the document for $merchDBA application'));
+				$this->_failure(__("Error! Could not send the document for $merchDBA application"));
 				$this->redirect(array('action' => $url));
 			}
 
