@@ -45,7 +45,7 @@ $this->Html->addCrumb(
 					)); 
 					echo $this->Form->input('name');
 					echo $this->Form->input('width', array('min' => 1, 'max' => 12));
-					echo $this->Form->input('rep_only', array('label'=> array('class' => 'col-md-9 control-label') ,'type' => 'checkbox', 'class' => null));
+					echo $this->Form->input('rep_only', array('label'=> array('class' => 'col-md-offset-7') ,'type' => 'checkbox', 'class' => null));
 					echo $this->Form->input('description');
 					echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success'));
 					?>

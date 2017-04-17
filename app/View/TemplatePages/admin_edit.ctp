@@ -41,7 +41,7 @@ $this->Html->addCrumb(
 				if ($nameDisabled) {
 					echo $this->Form->hidden('name');
 				}
-				echo $this->Form->input('rep_only', array('label'=> array('class' => 'col-md-9 control-label'), 'type' => 'checkbox', 'class' => null));
+				echo $this->Form->input('rep_only', array('label'=> array('class' => 'col-md-offset-7'), 'type' => 'checkbox', 'class' => null));
 				echo $this->Form->input('order', array('min' => 0, 'max' => $maxOrderValue, 'disabled' => $orderDisabled));
 				if ($orderDisabled) {
 					echo $this->Form->hidden('order');

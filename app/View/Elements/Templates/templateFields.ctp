@@ -45,7 +45,7 @@ if (!isset($logoThumbNailsHtml)) {
 } else {
 	echo $logoThumbNailsHtml;
 }
-echo $this->Form->input('include_brand_logo', array('class' => false, 'label' => array('class' => 'col-md-12 control-label'), 'type' => 'checkbox'));
+echo $this->Form->input('include_brand_logo', array('class' => false, 'label' => array('class' => 'col-md-offset-7'), 'type' => 'checkbox'));
 
 $requestData = Hash::extract($this->request->data, '{s}.requires_coversheet');
 $rCoverSheetAttr = array();
@@ -53,7 +53,7 @@ if (empty($requestData)) {
 	//default checked state for new data
 	$rCoverSheetAttr['checked'] = true;
 }
-$rCoverSheetAttr = array_merge($rCoverSheetAttr, array('class' => false, 'label' => array('class' => 'col-md-12 control-label'), 'type' => 'checkbox'));
+$rCoverSheetAttr = array_merge($rCoverSheetAttr, array('class' => false, 'label' => array('class' => 'col-md-offset-7'), 'type' => 'checkbox'));
 echo $this->Form->input('requires_coversheet', $rCoverSheetAttr);
 
 echo $this->Form->input('description', array('class' => 'form-control', 'wrapInput' => 'col col-md-4'));

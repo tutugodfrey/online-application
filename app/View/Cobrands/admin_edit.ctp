@@ -94,7 +94,7 @@
 				);
 
 				echo $this->Form->input('cobrand_logo', array('type' => 'file', 'class' => null, 'label' => $label, 'novalidate' => true, 'required' => false));
-				echo $this->Form->input('delete_cobrand_logo',  array('label'=> array('class' => 'col-md-11 control-label text-warning'),'type'=>'checkbox', 'class' => null));
+				echo $this->Form->input('delete_cobrand_logo',  array('label'=> array('class' => 'col-md-offset-7'),'type'=>'checkbox', 'class' => null));
 				echo $this->Form->input('cobrand_logo_url');
 
 				echo "<br><br>";
@@ -142,7 +142,7 @@
 				);
 
 				echo $this->Form->input('brand_logo', array('type' => 'file', 'class' => null, 'label' => $label, 'novalidate' => true, 'required' => false));
-				echo $this->Form->input('delete_brand_logo', array('label'=> array('class' => 'col-md-11 control-label text-warning'),'type'=>'checkbox', 'class' => null));
+				echo $this->Form->input('delete_brand_logo', array('label'=> array('class' => 'col-md-offset-7'),'type'=>'checkbox', 'class' => null));
 				echo $this->Form->input('brand_logo_url');
 
 				echo "<br><br>";
