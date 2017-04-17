@@ -101,29 +101,6 @@ class AppController extends Controller {
 		  Configure::write('Setting.'.$setting['Setting']['key'], $setting['Setting']['value']);
 		}
 	}
-	
-	/**
-	* CSV Import functionality for all controllers
-	*    
-	*/
-	function import() {
-		$modelClass = $this->modelClass;
-		if ( $this->request->is('POST') ) {
-			$records_count = $this->$modelClass->find( 'count' );
-			try {
-				$this->$modelClass->importCSV( $this->request->data[$modelClass]['CsvFile']['tmp_name']  );
-			} catch (Exception $e) {
-				$import_errors = $this->$modelClass->getImportErrors();
-				$this->set( 'import_errors', $import_errors );
-				$this->Session->_failure( __('Error Importing') . ' ' . $this->request->data[$modelClass]['CsvFile']['name'] . ', ' . __('column name mismatch.'), array('action'=>'import'));
-			}
-
-			$new_records_count = $this->$modelClass->find( 'count' ) - $records_count;
-			$this->Session->_failure(__('Successfully imported') . ' ' . $new_records_count .  ' records from ' . $this->request->data[$modelClass]['CsvFile']['name'], array('action'=>'index'));
-		}
-		$this->set('modelClass', $modelClass );
-		$this->render('../Common/import');
-	} //end import()
 
 	/**
 	 * Log Api Requests, whether failed or not
