@@ -27,7 +27,7 @@ class AppController extends Controller {
 		'Paginator' => array('className' => 'BoostCake.BoostCakePaginator'),
 		'Session',
 		'Js' => array('AppJs'),
-		/*'Ajax', 'Javascript'*/);
+	);
 
 	public function beforeFilter() {
 		// Force SSL
@@ -67,9 +67,7 @@ class AppController extends Controller {
 			}
 		}
 
-
 		// Look up user & group info (from auth params...should be safe!)
-		// $user = $this->User->findByEmail($this->Auth->user('email'));
 		$user = $this->User->find('first', array(
 			'conditions' => array(
 				'User.email' => $this->Auth->user('email')
@@ -180,8 +178,6 @@ class AppController extends Controller {
  * @return void
  */
 	public function admin_delete($id) {
-		$errClass = array('class' => 'alert alert-danger');
-		$successClass = array('class' => 'alert alert-success');
 		if (!$this->request->is('post')) {
 			$this->_failure(" - Error 405:  Method Not Allowed!", $this->referer());
 		}

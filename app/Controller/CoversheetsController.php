@@ -38,9 +38,8 @@ class CoversheetsController extends AppController {
             );
                 
             if ($this->Coversheet->save()) {
-				$this->_success(__('The coversheet has been created'));
-				//$this->redirect(array('action' => 'add'));
                 $id = $this->Coversheet->id;
+                $this->_success(__('New Coversheet #$id has been created'));
                 $this->redirect('/coversheets/edit/' . $this->Coversheet->id);
             } else {
 				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
@@ -116,10 +115,10 @@ class CoversheetsController extends AppController {
                 }
 			
                 if ($this->Coversheet->save($this->request->data, array('validate' => false))) {
-				    $this->_success(__('The coversheet has been saved'));
+				    $this->_success(__('The coversheet #' . $this->request->data('Coversheet.id') . ' has been saved'));
 				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                 } else {
-				    $this->_failure(__('The coversheet could not be saved. Please, try again.'));
+				    $this->_failure(__('The coversheet #' . $this->request->data('Coversheet.id') . 'could not be saved. Please, try again.'));
                 }
             } elseif (isset($this->request->data['uw'])) {
                 $term1AcceptDebit = 'no';
@@ -174,24 +173,24 @@ class CoversheetsController extends AppController {
                         if ($this->Coversheet->pdfGen($id, $viewData)) {
                             if ($this->Coversheet->sendCoversheet($id)) {
                                 if ($this->Coversheet->unlinkCoversheet($id)) {
-                                    $this->_success(__('The coversheet has been submitted to underwriting'));
+                                    $this->_success(__("The coversheet $id has been submitted to underwriting"));
                                     $this->Coversheet->saveField('status', 'sent');
                                 } else {
-                                    $this->_failure(__('There was a problem deleting the Coversheet pdf file'));
+                                    $this->_failure(__("There was a problem deleting the Coversheet pdf file"));
                                 }
                             } else {
-                                $this->_failure(__('There was a problem sending the Coversheet pdf'));
+                                $this->_failure(__("There was a problem sending the Coversheet pdf"));
                             }
                         } else {
-                            $this->_failure(__('There was a problem generating the Coversheet pdf'));
+                            $this->_failure(__("There was a problem generating the Coversheet pdf"));
                         }
                     } else {
-                        $this->_success(__('The coversheet has been validated and will be sent to underwriting once the application is signed'));
+                        $this->_success(__("The coversheet $id has been validated and will be sent to underwriting once the application is signed"));
                         $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                     }
 				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                 } else {
-				    $this->_failure(__('The coversheet could not be validated. Please, try again.'));
+				    $this->_failure(__('The coversheet $id could not be validated. Please, try again.'));
                     $errors = $this->Coversheet->validationErrors;
                     $this->set('errors', $errors);
                     if (array_key_exists('cp_encrypted_sn', $errors) || array_key_exists('cp_pinpad_ra_attached', $errors) || array_key_exists('cp_check_guarantee_info', $errors) || array_key_exists('cp_pos_contact', $errors)) {

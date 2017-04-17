@@ -706,7 +706,6 @@
                                                     $div_hide = 'HideCpLink';
                                                     $div_string = 'Cp';
                                                     echo '<div id="'.$div_show.'">';
-                                                    //echo $this->Js->link('Click for Card Present Merchant', '', array('update' => array($div_string,$div_hide,$div_show), 'loading' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')')); 
                                                     echo $this->Html->link('Click for Card Present Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')'));
                                                     echo '</div>'; 
                                                     echo '<div id="'.$div_hide.'" style=display:none;">';

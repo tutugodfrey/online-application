@@ -400,7 +400,7 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->CobrandedApplication->isExpired($uuid) && !$this->Auth->loggedIn()) {
 			$this->redirect(array('action' => '/expired/'.$uuid));
 		}
-		else if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
+		elseif (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 			// redirect to a retrieve page
 			$this->redirect(array('action' => 'retrieve'));
 		} else {
@@ -617,10 +617,10 @@ class CobrandedApplicationsController extends AppController {
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->CobrandedApplication->save($this->request->data)) {
-				$this->_success(__('The application has been saved'));
+				$this->_success(__("Application number $id has been saved"));
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->_failure(__('The application could not be saved. Please, try again.'));
+				$this->_failure(__("Application number $id could not be saved. Please, try again."));
 			}
 		} else {
 			$options = array('conditions' => array(
@@ -678,9 +678,9 @@ class CobrandedApplicationsController extends AppController {
 		}
 
 		if ($this->CobrandedApplication->copyApplication($id, $this->Session->read('Auth.User.id'), $templateId)) {
-			$this->_success(__('Application copied'), array('action' => 'index'));
+			$this->_success(__("Application $id copied"), array('action' => 'index'));
 		}
-		$this->_failure(__('Failed to copy application'), array('action' => 'index'));
+		$this->_failure(__("Failed to copy application $id"), array('action' => 'index'));
 	}
 
 /**
@@ -697,9 +697,9 @@ class CobrandedApplicationsController extends AppController {
 		}
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->CobrandedApplication->delete()) {
-			$this->_success(__('Application deleted'), array('action' => 'index'));
+			$this->_success(__("Application $id deleted"), array('action' => 'index'));
 		}
-		$this->_failure(__('Application was not deleted'), array('action' => 'index'));
+		$this->_failure(__('Application $id was not deleted'), array('action' => 'index'));
 	}
 
 /**
@@ -873,12 +873,12 @@ class CobrandedApplicationsController extends AppController {
 					$tmpResponse = json_decode($response, true);
 
 					if ($tmpResponse && key_exists('error', $tmpResponse)) {
-						$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
-						$this->_failure(__('error! '.$tmpResponse['error']['message']));
+						$url = "/edit/" . $cobrandedApplication['CobrandedApplication']['uuid'];
+						$this->_failure(__('error! ' . $tmpResponse['error']['message']));
 						$this->redirect(array('action' => $url));
 					}
 				} else {
-					$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
+					$url = "/edit/" . $cobrandedApplication['CobrandedApplication']['uuid'];
 					$this->_failure(__(CobrandedApplication::RIGHTSIGNATURE_NO_TEMPLATE_ERROR));
 					$this->redirect(array('action' => $url));
 				}
@@ -888,7 +888,12 @@ class CobrandedApplicationsController extends AppController {
 				$response['document']['status'] = 'sent';
 				$response['document']['guid'] = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 			}
-
+			$appValues = Hash::combine(
+				$cobrandedApplication,
+				'CobrandedApplicationValues.{n}.name',
+				'CobrandedApplicationValues.{n}.value'
+			);
+			$merchDBA = (!empty($appValues['DBA']))? $appValues['DBA'] : Hash::get($appValues, 'CorpName');
 			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
 				// save the guid
 				$this->CobrandedApplication->save(
@@ -904,18 +909,13 @@ class CobrandedApplicationsController extends AppController {
 
 				// check whether they want to sign in person
 				if ($signNow) {
-					$this->redirect(array('action' => 'sign_rightsignature_document?guid='.$response['document']['guid']));
+					$this->redirect(array('action' => 'sign_rightsignature_document?guid=' . $response['document']['guid']));
 				} else {
-					$applicationValues = Hash::combine(
-						$cobrandedApplication,
-						'CobrandedApplicationValues.{n}.name',
-						'CobrandedApplicationValues.{n}.value'
-					);
 					// if not simply send the documents
 					$emailResponse = $this->CobrandedApplication->sendApplicationForSigningEmail($applicationId);
 					if ($emailResponse['success'] === true) {
 						$this->_success(
-							__('Application has been emailed to: ' . $applicationValues['Owner1Email'])
+							__("$merchDBA Application has been emailed to: " . $appValues['Owner1Email'])
 						);
 						$this->redirect(array('action' => 'index', 'admin' => true));
 					} else {
@@ -924,8 +924,8 @@ class CobrandedApplicationsController extends AppController {
 					}
 				}
 			} else {
-				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
-				$this->_failure(__('error! could not send the document'));
+				$url = "/edit/" . $cobrandedApplication['CobrandedApplication']['uuid'];
+				$this->_failure(__('Error! Could not send the document for $merchDBA application'));
 				$this->redirect(array('action' => $url));
 			}
 
