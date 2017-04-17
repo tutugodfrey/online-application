@@ -398,31 +398,18 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function edit($uuid = null) {
 		if ($this->CobrandedApplication->isExpired($uuid) && !$this->Auth->loggedIn()) {
-			$this->redirect(array('action' => '/expired/'.$uuid));
-		}
-		elseif (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
+			$this->redirect(array('action' => '/expired/' . $uuid));
+		} elseif (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 			// redirect to a retrieve page
 			$this->redirect(array('action' => 'retrieve'));
 		} else {
-			if ($this->request->is('post') || $this->request->is('put')) {
-				if ($this->CobrandedApplication->save($this->request->data)) {
-					$this->_success(__('The application has been saved'));
-					$this->redirect(array('action' => 'index'));
-				} else {
-					$this->_failure(__('The application could not be saved. Please, try again.'));
-				}
-			} else {
-				$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
-				$this->request->data = $this->CobrandedApplication->find('first', $options);
-				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
-				$this->set('valuesMap', $valuesMap);
-			}
-
+			$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
+			$this->request->data = $this->CobrandedApplication->find('first', $options);
 			$users = $this->CobrandedApplication->User->find('list');
-			$this->set(compact('users'));
-
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
-
+			$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
+			$this->set(compact('users'));
+			$this->set('valuesMap', $valuesMap);
 			$this->set('brand_logo_url', $template['Template']['Cobrand']['brand_logo_url']);
 			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['cobrand_logo_url']);
 			$this->set('include_brand_logo', $template['Template']['include_brand_logo']);
@@ -432,14 +419,12 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('rightsignature_install_template_guid', $template['Template']['rightsignature_install_template_guid']);
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
-
 			$this->set('methodName', $this->Session->read('methodName'));
 			$this->Session->delete('methodName');
 
 			// if it is a rep viewing/editing the application don't require fields to be filled in
 			// but if they do have data, validate it
 			$this->set('requireRequiredFields', false);
-
 			$this->Session->write('applicationStatus', $this->request->data['CobrandedApplication']['status']);
 		}
 	}
