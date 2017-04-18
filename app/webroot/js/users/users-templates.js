@@ -129,9 +129,9 @@
 			});
 		});
 
-		//Tidy up/remove from left all templates that are already in right
+		//--Tidy up:		
+		//remove from left all templates that are already in right
 		$.multiselect.defaults.startUp($('#all_templates'), $('#all_templates_to'));
-
 		//Re-sort list
 		natSortSelect('all_templates');
 	}

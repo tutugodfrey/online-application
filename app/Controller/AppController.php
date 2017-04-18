@@ -164,7 +164,7 @@ class AppController extends Controller {
 		}
 
 		if($this->{$this->modelClass}->delete()) {
-			$this->_failure("{$this->modelClass} has been deleted!", $this->referer());
+			$this->_success("{$this->modelClass} has been deleted!", $this->referer());
 		} else {
 			$this->_failure("Error: Could not delete {$this->modelClass}!", $this->referer());
 		}
@@ -178,13 +178,17 @@ class AppController extends Controller {
  * @param array $redirectUrl url
  * @return mixed
  */
-	protected function _success($message = null, $redirectUrl = array()) {
+	protected function _success($message = null, $redirectUrl = array(), $cssClass = '') {
 		if (empty($message)) {
 			$message = __('%s successfully saved', $this->modelClass);
 		}
+		$alertCss = 'alert-info';
+		if (!empty($cssClass)) {
+			$alertCss = $cssClass;
+		}
 		$this->Session->setFlash($message, 'alert', array(
 				'plugin' => 'BoostCake',
-				'class' => 'alert-success'
+				'class' => $alertCss
 			));
 		if (!empty($redirectUrl)) {
 			return $this->redirect($redirectUrl);
