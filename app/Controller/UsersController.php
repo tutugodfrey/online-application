@@ -60,7 +60,7 @@ class UsersController extends AppController {
 				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
 				$this->redirect($this->Auth->redirect());
 			} else {
-				$this->_failure(__('Invalid e-mail / password combination.  Please try again.'));
+				$this->_failure(__('Invalid e-mail / password combination.'));
 			}
 		}
 	}
