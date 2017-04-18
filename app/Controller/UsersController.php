@@ -134,7 +134,7 @@ class UsersController extends AppController {
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('allManagers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('allCobrands', ClassRegistry::init('Cobrand')->getList());
-		$this->set('allTemplates', $this->User->Template->getList());
+		$this->set('allTemplates', $this->User->getJsonCobrandsTemplates());
 		$this->_persistMultiselectData($this->request->data);
 	}
 
@@ -203,7 +203,7 @@ class UsersController extends AppController {
 		$this->set('allRepresentatives', $this->User->getActiveUserList());
 		$this->set('allCobrands', ClassRegistry::init('Cobrand')->getList());
 		$this->_setViewNavData('');
-		$this->set('allTemplates', $this->User->Template->getList());
+		$this->set('allTemplates', $this->User->getJsonCobrandsTemplates());
 		$this->set('userDefaultTemplates', $this->User->getTemplates($id));
 		$this->_persistMultiselectData($this->request->data);
 	}

@@ -240,6 +240,9 @@ class User extends AppModel {
  * @return boolean
  */
 	public function templatesMatchCobrand($data) {
+		if (!empty($this->data[$this->alias]['Template']) && empty($this->data[$this->alias]['Cobrand'])) {
+			return false;
+		}
 		if (!empty($this->data[$this->alias]['Template'])) {
 			$selectedTemplateIds = $this->data[$this->alias]['Template'];
 			$actualTmpltAndCob = $this->Template->find('all', array(
@@ -605,6 +608,7 @@ class User extends AppModel {
 			));
 		return $data;
 	 }
+
 /**
  * getCombinedCobrandTemplateList
  *
@@ -617,5 +621,21 @@ class User extends AppModel {
 		return $this->Template->setCobrandsTemplatesList($tmplts);
 	}
 
+/**
+ * getJsonCobrandsTemplates
+ *
+ * @return string JSON encoded array with Cobrand ids keys and [Template id-Template name] as values
+ */
+	public function getJsonCobrandsTemplates() {
+		$data = $this->Template->getTemplatesAndCobrands(array('recursive' => -1));
+
+		foreach (Hash::extract($data, '{n}.Cobrand.id') as $cobId) {
+			foreach ($data as $tAndC) {
+				if ($tAndC['Cobrand']['id'] === $cobId) {
+					$cobAndTmpl[$cobId][$tAndC['Template']['id']] = $tAndC['Cobrand']['partner_name'] . ' - ' . $tAndC['Template']['name'];
+				}
+			}
+		}
+		return json_encode($cobAndTmpl);
+	}
 }
-?>

@@ -1,4 +1,8 @@
  <script type='text/javascript' src='/js/multiselect/multiselect.js'></script>
+ <script type='text/javascript'>
+ 	//Set global variable
+	var allTemplates = <?php echo $allTemplates;?>;
+ </script>
  <?php 
 $this->request->data['Managers'] = [];
 $managers = [];
@@ -122,10 +126,10 @@ echo $this->Html->tag('/div');
 		    'size' => '18'));
 	    ?>    
 	    <div class="col-xs-2">
-	        <button type="button" id="all_cobrands_rightAll" class="btn btn-block btn-primary"><i class="glyphicon glyphicon-forward"></i></button>
-	        <button type="button" id="all_cobrands_rightSelected" class="btn btn-block btn-info"><i class="glyphicon glyphicon-chevron-right"></i></button>
-	        <button type="button" id="all_cobrands_leftSelected" class="btn btn-block btn-warning"><i class="glyphicon glyphicon-chevron-left"></i></button>
-	        <button type="button" id="all_cobrands_leftAll" class="btn btn-block btn-danger"><i class="glyphicon glyphicon-backward"></i></button>
+	        <button type="button" name='cobrands_btns' id="all_cobrands_rightAll" class="btn btn-block btn-primary"><i class="glyphicon glyphicon-forward"></i></button>
+	        <button type="button" name='cobrands_btns' id="all_cobrands_rightSelected" class="btn btn-block btn-info"><i class="glyphicon glyphicon-chevron-right"></i></button>
+	        <button type="button" name='cobrands_btns' id="all_cobrands_leftSelected" class="btn btn-block btn-warning"><i class="glyphicon glyphicon-chevron-left"></i></button>
+	        <button type="button" name='cobrands_btns' id="all_cobrands_leftAll" class="btn btn-block btn-danger"><i class="glyphicon glyphicon-backward"></i></button>
 	    </div>
 	    <?php
 	    echo $this->Form->input('Cobrand', array(
@@ -149,7 +153,7 @@ echo $this->Html->tag('/div');
 		<?php
 		    echo $this->Form->input('AllTemplatesMulti', array(
 	    	'id' => 'all_templates',
-	    	'options' => $allTemplates,
+	    	'options' => array(),
 		    'div' => false,
 		    'wrapInput' => 'col-xs-5',
 		    'label' => false,
@@ -176,6 +180,7 @@ echo $this->Html->tag('/div');
 </div>
 
 <?php
+	echo $this->Form->hidden('CobrandTemplateJSON');
 	//set variable for add action
 	$userDefaultTemplates = (!isset($userDefaultTemplates))? array() : $userDefaultTemplates;
 	echo $this->Form->input(
@@ -188,83 +193,7 @@ echo $this->Html->tag('/div');
 		)
 	);
 ?>
-<script type='text/javascript'>
-$(document).ready(function() {
-	//Enable multiselect functionality
-	$('#all_managers').multiselect({
-		settings: {
-			submitAllLeft: false
-		},
-		search: {
-			left: '<input type="text" name="mgr_optns_search" class="form-control" placeholder="Search All Managers..." />',
-			right: '<input type="text" name="mgr_optns_search" class="form-control" placeholder="Search Selected..." />',
-		},
-		fireSearch: function(value) {
-			return value.length > 1;
-		}
-	});
-
-	$('#all_assn_reps').multiselect({
-		settings: {
-			submitAllLeft: false
-		},
-		search: {
-			left: '<input type="text" name="assn_reps_optns_search" class="form-control" placeholder="Search All Reps..." />',
-			right: '<input type="text" name="assn_reps_optns_search" class="form-control" placeholder="Search Selected..." />',
-		},
-		fireSearch: function(value) {
-			return value.length > 1;
-		}
-	});
-
-	$('#all_cobrands').multiselect({
-		settings: {
-			submitAllLeft: false
-		},
-		search: {
-			left: '<input type="text" name="all_cobrands_optns_search" class="form-control" placeholder="Search All Cobrands..." />',
-			right: '<input type="text" name="all_cobrands_optns_search" class="form-control" placeholder="Search Selected..." />',
-		},
-		fireSearch: function(value) {
-			return value.length > 1;
-		}
-	});
-
-	$('#all_templates').multiselect({
-		settings: {
-			submitAllLeft: false
-		},
-		search: {
-			left: '<input type="text" name="all_templates_optns_search" class="form-control" placeholder="Search All Templates..." />',
-			right: '<input type="text" name="all_templates_optns_search" class="form-control" placeholder="Search Selected..." />',
-		},
-		fireSearch: function(value) {
-			return value.length > 1;
-		}
-	});
-	$('#multiSelectionArea').on('click mouseenter mouseleave keypress', function() {
-		if ($('#UserTemplateId option').length -1 !== $('#all_templates_to option').length) {
-			//remember initial selection
-			curSelVal = $("#UserTemplateId option:selected").val();
-			//Get all new updated options from multiselect selected menu
-			var newOptions = $('#all_templates_to option');
-			
-			var $el = $("#UserTemplateId");
-			// remove old options except the top 
-			$('#UserTemplateId option:gt(0)').remove(); 
-			//Update default template dropdown
-			$.each(newOptions, function(key,value) {
-				$el.append($("<option></option>")
-					.attr("value", value.value).text(value.label));
-			});
-
-			//Set initial value
-			$('#UserTemplateId option[value=' + curSelVal + ']').attr('selected','selected');
-		}
-	});
-
-});
-</script>
+<script type='text/javascript' src='/js/users/users-templates.js'></script>
 <?php
 echo $this->Form->end(array('label' => __('Save user'), 'div' => array('class' => 'col-md-12'), 'class' => 'btn btn-sm btn-success'));
 ?>
