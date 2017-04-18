@@ -297,22 +297,6 @@ class User extends AppModel {
 	}
 
 /**
- * flatRateUsers
- * Determine whether a users should be able to assign flat rate pricing
- * 
- * @param integer $userId a user id
- * @return boolean
- */
-	public function flatRateUsers($userId) {
-		$flatRateManagers = Configure::read('Axia.flatRateManagers');
-		if (count($flatRateManagers) > count(array_diff($flatRateManagers, $this->getAssignedManagerIds($userId))) || in_array($userId, $flatRateManagers)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-/**
  * useToken
  * 
  * @param string $token a string token max length 40 chars

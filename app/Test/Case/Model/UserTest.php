@@ -248,52 +248,6 @@ class UserTest extends CakeTestCase {
 	}
 
 /**
- * testFlatRateUsers
- *
- * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
- * @return void
- */
-	public function testFlatRateUsers() {
-		$userId = 99999; //fake user id
-		$result = $this->User->flatRateUsers($userId);
-		$this->assertFalse($result);
-
-		foreach (Configure::read('Axia.flatRateManagers') as $userId) {
-			$result = $this->User->flatRateUsers($userId);
-			$this->assertTrue($result);
-		}
-
-		$usersMgrsData = array(
-					'user_id' => 99,
-					'manager_id' => 69
-				);
-		$this->UsersManager->create();
-		$this->UsersManager->save($usersMgrsData);
-		$result = $this->User->flatRateUsers($usersMgrsData['user_id']);
-		$this->assertTrue($result);
-
-		$usersMgrsData = array(
-				array(
-					'user_id' => 99,
-					'manager_id' => 69
-				),
-				array(
-					'user_id' => 99,
-					'manager_id' => 68
-				),
-				array(
-					'user_id' => 99,
-					'manager_id' => 1234 //fake user not in app config
-				),
-			);
-		$this->UsersManager->saveMany($usersMgrsData);
-		$result = $this->User->flatRateUsers($usersMgrsData[0]['user_id']);
-		$this->assertTrue($result);
-	}
-
-/**
  * testUseTokenExceptionThrown
  *
  * @expectedException Exception
