@@ -180,7 +180,6 @@ echo $this->Html->tag('/div');
 </div>
 
 <?php
-	echo $this->Form->hidden('CobrandTemplateJSON');
 	//set variable for add action
 	$userDefaultTemplates = (!isset($userDefaultTemplates))? array() : $userDefaultTemplates;
 	echo $this->Form->input(
