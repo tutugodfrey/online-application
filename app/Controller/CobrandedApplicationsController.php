@@ -49,7 +49,7 @@ class CobrandedApplicationsController extends AppController {
 		'submit_for_review' => array('*')
 	);
 
-	public $helpers = array('TemplateField', 'Js');
+	public $helpers = array('TemplateField');
 
 	public function beforeFilter() {
 		parent::beforeFilter();
