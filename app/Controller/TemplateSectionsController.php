@@ -36,7 +36,7 @@ class TemplateSectionsController extends NestedResourceController {
 	public function admin_edit($idToEdit) {
 		$this->TemplateSection->id = $idToEdit;
 		if (empty($this->request->data)) {
-			$this->request->data = $this->TemplateSection->read();
+			$this->request->data = $this->TemplateSection->getById($idToEdit);
 		} else {
 			$data = $this->request->data;
 			// we know the page_id from the uri

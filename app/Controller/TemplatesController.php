@@ -56,7 +56,7 @@ class TemplatesController extends NestedResourceController {
 	public function admin_edit($idToEdit) {
 		$this->Template->id = $idToEdit;
 		if (empty($this->request->data)) {
-			$this->request->data = $this->Template->read();
+			$this->request->data = $this->Template->getById($idToEdit);
 
 			$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 			

@@ -29,15 +29,14 @@ class CobrandsController extends AppController {
 
 	public function admin_edit($idToEdit) {
 		$this->Cobrand->id = $idToEdit;
-		
 		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
 		$this->set('existingLogos', $this->Cobrand->getExistingLogos());
 
-		$data = $this->Cobrand->find('first', array('conditions' => array('id' => $this->Cobrand->id), 'recursive' => -1));
+		$data = $this->Cobrand->getById($this->Cobrand->id);
 		$this->set('cobrand', $data);
 		
 		if (empty($this->request->data)) {
-			$this->request->data = $this->Cobrand->read();
+			$this->request->data = $data;
 		} else {
 			if ($this->request->data['Cobrand']['delete_cobrand_logo'] == '1') {
 				unlink(WWW_ROOT . substr($data['Cobrand']['cobrand_logo_url'],1));
