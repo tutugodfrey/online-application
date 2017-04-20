@@ -38,6 +38,16 @@ class Template extends AppModel {
 			'foreignKey' => 'template_id',
 			'dependent' => false,
 		),
+		'Users' => array(
+			'className' => 'User',
+			'foreignKey' => 'template_id',
+			'dependent' => false,
+		),
+		'UsersTemplate' => array(
+			'className' => 'UsersTemplate',
+			'foreignKey' => 'template_id',
+			'dependent' => true,
+		),
 		'TemplatePages' => array(
 			'className' => 'TemplatePage',
 			'foreignKey' => 'template_id',
@@ -206,7 +216,7 @@ class Template extends AppModel {
 
 	public function beforeDelete($cascade = true) {
 		$templateToDelete = $this->read();
-		$pages = $templateToDelete['TemplatePages'];
+		$pages = !empty($templateToDelete)? Hash::get($templateToDelete, 'TemplatePages'): null;
 		if (count($pages) > 0) {
 			// delete the children
 			$templatePage = ClassRegistry::init('TemplatePage');
@@ -245,5 +255,17 @@ class Template extends AppModel {
 			$badChars[count($badChars)] = ' ';
 		}
 		return str_replace($badChars, '', $str);
+	}
+
+/**
+ * isRemovable
+ * Checks if a template is already associated with a CobrandedApplication.
+ * If it is then template can not be deleted
+ *
+ * @param integer $id template id
+ * @return boolean
+ */
+	public function removable($id) {
+		return (!ClassRegistry::init('CobrandedApplication')->hasAny(array('template_id' => $id)));
 	}
 }

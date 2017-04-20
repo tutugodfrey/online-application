@@ -893,4 +893,27 @@ class TemplateTest extends CakeTestCase {
 		$this->assertEquals(array(), $actualTemplate, 'Template with id of 5 should not be in the database');
 	}
 
+/**
+ * testRemovable
+ *
+ * @covers Template::removable()
+ * @return void
+ */
+	public function testRemovable() {
+		$appData = array(
+			'template_id' => 1,
+			'user_id' => 2,
+			'uuid' => '1bb038e3-f566-4557-88d8-88acdc4115ca',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+		);
+		$this->CobrandedApplication->create();
+		$this->CobrandedApplication->save($appData);
+
+		//Not removable because it already has an apoplication assigned
+		$templateId = 1;
+		$this->assertFalse($this->Template->removable($templateId));
+		$templateId = 99999;
+		$this->assertTrue($this->Template->removable($templateId));
+	}
 }

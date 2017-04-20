@@ -103,9 +103,13 @@ class TemplatesController extends NestedResourceController {
 		$this->__setCommonViewVariables();
 	}
 
-	public function admin_delete($idToDelete) {
-		$this->Template->delete($idToDelete);
-		$this->Session->setFlash("Template Deleted!");
+	public function admin_delete($id) {
+		if ($this->Template->removable($id)) {
+			$this->Template->delete($id);
+			$this->_success("Template Deleted!");
+		} else {
+			$this->_falure("Template is assigned to an Application and cannot be Deleted!");
+		}
 		$this->redirect($this->_getListUrl());
 	}
 
