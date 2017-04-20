@@ -1,6 +1,7 @@
 /* 
  * Developed by Oscar Mota 2012
  * 
+ * Copyright Axia Technologies
  */
 
 
@@ -115,3 +116,16 @@ function endSlide(objname){
 
         return;
 }
+
+/**
+ * Performs a natural sort of dropdown menu elements in ascending order
+ *  
+ * @method natSortSelect
+ * @param ddListId string id of drop down element
+ * @return void
+ */
+    function natSortSelect(ddListId) {
+        $("#" + ddListId).html($('#' + ddListId +' option').sort(function(x, y) {
+            return $(x).text() < $(y).text() ? -1 : 1;
+        }));
+    }

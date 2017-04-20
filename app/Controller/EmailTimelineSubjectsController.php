@@ -32,10 +32,10 @@ class EmailTimelineSubjectsController extends AppController {
 	public function admin_edit($id = null) {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->EmailTimelineSubject->save($this->request->data)) {
-				$this->Session->setFlash(Inflector::singularize($this->name) . " has been saved", 'default', array('class' => 'alert alert-success'));
+				$this->_success(Inflector::singularize($this->name) . " has been saved");
 				$this->redirect($this->referer());
 			} else {
-				$this->Session->setFlash("Something went wrong " . Inflector::singularize($this->name) . " could not be saved!", 'default', array('class' => 'alert alert-danger'));
+				$this->_failure("Something went wrong " . Inflector::singularize($this->name) . " could not be saved!");
 			}
 		}
 		if (!empty($id)) {

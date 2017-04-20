@@ -1,7 +1,7 @@
-<div class="ApiLogs panel panel-default index">
+<div class="panel panel-default">
 	<div class="panel-heading"><u><strong><?php echo __('ApiLogs');?></strong></u></div>
 	<?php echo $this->Element('paginatorBottomNav'); ?>
-	<table class="table talbe-condensed table-hover">
+	<table class="table table-condensed table-striped table-hover">
 	<tr>
 			<th><?php echo $this->Paginator->sort('User.fullname');?></th>
                         <th><?php echo $this->Paginator->sort('auth_status');?></th>

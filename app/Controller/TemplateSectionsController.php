@@ -24,10 +24,10 @@ class TemplateSectionsController extends NestedResourceController {
 			$data['TemplateSection']['page_id'] = $this->_getParentControllerId();
 			$this->TemplateSection->create();
 			if ($this->TemplateSection->save($data)) {
-				$this->Session->setFlash("Template Section Saved!");
+				$this->_success("Template Section Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to add your section.'));
+			$this->_failure(__('Unable to add your section.'));
 		}
 
 		$this->__setCommonViewVariables();
@@ -42,10 +42,10 @@ class TemplateSectionsController extends NestedResourceController {
 			// we know the page_id from the uri
 			$data['TemplateSection']['page_id'] = $this->_getParentControllerId();
 			if ($this->TemplateSection->save($data)) {
-				$this->Session->setFlash("Template Section Saved!");
+				$this->_success("Template Section Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to update your section.'));
+			$this->_failure(__('Unable to update your section.'));
 		}
 
 		$this->__setCommonViewVariables();
@@ -67,7 +67,7 @@ class TemplateSectionsController extends NestedResourceController {
 
 	public function admin_delete($idToDelete) {
 		$this->TemplateSection->delete($idToDelete);
-		$this->Session->setFlash("Template Section Deleted!");
+		$this->_success("Template Section Deleted!");
 		$this->redirect($this->_getListUrl());
 	}
 

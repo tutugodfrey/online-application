@@ -1,6 +1,6 @@
-<div class="epayments panel panel-default index">
+<div class="panel panel-default">
 	<div class="panel-heading"><u><strong><?php echo __('Epayments') ?></strong></u></div>
-	<table cellpadding="0" cellspacing="0">
+	<table class="table table-condensed table-striped table-hover">
 	<thead>
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
@@ -28,7 +28,8 @@
 		<td><?php echo h($epayment['Epayment']['date_boarded']); ?>&nbsp;</td>
 		<td><?php echo h($epayment['Epayment']['date_retrieved']); ?>&nbsp;</td>
 		<td class="actions">
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $epayment['Epayment']['id']), array('confirm' => __('Are you sure you want to delete # %s?', $epayment['Epayment']['id']))); ?>
+			<?php echo $this->Form->postLink($this->Html->tag('span', '&nbsp', array('class' => 'glyphicon glyphicon-remove text-danger')),
+				array('action' => 'delete', $epayment['Epayment']['id']), array('escape' => false,'confirm' => __('Are you sure you want to delete # %s?', $epayment['Epayment']['id']))); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

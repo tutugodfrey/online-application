@@ -80,8 +80,8 @@ class CoversheetsController extends AppController {
 		
 		$this->set('tier',$result);
 		
-		if (!$id && empty($this->request->data)) {
-			$this->Session->setFlash(__('Invalid coversheet'));
+        if (!$id && empty($this->request->data)) {
+			$this->_failure(__('Invalid coversheet'));
 			$this->redirect(array('action' => 'index'));
 		}
 
@@ -91,118 +91,118 @@ class CoversheetsController extends AppController {
 					$this->request->data['Coversheet']['gateway_gold_subpackage'] = '';
 				}
 			
-				if ($this->Coversheet->save($this->request->data, array('validate' => false))) {
-					$this->Session->setFlash(__('The coversheet has been saved'));
-					$this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
-				} else {
-					$this->Session->setFlash(__('The coversheet could not be saved. Please, try again.'));
-				}
-			} elseif (isset($this->request->data['uw'])) {
-				$term1AcceptDebit = 'no';
-				if (Hash::get($data, 'CobrandedApplication.TermAcceptDebit-Yes') == true) {
-					$term1AcceptDebit = 'yes'; 
-				}
+                if ($this->Coversheet->save($this->request->data, array('validate' => false))) {
+				    $this->_success(__('The coversheet #' . $this->request->data('Coversheet.id') . ' has been saved'));
+				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
+                } else {
+				    $this->_failure(__('The coversheet #' . $this->request->data('Coversheet.id') . 'could not be saved. Please, try again.'));
+                }
+            } elseif (isset($this->request->data['uw'])) {
+                $term1AcceptDebit = 'no';
+                if ($data['CobrandedApplication']['TermAcceptDebit-Yes'] == true) {
+                    $term1AcceptDebit = 'yes'; 
+                }
 
-				$businessType = '';
+                $businessType = '';
 
-				if (Hash::get($data, 'CobrandedApplication.BusinessType-Retail') == true) {
-					$businessType = 'BusinessType-Retail';
-				} elseif (Hash::get($data, 'CobrandedApplication.BusinessType-Restaurant') == true) {
-					$businessType = 'BusinessType-Restaurant';
-				} elseif (Hash::get($data, 'CobrandedApplication.BusinessType-Lodging') == true) {
-					$businessType = 'BusinessType-Lodging';
-				} elseif (Hash::get($data, 'CobrandedApplication.BusinessType-MOTO') == true) {
-					$businessType = 'BusinessType-MOTO';
-				} elseif (Hash::get($data, 'CobrandedApplication.BusinessType-Internet') == true) {
-					$businessType = 'BusinessType-Internet';
-				} elseif (Hash::get($data, 'CobrandedApplication.BusinessType-Grocery') == true) {
-					$businessType = 'BusinessType-Grocery';
-				}
+                if ($data['CobrandedApplication']['BusinessType-Retail'] == true) {
+                    $businessType = 'BusinessType-Retail';
+                } elseif ($data['CobrandedApplication']['BusinessType-Restaurant'] == true) {
+                    $businessType = 'BusinessType-Restaurant';
+                } elseif ($data['CobrandedApplication']['BusinessType-Lodging'] == true) {
+                    $businessType = 'BusinessType-Lodging';
+                } elseif ($data['CobrandedApplication']['BusinessType-MOTO'] == true) {
+                    $businessType = 'BusinessType-MOTO';
+                } elseif ($data['CobrandedApplication']['BusinessType-Internet'] == true) {
+                    $businessType = 'BusinessType-Internet';
+                } elseif ($data['CobrandedApplication']['BusinessType-Grocery'] == true) {
+                    $businessType = 'BusinessType-Grocery';
+                }
 
-				$this->Coversheet->set(array('status' => 'validated', 'debit' => $term1AcceptDebit, 'moto' => $businessType));
+                $this->Coversheet->set(array('status' => 'validated', 'debit' => $term1AcceptDebit, 'moto' => $businessType));
 
-				if ($this->request->data['Coversheet']['gateway_package'] != 'gold') {
-					$this->request->data['Coversheet']['gateway_gold_subpackage'] = '';
-				}
+                if ($this->request->data['Coversheet']['gateway_package'] != 'gold') {
+                    $this->request->data['Coversheet']['gateway_gold_subpackage'] = '';
+                }
 
-				if ($this->Coversheet->save($this->request->data)) {
-					if (Hash::get($data, 'CobrandedApplication.status') == 'signed') {
-						$coversheetData = $this->Coversheet->findById($id);
+                if ($this->Coversheet->save($this->request->data)) {
+                    if ($data['CobrandedApplication']['status'] == 'signed') {
+                        $coversheetData = $this->Coversheet->findById($id);
 
-						$valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
-						foreach ($valuesMap as $key => $val) {
-							$coversheetData['CobrandedApplication'][$key] = $val;
-						}
+                        $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
+                        foreach ($valuesMap as $key => $val) {
+                            $coversheetData['CobrandedApplication'][$key] = $val;
+                        }
 
-						$View = new View($this, false);
+                        $View = new View($this, false);
 
-						if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
-							$View->set('cp',false);
-						} else {
-							$View->set('cp',true);
-						}
+                        if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
+                            $View->set('cp',false);
+                        } else {
+                            $View->set('cp',true);
+                        }
 
-						$View->set('data', $coversheetData);
-						$View->viewPath = 'Elements';
-						$View->layout = false;
-						$viewData = $View->render('/Elements/coversheets/pdf_export'); 
+                        $View->set('data', $coversheetData);
+                        $View->viewPath = 'Elements';
+                        $View->layout = false;
+                        $viewData = $View->render('/Elements/coversheets/pdf_export'); 
 
-						if ($this->Coversheet->pdfGen($id, $viewData)) {
-							if ($this->Coversheet->sendCoversheet($id)) {
-								if ($this->Coversheet->unlinkCoversheet($id)) {
-									$this->Session->setFlash(__('The coversheet has been submitted to underwriting'));
-									$this->Coversheet->saveField('status', 'sent');
-								} else {
-									$this->Session->setFlash(__('There was a problem deleting the Coversheet pdf file'));
-								}
-							} else {
-								$this->Session->setFlash(__('There was a problem sending the Coversheet pdf'));
-							}
-						} else {
-							$this->Session->setFlash(__('There was a problem generating the Coversheet pdf'));
-						}
-					} else {
-						$this->Session->setFlash(__('The coversheet has been validated and will be sent to underwriting once the application is signed'));
-						$this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
-					}
-					$this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
-				} else {
-					$this->Session->setFlash(__('The coversheet could not be validated. Please, try again.'));
-					$errors = $this->Coversheet->validationErrors;
-					$this->set('errors', $errors);
-					if (array_key_exists('cp_encrypted_sn', $errors) || array_key_exists('cp_pinpad_ra_attached', $errors) || array_key_exists('cp_check_guarantee_info', $errors) || array_key_exists('cp_pos_contact', $errors)) {
-						$this->set('cardPresent', true);
-					}
-					if (array_key_exists('micros', $errors)) {
-						$this->set('micros', true);              
-					}
-					if (array_key_exists('gateway_package', $errors) || array_key_exists('gateway_gold_subpackage', $errors) || array_key_exists('gateway_epay', $errors) || array_key_exists('gateway_billing', $errors)) {
-						$this->set('gateway', true);
-					}
-					if (array_key_exists('moto_online_chd', $errors)) {
-						$this->set('moto', true);
-					}
-					//$this->redirect(array('controller' => 'coversheets', 'action' => 'edit', $id));            
-				}
-			}
-		}
+                        if ($this->Coversheet->pdfGen($id, $viewData)) {
+                            if ($this->Coversheet->sendCoversheet($id)) {
+                                if ($this->Coversheet->unlinkCoversheet($id)) {
+                                    $this->_success(__("The coversheet $id has been submitted to underwriting"));
+                                    $this->Coversheet->saveField('status', 'sent');
+                                } else {
+                                    $this->_failure(__("There was a problem deleting the Coversheet pdf file"));
+                                }
+                            } else {
+                                $this->_failure(__("There was a problem sending the Coversheet pdf"));
+                            }
+                        } else {
+                            $this->_failure(__("There was a problem generating the Coversheet pdf"));
+                        }
+                    } else {
+                        $this->_success(__("The coversheet $id has been validated and will be sent to underwriting once the application is signed"));
+                        $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
+                    }
+				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
+                } else {
+				    $this->_failure(__("The coversheet $id could not be validated. Please, try again."));
+                    $errors = $this->Coversheet->validationErrors;
+                    $this->set('errors', $errors);
+                    if (array_key_exists('cp_encrypted_sn', $errors) || array_key_exists('cp_pinpad_ra_attached', $errors) || array_key_exists('cp_check_guarantee_info', $errors) || array_key_exists('cp_pos_contact', $errors)) {
+                        $this->set('cardPresent', true);
+                    }
+                    if (array_key_exists('micros', $errors)) {
+                        $this->set('micros', true);              
+                    }
+                    if (array_key_exists('gateway_package', $errors) || array_key_exists('gateway_gold_subpackage', $errors) || array_key_exists('gateway_epay', $errors) || array_key_exists('gateway_billing', $errors)) {
+                        $this->set('gateway', true);
+                    }
+                    if (array_key_exists('moto_online_chd', $errors)) {
+                        $this->set('moto', true);
+                    }
+                    //$this->redirect(array('controller' => 'coversheets', 'action' => 'edit', $id));            
+                }
+            }
+        }
 
-		if ($moto === true) {
-			$this->set('cp',false);
-		} else {
-			$this->set('cp',true);
-		}
+        if ($moto === true) {
+            $this->set('cp',false);
+        } else {
+            $this->set('cp',true);
+        }
 
-		if (empty($this->request->data)) {
-			$this->request->data = $this->Coversheet->findById($id);
+        if (empty($this->request->data)) {
+            $this->request->data = $this->Coversheet->findById($id);
 
-			$valuesMap = $this->getCobrandedApplicationValues($this->request->data['CobrandedApplication']['id']);
-			foreach ($valuesMap as $key => $val) {
-				$this->request->data['CobrandedApplication'][$key] = $val;
-			}
+            $valuesMap = $this->getCobrandedApplicationValues($this->request->data['CobrandedApplication']['id']);
+            foreach ($valuesMap as $key => $val) {
+                $this->request->data['CobrandedApplication'][$key] = $val;
+            }
 
-			$this->set('data', $this->request->data);
-		}
+            $this->set('data', $this->request->data);
+        }
 	}
 
 /*
@@ -227,14 +227,14 @@ class CoversheetsController extends AppController {
 	
 	public function delete($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for coversheet'));
+			$this->_failure(__('Invalid id for coversheet'));
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->Coversheet->delete($id)) {
-			$this->Session->setFlash(__('coversheet deleted'));
+			$this->_success(__('coversheet deleted'));
 			$this->redirect(array('action'=>'index'));
 		}
-		$this->Session->setFlash(__('coversheet was not deleted'));
+		$this->_failure(__('coversheet was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
 		
@@ -356,15 +356,15 @@ class CoversheetsController extends AppController {
  */        
 	public function admin_override($id = null) {
 		if (!$id && empty($this->request->data)) {
-			$this->Session->setFlash(__('Invalid coversheet'));
+			$this->_failure(__('Invalid coversheet'));
 			$this->redirect(array('action' => 'index'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Coversheet->save($this->request->data)) {
-				$this->Session->setFlash(__('The coversheet has been saved'));
+				$this->_success(__('The coversheet has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The coversheet could not be saved. Please, try again.'));
+				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
 			}
 		}
 		if (empty($this->request->data)) {
@@ -382,14 +382,14 @@ class CoversheetsController extends AppController {
 		
 	public function admin_delete($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for coversheet'));
+			$this->_failure(__('Invalid id for coversheet'));
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->Coversheet->delete($id)) {
-			$this->Session->setFlash(__('coversheet deleted'));
+			$this->_success(__('coversheet deleted'));
 			$this->redirect(array('action'=>'index'));
 		}
-		$this->Session->setFlash(__('coversheet was not deleted'));
+		$this->_failure(__('coversheet was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
 

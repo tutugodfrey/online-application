@@ -2,6 +2,7 @@
 App::uses('AppModel', 'Model');
 App::uses('AuthComponent', 'Controller/Component');
 class User extends AppModel {
+
 	public $actsAs = array('Search.Searchable', 'Containable');
 
 	//Group Constants
@@ -21,42 +22,42 @@ class User extends AppModel {
 	const INSPIRE_PAY = 69;
 
 	public $useTable = 'onlineapp_users';
+
 	public $validate = array(
 		'email' => array(
 			'email' => array(
 				'rule' => array('email'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'pwd' => array(
 			'notBlank' => array(
 				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'password_confirm' => array(
-			'required'=>'notBlank',
-			'match'=>array(
-			'rule' => 'validatePasswdConfirm',
-			'message' => 'Passwords do not match'
-		   )
+			'required' => 'notBlank',
+			'match' => array(
+				'rule' => 'validatePasswdConfirm',
+				'message' => 'Passwords do not match'
+			)
+		),
+		'template_id' => array(
+			'rule' => 'hasDefaultTemplate',
+			'message' => 'Please specify a default Template.',
+		),
+		'Template' => array(
+			'withCobrandsNotEmpty' => array(
+				'rule' => 'withCobrandsNotEmpty',
+				'message' => 'Cobrands were selected, please also select a Template.',
+			),
+			'templatesMatchCobrand' => array(
+				'rule' => 'templatesMatchCobrand',
+				'message' => 'One or more of the selected templates do not belong to the selected cobrands.',
+			),
 		),
 		'group_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 	);
@@ -171,14 +172,14 @@ class User extends AppModel {
 		'search' => array('type' => 'query', 'method' => 'orConditions'),
 	);
 
-
 /**
  * Return conditions to be used when searching for users
  *
+ * @param array $data containing conditions
  * @return array
  */
 	public function orConditions($data = array()) {
-		$criteria = $data['search']; 
+		$criteria = $data['search'];
 		$criteria = '%' . $criteria . '%';
 		$conditions = array(
 			'OR' => array(
@@ -193,14 +194,80 @@ class User extends AppModel {
 		return $conditions;
 	}
 
-
-	function bindNode($user) {
-		return array('model' => 'Group', 'foreign_key' => $user['User']['group_id']);
+/**
+ * bindNode
+ *
+ * @param array $user containing a user data
+ * @return array
+ */
+	public function bindNode($user) {
+		return array('model' => 'Group', 'foreign_key' => Hash::get($user, 'User.group_id'));
 	}
 
-	function validatePasswdConfirm($data) {
+/**
+ * validatePasswdConfirm
+ * Custom Validation rule to check submitted passwords match
+ *
+ * @param array $data submitted from client-side form
+ * @return boolean
+ */
+	public function validatePasswdConfirm($data) {
 		if (Security::hash($this->data[$this->alias]['pwd'], null, true) !== Security::hash($data['password_confirm'], null, true)) {
 			return false;
+		}
+		return true;
+	}
+
+/**
+ * hasDefaultTemplate
+ * Custom validation rule
+ *
+ * @param array $data template_id data
+ * @return boolean
+ */
+	public function hasDefaultTemplate($data) {
+		if (!empty($this->data['User']['Template'])) {
+			return (!empty($data['template_id']));
+		}
+		return true;
+	}
+
+/**
+ * withCobrandsNotEmpty
+ * Custom validation rule
+ *
+ * @param array $data template_id data
+ * @return boolean
+ */
+	public function withCobrandsNotEmpty($data) {
+		if (!empty($this->data['User']['Cobrand'])) {
+			return (!empty($this->data['User']['Template']));
+		}
+		return true;
+	}
+
+/**
+ * templatesMatchCobrand
+ * Custom validation rule checks for any Templates for which no corresponding cobrands were selected
+ *
+ * @param array $data submitted data
+ * @return boolean
+ */
+	public function templatesMatchCobrand($data) {
+		if (!empty($this->data[$this->alias]['Template']) && empty($this->data[$this->alias]['Cobrand'])) {
+			return false;
+		}
+		if (!empty($this->data[$this->alias]['Template'])) {
+			$selectedTemplateIds = $this->data[$this->alias]['Template'];
+			$actualTmpltAndCob = $this->Template->find('all', array(
+					'fields' => array('Template.id', 'Cobrand.id'),
+					'conditions' => array('Template.id' => $selectedTemplateIds),
+					'contain' => array('Cobrand'),
+				));
+			$actualCbrandIds = Hash::extract($actualTmpltAndCob, '{n}.Cobrand.id');
+			$misMatchingCobrands = array_diff($actualCbrandIds, $this->data[$this->alias]['Cobrand']);
+			return empty($misMatchingCobrands);
+
 		}
 		return true;
 	}
@@ -212,84 +279,112 @@ class User extends AppModel {
  * @throws Exception
  */  
 	public function getActiveUserList() {
-		//$users = array();
-		return $this->find('list', array('fields' => array('User.id','User.fullname'),'order' => array('User.fullname ASC'),'conditions' => array('User.active' => 't')));
+		return $this->find('list', array(
+				'fields' => array('User.id', 'User.fullname'),
+				'order' => array('User.fullname ASC'),
+				'conditions' => array('User.active' => 't')
+			)
+		);
 	}
-	/**
+
+/**
+ * assignableUsers
  * Return the list of users that can be assigned by the userId.
- * @param type $userId
+ * 
+ * @param type $userId a user id
  * @param string $userGroupId the group of the user
+ * @return array
  */
-		public function assignableUsers($userId, $userGroupId) {
-				$users = array();
-				if ($userGroupId == self::ADMIN_GROUP_ID) {
-						// return all users
-						return $this->find('list', array('fields' => array('id', 'fullname'), 'order' => array('fullname')));
-				} else if ($userGroupId == self::MANAGER_GROUP_ID) {
-						// return all users related to the manager
-						return $this->find('list', array(
-								'conditions' => array('id' => $this->getAssignedUserIds($userId)),
-								'fields' => array('id', 'fullname'),
-								'order' => array('fullname')));
-				}
-				return $users;
-		}
-
-		/*
-		 * Get a List of Managers
-		 */
-		public function getAllManagers($managerId) {
-				$managers = $this->find('list', array(
-					'conditions' => array('group_id' => $managerId),
+	public function assignableUsers($userId, $userGroupId) {
+		if ($userGroupId == self::ADMIN_GROUP_ID) {
+			// return all users
+			$users = $this->find('list', array('fields' => array('id', 'fullname'), 'order' => array('fullname')));
+		} elseif ($userGroupId == self::MANAGER_GROUP_ID) {
+			// return all users related to the manager
+			$users = $this->find('list', array(
+					'conditions' => array('id' => $this->getAssignedUserIds($userId)),
 					'fields' => array('id', 'fullname'),
-					'order' => array('fullname')));
-				return $managers;
+					'order' => array('fullname')
+					)
+				);
+		} else {
+			return array();
 		}
+		return $users;
+	}
 
-	public function getAssignedManagerIds($userId){
-		$assignedManagers =  $this->UsersManager->find(
+/**
+ * getAllManagers 
+ * Get a List of Managers
+ *
+ * @param integer $managerId the id of manger user group
+ * @return array
+ */
+	public function getAllManagers($managerId) {
+		$managers = $this->find('list', array(
+			'conditions' => array('group_id' => $managerId),
+			'fields' => array('id', 'fullname'),
+			'order' => array('fullname')));
+		return $managers;
+	}
+
+/**
+ * getAssignedManagerIds 
+ * Get an array of all the assigned user ids to a specific user
+ *
+ * @param integer $userId a user id
+ * @return array
+ */
+	public function getAssignedManagerIds($userId) {
+		$assignedManagers = $this->UsersManager->find(
 			'all',
 			array(
 				'conditions' => array('user_id' => $userId),
 				'fields' => array('manager_id')
 			)
 		);
-		$assignedManagerIds = Set::classicExtract($assignedManagers, '{n}.UsersManager.manager_id');
-
-//        return $this->find('list', array(
-//                                'conditions' => array('id' => $assignedManagerIds),
-//                                'fields' => array('id', 'fullname'),
-//                                'order' => array('fullname')));
+		$assignedManagerIds = Hash::extract($assignedManagers, '{n}.UsersManager.manager_id');
 
 		return $assignedManagerIds;
 	}
+
+	public function getAssignedManagersList($userId){
+		$assignedManagers =  $this->find(
+			'list',
+			array(
+				'conditions' => array('id' => $this->getAssignedManagerIds($userId)),
+				'fields' => array('id', 'fullname'),
+				'order' => array('fullname')
+			)
+		);
+		return $assignedManagers;
+	}
+
+
 /**
+ * getAssignedUserIds 
  * Get an array of all the assigned user ids to a specific user
+ *
+ * @param integer $userId a user id
+ * @return array
  */
-	public function getAssignedUserIds($userId){
-		$assignedUsers =  $this->UsersManager->find('all', array(
+	public function getAssignedUserIds($userId) {
+		$assignedUsers = $this->UsersManager->find('all', array(
 								'conditions' => array('manager_id' => $userId),
 								'fields' => array('user_id')
 						));
-		$assignedUserIds = Set::classicExtract($assignedUsers, '{n}.UsersManager.user_id');
+		$assignedUserIds = Hash::extract($assignedUsers, '{n}.UsersManager.user_id');
 		$assignedUserIds[] = $userId;
 		return $assignedUserIds;
-}
-
-/**
- * determine whether a users should be able to assign flat rate pricing
- * @param type integer
- * @return boolean
- */
-	public function flatRateUsers($userId) {
-		$flatRateManagers = Configure::read('Axia.flatRateManagers');
-		if (count($flatRateManagers) > count(array_diff($flatRateManagers,$this->getAssignedManagerIds($userId))) || in_array($userId, $flatRateManagers)){
-			return true;
-		} else{
-			return false;
-		}
 	}
 
+/**
+ * useToken
+ * 
+ * @param string $token a string token max length 40 chars
+ * @return boolean
+ * @throws Exception
+ */
 	public function useToken($token) {
 		$user = $this->find('first', array(
 			'conditions' => array($this->alias . '.token' => $token),
@@ -310,6 +405,7 @@ class User extends AppModel {
 					$apiSettings['time'], strtotime($tokenUsed));
 		}
 		$now = time();
+
 		if (!empty($tokenUsed) && $now <= $tokenTimeThreshold &&
 				$tokenUses >= $apiSettings['maximum']) {
 			return false;
@@ -327,6 +423,21 @@ class User extends AppModel {
 		return $id;
 	}
 
+
+
+	public function beforeValidate($options = array()) {
+		//Modify any HABTM data structures so that the data can be validated
+		//This is the required data structure for HABTM validation
+		foreach (array_keys($this->hasAndBelongsToMany) as $model){
+			if(isset($this->data[$model][$model])){
+				$this->data[$this->name][$model] = $this->data[$model][$model];
+				unset($this->data[$model]);
+			}
+		}
+		return true;
+	}
+
+
 	public function beforeSave($options = array()) {
 		parent::beforeSave($options);
 		if (!empty($this->data[$this->alias]['pwd'])) {
@@ -335,57 +446,25 @@ class User extends AppModel {
 		if (!empty($this->data[$this->alias]['api_password'])) {
 			$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
 		}
+
+		//Modify any HABTM data structures so that the data can be saved
+		//This is the required data structure for saving HABTM data
+		foreach (array_keys($this->hasAndBelongsToMany) as $model){
+			if(isset($this->data[$this->name][$model])){
+				$this->data[$model][$model] = $this->data[$this->name][$model];
+				unset($this->data[$this->name][$model]);
+			}
+		}
 		return true;
 	}
 
-	public function afterSave($created, $options = array()) {
-		// make sure all templates selected have associated
-		// cobrands selected, otherwise delete those user template records
-
-		if (!empty($this->data['Template']['Template'])) {
-    		$this->Template = ClassRegistry::init('Template');
-    	
-    		$templates = $this->Template->find(
-				'all',
-				array(
-					'fields' => array(
-						'id',
-						'cobrand_id'
-					)
-				)
-			);
-
-			$templateToCobrandMap = array();
-
-			foreach ($templates as $template) {
-				$templateToCobrandMap[$template['Template']['id']] = $template['Template']['cobrand_id'];
-			}
-
-			$usersCobrands = $this->data['Cobrand']['Cobrand'];
-    		$usersTemplates = $this->data['Template']['Template'];
-
-    		foreach ($usersTemplates as $userTemplateId) {
-    			$assocCobrandId = $templateToCobrandMap[$userTemplateId];
-    			$flag = false;
-    			if (!empty($usersCobrands)) {
-    				foreach ($usersCobrands as $userCobrandId) {
-    					if ($userCobrandId == $assocCobrandId) {
-    						$flag = true;
-    					}
-    				}
-    			}
-    			if ($flag == false) {
-    				// get rid of the onlineapp_users_onlineapp_templates record
-    				// we don't have an associated cobrand selected by the user
-    				$this->UserTemplate->deleteAll(array(
-    					'UserTemplate.user_id' => $this->data['User']['id'],
-    					'UserTemplate.template_id' => $userTemplateId
-    				), false);
-    			}
-    		}
-    	}
-	}
-
+/**
+ * afterFind callback
+ * 
+ * @param array $results Array of results
+ * @param boolean $primary a boolean primary param requied for callback
+ * @return boolean
+ */
 	public function afterFind($results, $primary = false) {
 		parent::afterFind($results, $primary);
 
@@ -410,10 +489,16 @@ class User extends AppModel {
 		return $results;
 	}
 
-
+/**
+ * arrayDiff
+ * Checks for difference between existing data in the database and the data passed to function
+ *
+ * @todo ****This method is not in used and should be removed in the near future********
+ * @param array $change Array of users data
+ * @return array
+ */
 	public function arrayDiff($change) {
-		$original = 
-			$this->find('all', 
+		$original = $this->find('all',
 				array(
 					'contain' => array(
 						'Template' => array(
@@ -442,19 +527,25 @@ class User extends AppModel {
 		$user = Hash::remove($user, '{n}.Template.name');
 		$user = Hash::flatten($user);
 		foreach ($user as $key => $value) {
-			if(preg_match("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", $key)) {
-			$newKey = preg_replace("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", "$1.$2.$2.$3", $key);
-			unset($user[$key]);
-			$user[$newKey] = $value;
+			if (preg_match("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", $key)) {
+				$newKey = preg_replace("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", "$1.$2.$2.$3", $key);
+				unset($user[$key]);
+				$user[$newKey] = $value;
+			}
 		}
-		}
-		$user = Hash::expand($user);	
+		$user = Hash::expand($user);
 		$changedUsers = Hash::diff($change, $user);
-		
 		return $changedUsers;
 	}
 
-	public function getCobrandIds($userId){
+/**
+ * getCobrandIds
+ * Get all UserCobrands that belong to a user
+ * 
+ * @param integer $userId a user id
+ * @return array
+ */
+	public function getCobrandIds($userId) {
 		$cobrandIds = $this->UserCobrand->find(
 			'all',
 			array(
@@ -463,11 +554,18 @@ class User extends AppModel {
 			)
 		);
 
-		$ids = Set::classicExtract($cobrandIds, '{n}.UserCobrand.cobrand_id');
+		$ids = Hash::extract($cobrandIds, '{n}.UserCobrand.cobrand_id');
 		return $ids;
 	}
 
-	public function getTemplates($userId){
+/**
+ * getTemplates
+ * Get all UserTemplate that belong to a user
+ * 
+ * @param integer $userId a user id
+ * @return array
+ */
+	public function getTemplates($userId) {
 		$templateIds = $this->UserTemplate->find(
 			'list',
 			array(
@@ -481,12 +579,11 @@ class User extends AppModel {
 		);
 
 		$ids = array();
-		
 		foreach ($templateIds as $key => $val) {
 			$ids[] = $val;
 		}
-		
-		$templates = $this->Template->find('all', 
+
+		$templates = $this->Template->find('all',
 			array(
 				'contain' => array('Cobrand.partner_name'),
 				'fields' => array('Template.id', 'Template.name'),
@@ -498,5 +595,53 @@ class User extends AppModel {
 		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
 		return $templates;
 	}
+
+	/**
+	 * getEditViewData
+	 * 
+	 * @param integer $id a user id
+	 * @return array
+	 */
+	 public function getEditViewData($id) {
+		$data = $this->find('first', array(
+				'conditions' => array('User.id' => $id),
+				'contain' => array(
+					'Manager' => array('fields' => array('id', 'fullname')),
+					'AssignedRepresentative' => array('fields' => array('id', 'fullname')),
+					'Cobrand' => array('fields' => array('id', 'partner_name')),
+					'Template' => array('fields' => array('id', 'name')),
+				),
+			));
+		return $data;
+	 }
+
+/**
+ * getCombinedCobrandTemplateList
+ *
+ * @param mixed $templateIds string|array of template ids
+ * @return array of ids as keys and [Cobrand-Template] names as values
+ */
+	public function getCombinedCobrandTemplateList($templateIds) {
+		$conditions['conditions'] = array('Template.id' => $templateIds);
+		$tmplts = $this->Template->getTemplatesAndCobrands($conditions);
+		return $this->Template->setCobrandsTemplatesList($tmplts);
+	}
+
+/**
+ * getJsonCobrandsTemplates
+ *
+ * @return string JSON encoded array with Cobrand ids keys and [Template id-Template name] as values
+ */
+	public function getJsonCobrandsTemplates() {
+		$data = $this->Template->getTemplatesAndCobrands(array('recursive' => -1));
+
+		foreach (Hash::extract($data, '{n}.Cobrand.id') as $cobId) {
+			foreach ($data as $tAndC) {
+				if ($tAndC['Cobrand']['id'] === $cobId) {
+					$cobAndTmpl[$cobId][$tAndC['Template']['id']] = $tAndC['Cobrand']['partner_name'] . ' - ' . $tAndC['Template']['name'];
+				}
+			}
+		}
+		return json_encode($cobAndTmpl);
+	}
 }
-?>

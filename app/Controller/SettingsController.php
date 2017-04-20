@@ -1,36 +1,47 @@
 <?php
+App::uses('AppController', 'Controller');
 class SettingsController extends AppController {
 
-       public $scaffold = 'admin';
+	public $permissions = array();
 
-    public $permissions = array();
+	public function beforeFilter() {
+		parent::beforeFilter();
 
-    function beforeFilter() {
-        parent::beforeFilter();
-        
-        $this->loadModel('User');
-        if (!$this->Auth->user('group_id') || $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))) != 'admin') {
-            header("HTTP/1.0 403 Forbidden");
-            exit;
-        }
-    }
+		$this->loadModel('User');
+		if (!$this->Auth->user('group_id') || $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))) != 'admin') {
+			header("HTTP/1.0 403 Forbidden");
+			exit;
+		}
+	}
 
-    function admin_delete() {
-        echo 'Admin delete is disabled!';
-        exit;
-    }
+/**
+ * Create Index
+ *
+ * @return null
+ */
+	public function admin_index() {
+		$this->set('settings', $this->paginate());
+	}
 
-    function admin_add() {
-        if ($this->Common->isPosted()) {
-            $this->Setting->create();
-            if ($this->Setting->save($this->request->data)) {
-                $this->Session->setFlash(__('The Setting has been created'));
-                $this->redirect(array('action'=> 'index', 'admin' => true));
-            } else {
-                $this->Session->setFlash(__('The Setting Could not Be saved'));
-            }
-        }
-    }
+/**
+ * Create Edit view
+ *
+ * @param integer $id Setting id
+ * @return null
+ */
+	public function admin_edit($id = null) {
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($this->Setting->save($this->request->data)) {
+				$this->_success(Inflector::singularize($this->name) . " has been saved");
+				$this->redirect($this->referer());
+			} else {
+				$this->_failure("Something went wrong " . Inflector::singularize($this->name) . " could not be saved!");
+			}
+		}
+		if (!empty($id)) {
+			$this->request->data = $this->Setting->find('first', ['conditions' => array('key' => $id)]);
+		}
+	}
 
 }
 ?>

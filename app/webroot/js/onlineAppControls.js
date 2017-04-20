@@ -1,6 +1,8 @@
 /* 
  * Author Oscar Mota 2017
  * 
+ * Copyright (c) 2017 Axia Technologies
+ * 
  */
 
 function renderContentAJAX(controller, action, id, containerID, actionPath) {

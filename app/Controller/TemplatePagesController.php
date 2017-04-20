@@ -24,10 +24,10 @@ class TemplatePagesController extends NestedResourceController {
 			$data['TemplatePage']['template_id'] = $this->_getParentControllerId();
 			$this->TemplatePage->create();
 			if ($this->TemplatePage->save($data)) {
-				$this->Session->setFlash("Template Page Saved!");
+				$this->_success("Template Page Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to add your page.'));
+			$this->_failure(__('Unable to add your page.'));
 		}
 
 		$this->__setCommonViewVariables();
@@ -42,10 +42,10 @@ class TemplatePagesController extends NestedResourceController {
 			// we know the template_id from the uri
 			$data['TemplatePage']['template_id'] = $this->_getParentControllerId();
 			if ($this->TemplatePage->save($data)) {
-				$this->Session->setFlash("Template Page Saved!");
+				$this->_success("Template Page Saved!");
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to update your page'));
+			$this->_failure(__('Unable to update your page'));
 		}
 
 		$this->__setCommonViewVariables();
@@ -70,7 +70,7 @@ class TemplatePagesController extends NestedResourceController {
 
 	public function admin_delete($idToDelete) {
 		$this->TemplatePage->delete($idToDelete);
-		$this->Session->setFlash("TemplatePage Deleted!");
+		$this->_success("TemplatePage Deleted!");
 		$this->redirect($this->_getListUrl());
 	}
 

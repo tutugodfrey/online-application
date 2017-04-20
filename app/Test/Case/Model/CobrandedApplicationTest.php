@@ -447,7 +447,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// we should get rep_only pages, sections, and fields, if we're logged in
 		$expected['Template']['TemplatePages'][3] = array(
 			'id' => (int)6,
-			'name' => 'Page 4',
+			'name' => 'Validate Application',
 			'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
 			'rep_only' => true,
 			'template_id' => (int)1,

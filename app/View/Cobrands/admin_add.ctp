@@ -25,50 +25,54 @@
 	});
 
 </script>
+<div class="container-fluid">
+  <div class="row">
+	<?php
+	echo $this->Element('actionsNav', $elVars); ?>
+	<div class="col-sm-9 col-lg-10">
+	  <!-- view page content -->
+		<div class="panel panel-default">
+		<div class="panel-heading"><u><strong><?php echo __('Add Cobrand')?></strong></u></div>
+			<?php echo $this->Form->create('Cobrand', array(
+					'enctype' => 'multipart/form-data',
+					'inputDefaults' => array(
+						'div' => 'form-group col-md-12',
+						'label' => array('class' => 'col-md-2 control-label'),
+						'wrapInput' => 'col-md-4',
+						'class' => 'form-control input-sm',
+					),
+					'class' => 'form-horizontal',
+					)); 
+						echo $this->Form->input('partner_name');
+						echo $this->Form->input('partner_name_short');
+						echo $this->Form->input(
+							'cobrand_logo_select',
+							array(
+								'type' => 'select',
+								'options' => $existingLogos,
+								'label' => 'Select Existing Logo',
+								'empty' => 'none'
+							)
+						);
+						echo $this->Form->input('cobrand_logo', array('class' => null, 'type' => 'file'));
+						echo $this->Form->input('cobrand_logo_url');
+						echo $this->Form->input(
+							'brand_logo_select',
+							array(
+								'type' => 'select',
+								'options' => $existingLogos,
+								'label' => 'Select Existing Logo',
+								'empty' => 'none'
+							)
+						);
 
-<div class="cobrands panel panel-default form">
-	<div class="panel-heading"><u><strong><?php echo __('Add Cobrand'); ?></strong></u></div>
-<?php echo $this->Form->create('Cobrand', array('enctype' => 'multipart/form-data')); 
-		echo $this->Form->input('partner_name');
-		echo $this->Form->input('partner_name_short');
-		echo "<br>";
-		echo $this->Form->input(
-			'cobrand_logo_select',
-			array(
-				'type' => 'select',
-				'options' => $existingLogos,
-				'label' => 'Select Existing Logo',
-				'empty' => 'none'
-			)
-		);
-		echo $this->Form->input('cobrand_logo', array('type' => 'file'));
-		echo $this->Form->input('cobrand_logo_url');
-		echo "<br><br>";
-		echo $this->Form->input(
-			'brand_logo_select',
-			array(
-				'type' => 'select',
-				'options' => $existingLogos,
-				'label' => 'Select Existing Logo',
-				'empty' => 'none'
-			)
-		);
-
-		echo $this->Form->input('brand_logo', array('type' => 'file'));
-		echo $this->Form->input('brand_logo_url');
-		echo "<br><br>";
-		echo $this->Form->input('description');
-		echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));
-	?>
-<?php echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
-</div>
-<div class="actions">
-	<div class="panel panel-info">
-		<div class="panel-heading"><strong><?php echo __('Actions'); ?></strong></div>
-		 <div class="panel-body">
-			<ul>
-				<li><?php echo $this->Html->link(__('Cancel'), array('action' => 'index')); ?></li>
-			</ul>
+						echo $this->Form->input('brand_logo', array('class' => null, 'type' => 'file'));
+						echo $this->Form->input('brand_logo_url');
+						echo $this->Form->input('description');
+						echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));
+					?>
+				<?php echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
 		</div>
 	</div>
+  </div>
 </div>

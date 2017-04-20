@@ -76,6 +76,16 @@ class OnlineappUsersManagerFixture extends CakeTestFixture {
 			'user_id' => 10,
 			'manager_id' => 10
 		),
+		array(
+			'id' => '2f79e561-660c-485b-aadc-3d60c828dfe7',
+			'user_id' => 11,
+			'manager_id' => 1
+		),
+		array(
+			'id' => '82b4905e-bb3a-4739-b98b-80c644605f6e',
+			'user_id' => 12,
+			'manager_id' => 2
+		),
 	);
 
 }
