@@ -459,60 +459,6 @@ class User extends AppModel {
 	}
 
 /**
- * afterSave callback
- * 
- * @param array $created created
- * @param array $options the options param is required for callback
- * @return boolean
- */
-	public function afterSave($created, $options = array()) {
-		// make sure all templates selected have associated
-		// cobrands selected, otherwise delete those user template records
-		if (!empty($this->data['Template']['Template'])) {
-			$this->Template = ClassRegistry::init('Template');
-		
-			$templates = $this->Template->find(
-				'all',
-				array(
-					'fields' => array(
-						'id',
-						'cobrand_id'
-					)
-				)
-			);
-
-			$templateToCobrandMap = array();
-
-			foreach ($templates as $template) {
-				$templateToCobrandMap[$template['Template']['id']] = $template['Template']['cobrand_id'];
-			}
-
-			$usersCobrands = $this->data['Cobrand']['Cobrand'];
-			$usersTemplates = $this->data['Template']['Template'];
-
-			foreach ($usersTemplates as $userTemplateId) {
-				$assocCobrandId = $templateToCobrandMap[$userTemplateId];
-				$flag = false;
-				if (!empty($usersCobrands)) {
-					foreach ($usersCobrands as $userCobrandId) {
-						if ($userCobrandId == $assocCobrandId) {
-							$flag = true;
-						}
-					}
-				}
-				if ($flag == false) {
-					// get rid of the onlineapp_users_onlineapp_templates record
-					// we don't have an associated cobrand selected by the user
-					$this->UserTemplate->deleteAll(array(
-						'UserTemplate.user_id' => $this->data['User']['id'],
-						'UserTemplate.template_id' => $userTemplateId
-					), false);
-				}
-			}
-		}
-	}
-
-/**
  * afterFind callback
  * 
  * @param array $results Array of results

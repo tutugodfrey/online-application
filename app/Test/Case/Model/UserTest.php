@@ -41,7 +41,7 @@ class UserTest extends CakeTestCase {
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->UsersTemplate = ClassRegistry::init('UsersTemplate');
-		$this->UsersTemplate = ClassRegistry::init('UsersCobrand');
+		$this->UsersCobrand = ClassRegistry::init('UsersCobrand');
 
 		// load data
 		$this->loadFixtures('OnlineappUser');
@@ -316,47 +316,6 @@ class UserTest extends CakeTestCase {
 		$expected['User']['api_password'] = $encApiPwd;
 		$this->assertSame($expected['User']['password'], $this->User->data['User']['password']);
 		$this->assertSame($expected['User']['api_password'], $this->User->data['User']['api_password']);
-	}
-
-/**
- * testAfterSave
- *
- * @covers User::virtualFields property
- * @return void
- */
-	public function testAfterSave() {
-		//Set HABTM data structure
-		$user = array(
-			'User' => array(
-				'id' => 1,
-			),
-			'Cobrand' => array(
-				'Cobrand' => array(1)
-			),
-			'Template' => array(
-				'Template' => array(
-					1,
-					2,
-				//this template does not belong to cobrand with id 1
-				//should be removed afterSave
-					3
-				)
-			),
-		);
-		//save new Cobrands/Templates for user
-		$this->User->saveAll($user);
-		$savedData = $this->User->find('first', array(
-			'conditions' => array('User.id' => 1),
-			'fields' => array('User.id'),
-			'contain' => array(
-				'Cobrand' => array('fields' => array('Cobrand.id')),
-				'Template' => array('fields' => array('Template.id'))
-			)
-		));
-
-		$expected = array(1, 2);
-		$actual = Hash::extract($savedData, 'Template.{n}.id');
-		$this->assertSame($expected, $actual);
 	}
 
 /**
