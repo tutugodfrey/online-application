@@ -8,11 +8,6 @@ App::uses('AppController', 'Controller');
 class TemplateBuilderController extends AppController {
 
 /**
- * Load helpers
- */
-	public $helpers = array('Js');
-
-/**
  * admin_build
  *
  * @return void

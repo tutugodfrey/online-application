@@ -6,7 +6,6 @@ App::uses('CakeEmail', 'Network/Email');
 class CoversheetsController extends AppController {
 
     public $components = array('Security', 'Search.Prg');
-    public $helpers = array('Js'); 
     public $permissions = array(
         'admin_index' => array('rep', 'admin', 'manager'),
         'add' => array('rep', 'admin', 'manager'),

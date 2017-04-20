@@ -169,21 +169,19 @@ if (!empty($response['errors'])) {
 				'class' => 'btn btn-success btn-lg center-block',
 				'onClick' => "$(this).hide();$('<img src=\'/img/refreshing.gif\'/>').appendTo( '#templateBuilderMainForm')"));
 	echo "</div>";
-
-
-$data = $this->Js->get('#templateBuilderMainForm')->serializeForm(array('isForm' => true, 'inline' => true));
-$this->Js->get('#templateBuilderMainForm')->event(
-   'submit',
-   $this->Js->request(
-	array('action' => 'add_template', 'controller' => 'TemplateBuilder'),
-	array(
-		'update' => '#tmpltBldrContainer',
-		'data' => $data,
-		'async' => true,    
-		'dataExpression'=>true,
-		'method' => 'POST'
-	)
-  )
-);
-echo $this->Js->writeBuffer();
 ?>
+<script type="text/javascript">
+	$("#templateBuilderMainForm").bind("submit", function (event) {
+		$.ajax({
+			async: true, 
+			type: "POST", 
+			url: "/TemplateBuilder/add_template",
+			dataType: "html", 
+			data: $("#templateBuilderMainForm").serialize(), 
+			success: function (data, textStatus) {
+				$("#tmpltBldrContainer").html(data);
+			}, 
+		});
+		return false;
+	});
+</script>

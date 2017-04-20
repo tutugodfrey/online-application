@@ -34,7 +34,7 @@
 					echo "</div>";
 				}
 			} else { 
-                                if(Set::countDim($xml) == 5) {
+                                if(Hash::dimensions($xml) == 5) {
                                     $rsarray = $xml['document']['signer-links']['signer-link'];
                                 } else {
                                     $rsarray = $xml['document']['signer-links'];
