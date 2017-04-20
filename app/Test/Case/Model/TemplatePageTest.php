@@ -104,6 +104,11 @@ class TemplatePageTest extends CakeTestCase {
 		);
 		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
 		$this->assertEquals($expectedCobrand, $returnedCobrand);
+
+		//Test method by setting data to the model
+		$this->TemplatePage->set(array('TemplatePage' => array('template_id' => $templateId)));
+		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
 	}
 
 	public function testGetTemplate() {
@@ -379,6 +384,22 @@ class TemplatePageTest extends CakeTestCase {
 
 	public function testOrderEditable() {
 		$this->assertFalse($this->TemplatePage->orderEditable('Validate Application'));
-		$this->assertTrue($this->TemplatePage->orderEditable('anything else'));
+	}
+/**
+ * testAfterSave
+ *
+ * @covers TemplatePage:afterSave()
+ * @return void
+ */
+	public function testAfterSave() {
+		//Set data to the model
+		$templateId = 1;
+		$this->TemplatePage->set(array('TemplatePage' => array('template_id' => $templateId)));
+		$this->TemplatePage->afterSave(false);
+		$result = $this->Template->find('first', array('conditions' => array('Template.id' => $templateId)));
+
+		//check that the template was saved in the proper order with Validate Application page at the end
+		$nameOfLastTemplate = Hash::get($result, 'TemplatePages.' . (count($result) - 1) . '.name');
+		$this->assertSame($nameOfLastTemplate, 'Validate Application');
 	}
 }
