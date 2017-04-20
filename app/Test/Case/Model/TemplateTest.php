@@ -894,26 +894,47 @@ class TemplateTest extends CakeTestCase {
 	}
 
 /**
- * testRemovable
- *
- * @covers Template::removable()
+ * testGetTemplatesAndCobrands
+ * 
  * @return void
  */
-	public function testRemovable() {
-		$appData = array(
-			'template_id' => 1,
-			'user_id' => 2,
-			'uuid' => '1bb038e3-f566-4557-88d8-88acdc4115ca',
-			'created' => '2014-01-24 09:07:08',
-			'modified' => '2014-01-24 09:07:08',
+	public function testGetTemplatesAndCobrands() {
+		$conditions['conditions'] = array('Template.id' => 1);
+		$expected = array(
+			array(
+				'Template' => array(
+						'id' => 1,
+						'name' => 'Template 1 for PN1'
+				),
+				'Cobrand' => array(
+						'partner_name' => 'Partner Name 1',
+						'id' => 1
+				)
+			)
 		);
-		$this->CobrandedApplication->create();
-		$this->CobrandedApplication->save($appData);
+		$actual = $this->Template->getTemplatesAndCobrands($conditions);
+		$this->assertSame($expected, $actual);
+	}
 
-		//Not removable because it already has an apoplication assigned
-		$templateId = 1;
-		$this->assertFalse($this->Template->removable($templateId));
-		$templateId = 99999;
-		$this->assertTrue($this->Template->removable($templateId));
+/**
+ * testSetCobrandsTemplatesList
+ * 
+ * @return void
+ */
+	public function testSetCobrandsTemplatesList() {
+		$tstData = array(
+				array(
+					'Template' => array(
+						'id' => 1,
+						'name' => 'Template Name'
+					),
+					'Cobrand' => array(
+						'partner_name' => 'Partner Name'
+					)
+				)
+			);
+		$expected = array(1 => 'Partner Name - Template Name');
+		$actual = $this->Template->setCobrandsTemplatesList($tstData);
+		$this->assertEquals($expected, $actual);
 	}
 }

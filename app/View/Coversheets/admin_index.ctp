@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="/css/app_status_popover.css">
 <div class="Coversheets">
 	<h2><?php echo$this->Element('coversheets/search');?></h2>
-	<table cellpadding="0" cellspacing="0">
+	<table class="table table-condensed table-hover">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id');?></th>
 			<th><?php echo $this->Paginator->sort('cobranded_application_id');?></th>

@@ -1,8 +1,8 @@
 <!--Load status popover css customizations-->
 <link rel="stylesheet" type="text/css" href="/css/app_status_popover.css">
 <div class="CobrandedApplications">
-	<h2><?php echo $this->Element('cobranded_applications/search'); ?></h2>
-	<table class="table table-condensed table-hover">
+	<?php echo $this->Element('cobranded_applications/search'); ?>
+	<table class="table table-condensed table-striped table-hover">
 		<tr>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.id', 'ID'); ?></th>
 			<th><?php echo $this->Paginator->sort('User.firstname', 'User Name'); ?></th>

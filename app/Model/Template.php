@@ -34,7 +34,7 @@ class Template extends AppModel {
 
 	public $hasMany = array(
 		'Users' => array(
-			'className' => 'User',
+			'className' => 'User', 
 			'foreignKey' => 'template_id',
 			'dependent' => false,
 		),
@@ -67,20 +67,36 @@ class Template extends AppModel {
 		$conditions = array();
 
 		if ($cobrandId != null) {
-			$conditions = array('Template.cobrand_id' => $cobrandId);
+			$conditions['conditions'] = array('Template.cobrand_id' => $cobrandId);
 		}
 
-		$templates = $this->find('all', 
-			array(
+		$templates = $this->getTemplatesAndCobrands($conditions);
+		return $this->setCobrandsTemplatesList($templates);
+	}
+/**
+ * getTemplatesAndCobrandsById
+ *
+ * @param array $options containing search query options
+ * @return array
+ */
+	public function setCobrandsTemplatesList($tmpltsCobrands) {
+		return Hash::combine($tmpltsCobrands, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
+	}
+/**
+ * getTemplatesAndCobrandsById
+ *
+ * @param array $options containing search query options
+ * @return array
+ */
+	public function getTemplatesAndCobrands($options) {
+		$dafaultOptns = array(
 				'contain' => array('Cobrand.partner_name'),
 				'fields' => array('Template.id', 'Template.name'),
 				'order' => array('Cobrand.partner_name' => 'ASC'),
-				'conditions' => $conditions,
-			)
-		);
+			);
 
-		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
-		return $templates;
+		$options = array_merge($dafaultOptns, $options);
+		return $this->find('all', $options);
 	}
 
 	public function getCobrand($cobrandId) {

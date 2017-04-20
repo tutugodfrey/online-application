@@ -19,7 +19,7 @@ class CoversheetsController extends AppController {
 
 	public function view($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid coversheet'));
+			$this->_failure(__('Invalid coversheet'));
 			$this->redirect(array('action' => 'index'));
 		}
 		$this->set('Coversheet', $this->Coversheet->read(null, $id));
@@ -37,21 +37,20 @@ class CoversheetsController extends AppController {
             );
                 
             if ($this->Coversheet->save()) {
-				$this->Session->setFlash(__('The coversheet has been created'));
-				//$this->redirect(array('action' => 'add'));
                 $id = $this->Coversheet->id;
+                $this->_success(__("New Coversheet #$id has been created"));
                 $this->redirect('/coversheets/edit/' . $this->Coversheet->id);
             } else {
-				$this->Session->setFlash(__('The coversheet could not be saved. Please, try again.'));
+				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
             }
         }
 
         if ($this->request->is('post')) {
             if ($this->Coversheet->save($this->request->data)) {
-				$this->Session->setFlash(__('The coversheet has been saved'));
+				$this->_success(__('The coversheet has been saved'));
 				$this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
             } else {
-				$this->Session->setFlash(__('The coversheet could not be saved. Please, try again.'));
+				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
             }
         }
 		
@@ -104,7 +103,7 @@ class CoversheetsController extends AppController {
         $this->set('tier',$result);
 		
         if (!$id && empty($this->request->data)) {
-			$this->Session->setFlash(__('Invalid coversheet'));
+			$this->_failure(__('Invalid coversheet'));
 			$this->redirect(array('action' => 'index'));
 		}
 
@@ -115,10 +114,10 @@ class CoversheetsController extends AppController {
                 }
 			
                 if ($this->Coversheet->save($this->request->data, array('validate' => false))) {
-				    $this->Session->setFlash(__('The coversheet has been saved'));
+				    $this->_success(__('The coversheet #' . $this->request->data('Coversheet.id') . ' has been saved'));
 				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                 } else {
-				    $this->Session->setFlash(__('The coversheet could not be saved. Please, try again.'));
+				    $this->_failure(__('The coversheet #' . $this->request->data('Coversheet.id') . 'could not be saved. Please, try again.'));
                 }
             } elseif (isset($this->request->data['uw'])) {
                 $term1AcceptDebit = 'no';
@@ -173,24 +172,24 @@ class CoversheetsController extends AppController {
                         if ($this->Coversheet->pdfGen($id, $viewData)) {
                             if ($this->Coversheet->sendCoversheet($id)) {
                                 if ($this->Coversheet->unlinkCoversheet($id)) {
-                                    $this->Session->setFlash(__('The coversheet has been submitted to underwriting'));
+                                    $this->_success(__("The coversheet $id has been submitted to underwriting"));
                                     $this->Coversheet->saveField('status', 'sent');
                                 } else {
-                                    $this->Session->setFlash(__('There was a problem deleting the Coversheet pdf file'));
+                                    $this->_failure(__("There was a problem deleting the Coversheet pdf file"));
                                 }
                             } else {
-                                $this->Session->setFlash(__('There was a problem sending the Coversheet pdf'));
+                                $this->_failure(__("There was a problem sending the Coversheet pdf"));
                             }
                         } else {
-                            $this->Session->setFlash(__('There was a problem generating the Coversheet pdf'));
+                            $this->_failure(__("There was a problem generating the Coversheet pdf"));
                         }
                     } else {
-                        $this->Session->setFlash(__('The coversheet has been validated and will be sent to underwriting once the application is signed'));
+                        $this->_success(__("The coversheet $id has been validated and will be sent to underwriting once the application is signed"));
                         $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                     }
 				    $this->redirect(array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true));
                 } else {
-				    $this->Session->setFlash(__('The coversheet could not be validated. Please, try again.'));
+				    $this->_failure(__("The coversheet $id could not be validated. Please, try again."));
                     $errors = $this->Coversheet->validationErrors;
                     $this->set('errors', $errors);
                     if (array_key_exists('cp_encrypted_sn', $errors) || array_key_exists('cp_pinpad_ra_attached', $errors) || array_key_exists('cp_check_guarantee_info', $errors) || array_key_exists('cp_pos_contact', $errors)) {
@@ -250,14 +249,14 @@ class CoversheetsController extends AppController {
     
 	public function delete($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for coversheet'));
+			$this->_failure(__('Invalid id for coversheet'));
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->Coversheet->delete($id)) {
-			$this->Session->setFlash(__('coversheet deleted'));
+			$this->_success(__('coversheet deleted'));
 			$this->redirect(array('action'=>'index'));
 		}
-		$this->Session->setFlash(__('coversheet was not deleted'));
+		$this->_failure(__('coversheet was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
         
@@ -330,7 +329,7 @@ class CoversheetsController extends AppController {
         
 	public function admin_view($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid coversheet'));
+			$this->_failure(__('Invalid coversheet'));
 			$this->redirect(array('action' => 'index'));
 		}
 		$this->set('Coversheet', $this->Coversheet->read(null, $id));
@@ -392,15 +391,15 @@ class CoversheetsController extends AppController {
  */        
 	public function admin_override($id = null) {
 		if (!$id && empty($this->request->data)) {
-			$this->Session->setFlash(__('Invalid coversheet'));
+			$this->_failure(__('Invalid coversheet'));
 			$this->redirect(array('action' => 'index'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Coversheet->save($this->request->data)) {
-				$this->Session->setFlash(__('The coversheet has been saved'));
+				$this->_success(__('The coversheet has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The coversheet could not be saved. Please, try again.'));
+				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
 			}
 		}
 		if (empty($this->request->data)) {
@@ -418,14 +417,14 @@ class CoversheetsController extends AppController {
         
 	public function admin_delete($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for coversheet'));
+			$this->_failure(__('Invalid id for coversheet'));
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->Coversheet->delete($id)) {
-			$this->Session->setFlash(__('coversheet deleted'));
+			$this->_success(__('coversheet deleted'));
 			$this->redirect(array('action'=>'index'));
 		}
-		$this->Session->setFlash(__('coversheet was not deleted'));
+		$this->_failure(__('coversheet was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
 
