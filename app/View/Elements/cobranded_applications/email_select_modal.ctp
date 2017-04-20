@@ -82,21 +82,24 @@
 		</div>
 		</div>
 	";
-
-$data = $this->Js->get('#' . $thisFormId)->serializeForm(array('isForm' => true, 'inline' => true));
-$this->Js->get('#' . $thisFormId)->event(
-   'submit',
-   $this->Js->request(
-    '/cobranded_applications/retrieve',
-    array(
-        'update' => '#ajaxEmailResponse' . $cobranded_application_id,
-        'data' => $data,
-        'async' => true,    
-        'dataExpression'=>true,
-        'method' => 'POST'
-    )
-  )
-);
-echo $this->Js->writeBuffer();
-
+?>
+<script type="text/javascript">
+	$(document).ready(function () {
+		var emailFrmId = '<?php echo $thisFormId; ?>';		
+		$("#" + emailFrmId).bind("submit", function (event) {
+			$.ajax({
+				type:"POST", 
+				url:"\/cobranded_applications\/retrieve",
+				async:true, 
+				dataType:"html", 
+				data:$("#" + emailFrmId).serialize(), 
+				success:function (data, textStatus) {
+					var cobrandedAppId = '<?php echo $cobranded_application_id; ?>';
+					$("#ajaxEmailResponse" + cobrandedAppId).html(data);
+				}, 
+			});
+			return false;
+		});
+	});
+</script>
 
