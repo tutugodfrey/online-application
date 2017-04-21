@@ -151,17 +151,6 @@
 	<script type="text/javascript">
 		/* TODO: move this into a javascript file */
 		$(document).on("ready", function() {
-			// remove the cake css
-			// TODO: use a different template that does not use the cake.generic.css file
-			$.map(
-				$('head link'),
-				function(link, index) {
-					if ($(link).attr('href') == '/css/cake.generic.css') {
-						$(link).remove();
-					}
-				}
-			);
-
 			$(document).on("percentOptionBlur", handlePercentOptionBlur);
 			$(document).on("feeOptionBlur", handleFeeOptionBlur);
 

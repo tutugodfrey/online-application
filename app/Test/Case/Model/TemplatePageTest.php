@@ -9,13 +9,12 @@ App::uses('TemplatePage', 'Model');
  */
 class TemplatePageTest extends CakeTestCase {
 
-	
-
 	public $autoFixtures = false;
 
 	public $fixtures = array(
 		'app.onlineappCobrand',
 		'app.onlineappUser',
+		'app.onlineappUsersTemplate',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
@@ -36,6 +35,7 @@ class TemplatePageTest extends CakeTestCase {
 		parent::setUp();
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->User = ClassRegistry::init('User');
+		$this->UsersTemplate = ClassRegistry::init('UsersTemplate');
 		$this->Template = ClassRegistry::init('Template');
 		$this->TemplatePage = ClassRegistry::init('TemplatePage');
 		$this->TemplateSection = ClassRegistry::init('TemplateSection');
@@ -46,6 +46,7 @@ class TemplatePageTest extends CakeTestCase {
 		// load data
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappUser');
+		$this->loadFixtures('OnlineappUsersTemplate');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappTemplateSection');
@@ -102,6 +103,11 @@ class TemplatePageTest extends CakeTestCase {
 			'response_url_type' => null,
 			'brand_logo_url' => 'PN2 logo_url',
 		);
+		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
+		$this->assertEquals($expectedCobrand, $returnedCobrand);
+
+		//Test method by setting data to the model
+		$this->TemplatePage->set(array('TemplatePage' => array('template_id' => $templateId)));
 		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
 		$this->assertEquals($expectedCobrand, $returnedCobrand);
 	}
@@ -195,7 +201,7 @@ class TemplatePageTest extends CakeTestCase {
 		);
 		$this->Template->create();
 		$this->Template->save($templateData);
-		$template = $this->Template->find('first', array('conditions' => array('Template.id' => $this->Template->id)));		
+		$template = $this->Template->find('first', array('conditions' => array('Template.id' => $this->Template->id)));
 
 		// add another page
 		$pageData = array(
@@ -379,6 +385,22 @@ class TemplatePageTest extends CakeTestCase {
 
 	public function testOrderEditable() {
 		$this->assertFalse($this->TemplatePage->orderEditable('Validate Application'));
-		$this->assertTrue($this->TemplatePage->orderEditable('anything else'));
+	}
+/**
+ * testAfterSave
+ *
+ * @covers TemplatePage::afterSave()
+ * @return void
+ */
+	public function testAfterSave() {
+		//Set data to the model
+		$templateId = 1;
+		$this->TemplatePage->set(array('TemplatePage' => array('template_id' => $templateId)));
+		$this->TemplatePage->afterSave(false);
+		$result = $this->Template->find('first', array('conditions' => array('Template.id' => $templateId)));
+
+		//check that the template was saved in the proper order with Validate Application page at the end
+		$nameOfLastTemplate = Hash::get($result, 'TemplatePages.' . (count($result['TemplatePages']) - 1) . '.name');
+		$this->assertSame($nameOfLastTemplate, 'Validate Application');
 	}
 }

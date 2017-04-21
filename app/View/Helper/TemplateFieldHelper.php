@@ -135,12 +135,13 @@ class TemplateFieldHelper extends Helper {
 				break;
 
 			case 3: // checkbox
-				if ($field['CobrandedApplicationValues'][0]['value'] == 'true') {
+				if (Hash::get($field, 'CobrandedApplicationValues.0.value') == 'true') {
 					$fieldOptions = Hash::insert($fieldOptions, 'checked', 'checked');
 				}
 				$retVal = $retVal . $this->Html->div('checkbox',
 					$this->Form->checkbox($field['name'], $fieldOptions) .
-					$this->Form->label($fieldId, $label)
+					$this->Form->label($fieldId, $label),
+					array('style' => 'margin-left:25px')
 				);
 				break;
 

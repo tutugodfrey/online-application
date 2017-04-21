@@ -282,9 +282,10 @@
                             
                                 <tr <?php if ($tier == 'tier1') echo 'class="warning"'; ?>>
                                     <td>
-                                    <?php 
+                                    <?php
+                                        $tierLabelsAttr = array('class' => false);
                                         $options = array('1' => 'Tier 1:');
-                                        echo $this->Form->radio('setup_tier_select', $options);
+                                        echo $this->Form->radio('setup_tier_select', $options, $tierLabelsAttr);
                                     
                                         if ($this->Form->isFieldError('setup_tier_select')){
                                             echo $this->Form->error('setup_tier_select');
@@ -298,7 +299,7 @@
                                     <td>
                                         <?php 
                                             $options = array('2' => 'Tier 2:');
-                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                            echo $this->Form->radio('setup_tier_select', $options, array_merge($attributes, $tierLabelsAttr));
                                         ?>
                                     </td>
                                     <td colspan="5">MOTO: Volume $0-$150,000, Average Ticket Less Than $1,000</td>
@@ -308,7 +309,7 @@
                                     <td>
                                         <?php 
                                             $options = array('3' => 'Tier 3:');
-                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                            echo $this->Form->radio('setup_tier_select', $options, array_merge($attributes, $tierLabelsAttr));
                                         ?>
                                     </td>
                                     <td colspan="5">
@@ -327,7 +328,7 @@
                                     <td>
                                         <?php 
                                             $options = array('4' => 'Tier 4:');
-                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                            echo $this->Form->radio('setup_tier_select', $options, array_merge($attributes, $tierLabelsAttr));
                                         ?>
                                     </td>
                                     <td colspan="5">
@@ -347,7 +348,7 @@
                                     <td>
                                         <?php 
                                             $options = array('5' => 'Tier 5:');
-                                            echo $this->Form->radio('setup_tier_select', $options, $attributes);
+                                            echo $this->Form->radio('setup_tier_select', $options, array_merge($attributes, $tierLabelsAttr));
                                         ?>                        
                                     </td>
                                     <td colspan="5"><p>Retail: Volume $250,000 or Greater/month, Average Ticket Greater Than $1,000</p>
@@ -705,7 +706,6 @@
                                                     $div_hide = 'HideCpLink';
                                                     $div_string = 'Cp';
                                                     echo '<div id="'.$div_show.'">';
-                                                    //echo $this->Js->link('Click for Card Present Merchant', '', array('update' => array($div_string,$div_hide,$div_show), 'loading' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')')); 
                                                     echo $this->Html->link('Click for Card Present Merchant', 'javascript:void(0)', array('onclick' => 'Effect.Appear(\''.$div_string.'\'),Effect.Appear(\''.$div_hide.'\'),Effect.Fade(\''.$div_show.'\')'));
                                                     echo '</div>'; 
                                                     echo '<div id="'.$div_hide.'" style=display:none;">';

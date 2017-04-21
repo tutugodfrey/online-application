@@ -3,12 +3,11 @@
     Created on : Mar 27, 2017, 5:23 PM
     Author     : omota
     Description:
-        These styles were created based on suggestions from twitter bootstrap and are not included in bootstrap itself
+        These styles were created based on suggestions from twitter bootstrap and are not included in bootstrap itself.
+        Refrain from adding styles unrelated to bootstrap. These styles load along side bootstrap.
 */
 
-/* 
-   Syntax recommendation http://getbootstrap.com/css/#less-mixins-truncating
-*/
+/* Syntax recommendation http://getbootstrap.com/css/#less-mixins-truncating */
 .text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -17,4 +16,15 @@
   max-width: 200px;
 }
 
-
+.content{
+  padding: 0px 20px 40px 20px;
+  overflow: auto;
+}
+/* Bootstrap does not dislplay an asterisk to indicate requied fields
+   We must define our own here.
+*/
+form .required label:after {
+  color: #e32;
+  content: '*';
+  display:inline;
+}
