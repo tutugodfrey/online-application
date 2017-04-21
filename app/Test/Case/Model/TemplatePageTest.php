@@ -389,7 +389,7 @@ class TemplatePageTest extends CakeTestCase {
 /**
  * testAfterSave
  *
- * @covers TemplatePage:afterSave()
+ * @covers TemplatePage::afterSave()
  * @return void
  */
 	public function testAfterSave() {
