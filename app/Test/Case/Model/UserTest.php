@@ -95,7 +95,7 @@ class UserTest extends CakeTestCase {
 /**
  * testBindNode
  *
- * @covers User::testBindNode()
+ * @covers User::bindNode()
  * @return void
  */
 	public function testBindNode() {
