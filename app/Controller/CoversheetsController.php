@@ -6,7 +6,6 @@ App::uses('CakeEmail', 'Network/Email');
 class CoversheetsController extends AppController {
 
 	public $components = array('Security', 'Search.Prg');
-	public $helpers = array('Js'); 
 	public $permissions = array(
 		'admin_index' => array('rep', 'admin', 'manager'),
 		'add' => array('rep', 'admin', 'manager'),
@@ -311,7 +310,6 @@ class CoversheetsController extends AppController {
  */        
 		protected function tier($id) {
 			$data = $this->Coversheet->CobrandedApplication->findById($id);
-			//debug($data);
 			$moto = false;
 			$result = '';
 
@@ -329,7 +327,7 @@ class CoversheetsController extends AppController {
 						$result = 'tier4';
 					} else {
 						$result = 'tier5';
-					}   //return $result;
+					}  
 					break;
 				case false:
 					if ($data['CobrandedApplication']['MonthlyVol'] < '250000' && $data['CobrandedApplication']['AvgTicket'] < '1000') {
@@ -340,11 +338,9 @@ class CoversheetsController extends AppController {
 						$result = 'tier4';
 					} else {
 						$result = 'tier5';
-					}   //return $result;
-					//debug($result);
+					}   
 					break;
 			}$this->set('tier',$result);
-				  //debug($result);  
 		}
 		function admin_edit($id = null) {
 
