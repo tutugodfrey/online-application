@@ -34,9 +34,19 @@ class Template extends AppModel {
 
 	public $hasMany = array(
 		'Users' => array(
+			'className' => 'User', 
+			'foreignKey' => 'template_id',
+			'dependent' => false,
+		),
+		'Users' => array(
 			'className' => 'User',
 			'foreignKey' => 'template_id',
 			'dependent' => false,
+		),
+		'UsersTemplate' => array(
+			'className' => 'UsersTemplate',
+			'foreignKey' => 'template_id',
+			'dependent' => true,
 		),
 		'TemplatePages' => array(
 			'className' => 'TemplatePage',
@@ -57,20 +67,36 @@ class Template extends AppModel {
 		$conditions = array();
 
 		if ($cobrandId != null) {
-			$conditions = array('Template.cobrand_id' => $cobrandId);
+			$conditions['conditions'] = array('Template.cobrand_id' => $cobrandId);
 		}
 
-		$templates = $this->find('all', 
-			array(
+		$templates = $this->getTemplatesAndCobrands($conditions);
+		return $this->setCobrandsTemplatesList($templates);
+	}
+/**
+ * getTemplatesAndCobrandsById
+ *
+ * @param array $options containing search query options
+ * @return array
+ */
+	public function setCobrandsTemplatesList($tmpltsCobrands) {
+		return Hash::combine($tmpltsCobrands, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
+	}
+/**
+ * getTemplatesAndCobrandsById
+ *
+ * @param array $options containing search query options
+ * @return array
+ */
+	public function getTemplatesAndCobrands($options) {
+		$dafaultOptns = array(
 				'contain' => array('Cobrand.partner_name'),
 				'fields' => array('Template.id', 'Template.name'),
 				'order' => array('Cobrand.partner_name' => 'ASC'),
-				'conditions' => $conditions,
-			)
-		);
+			);
 
-		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
-		return $templates;
+		$options = array_merge($dafaultOptns, $options);
+		return $this->find('all', $options);
 	}
 
 	public function getCobrand($cobrandId) {
@@ -206,7 +232,7 @@ class Template extends AppModel {
 
 	public function beforeDelete($cascade = true) {
 		$templateToDelete = $this->read();
-		$pages = $templateToDelete['TemplatePages'];
+		$pages = !empty($templateToDelete)? Hash::get($templateToDelete, 'TemplatePages'): null;
 		if (count($pages) > 0) {
 			// delete the children
 			$templatePage = ClassRegistry::init('TemplatePage');
@@ -245,5 +271,17 @@ class Template extends AppModel {
 			$badChars[count($badChars)] = ' ';
 		}
 		return str_replace($badChars, '', $str);
+	}
+
+/**
+ * isRemovable
+ * Checks if a template is already associated with a CobrandedApplication.
+ * If it is then template can not be deleted
+ *
+ * @param integer $id template id
+ * @return boolean
+ */
+	public function removable($id) {
+		return (!ClassRegistry::init('CobrandedApplication')->hasAny(array('template_id' => $id)));
 	}
 }

@@ -1,8 +1,6 @@
 <?php
 class UsersController extends AppController {
 
-	public $scaffold = 'admin';
-
 	public $permissions = array(
 		'login' => '*',
 		'logout' => '*',
@@ -34,7 +32,7 @@ class UsersController extends AppController {
 		$conditions = array('conditions' => array('User.id' => $id), 'recursive' => -1);
 		$data = $this->User->find('first', $conditions);
 		if ($data['User']['api_enabled'] === true) {
-			$this->Session->setFlash('This User already has Valid API Credentials!');
+			$this->_failure('This User already has Valid API Credentials!');
 			$this->redirect('/admin/users');
 		} else {
 			$token = sha1(CakeText::uuid());
@@ -43,9 +41,9 @@ class UsersController extends AppController {
 			$this->User->set(array('token' => $token, 'api_password' => $password, 'api_enabled' => true, 'api' => true));
 			if (!$this->User->save()) {
 				$token = null;
-				$this->Session->setFlash('There was an error generating this token');
+				$this->_failure('There was an error generating this token');
 			}
-			$this->Session->setFlash('API access has been enabled for this user');
+			$this->_success('API access has been enabled for this user');
 			$this->set(compact('token', 'password', 'id'));
 		}
 	}
@@ -62,7 +60,7 @@ class UsersController extends AppController {
 				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
 				$this->redirect($this->Auth->redirect());
 			} else {
-				$this->Session->setFlash(__('Invalid e-mail / password combination.  Please try again.'));
+				$this->_failure(__('Invalid e-mail / password combination.'));
 			}
 		}
 	}
@@ -74,7 +72,7 @@ class UsersController extends AppController {
  */
 
 	public function logout() {
-		$this->Session->setFlash('Good-Bye');
+		$this->_success('Good-Bye');
 		$this->redirect($this->Auth->logout());
 	}
 
@@ -110,8 +108,8 @@ class UsersController extends AppController {
 		//		$groups = $this->User->Group->find('list');
 		//		$templates = $this->User->Template->getList();
 		$users = $this->paginate();
-		$this->set(compact('users', 'queryString'));
-		$this->set('scaffoldFields', array_keys($this->User->schema()));
+		$this->_setViewNavData($queryString);
+		$this->set(compact('users'));
 	}
 
 /**
@@ -121,25 +119,23 @@ class UsersController extends AppController {
  */
 
 	public function admin_add() {
-		$this->Cobrand = ClassRegistry::init('Cobrand');
-
-		$this->set('groups', $this->User->Group->find('list'));
-		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
-		$this->set('cobrands', $this->Cobrand->getList());
-		$this->set('templates', $this->User->Template->getList());
-
+		$this->_setViewNavData('');
 		if ($this->request->is('post')) {
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('The User has been created'));
+				$this->_success(__('The User has been created'));
 				$this->redirect(array('action' => 'index', 'admin' => true));
 			} else {
 				unset($this->request->data['User']['pwd']);
 				unset($this->request->data['User']['password_confirm']);
-				$this->Session->setFlash(__('The User Could not Be saved'));
+				$this->_failure(__('The User Could not Be saved'));
 			}
 		}
-		$this->set(compact('users'));
+		$this->set('groups', $this->User->Group->find('list'));
+		$this->set('allManagers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
+		$this->set('allCobrands', ClassRegistry::init('Cobrand')->getList());
+		$this->set('allTemplates', $this->User->getJsonCobrandsTemplates());
+		$this->_persistMultiselectData($this->request->data);
 	}
 
 /**
@@ -172,7 +168,7 @@ class UsersController extends AppController {
 			$mergeData = Hash::merge($userData, $relatedData);
 			$changedUsers = $this->User->arrayDiff($mergeData);
 			if ($this->User->saveAll($changedUsers, array('deep' => true))) {
-				$this->Session->setFlash("Users Saved!");
+				$this->_success("Users Saved!");
 				$this->redirect('/admin/users');
 			}
 		}
@@ -186,36 +182,70 @@ class UsersController extends AppController {
  */
 
 	public function admin_edit($id) {
-		$this->Cobrand = ClassRegistry::init('Cobrand');
-
 		$this->User->id = $id;
-		$this->User->read();
-		$this->set('groups', $this->User->Group->find('list'));
-		$this->set('managers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
-		$this->set('assigned_managers', $this->User->getAssignedManagerIds($id));
-		$this->set('assignedRepresentatives', $this->User->getActiveUserList());
-
-		$user = $this->User->read();
-
-		$this->set('cobrands', $this->Cobrand->getList());
-		$this->set('templates', $this->User->Template->getList());
-
-		$userTemplates = $this->User->getTemplates($id);
-
-		$this->set('userTemplates', $userTemplates);
-		$this->set('defaultTemplateId', $user['User']['template_id']);
-
-		// TODO: Replace $this->User->read() with an action query
-		if (empty($this->request->data)) {
-			$this->request->data = $this->User->read();
-		} else {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			if (empty($this->request->data['User']['pwd']) && empty($this->request->data['User']['password_confirm'])) {
 				unset($this->request->data['User']['pwd']);
 				unset($this->request->data['User']['password_confirm']);
 			}
 			if ($this->User->saveAll($this->request->data)) {
-				$this->Session->setFlash("User Saved!");
+				$this->_success(__("User Saved!"));
 				$this->redirect('/admin/users');
+			} else {
+				$this->_failure(__("Could not save User! Check for any form validation errors and try again..."));
+			}
+		} else {
+			$this->request->data = $this->User->getEditViewData($id);
+		}
+
+		$this->set('groups', $this->User->Group->find('list'));
+		$this->set('allManagers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
+		$this->set('allRepresentatives', $this->User->getActiveUserList());
+		$this->set('allCobrands', ClassRegistry::init('Cobrand')->getList());
+		$this->_setViewNavData('');
+		$this->set('allTemplates', $this->User->getJsonCobrandsTemplates());
+		$this->set('userDefaultTemplates', $this->User->getTemplates($id));
+		$this->_persistMultiselectData($this->request->data);
+	}
+
+/**
+ * _persistMultiselectData
+ * Utility function to persist multiselect options data submitted.
+ *
+ * @param array $data request data submitted or queried.
+ * @return null
+ */
+	protected function _persistMultiselectData($data) {
+		$modelsFields = array(
+			'AssignedRepresentative' => array('fullname'),
+			'Manager' => array('fullname'),
+			'Cobrand' => array('partner_name'),
+			'Template' => array('name'),
+		);
+		foreach ($modelsFields as $model => $fields) {
+			$varName = Inflector::variable(Inflector::tableize($model));
+			//If the data structure is from a form submission, we must persist request data.
+			if (array_key_exists($model, Hash::extract($data, $model)) && !empty($data[$model][$model])) {
+				if ($model === 'Template') {
+					$data[$model][$model] = $this->User->getCombinedCobrandTemplateList($data[$model][$model]);
+				} else {
+					$data[$model][$model] = $this->User->{$model}->find('list', array(
+								'conditions' => array('id' => $data[$model][$model]),
+								'fields' => array('id', $fields[0])
+							)
+						);
+				}
+
+				$this->set($varName, $data[$model][$model]);
+			} elseif (!empty(Hash::extract($data, "$model.{n}.id"))) {
+				if ($model === 'Template') {
+					$combinedData = $this->User->getCombinedCobrandTemplateList(Hash::extract($data, "$model.{n}.id"));
+					$this->set($varName, $combinedData);
+				} else {
+					$keys = Hash::extract($data, "$model.{n}.id");
+					$vals = Hash::extract($data, "$model.{n}." . $fields[0]);
+					$this->set($varName, array_combine($keys, $vals));
+				}
 			}
 		}
 	}
@@ -264,5 +294,34 @@ class UsersController extends AppController {
 			echo '<option value="">NO TEMPLATES FOR USER</option>';
 		}
 	}
+
+/**
+ * _setViewNavContent
+ * Utility method sets an array of urls to use as left navigation items on views
+ *
+ * @param string $showActive string representation of boolean value
+ * @return array
+ */
+	protected function _setViewNavData($showActive) {
+		if ($showActive == '1') {
+			$labelActiveInactive = 'Show Active Users';
+			$userIndexUrl = Router::url(array('action' => 'index', 'admin' => true));
+		} else {
+			$labelActiveInactive = 'Show All Users';
+			$userIndexUrl = Router::url(array('action' => '?all=1', 'admin' => true));
+		}
+
+		$elVars = array(
+			'navLinks' => array(
+				'New User' => Router::url(array('action' => 'add', 'admin' => true)),
+				$labelActiveInactive => $userIndexUrl,
+				'List Settings' => Router::url(array('controller' => 'settings', 'action' => 'index', 'admin' => true)),
+				'List IP Restrictions' => Router::url(array('controller' => 'apips', 'action' => 'index', 'admin' => true)),
+				'List Groups' => Router::url(array('controller' => 'groups', 'action' => 'index', 'admin' => true)),
+			)
+		);
+		$this->set(compact('elVars'));
+	}
+
 }
 // Last Line

@@ -893,4 +893,48 @@ class TemplateTest extends CakeTestCase {
 		$this->assertEquals(array(), $actualTemplate, 'Template with id of 5 should not be in the database');
 	}
 
+/**
+ * testGetTemplatesAndCobrands
+ * 
+ * @return void
+ */
+	public function testGetTemplatesAndCobrands() {
+		$conditions['conditions'] = array('Template.id' => 1);
+		$expected = array(
+			array(
+				'Template' => array(
+						'id' => 1,
+						'name' => 'Template 1 for PN1'
+				),
+				'Cobrand' => array(
+						'partner_name' => 'Partner Name 1',
+						'id' => 1
+				)
+			)
+		);
+		$actual = $this->Template->getTemplatesAndCobrands($conditions);
+		$this->assertSame($expected, $actual);
+	}
+
+/**
+ * testSetCobrandsTemplatesList
+ * 
+ * @return void
+ */
+	public function testSetCobrandsTemplatesList() {
+		$tstData = array(
+				array(
+					'Template' => array(
+						'id' => 1,
+						'name' => 'Template Name'
+					),
+					'Cobrand' => array(
+						'partner_name' => 'Partner Name'
+					)
+				)
+			);
+		$expected = array(1 => 'Partner Name - Template Name');
+		$actual = $this->Template->setCobrandsTemplatesList($tstData);
+		$this->assertEquals($expected, $actual);
+	}
 }

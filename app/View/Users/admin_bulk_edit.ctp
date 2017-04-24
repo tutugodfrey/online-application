@@ -12,8 +12,8 @@
 		</div>
 	</div>
 </div>
-<div class="users index">
-	<h2><?php echo __('Bulk Users Edit');?></h2>
+<div class="users panel panel-default index">
+	<div class="panel-heading"><u><strong><?php echo __('Bulk Edit Users') ?></strong></u></div>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('firstname');?></th>
@@ -27,7 +27,7 @@
 	</tr>
 	<?php
 	$i = 0;
-        echo $this->Form->create('User', array('action' => 'bulk_edit'));
+        echo $this->Form->create('User', array('url' => array('action' => 'bulk_edit')));
 	foreach ($users as $user):
 			$usersCobrands = Hash::extract($user, 'Cobrand.{n}.id');
 			$usersTemplates = Hash::extract($user, 'Template.{n}.id');

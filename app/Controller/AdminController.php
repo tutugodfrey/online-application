@@ -22,7 +22,7 @@ class AdminController extends AppController {
 				array('API IP restrictions', '/admin/apips/'),
 				array('API Logs', '/admin/apiLogs/'),
 				array('USAePay Merchants', '/admin/epayments/'),
-				array('Email Timelines', '/admin/emailTimelines/'),
+				array('Email Timeline Subjects', '/admin/emailTimelineSubjects/'),
 				array('Template Builder', '/admin/template_builder/build'),
 			);
 		}

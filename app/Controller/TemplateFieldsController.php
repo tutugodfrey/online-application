@@ -24,10 +24,10 @@ class TemplateFieldsController extends NestedResourceController {
 			$data['TemplateField']['section_id'] = $this->_getParentControllerId();
 			$this->TemplateField->create();
 			if ($this->TemplateField->save($data)) {
-				$this->Session->setFlash("Template Field Saved!");
+				$this->_success(__("Template Field Saved!"));
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to add your field.'));
+			$this->_failure(__('Unable to add your field.'));
 		}
 
 		$this->__setCommonViewVariables();
@@ -50,10 +50,10 @@ class TemplateFieldsController extends NestedResourceController {
 			// we know the page_id from the uri
 			$data['TemplateField']['section_id'] = $this->_getParentControllerId();
 			if ($this->TemplateField->save($data)) {
-				$this->Session->setFlash("Template Field Saved!");
+				$this->_success(__("Template Field Saved!"));
 				return $this->redirect($this->_getListUrl());
 			}
-			$this->Session->setFlash(__('Unable to update your field.'));
+			$this->_failure(__('Unable to update your field.'));
 		}
 
 		$this->__setCommonViewVariables();
@@ -76,7 +76,7 @@ class TemplateFieldsController extends NestedResourceController {
 
 	public function admin_delete($idToDelete) {
 		$this->TemplateField->delete($idToDelete);
-		$this->Session->setFlash("Template Field Deleted!");
+		$this->_success(("Template Field Deleted!"));
 		$this->redirect($this->_getListUrl());
 	}
 

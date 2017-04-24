@@ -24,10 +24,5 @@ class MerchantsController extends AppController {
         echo 'Admin add is disabled!';
         exit;
     }
-    
-    function admin_import($id) {
-        $this->Merchant->import($id,$mid);
-    }
-
 }
 ?>
