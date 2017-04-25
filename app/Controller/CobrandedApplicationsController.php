@@ -1075,7 +1075,7 @@ class CobrandedApplicationsController extends AppController {
 					'CobrandedApplicationValues',
 					'Merchant' => array('EquipmentProgramming'),
 				),
-				'recursive' => 2
+				'recursive' => -1
 			)
 		);
 
