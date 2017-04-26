@@ -394,21 +394,18 @@ class CoversheetsController extends AppController {
 			$this->_failure(__('Invalid coversheet'));
 			$this->redirect(array('action' => 'index'));
 		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Coversheet->save($this->request->data)) {
-				$this->_success(__('The coversheet has been saved'));
-				$this->redirect(array('action' => 'index'));
+        if ($this->request->is('ajax')) {
+            $data = $this->Coversheet->findById($id);
+            $Applications = $this->Coversheet->CobrandedApplication->find('list');
+            $Users = $this->Coversheet->User->find('list', array('order' => 'User.firstname ASC', 'fields' => array('User.id', 'User.fullname')));
+            $this->set(compact('Applications', 'Users', 'data'));
+        } elseif ($this->request->is('post') || $this->request->is('put')) {
+            if ($this->Coversheet->save($this->request->data)) {
+				$this->_success(__('The coversheet has been saved'), array('action' => 'index'));
 			} else {
-				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
+				$this->_failure(__('The coversheet could not be saved. Please, try again.'), array('action' => 'index'));
 			}
 		}
-		if (empty($this->request->data)) {
-			$data = $this->Coversheet->findById($id);
-                        $this->request->data = $data;
-		}
-		$Applications = $this->Coversheet->CobrandedApplication->find('list');
-		$Users = $this->Coversheet->User->find('list', array('order' => 'User.firstname ASC', 'fields' => array('User.id', 'User.fullname')));
-		$this->set(compact('Applications', 'Users', 'data'));
 	}
 
 /*
