@@ -505,8 +505,8 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function admin_add($applicationId = null) {
 		// look up the user to make sure we don't get stale session data
-		$user = $this->User->read(null, $this->Session->read('Auth.User.id'));
-
+		$this->User->id = $this->Session->read('Auth.User.id');
+		$user = $this->User->getById($this->User->id);
 		if ($this->request->is('ajax')) {
 			$this->autoRender = false;
 			$this->CobrandedApplication->create(
