@@ -832,7 +832,7 @@ class CobrandedApplicationsController extends AppController {
 
 				$achYes = false;
 
-				$valuesMap = $this->getCobrandedApplicationValues($cobrandedApplication['CobrandedApplication']['id']);
+				$valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($cobrandedApplication['CobrandedApplication']['id']);
         			foreach ($valuesMap as $key => $val) {
 					if (preg_match('/ACH-Yes/', $key)) {
 						$achYes = $val;
@@ -1252,46 +1252,6 @@ class CobrandedApplicationsController extends AppController {
 		$this->render('end');
 	}
 
-/*
- * getCobrandedApplicationValues
- *
- * @param $applicationId integer
- * @param $valueConditions array
- * @param $recursive integer
- * @return $valuesMap array
- */
-    public function getCobrandedApplicationValues($applicationId, $valueConditions = array(), $recursive = null) {
-        $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-
-        if (!isset($recursive)) {
-            $recursive = 1;
-        }
-
-        $conditions = array(
-            'conditions' => array(
-                'cobranded_application_id' => $applicationId,
-            ),
-            'recursive' => $recursive
-        );
-
-        if (!empty($valueConditions)) {
-            $conditions['conditions'][] = $valueConditions;
-        }
-
-        $appValues = $CobrandedApplicationValue->find(
-            'all',
-            $conditions
-        );
-
-        $appValueArray = array();
-        foreach ($appValues as $arr) {
-            $appValueArray[] = $arr['CobrandedApplicationValue'];
-        }
-
-        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
-        return $valuesMap;
-    }
-
 /**
  * sendCoversheet
  *
@@ -1301,7 +1261,7 @@ class CobrandedApplicationsController extends AppController {
     public function sendCoversheet($data) {
 		$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
 
-        $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
+        $valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($coversheetData['CobrandedApplication']['id']);
         foreach ($valuesMap as $key => $val) {
             $coversheetData['CobrandedApplication'][$key] = $val;
         }
