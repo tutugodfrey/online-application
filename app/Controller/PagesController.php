@@ -38,12 +38,7 @@ class PagesController extends AppController {
 	public $permissions = array(
 		'refreshSession' => '*',
 	);
-/**
- * helpter name
- *
- * @var array
- */
-	public $helpers = array('Js');
+
 /**
  * This controller does not use a model
  *
