@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
 	
-	<div class="col-md-5 col-md-offset-3">
+	<div class="col-md-12">
 	  <!-- view page content -->
 		<div class="panel panel-default">
 			<div class="panel-heading"><u><strong><?php echo __('Admin Edit Application')?></strong></u></div>

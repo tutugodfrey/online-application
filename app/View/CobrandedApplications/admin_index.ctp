@@ -68,22 +68,22 @@
 					)
 				);
 				}
-				echo $this->Html->link(' ',
+				echo $this->Form->button(' ',
 					array(
-						'action' => 'add',
-						$cobrandedApplication['CobrandedApplication']['id']
-					),
-					array(
-						'class' => 'btn btn-default btn-sm glyphicon glyphicon-tags',
-						'title' => __('Copy')
+						'type' => 'button',
+						'data-toggle' => 'modal',
+						'data-target' => '#dynamicModal',
+						'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/add/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+						'class' => 'btn btn-default btn-sm glyphicon glyphicon-duplicate',
+						'title' => __('Create Copy')
 					)
 				);
-				echo $this->Html->link(' ',
+				echo $this->Form->button(' ',
 					array(
-						'action' => 'email_timeline',
-						$cobrandedApplication['CobrandedApplication']['id']
-					),
-					array(
+						'type' => 'button',
+						'data-toggle' => 'modal',
+						'data-target' => '#dynamicModal',
+						'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/email_timeline/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
 						'class' => 'btn btn-default btn-sm glyphicon glyphicon-calendar',
 						'title' => __('Timeline for Emails')
 					)
@@ -146,23 +146,24 @@
 									'admin' => false
 								),
 								array(
-									'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
+								'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
 									'title' => __('Create Cover Sheet')
 								)
 							);
 						}
 					}
 				if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
-				echo $this->Html->link(' ',
-					array(
-						'action' => 'edit',
-						$cobrandedApplication['CobrandedApplication']['id']
-					),
-					array(
-						'class' => 'btn btn-danger btn-sm glyphicon glyphicon-cog',
-						'title' => __('Override')
-					)
-				);
+					echo $this->Form->button(' ',
+						array(
+							'type' => 'button',
+							'data-toggle' => 'modal',
+							'data-target' => '#dynamicModal',
+							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/edit/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+							'class' => 'btn btn-danger btn-sm glyphicon glyphicon-cog',
+							'title' => __('Override')
+						)
+					);
+
 				}
 				if (!isset($cobrandedApplication['Coversheet']['id'])) {
 					echo $this->Form->postLink(' ',
@@ -185,5 +186,8 @@
 		</tr>
 		<?php endforeach; ?>
 	</table>
-	<?php echo $this->Element('paginatorBottomNav'); ?>
+	<?php 
+		echo $this->Element('paginatorBottomNav'); 
+		echo $this->Element('Ajax/dynamicModal');
+	?>
 </div>

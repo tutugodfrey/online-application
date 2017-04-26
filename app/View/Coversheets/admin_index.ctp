@@ -53,18 +53,19 @@
         </td>
 
 		<td class="actions">
-                    <?php if ($this->Session->read('Auth.User.group') == 'admin'): ?>
-			<?php echo $this->Html->link(__(' '), 
-				array(
-					'action' => 'override', 
-					$coversheet['Coversheet']['id']
-				),
-				array(
-					'class' => 'btn btn-danger btn-sm glyphicon glyphicon-cog',
-                                        'title' => __('Override')
-				)   
-			); ?>
-                    <?php endif; ?>
+        <?php if ($this->Session->read('Auth.User.group') == 'admin') {
+				echo $this->Form->button(' ',
+					array(
+						'type' => 'button',
+						'data-toggle' => 'modal',
+						'data-target' => '#dynamicModal',
+						'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/Coversheets/override/" . $coversheet['Coversheet']['id'] . "')",
+						'class' => 'btn btn-danger btn-sm glyphicon glyphicon-cog',
+						'title' => __('Override')
+					)
+				);
+			}
+		?>
 			<?php echo $this->Form->postLink(__(' '), 
 				array(
 					'action' => 'delete',
@@ -82,5 +83,6 @@
 	<p>
 	<?php
 	echo $this->Element('paginatorBottomNav');
+	echo $this->Element('Ajax/dynamicModal');
 	?>
 </div>

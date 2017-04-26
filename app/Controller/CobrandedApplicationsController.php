@@ -505,12 +505,41 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function admin_add($applicationId = null) {
 		// look up the user to make sure we don't get stale session data
-		$this->User->id = $this->Session->read('Auth.User.id');
-		$user = $this->User->getById($this->User->id);
-		if ($this->request->is('post')) {
+		$user = $this->User->read(null, $this->Session->read('Auth.User.id'));
+
+		if ($this->request->is('ajax')) {
+			$this->autoRender = false;
+			$this->CobrandedApplication->create(
+				array(
+					'user_id' => $this->Session->read('Auth.User.id'),
+					'uuid' => CakeText::uuid()
+				)
+			);
+			$this->request->data = $this->CobrandedApplication->data;
+			$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+			if (empty($users)) {
+				$users = $this->CobrandedApplication->User->find(
+					'list',
+					array(
+						'conditions' => array('User.id' => $this->Auth->user('id')),
+					)
+				);
+			}
+
+			$defaultTemplateId = $user['User']['template_id'];
+			$templates = $this->User->getTemplates($this->User->id);
+
+			if ($applicationId != null) {
+				$this->set('applicationId');
+			}
+
+			$this->set(compact('templates', 'users', 'defaultTemplateId'));
+			$this->render('admin_add');
+
+		} elseif ($this->request->is('post')) {
 			// if applicationId exists, we're copying the application
 			if ($applicationId) {
-				$this->redirect(array('action' => "/copy/".$applicationId."/".$this->request->data['CobrandedApplication']['template_id']));
+				$this->redirect(array('action' => "/copy/" . $applicationId . "/" . $this->request->data['CobrandedApplication']['template_id']));
 			}
 
 			// now try to save with the data from the user model
@@ -558,67 +587,40 @@ class CobrandedApplicationsController extends AppController {
 			} else {
 				$this->_failure(__('The application could not be saved. Please, try again.'));
 			}
-		} else {
-			$this->CobrandedApplication->create(
-				array(
-					'user_id' => $this->Session->read('Auth.User.id'),
-					'uuid' => CakeText::uuid()
-				)
-			);
-			$this->request->data = $this->CobrandedApplication->data;
 		}
-
-		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
-
-		if (empty($users)) {
-			$users = $this->CobrandedApplication->User->find(
-				'list',
-				array(
-					'conditions' => array('User.id' => $this->Auth->user('id')),
-				)
-			);
-		}
-
-		$defaultTemplateId = $user['User']['template_id'];
-		$templates = $this->User->getTemplates($this->User->id);
-
-		if ($applicationId != null) {
-			$this->set('applicationId');
-		}
-
-		$this->set(compact('templates', 'users', 'defaultTemplateId'));
 	}
 
 /**
  * admin_edit method
  *
+ * @param string $id CobrandedApplication id
  * @throws NotFoundException
- * @param string $id
  * @return void
  */
 	public function admin_edit($id = null) {
 		if (!$this->CobrandedApplication->exists($id)) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->CobrandedApplication->save($this->request->data)) {
-				$this->_success(__("Application number $id has been saved"));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->_failure(__("Application number $id could not be saved. Please, try again."));
-			}
-		} else {
-			$options = array('conditions' => array(
-				'CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id,
-
+		if ($this->request->is('ajax')) {
+			$options = array(
+				'conditions' => array(
+					'CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id
 				),
 				'recursive' => -1
 			);
 			$this->request->data = $this->CobrandedApplication->find('first', $options);
+			$users = $this->CobrandedApplication->User->find('list',
+				array('order' => 'User.firstname ASC'));
+			$this->set(compact('users'));
+			$this->render('admin_edit');
+		} elseif ($this->request->is('post') || $this->request->is('put')) {
+			if ($this->CobrandedApplication->save($this->request->data)) {
+				$this->_success(__("Application number $id has been saved"));
+				$this->redirect(array('action' => 'index'));
+			} else {
+				$this->_failure(__("Application number $id could not be saved. Please, try again."), array('action' => 'index'));
+			}
 		}
-		$users = $this->CobrandedApplication->User->find('list',
-			array('order' => 'User.firstname ASC'));
-		$this->set(compact('users'));
 	}
 
 /**
@@ -708,19 +710,10 @@ class CobrandedApplicationsController extends AppController {
 			'limit' => 50,
 			'recursive' => -1
 		);
-
 		$data = $this->paginate('CobrandedApplication');
-
 		$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($data[0]['CobrandedApplicationValues']);
-
-		$dba = '';
-
-		if (!empty($valuesMap['DBA'])) {
-			$dba = $valuesMap['DBA'];
-		}
-
-		$data[0]['CobrandedApplication']['DBA'] = $dba;
 		$this->set('applications', $data);
+		$this->set('dba', Hash::get($valuesMap, 'DBA'));
 	}
 
 /**
