@@ -36,7 +36,7 @@ class TemplatePagesController extends NestedResourceController {
 	public function admin_edit($idToEdit) {
 		$this->TemplatePage->id = $idToEdit;
 		if (empty($this->request->data)) {
-			$this->request->data = $this->TemplatePage->read();
+			$this->request->data = $this->TemplatePage->getById($idToEdit);
 		} else {
 			$data = $this->request->data;
 			// we know the template_id from the uri
