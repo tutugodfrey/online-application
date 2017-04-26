@@ -7,31 +7,31 @@ App::uses('AppModel', 'Model');
 class TemplateField extends AppModel {
 
 	public $fieldTypes = array(
-		'text',             	//  0 - free form
-		'date',             	//  1 - yyyy/mm/dd
-		'time',             	//  2 - hh:mm:ss
-		'checkbox',         	//  3 - 
-		'radio',            	//  4 - 
-		'percents',         	//  5 - (group of percent)
-		'label',            	//  6 - no validation
-		'fees',             	//  7 - (group of money?)
-		'hr',               	//  8 - no validation
-/* newer types */
-		'phoneUS',          	//  9 - (###) ###-####
-		'money',            	// 10 - $(#(1-3),)?(#(1-3)).## << needs work
-		'percent',          	// 11 - (0-100)%
-		'ssn',              	// 12 - ###-##-####
-		'zipcodeUS',        	// 13 - #####[-####]
-		'email',            	// 14 - 
-		'lengthoftime',     	// 15 - [#+] [year|month|day]s
-		'creditcard',       	// 16 - 
-		'url',              	// 17 - 
-		'number',           	// 18 - (#)+.(#)+
-		'digits',           	// 19 - (#)+
-		'select',           	// 20 - 
-		'textArea',         	// 21 -
+		'text',					//  0 - free form
+		'date',					//  1 - yyyy/mm/dd
+		'time',					//  2 - hh:mm:ss
+		'checkbox',				//  3 -
+		'radio',				//  4 -
+		'percents',				//  5 - (group of percent)
+		'label',				//  6 - no validation
+		'fees',					//  7 - (group of money?)
+		'hr',					//  8 - no validation
+		/* newer types */
+		'phoneUS',				//  9 - (###) ###-####
+		'money',				// 10 - $(#(1-3),)?(#(1-3)).## << needs work
+		'percent',				// 11 - (0-100)%
+		'ssn',					// 12 - ###-##-####
+		'zipcodeUS',			// 13 - #####[-####]
+		'email',				// 14 -
+		'lengthoftime',			// 15 - [#+] [year|month|day]s
+		'creditcard',			// 16 -
+		'url',					// 17 -
+		'number',				// 18 - (#)+.(#)+
+		'digits',				// 19 - (#)+
+		'select',				// 20 -
+		'textArea',				// 21 -
 		'multirecord',			// 22 - multiple records
-		'luhn',          		// 23 - luhn validation
+		'luhn',					// 23 - luhn validation
 	);
 
 	public $sourceTypes = array('api', 'user', 'api/user', 'n/a');
@@ -86,7 +86,7 @@ class TemplateField extends AppModel {
 		),
 	);
 
-	public function validMergeFieldName(/*$check*/) {
+	public function validMergeFieldName() {
 		$valid = false;
 		if (key_exists('TemplateField', $this->data)) {
 			if (strlen($this->data['TemplateField']['merge_field_name']) == 0) {
@@ -126,59 +126,122 @@ class TemplateField extends AppModel {
 		)
 	);
 
-	private $__cobrand;
-
-	private $__template;
-
-	private $__templatePage;
-
-	private $__templateSection;
-
+/**
+ * __getRelated
+ * Returns associated model data
+ *
+ * @param integer $templateSectionId a TemplateSection.id
+ * @visibility private
+ * @return array
+ */
 	private function __getRelated($templateSectionId) {
-		$this->TemplateSection->id = $templateSectionId;
-		$parent = $this->TemplateSection->read();
-
-		$this->__templatePage = $parent['TemplatePage'];
-		$this->__templateSection = $parent['TemplateSection'];
-
-		// look up the template
-		$Template = ClassRegistry::init('Template');
-		$Template->id = $this->__templatePage['template_id'];
-		$myTemplate = $Template->read();
-		$this->__template = $myTemplate['Template'];
-
-		// look up the cobrand
-		$Cobrand = ClassRegistry::init('Cobrand');
-		$Cobrand->id = $this->__template['cobrand_id'];
-		$myCobrand = $Cobrand->read();
-		$this->__cobrand = $myCobrand['Cobrand'];
+		$data = $this->TemplateSection->find('first', array(
+				'recursive' => -1,
+				'fields' => array(
+						'TemplateSection.*',
+						'TemplatePage.*',
+						'Template.id',
+						'Template.name',
+						'Template.logo_position',
+						'Template.include_brand_logo',
+						'Template.description',
+						'Template.cobrand_id',
+						'Template.created',
+						'Template.modified',
+						'Template.rightsignature_template_guid',
+						'Template.rightsignature_install_template_guid',
+						'Template.owner_equity_threshold',
+						'Template.requires_coversheet',
+						'Cobrand.id',
+						'Cobrand.partner_name',
+						'Cobrand.partner_name_short',
+						'Cobrand.cobrand_logo_url',
+						'Cobrand.description',
+						'Cobrand.created',
+						'Cobrand.modified',
+						'Cobrand.response_url_type',
+						'Cobrand.brand_logo_url',
+				),
+				'conditions' => array('TemplateSection.id' => $templateSectionId),
+				'joins' => array(
+					array(
+						//TemplatePage
+						'table' => 'onlineapp_template_pages',
+						'alias' => 'TemplatePage',
+						'type' => 'LEFT',
+						'conditions' => array(
+								'TemplatePage.id = TemplateSection.page_id'
+						)
+					),
+					array(
+						//Template
+						'table' => 'onlineapp_templates',
+						'alias' => 'Template',
+						'type' => 'LEFT',
+						'conditions' => array(
+								'TemplatePage.template_id = Template.id'
+						)
+					),
+					array(
+						//Cobrand
+						'table' => 'onlineapp_cobrands',
+						'alias' => 'Cobrand',
+						'type' => 'LEFT',
+						'conditions' => array(
+								'Template.cobrand_id = Cobrand.id'
+						)
+					),
+				)
+			)
+		);
+		return $data;
 	}
 
+/**
+ * getCobrand
+ * Returns associated model data
+ *
+ * @param integer $templateSectionId a TemplateSection.id
+ * @return array
+ */
 	public function getCobrand($templateSectionId) {
-		if ($this->__cobrand == null) {
-			$this->__getRelated($templateSectionId);
-		}
-		return $this->__cobrand;
+		$data = $this->__getRelated($templateSectionId);
+		return Hash::get($data, 'Cobrand');
 	}
 
+/**
+ * getTemplate
+ * Returns associated model data
+ *
+ * @param integer $templateSectionId a TemplateSection.id
+ * @return array
+ */
 	public function getTemplate($templateSectionId) {
-		if ($this->__template == null) {
-			$this->__getRelated($templateSectionId);
-		}
-		return $this->__template;
+		$data = $this->__getRelated($templateSectionId);
+		return Hash::get($data, 'Template');
 	}
 
+/**
+ * getTemplatePage
+ * Returns associated model data
+ *
+ * @param integer $templateSectionId a TemplateSection.id
+ * @return array
+ */
 	public function getTemplatePage($templateSectionId) {
-		if ($this->__templatePage == null) {
-			$this->__getRelated($templateSectionId);
-		}
-		return $this->__templatePage;
+		$data = $this->__getRelated($templateSectionId);
+		return Hash::get($data, 'TemplatePage');
 	}
 
+/**
+ * getTemplateSection
+ * Returns associated model data
+ *
+ * @param integer $templateSectionId a TemplateSection.id
+ * @return array
+ */
 	public function getTemplateSection($templateSectionId) {
-		if ($this->__templateSection == null) {
-			$this->__getRelated($templateSectionId);
-		}
-		return $this->__templateSection;
+		$data = $this->__getRelated($templateSectionId);
+		return Hash::get($data, 'TemplateSection');
 	}
 }

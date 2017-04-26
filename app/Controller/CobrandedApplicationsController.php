@@ -505,8 +505,8 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function admin_add($applicationId = null) {
 		// look up the user to make sure we don't get stale session data
-		$user = $this->User->read(null, $this->Session->read('Auth.User.id'));
-
+		$this->User->id = $this->Session->read('Auth.User.id');
+		$user = $this->User->getById($this->User->id);
 		if ($this->request->is('post')) {
 			// if applicationId exists, we're copying the application
 			if ($applicationId) {
@@ -549,8 +549,8 @@ class CobrandedApplicationsController extends AppController {
 						'recursive' => -1
 					)
 				);
-				if(isset($appValue['CobrandedApplicationValue']['name'])) {
-					$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'].' '.$user['User']['lastname'];
+				if (isset($appValue['CobrandedApplicationValue']['name'])) {
+					$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
 					$this->CobrandedApplicationValue->save($appValue);
 				}
 				$this->_success(__('Application created'));
@@ -748,18 +748,15 @@ class CobrandedApplicationsController extends AppController {
  * @param varchar $renew
  * RightSignature Document Guid Allows for extending life of application
  */
-	function admin_app_status($applicationId, $renew = null) {
-		$this->CobrandedApplication->id = $applicationId;
-		$cobrandedApplication = $this->CobrandedApplication->read();
+	function admin_app_status($id, $renew = null) {
+		$guid = $this->CobrandedApplication->field('rightsignature_document_guid', array('id' => $id));
 		$client = $this->CobrandedApplication->createRightSignatureClient();
-		$results = $client->getDocumentDetails($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']);
+		$results = $client->getDocumentDetails($guid);
 		$data = json_decode($results, true);
 		$pg = 'Personal Guarantee';
 		$app = 'Application';
 		$recipients = array_reverse($data['document']['recipients']);
 		$state = $data['document']['state'];
-		$guid = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
-		$id = $applicationId;
 
 		if ($renew != '') {
 			$renewed = $client->extendDocument($guid);
@@ -801,8 +798,8 @@ class CobrandedApplicationsController extends AppController {
 		if (!$this->CobrandedApplication->exists()) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-
-		$cobrandedApplication = $this->CobrandedApplication->read();
+		$settings = array('contain' => array('CobrandedApplicationValues', 'Template'));
+		$cobrandedApplication = $this->CobrandedApplication->getById($applicationId, $settings);
 
 		$response = null;
 

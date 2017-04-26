@@ -66,39 +66,100 @@ class TemplateSection extends AppModel {
 	private $__template;
 
 	private $__templatePage;
-
+/**
+ * __getRelated
+ * Returns associated model data
+ *
+ * @param integer $templatePageId a TemplatePage.id
+ * @visibility private
+ * @return array
+ */
 	private function __getRelated($templatePageId) {
-		$this->TemplatePage->id = $templatePageId;
-		$parentTemplatePage = $this->TemplatePage->read();
-
-		$this->__template = $parentTemplatePage['Template'];
-		$this->__templatePage = $parentTemplatePage['TemplatePage'];
-
-		// look up the cobrand from __template
-		$Cobrand = ClassRegistry::init('Cobrand');
-		$Cobrand->id = $this->__template['cobrand_id'];
-		$myCobrand = $Cobrand->read();
-		$this->__cobrand = $myCobrand['Cobrand'];
+		$data = $this->TemplatePage->find('first', array(
+				'recursive' => -1,
+				'fields' => array(
+						'TemplatePage.*',
+						'Template.id',
+						'Template.name',
+						'Template.logo_position',
+						'Template.include_brand_logo',
+						'Template.description',
+						'Template.cobrand_id',
+						'Template.created',
+						'Template.modified',
+						'Template.rightsignature_template_guid',
+						'Template.rightsignature_install_template_guid',
+						'Template.owner_equity_threshold',
+						'Template.requires_coversheet',
+						'Cobrand.id',
+						'Cobrand.partner_name',
+						'Cobrand.partner_name_short',
+						'Cobrand.cobrand_logo_url',
+						'Cobrand.description',
+						'Cobrand.created',
+						'Cobrand.modified',
+						'Cobrand.response_url_type',
+						'Cobrand.brand_logo_url',
+				),
+				'conditions' => array('TemplatePage.id' => $templatePageId),
+				'joins' => array(
+					array(
+						//Template
+						'table' => 'onlineapp_templates',
+						'alias' => 'Template',
+						'type' => 'LEFT',
+						'conditions' => array(
+								'TemplatePage.template_id = Template.id'
+						)
+					),
+					array(
+						//Cobrand
+						'table' => 'onlineapp_cobrands',
+						'alias' => 'Cobrand',
+						'type' => 'LEFT',
+						'conditions' => array(
+								'Template.cobrand_id = Cobrand.id'
+						)
+					),
+				)
+			)
+		);
+		return $data;
 	}
 
+/**
+ * getCobrand
+ * Returns associated model data
+ *
+ * @param integer $templatePageId a TemplatePage.id
+ * @return array
+ */
 	public function getCobrand($templatePageId) {
-		if ($this->__cobrand == null) {
-			$this->__getRelated($templatePageId);
-		}
-		return $this->__cobrand;
+		$data = $this->__getRelated($templatePageId);
+		return Hash::get($data, 'Cobrand');
 	}
 
+/**
+ * getTemplate
+ * Returns associated model data
+ *
+ * @param integer $templatePageId a TemplatePage.id
+ * @return array
+ */
 	public function getTemplate($templatePageId) {
-		if ($this->__template == null) {
-			$this->__getRelated($templatePageId);
-		}
-		return $this->__template;
+		$data = $this->__getRelated($templatePageId);
+		return Hash::get($data, 'Template');
 	}
 
+/**
+ * getTemplatePage
+ * Returns associated model data
+ *
+ * @param integer $templatePageId a TemplatePage.id
+ * @return array
+ */
 	public function getTemplatePage($templatePageId) {
-		if ($this->__templatePage == null) {
-			$this->__getRelated($templatePageId);
-		}
-		return $this->__templatePage;
+		$data = $this->__getRelated($templatePageId);
+		return Hash::get($data, 'TemplatePage');
 	}
 }
