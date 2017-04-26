@@ -578,8 +578,8 @@ class CobrandedApplicationsController extends AppController {
 						'recursive' => -1
 					)
 				);
-				if(isset($appValue['CobrandedApplicationValue']['name'])) {
-					$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'].' '.$user['User']['lastname'];
+				if (isset($appValue['CobrandedApplicationValue']['name'])) {
+					$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
 					$this->CobrandedApplicationValue->save($appValue);
 				}
 				$this->_success(__('Application created'));
@@ -741,18 +741,15 @@ class CobrandedApplicationsController extends AppController {
  * @param varchar $renew
  * RightSignature Document Guid Allows for extending life of application
  */
-	function admin_app_status($applicationId, $renew = null) {
-		$this->CobrandedApplication->id = $applicationId;
-		$cobrandedApplication = $this->CobrandedApplication->read();
+	function admin_app_status($id, $renew = null) {
+		$guid = $this->CobrandedApplication->field('rightsignature_document_guid', array('id' => $id));
 		$client = $this->CobrandedApplication->createRightSignatureClient();
-		$results = $client->getDocumentDetails($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']);
+		$results = $client->getDocumentDetails($guid);
 		$data = json_decode($results, true);
 		$pg = 'Personal Guarantee';
 		$app = 'Application';
 		$recipients = array_reverse($data['document']['recipients']);
 		$state = $data['document']['state'];
-		$guid = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
-		$id = $applicationId;
 
 		if ($renew != '') {
 			$renewed = $client->extendDocument($guid);
@@ -794,8 +791,8 @@ class CobrandedApplicationsController extends AppController {
 		if (!$this->CobrandedApplication->exists()) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-
-		$cobrandedApplication = $this->CobrandedApplication->read();
+		$settings = array('contain' => array('CobrandedApplicationValues', 'Template'));
+		$cobrandedApplication = $this->CobrandedApplication->getById($applicationId, $settings);
 
 		$response = null;
 
@@ -828,7 +825,7 @@ class CobrandedApplicationsController extends AppController {
 
 				$achYes = false;
 
-				$valuesMap = $this->getCobrandedApplicationValues($cobrandedApplication['CobrandedApplication']['id']);
+				$valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($cobrandedApplication['CobrandedApplication']['id']);
         			foreach ($valuesMap as $key => $val) {
 					if (preg_match('/ACH-Yes/', $key)) {
 						$achYes = $val;
@@ -1068,15 +1065,31 @@ class CobrandedApplicationsController extends AppController {
 					'CobrandedApplicationValues',
 					'Merchant' => array('EquipmentProgramming'),
 				),
-				'recursive' => 2
+				'recursive' => -1
 			)
 		);
 
+		if ($data['Merchant']['merchant_id'] == "") {
+			$this->Session->setFlash(
+					__('This Application Has not been boarded into the Database!'),
+					'Flash/installSheetAlert',
+					array('class' => 'alert-warning', 'subjectSubString' => 'not boarded', 'appId' => $data['CobrandedApplication']['id'])
+				);
+			$this->redirect($this->referer());
+		} elseif (empty($data['Merchant']['EquipmentProgramming'])) {
+			$this->Session->setFlash(
+					__('A terminal associated with that application has not yet been configured!'),
+					'Flash/installSheetAlert',
+					array('class' => 'alert-warning', 'subjectSubString' => 'no terminal configured', 'appId' => $data['CobrandedApplication']['id'])
+				);
+			$this->redirect($this->referer());
+		}
+
 		$this->set('data', $data);
 
-		if ($this->request->data) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			if (empty($this->request->data['CobrandedApplication']['select_terminal_type'])) {
-				$url = "/install_sheet_var/".$data['CobrandedApplication']['id'];
+				$url = "/install_sheet_var/" . $data['CobrandedApplication']['id'];
 				$this->_failure(__('error! terminal type not selected'));
 				$this->redirect(array('action' => $url));
 			}
@@ -1248,46 +1261,6 @@ class CobrandedApplicationsController extends AppController {
 		$this->render('end');
 	}
 
-/*
- * getCobrandedApplicationValues
- *
- * @param $applicationId integer
- * @param $valueConditions array
- * @param $recursive integer
- * @return $valuesMap array
- */
-    public function getCobrandedApplicationValues($applicationId, $valueConditions = array(), $recursive = null) {
-        $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-
-        if (!isset($recursive)) {
-            $recursive = 1;
-        }
-
-        $conditions = array(
-            'conditions' => array(
-                'cobranded_application_id' => $applicationId,
-            ),
-            'recursive' => $recursive
-        );
-
-        if (!empty($valueConditions)) {
-            $conditions['conditions'][] = $valueConditions;
-        }
-
-        $appValues = $CobrandedApplicationValue->find(
-            'all',
-            $conditions
-        );
-
-        $appValueArray = array();
-        foreach ($appValues as $arr) {
-            $appValueArray[] = $arr['CobrandedApplicationValue'];
-        }
-
-        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
-        return $valuesMap;
-    }
-
 /**
  * sendCoversheet
  *
@@ -1297,7 +1270,7 @@ class CobrandedApplicationsController extends AppController {
     public function sendCoversheet($data) {
 		$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
 
-        $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
+        $valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($coversheetData['CobrandedApplication']['id']);
         foreach ($valuesMap as $key => $val) {
             $coversheetData['CobrandedApplication'][$key] = $val;
         }

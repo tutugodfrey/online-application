@@ -173,7 +173,6 @@ class CobrandedApplication extends AppModel {
 
 	// tests will set this via dependency injection, using a mocked object
 	public $CakeEmail = null;
-
 /**
  * afterSave
  *
@@ -331,7 +330,6 @@ class CobrandedApplication extends AppModel {
 				)
 			)
 		);
-		//$application = $this->read();
 
 		// if user is not logged in, don't show rep-only fields
 		$conditions = '';
@@ -931,7 +929,8 @@ class CobrandedApplication extends AppModel {
 		);
 
 		if ($this->save()) {
-			$newApp = $this->read();
+			$settings = array('contain' => array('CobrandedApplicationValues'));
+			$newApp = $this->getById($this->id, $settings);
 
 			// copy each value over
 			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
@@ -1187,8 +1186,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'Template',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 
@@ -1289,8 +1291,10 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$hash = $cobrandedApplication['CobrandedApplication']['uuid'];
 
@@ -1369,8 +1373,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'User',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
@@ -1431,8 +1438,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'User',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
@@ -1490,8 +1500,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'Template',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 		$ownerName = '';
