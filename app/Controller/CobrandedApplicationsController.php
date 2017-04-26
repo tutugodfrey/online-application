@@ -1072,15 +1072,31 @@ class CobrandedApplicationsController extends AppController {
 					'CobrandedApplicationValues',
 					'Merchant' => array('EquipmentProgramming'),
 				),
-				'recursive' => 2
+				'recursive' => -1
 			)
 		);
 
+		if ($data['Merchant']['merchant_id'] == "") {
+			$this->Session->setFlash(
+					__('This Application Has not been boarded into the Database!'),
+					'Flash/installSheetAlert',
+					array('class' => 'alert-warning', 'subjectSubString' => 'not boarded', 'appId' => $data['CobrandedApplication']['id'])
+				);
+			$this->redirect($this->referer());
+		} elseif (empty($data['Merchant']['EquipmentProgramming'])) {
+			$this->Session->setFlash(
+					__('A terminal associated with that application has not yet been configured!'),
+					'Flash/installSheetAlert',
+					array('class' => 'alert-warning', 'subjectSubString' => 'no terminal configured', 'appId' => $data['CobrandedApplication']['id'])
+				);
+			$this->redirect($this->referer());
+		}
+
 		$this->set('data', $data);
 
-		if ($this->request->data) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			if (empty($this->request->data['CobrandedApplication']['select_terminal_type'])) {
-				$url = "/install_sheet_var/".$data['CobrandedApplication']['id'];
+				$url = "/install_sheet_var/" . $data['CobrandedApplication']['id'];
 				$this->_failure(__('error! terminal type not selected'));
 				$this->redirect(array('action' => $url));
 			}
