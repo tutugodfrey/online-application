@@ -29,11 +29,11 @@ class CoversheetsController extends AppController {
 			);
 
 			if ($this->Coversheet->save()) {
-				$this->Session->setFlash(__('The coversheet has been created'));
+				$this->_success(__("New Coversheet #$id has been created"));
 				$id = $this->Coversheet->id;
 				$this->redirect('/coversheets/edit/' . $this->Coversheet->id);
 			} else {
-				$this->Session->setFlash(__('The coversheet could not be saved. Please, try again.'));
+				$this->_failure(__('The coversheet could not be saved. Please, try again.'));
 			}
 		}
 	}
@@ -351,11 +351,11 @@ class CoversheetsController extends AppController {
  * Provide functionality to override certian aspects of the coversheet, in the
  * even that something was done incorrectly and needs to be done again
  */        
-	public function admin_override($id = null) {
-		if (!$id && empty($this->request->data)) {
-			$this->_failure(__('Invalid coversheet'));
-			$this->redirect(array('action' => 'index'));
-		}
+    public function admin_override($id = null) {
+        if (!$id && empty($this->request->data)) {
+            $this->_failure(__('Invalid coversheet'));
+            $this->redirect(array('action' => 'index'));
+        }
         if ($this->request->is('ajax')) {
             $data = $this->Coversheet->findById($id);
             $Applications = $this->Coversheet->CobrandedApplication->find('list');
@@ -363,19 +363,12 @@ class CoversheetsController extends AppController {
             $this->set(compact('Applications', 'Users', 'data'));
         } elseif ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Coversheet->save($this->request->data)) {
-				$this->_success(__('The coversheet has been saved'), array('action' => 'index'));
-			} else {
-				$this->_failure(__('The coversheet could not be saved. Please, try again.'), array('action' => 'index'));
-			}
-		}
-		if (empty($this->request->data)) {
-			$data = $this->Coversheet->findById($id);
-						$this->request->data = $data;
-		}
-		$Applications = $this->Coversheet->CobrandedApplication->find('list');
-		$Users = $this->Coversheet->User->find('list', array('order' => 'User.firstname ASC', 'fields' => array('User.id', 'User.fullname')));
-		$this->set(compact('Applications', 'Users', 'data'));
-	}
+                $this->_success(__('The coversheet has been saved'), array('action' => 'index'));
+            } else {
+                $this->_failure(__('The coversheet could not be saved. Please, try again.'), array('action' => 'index'));
+            }
+        }
+    }
 
 /*
 * Delete a coversheet
