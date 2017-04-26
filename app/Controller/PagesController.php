@@ -30,13 +30,15 @@ App::uses('AppController', 'Controller');
  * @link http://book.cakephp.org/2.0/en/controllers/pages-controller.html
  */
 class PagesController extends AppController {
-
 /**
  * helpter name
  *
  * @var array
  */
-	public $helpers = array('Js');
+	public $permissions = array(
+		'refreshSession' => '*',
+	);
+
 /**
  * This controller does not use a model
  *
