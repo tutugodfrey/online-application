@@ -2554,6 +2554,7 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.status',
 				'CobrandedApplication.rightsignature_install_document_guid',
 				'CobrandedApplication.rightsignature_install_status',
+				'CobrandedApplication.data_to_sync',
 				'Cobrand.id',
 				'Cobrand.partner_name',
 				'Template.id',
@@ -2799,5 +2800,145 @@ class CobrandedApplication extends AppModel {
  */
 	private function __startsWith($haystack, $needle) {
 		return $needle === "" || strpos($haystack, $needle) === 0;
+	}
+
+/**
+ * setDataToSync
+ * Saves serialized data with which an application needs to be synced.
+ * This method updates all aplications that use the template field that was modified in some way.
+ *
+ * @param array $data containing a single TemplateField record which was modified/deleted/added.				
+ * @return boolean
+ * @throws InvalidArgumentException
+ */
+	public function setDataToSync($data) {
+		if (!array_key_exists('TemplateField', $data) || empty($data['TemplateField']['section_id'])) {
+			throw new InvalidArgumentException("Expected TemplateField data is missing array argument.");
+		}
+
+		$templateId = $this->_getAssociatedTemplateId($data);
+
+		//If no template id was found then no apps were ever using it and/or the template was deleted along with its fields
+		if (empty($templateId)) {
+			return true;
+		}
+
+		//Get all applications that use this template with their serialized data_to_sync string
+		$settings = array(
+			'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync'),
+			'conditions' => array(
+				'CobrandedApplication.status NOT IN' => array(self::STATUS_SIGNED, self::STATUS_COMPLETED)
+			)
+		);
+
+		$cbApps = $this->getByTemplateId($templateId, $settings);
+		if (empty($cbApps)) {
+			return true; //nothing out-of-sync
+		}
+		//Only want TemplateField data to be saved
+		$data['TemplateField'] = $data['TemplateField'];
+
+		//Iterate throug each app
+		foreach ($cbApps as $cpAppDat) {
+				$dataToSync = unserialize($cpAppDat['CobrandedApplication']['data_to_sync']); //decode as array
+				$id = $cpAppDat['CobrandedApplication']['id'];
+			if (empty($dataToSync)) {
+				//Encode TemplateField Data structure as {n}.TemplateField.{field}.{val}
+				$dataToSync = serialize(array($data));
+				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync);
+			} else {
+				//Iterate through and find existing data to sync in order to find a match and update it
+				$matchFound = false;
+				//We expect existing to-be-synced TemplateField Data structure to be {n}.TemplateField.{field}.{val}
+				foreach ($dataToSync as $idx => $oldDat) {
+					//Find a match and exit loop
+					if ($oldDat['TemplateField']['id'] === $data['TemplateField']['id']) {
+						$matchFound = true;
+						break;
+					}
+				}
+				if ($matchFound) {
+					//Use index at which the match was found to update data
+					$dataToSync[$idx]['TemplateField'] = $data['TemplateField'];
+				} else {
+					//Insert new data
+					$dataToSync[]['TemplateField'] = $data['TemplateField'];
+				}
+				$dataToSync = serialize($dataToSync);
+				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync);
+			}
+		}
+
+		//Updating existing prevalidated data no need to validate here
+		return $this->saveMany($updated, array('validate' => false));
+			
+	}
+
+/**
+ * _getAssociatedTemplateId
+ * Finds template id associated with the TemplateField passed in the first param.
+ *
+ * @param array $templateFieldData A singe TemplateField record 
+ * @param array $settings query settings
+ * @visibility protected
+ * @return mixed string|null the template id if found
+ */
+	protected function _getAssociatedTemplateId($templateFieldData) {
+		if (!array_key_exists('TemplateField', $templateFieldData) || empty($templateFieldData['TemplateField']['section_id'])) {
+			throw new InvalidArgumentException("Expected TemplateField data is missing array argument.");
+		}
+		//We don't know whether data from associated Template/TemplatePage/TemplateSection models might have been deleted
+		//so can't use those models to find Template associated to the TemplateField.
+		//So first attempt to find a sample of a single CobrandedApplicationValue record that uses this field.
+		$sampleAppTemplate = $this->CobrandedApplicationValues->find('first', array(
+				'recursive' => -1,
+				'contain' => array('CobrandedApplication'),
+				'fields' => array('CobrandedApplication.template_id'), //we only care about this piece of data
+				'conditions' => array(
+						'CobrandedApplicationValues.template_field_id' => Hash::get($templateFieldData, 'TemplateField.id')
+					),
+			));
+
+		$templateId = Hash::get($sampleAppTemplate, 'CobrandedApplication.template_id');
+
+		//If not found then it could be a new field that no CobrandedApplicationValues is using yet
+		if (empty($templateId)) {
+			//Attempt to find Template id directly through the TemplateField class
+			$templateData = ClassRegistry::init('TemplateField')->getTemplate($templateFieldData['TemplateField']['section_id']);
+			$templateId = Hash::get($templateData, 'id');
+		}
+
+		return $templateId;
+	}
+/**
+ * getByTemplateId
+ * Finds a list of applications by template_id
+ *
+ * @param integer $templateId An associated Template.id
+ * @param array $settings query settings
+ * @return array
+ */
+	public function getByTemplateId($templateId, $settings) {
+		$default = array(
+				'contain' => false,
+			);
+		$settings = array_merge($default, $settings);
+		$settings['conditions']['CobrandedApplication.template_id'] = $templateId;
+		return $this->find('all', $settings);
+	}
+
+/**
+ * sycApp
+ * Synchronizes Application with all the models that they are out of sync.
+ * Synchronizable Associated models are Template, TemplatePages, TemplateSection and TemplateFields
+ *
+ * @param integer $id $this->id
+ * @return boolean true on success false otherwise
+ */
+	public function syncApp(int $id) {
+		//A field can be modified/deleted/added
+
+		//Get data to sync
+		return true;
 	}
 }

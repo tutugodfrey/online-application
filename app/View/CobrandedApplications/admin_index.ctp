@@ -4,7 +4,7 @@
 	<?php echo $this->Element('cobranded_applications/search'); ?>
 	<table class="table table-condensed table-striped table-hover">
 		<tr>
-			<th><?php echo $this->Paginator->sort('CobrandedApplication.id', 'ID'); ?></th>
+			<th> &nbsp</th>
 			<th><?php echo $this->Paginator->sort('User.firstname', 'User Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('Cobrand.partner_name', 'Partner Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.template_id', 'Template'); ?></th>
@@ -13,21 +13,37 @@
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.modified', 'Modified'); ?></th>
 			<th><?php echo 'Actions'; ?></th>
 		</tr>
-		<?php foreach ($cobrandedApplications as $cobrandedApplication): ?>
-		<tr>
+		<?php foreach ($cobrandedApplications as $cobrandedApplication): 
+			$appOutOfSync = !empty($cobrandedApplication['CobrandedApplication']['data_to_sync']);
+			//set contextual highlight class for out-of-sync applications
+			echo ($appOutOfSync)? "<tr class='warning'>" : "<tr>"; 
+		?>
 		<td><div class="btn-group"><?php
-				echo $this->Html->link(' ',
-					array(
-						'controller' => 'cobrandedApplications',
-						'action' => 'edit',
-						$cobrandedApplication['CobrandedApplication']['uuid'],
-						'admin' => false,
-					),
-					array(
-						'class' => 'btn btn-primary btn-sm glyphicon glyphicon-edit',
-						'title' => __('Edit ' . $cobrandedApplication['CobrandedApplication']['id'])
-					)
+				$btnSettings = array(
+					'controller' => 'cobrandedApplications',
+					'admin' => false,
 				);
+				
+				if ($appOutOfSync === false) {
+					$btnSettings['action'] = 'edit';
+					$btnSettings[] = $cobrandedApplication['CobrandedApplication']['uuid'];
+					$btnAttributes = array(
+							'class' => 'btn btn-primary btn-sm glyphicon glyphicon-edit',
+							'title' => __('Edit ' . $cobrandedApplication['CobrandedApplication']['id'])
+						);
+
+				} else {
+					$btnSettings['action'] = 'syncApplication';
+					$btnSettings[] = $cobrandedApplication['CobrandedApplication']['id'];
+					$btnSettings[] = $cobrandedApplication['CobrandedApplication']['template_id'];
+					$btnAttributes = array(
+							'class' => 'btn btn-danger btn-sm glyphicon glyphicon-refresh',
+							'title' => __('Sync Application ' . $cobrandedApplication['CobrandedApplication']['id'] . ' with Template.')
+						);
+
+				}
+
+				echo $this->Html->link(' ', $btnSettings, $btnAttributes);
 		?></div></td>
 			<td>
 				<?php echo $cobrandedApplication['User']['firstname'] . ' ' . $cobrandedApplication['User']['lastname']; ?>
@@ -48,8 +64,9 @@
 					'appId' => $cobrandedApplication['CobrandedApplication']['id'],
 					'appStatus' => $cobrandedApplication['CobrandedApplication']['status']
 				));
+		} elseif($appOutOfSync) {
+			echo "<span class='text-warning' data-toggle='tooltip' data-placement='left' title='' alt='' data-original-title=\"App and Template are out-of-sync due to changes made to Template. Click Sync button if necessary.\";><strong>out-of-sync</strong></span>";
 		} else {
-			
 			echo $cobrandedApplication['CobrandedApplication']['status'];
 		}
 	?>&nbsp;
@@ -57,27 +74,29 @@
 			<td><?php echo $this->Time->format('m/d/y h:i A', $cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td><div class="btn-group"><?php
 				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-				echo $this->Html->link(' ',
-					array(
-						'action' => 'export',
-						$cobrandedApplication['CobrandedApplication']['id']
-					),
-					array(
-						'class' => 'btn btn-default btn-sm glyphicon glyphicon-export',
-						'title' => __('Export')
-					)
-				);
+					echo $this->Html->link(' ',
+						array(
+							'action' => 'export',
+							$cobrandedApplication['CobrandedApplication']['id']
+						),
+						array(
+							'class' => 'btn btn-default btn-sm glyphicon glyphicon-export',
+							'title' => __('Export')
+						)
+					);
 				}
-				echo $this->Form->button(' ',
-					array(
-						'type' => 'button',
-						'data-toggle' => 'modal',
-						'data-target' => '#dynamicModal',
-						'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/add/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
-						'class' => 'btn btn-default btn-sm glyphicon glyphicon-duplicate',
-						'title' => __('Create Copy')
-					)
-				);
+				if (!$appOutOfSync){
+					echo $this->Form->button(' ',
+						array(
+							'type' => 'button',
+							'data-toggle' => 'modal',
+							'data-target' => '#dynamicModal',
+							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/add/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+							'class' => 'btn btn-default btn-sm glyphicon glyphicon-duplicate',
+							'title' => __('Create Copy')
+						)
+					);
+				}
 				echo $this->Form->button(' ',
 					array(
 						'type' => 'button',
@@ -100,15 +119,17 @@
 						'valuesMap' => $valuesMap
 					)
 				);
-				echo $this->Form->button(' ',
-					array(
-						'type' => 'button',
-						'data-toggle' => 'modal',
-						'data-target' => '#myModal_' . $cobrandedApplication['CobrandedApplication']['id'],
-						'class' => 'btn btn-info btn-sm glyphicon glyphicon-send',
-						'title' => __('Email App For Field Completion')
-					)
-				);
+				if (!$appOutOfSync){
+					echo $this->Form->button(' ',
+						array(
+							'type' => 'button',
+							'data-toggle' => 'modal',
+							'data-target' => '#myModal_' . $cobrandedApplication['CobrandedApplication']['id'],
+							'class' => 'btn btn-info btn-sm glyphicon glyphicon-send',
+							'title' => __('Email App For Field Completion')
+						)
+					);
+				}
 
 				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['merchant_id'])) {
 					echo $this->Html->link(' ',
@@ -191,3 +212,9 @@
 		echo $this->Element('Ajax/dynamicModal');
 	?>
 </div>
+
+<script type='text/javascript'>
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();   
+});
+</script>

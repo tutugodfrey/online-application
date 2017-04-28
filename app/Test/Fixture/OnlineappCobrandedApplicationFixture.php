@@ -21,6 +21,7 @@ class OnlineappCobrandedApplicationFixture extends CakeTestFixture {
 		'status' => array('type' => 'string', 'length' => 10, 'null' => true),
 		'rightsignature_install_document_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
 		'rightsignature_install_status' => array('type' => 'string', 'length' => 10, 'null' => true),
+		'data_to_sync' => array('type' => 'text', 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'unique_uuid' => array('unique' => true, 'column' => 'uuid')

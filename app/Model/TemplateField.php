@@ -244,4 +244,70 @@ class TemplateField extends AppModel {
 		$data = $this->__getRelated($templateSectionId);
 		return Hash::get($data, 'TemplateSection');
 	}
+
+/**
+ * beforeDelete callback
+ *
+ * @param $cascade boolean true if records that depend on this record will also be deleted
+ * @return boolean
+ */
+	public function beforeDelete($cascade = true) {
+		//call CobrandedApplication->setDataToSync to desynchronize all Apps that use this field
+		if($this->_desyncronizeApplicaitons($this->data) === false) {
+			return false; //prevent deletion if desynchronization fails
+		}
+		return true;
+	}
+
+/**
+ * afterSave callback
+ *
+ * @param $created boolean true if a new record was created (rather than an update).
+ * @param $options array
+ * @return void
+ */
+	public function beforeSave($created, $options = array()) {
+		//call CobrandedApplication->setDataToSync if we are saving a new field
+		if (empty($this->data['TemplateField']['id'])) {
+			return $this->_desyncronizeApplicaitons($this->data); //when false prevent save
+		} else {
+			//Get Existing data
+			$curData = $this->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->data['TemplateField']['id'])));
+			//get all existing fields;
+			$fields = $this->getColumnTypes();
+
+			//remove fields that aren't important for comparison
+			unset($fields['id']);
+			if (array_key_exists('created', $fields)) {
+				unset($fields['created']);
+			}
+			if (array_key_exists('modified', $fields)) {
+				unset($fields['modified']);
+			}
+			if (array_key_exists('section_id', $fields)) {
+				unset($fields['section_id']);
+			}
+			foreach ($fields as $key => $val) {
+				if ($curData['TemplateField'][$key] !== $this->data['TemplateField'][$key]){
+					return $this->_desyncronizeApplicaitons($this->data); //when false prevent save
+				}
+			}
+		}
+	}
+
+/**
+ * _desyncronizeApplicaitons
+ *
+ * @param array $data TemplateData
+ * @return boolean true on success false on falure
+ * @visibility protected
+ */
+	protected function _desyncronizeApplicaitons($data) {
+		try {
+			return ClassRegistry::init('CobrandedApplication')->setDataToSync($this->data);
+		} catch (InvalidArgumentException $e) {
+			return false;
+		}
+	}
+
 }

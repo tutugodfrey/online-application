@@ -161,6 +161,233 @@ class CobrandedApplicationTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
+/**
+ * testSetDataExceptionThrown
+ *
+ * @expectedException InvalidArgumentException
+ * @expectedExceptionMessage Expected TemplateField data is missing array argument.
+ * @return void
+ */
+	public function testSetDataExceptionThrown() {
+		$this->CobrandedApplication->setDataToSync(array('junk and stuff'));
+	}
+
+/**
+ * testSetDataToSyncNewData()
+ *
+ * @covers CobrandedApplication::setDataToSync()
+ * @return void
+ */
+	public function testSetDataToSyncNewData() {
+		$newData = array(
+			'user_id' => 1,
+			'template_id' => 4,
+			'uuid' => '59025600-cd20-40ae-820b-1e2934627ad4',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+			'status' => 'saved',
+		);
+
+		$this->CobrandedApplication->create();
+		$this->CobrandedApplication->save($newData);
+		//Expected should be in saveMany-like data structure
+		$expected[] = array(
+			'TemplateField' => array(
+				'id' => 99,
+				'name' => 'field type hr',
+				'width' => 12,
+				'description' => '',
+				'type' => 8,
+				'required' => 1,
+				'source' => 1,
+				'default_value' => '',
+				'merge_field_name' => 'hr',
+				'order' => 8,
+				'section_id' => 4,
+				'rep_only' => false,
+				'encrypt' => false,
+				'created' => '2013-12-18 14:10:17',
+				'modified' => '2013-12-18 14:10:17'
+			)
+		);
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($expected[0]));
+
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+	}
+
+/**
+ * testSetDataToSyncUpdateExistingData()
+ * Test that method updates existing data-to-be-synced and
+ *
+ * @covers CobrandedApplication::setDataToSync()
+ * @return void
+ */
+	public function testSetDataToSyncUpdateExistingData() {
+		//Expected should be in saveMany-like data structure
+		$existing[] = array(
+			'TemplateField' => array(
+				'id' => 99,
+				'name' => 'field type hr',
+				'width' => 12,
+				'description' => '',
+				'type' => 8,
+				'required' => 1,
+				'source' => 1,
+				'default_value' => '',
+				'merge_field_name' => 'hr',
+				'order' => 8,
+				'section_id' => 4,
+				'rep_only' => false,
+				'encrypt' => false,
+				'created' => '2013-12-18 14:10:17',
+				'modified' => '2013-12-18 14:10:17'
+			)
+		);
+		$newData = array(
+			'user_id' => 1,
+			'template_id' => 4,
+			'uuid' => '59025600-cd20-40ae-820b-1e2934627ad4',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+			'status' => 'saved',
+			'data_to_sync' => serialize($existing)
+		);
+		$this->CobrandedApplication->create();
+		$this->CobrandedApplication->save($newData);
+
+		$existing[0]['TemplateField']['width'] = 6;
+		$existing[0]['TemplateField']['description'] = 'This field has been modified';
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($existing[0]));
+
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+		$expected = $existing;
+
+		//Assert that existing serialized data was found and updated
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+		$this->assertContains('This field has been modified', $saved['CobrandedApplication']['data_to_sync']);
+		$expectedCount = count($expected);
+		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
+		$this->assertEqual($expectedCount, $actualCount);
+	}
+
+/**
+ * testSetDataToSyncUpdateOneInManyExistingData()
+ * Test that method updates only the specific field that was modified and leaves all other data-to-be-synced intact
+ *
+ * @covers CobrandedApplication::setDataToSync()
+ * @return void
+ */
+	public function testSetDataToSyncUpdateOneInManyExistingData() {
+		//Expected should be in saveMany-like data structure
+		//This TemplateField data emulates TemplateFields that were modified at a point in time before a second modification, which takes place at a later point in time, 
+		//in which only the second TemplateField below is modified
+		$existing = array(
+			array(
+				'TemplateField' => array(
+					'id' => 98,
+					'name' => 'field type hr',
+					'width' => 12,
+					'description' => 'field data-to-be-synced',
+					'type' => 8,
+					'required' => 1,
+					'source' => 1,
+					'default_value' => '',
+					'merge_field_name' => 'hr',
+					'order' => 8,
+					'section_id' => 4,
+					'rep_only' => false,
+					'encrypt' => false,
+					'created' => '2013-12-18 14:10:17',
+					'modified' => '2013-12-18 14:10:17'
+				)
+			),
+			array(
+				'TemplateField' => array(
+					'id' => 99,
+					'name' => 'field type hr',
+					'width' => 12,
+					'description' => 'field data-to-be-synced',
+					'type' => 8,
+					'required' => 1,
+					'source' => 1,
+					'default_value' => '',
+					'merge_field_name' => 'hr',
+					'order' => 8,
+					'section_id' => 4,
+					'rep_only' => false,
+					'encrypt' => false,
+					'created' => '2014-12-18 14:10:17',
+					'modified' => '2014-12-18 14:10:17'
+				)
+			),
+		);
+		$newData = array(
+			'user_id' => 1,
+			'template_id' => 4,
+			'uuid' => '59025600-cd20-40ae-820b-1e2934627ad4',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+			'status' => 'saved',
+			'data_to_sync' => serialize($existing)
+		);
+		$this->CobrandedApplication->create();
+		$this->CobrandedApplication->save($newData);
+
+		//*****This is the second mod to the moded field that was already awaiting synchronization
+		$existing[1]['TemplateField']['width'] = 6;
+		$existing[1]['TemplateField']['description'] = 'modify the modified field data-to-be-synced';
+
+		//By passing only the field that was modified we are amulating a call that TemplateField::[beforeDelete/afterSave] makes tho this method
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($existing[1]));
+
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+		$expected = $existing;
+
+		//Assert that existing serialized data was found and updated and no new records were added
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+		$this->assertContains('modify the modified field data-to-be-synced', $saved['CobrandedApplication']['data_to_sync']);
+		$expectedCount = count($expected);
+		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
+		$this->assertEqual($expectedCount, $actualCount);
+
+		//Lastly test a new item to sync is added to the existing collection
+		$newToSync = array(
+			array(
+				'TemplateField' => array(
+					'id' => 97,
+					'name' => 'field type hr',
+					'width' => 12,
+					'description' => 'New field data-to-be-synced',
+					'type' => 8,
+					'required' => 1,
+					'source' => 1,
+					'default_value' => '',
+					'merge_field_name' => 'hr',
+					'order' => 8,
+					'section_id' => 4,
+					'rep_only' => false,
+					'encrypt' => false,
+					'created' => '2013-12-18 14:10:17',
+					'modified' => '2013-12-18 14:10:17'
+				)
+			),
+		);
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($newToSync[0]));
+		$expected = array_merge($existing, $newToSync);
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+		$this->assertContains('New field data-to-be-synced', $saved['CobrandedApplication']['data_to_sync']);
+		$expectedCount = count($expected);
+		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
+		$this->assertEqual($expectedCount, $actualCount);
+	}
+
 	public function testValidation() {
 		// create a new appliction
 		// only validation currently in place is for the uuid
@@ -209,6 +436,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
+				'data_to_sync' => null
 			),
 			'Template' => array(
 				'id' => (int)1,
@@ -525,6 +753,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
+				'data_to_sync' => null
 			),
 			'TemplateField' => array(
 				'id' => 1,
@@ -589,6 +818,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
+				'data_to_sync' => null
 			),
 			'TemplateField' => array(
 				'id' => 4,
