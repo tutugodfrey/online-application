@@ -4,8 +4,6 @@
 
 class TemplateBuilderTest extends CakeTestCase {
 
-	
-
 	public $autoFixtures = false;
 
 	public $fixtures = array(
@@ -15,6 +13,8 @@ class TemplateBuilderTest extends CakeTestCase {
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
+		'app.onlineappUsersTemplate',
+		'app.onlineappCobrandedApplicationValue',
 		'app.onlineappCobrandedApplication',
 	);
 
@@ -45,6 +45,8 @@ class TemplateBuilderTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
 		$this->loadFixtures('OnlineappCobrandedApplication');
+		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+		$this->loadFixtures('OnlineappUsersTemplate');
 	}
 
 /**
@@ -299,6 +301,7 @@ class TemplateBuilderTest extends CakeTestCase {
 					'a_21933214_7e74fcd0e3b2475dbe4dbc9c0d85e38c' => 'I3_Axia_Payments_Agreement_with_Terms_and_Conditions__revised_7.22.16__Editable.pdf',
 					'a_10382161_c7e20695693845f1b1f9fd3ddc79a3fa' => 'I3_Axia_Payments_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_7.22.16_.pdf',
 					'a_12819196_9fc4bb1d1f72498f86574153233d0d35' => 'Loaner_Agreement.pdf',
+					'a_23582393_40ae4608efc44d12b2e163630151c9d3' => 'Payment_Fusion_Sales_Agreement_-_Billed_to_Merchant_via_ACH_by_Payment_Fusion_Control_Center_rev_5.2.17.pdf',
 					'a_13392825_7b9cebb9f8db4e7abcdde06f5c980536' => 'Payment_Fusion_Sales_Agreement_-_Billed_to_Merchant_via_ACH_by_Payment_Fusion__Acquiring__rev_1.19.16.pdf',
 					'a_20767716_2ac3106997d44d97a3bf05ca9418ca2c' => 'Payment_Fusion_Sales_Agreement_-_Billed_to_Merchant_via_ACH_by_Payment_Fusion__Acquiring__rev_1.3.17.pdf'
 				),

@@ -246,33 +246,37 @@ class TemplateField extends AppModel {
 	}
 
 /**
- * beforeDelete callback
+ * beforeSave callback
  *
- * @param $cascade boolean true if records that depend on this record will also be deleted
- * @return boolean
+ * @param $options array
+ * @return void
  */
-	public function beforeDelete($cascade = true) {
-		//call CobrandedApplication->setDataToSync to desynchronize all Apps that use this field
-		if($this->_desyncronizeApplicaitons($this->data) === false) {
-			return false; //prevent deletion if desynchronization fails
-		}
+	public function beforeSave($options = array()) {
+		//If a change was made add a new value to indicate so in the data.
+		//Then check for this value in the afterSave callback
+		$this->data['TemplateField']['record_changed'] = $this->_recordChanged($this->data);
 		return true;
 	}
 
 /**
- * afterSave callback
+ * _recordChanged
+ * Analyzes any form-submitted data and determines if changes were actually made by comparing to current data of the same record in the DB.
  *
- * @param $created boolean true if a new record was created (rather than an update).
- * @param $options array
- * @return void
+ * @param array $data array request data submitted from the view or same as $this->data
+ * @return boolean
  */
-	public function beforeSave($created, $options = array()) {
-		//call CobrandedApplication->setDataToSync if we are saving a new field
-		if (empty($this->data['TemplateField']['id'])) {
-			return $this->_desyncronizeApplicaitons($this->data); //when false prevent save
-		} else {
+	protected function _recordChanged($data) {
+		if (!empty($data['TemplateField']['id']) &&
+				//Type label no need to track changes
+				$data['TemplateField']['type'] !== $this->fieldTypes[6] &&
+				//Type hr no need to track changes
+				$data['TemplateField']['type'] !== $this->fieldTypes[8]) {
 			//Get Existing data
-			$curData = $this->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->data['TemplateField']['id'])));
+			$curData = $this->find('first', array('recursive' => -1, 'conditions' => array('id' => $data['TemplateField']['id'])));
+			//Check current data exists
+			if (empty($curData)) {
+				return false;
+			}
 			//get all existing fields;
 			$fields = $this->getColumnTypes();
 
@@ -287,11 +291,32 @@ class TemplateField extends AppModel {
 			if (array_key_exists('section_id', $fields)) {
 				unset($fields['section_id']);
 			}
+
 			foreach ($fields as $key => $val) {
-				if ($curData['TemplateField'][$key] !== $this->data['TemplateField'][$key]){
-					return $this->_desyncronizeApplicaitons($this->data); //when false prevent save
+				//Compare value not data type
+				if ($curData['TemplateField'][$key] != $data['TemplateField'][$key]) {
+					//If a change was made return true
+					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+/**
+ * afterSave callback
+ *
+ * @param boolean $created whether a new record was created
+ * @param $options array same options as calling save method
+ * @return void
+ */
+	public function afterSave($created, $options = array()) {
+		//call CobrandedApplication->setDataToSync if we are saving a new field
+		if ($created) {
+			$this->_desyncronizeApplicaitons($this->data);
+		} elseif (is_array($this->data) && Hash::get($this->data, 'TemplateField.record_changed') === true) {
+			//call CobrandedApplication->setDataToSync if record was changed
+			$this->_desyncronizeApplicaitons($this->data);
 		}
 	}
 

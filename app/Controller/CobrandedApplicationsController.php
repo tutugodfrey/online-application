@@ -1315,7 +1315,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->_failure(__("The Application's Template could not be found! Application cannot be synchronized."), array('action' => 'index', 'admin' => true));
 		} else {
 			if ($this->CobrandedApplication->syncApp($id)) {
-				$this->_success(__("Application successfully synchronized with its Template!"), array('action' => 'index', 'admin' => true));
+				$this->_success(__("Application synchronized with its Template! Please review application, data has been synced and may have changed if corresponding Template Fields were modified."), array('action' => 'index', 'admin' => true));
 			} else {
 				$this->_failure(__("Error: Synchronization process failed!"), array('action' => 'index', 'admin' => true));
 			}

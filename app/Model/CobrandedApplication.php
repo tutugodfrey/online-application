@@ -2929,16 +2929,190 @@ class CobrandedApplication extends AppModel {
 
 /**
  * sycApp
+ * Uses datasource transactions
  * Synchronizes Application with all the models that they are out of sync.
  * Synchronizable Associated models are Template, TemplatePages, TemplateSection and TemplateFields
- *
+ * 
  * @param integer $id $this->id
- * @return boolean true on success false otherwise
+ * @return mixed | boolean false on falure otherwise an array with changes that were made to the TemplateField
  */
-	public function syncApp(int $id) {
-		//A field can be modified/deleted/added
+	public function syncApp($id) {
+		$appData = $this->find('first', array(
+				'recursive' => -1,
+				'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync'),
+				'conditions' => array('CobrandedApplication.id' => $id),
+			));
+		$dataToSync = unserialize($appData['CobrandedApplication']['data_to_sync']);
+		$updatedValues = array();
+		$outDatedIds = array();
+		$dataSource = $this->getDataSource();
+		//Begin transaction
+		$dataSource->begin();
+		foreach ($dataToSync as $modedField) {
+			$TemplateField = ClassRegistry::init('TemplateField');
+			//get App values that are using this field
+			$outOfSyncVals = $this->CobrandedApplicationValues->find('all', array(
+						'recursive' => -1,
+						'fields' => array(
+							'CobrandedApplicationValues.id',
+							'CobrandedApplicationValues.cobranded_application_id',
+							'CobrandedApplicationValues.template_field_id',
+							'CobrandedApplicationValues.name',
+							'CobrandedApplicationValues.value',
+						),
+						'conditions' => array(
+							'CobrandedApplicationValues.cobranded_application_id' => $id,
+							'CobrandedApplicationValues.template_field_id' => $modedField['TemplateField']['id']
+						)
+					)
+				);
+			//TemplateFields and CobrandedApplicationValue Model association is dependent,
+			$sycronized = $this->syncAppValues($appData['CobrandedApplication']['id'], $outOfSyncVals, $modedField);
 
+			if ($sycronized === false) {
+				return false;
+			} else {
+				$updatedValues = array_merge($updatedValues, $sycronized);
+				$outDatedIds = array_merge($outDatedIds, Hash::extract($outOfSyncVals, '{n}.CobrandedApplicationValues.id'));
+			}
+		}
+		$this->create();
+		$syncedDat = array('id' => $id, 'data_to_sync' => null);
+
+		//any outdated data to delete?
+		if (!empty($outDatedIds) && $this->CobrandedApplicationValues->deleteAll(array('CobrandedApplicationValues.id IN' => $outDatedIds)) === false) {
+			$dataSource->rollback();
+			return false;
+		}
+
+			//save updated data
+		if ($this->CobrandedApplicationValues->saveAll($updatedValues) === false ||
+
+			//Finally clear out data_to_sync
+			$this->save($syncedDat, array('validate' => false)) === false) {
+
+			//If any operation fails rollback
+			$dataSource->rollback();
+			return false;
+		}
+		$dataSource->commit();
 		//Get data to sync
 		return true;
+	}
+
+/**
+ * syncAppValues
+ * Synchronizes CobrabdedApplicationValues (CAVs) and corresponding TemplateFields
+ * Multiple CAVs will be created for multi-choice fields defined in TemplateFields.default_value
+ * CAVs will be removed if multi-choice definitions within TemplateFields.default_value are removed
+ * CAV.value if not set will be set with any default value(s) defined in TemplateFields.default_value
+ * 
+ * @param int $appId CobrandedApplication.id
+ * @param array $outOfSyncData this is the counterpart of the $modedTemplateField param which will be synced and added to param 1.
+ *				If this param is empty new CobrabdedApplicationValues will be created for each corresponding TemplateField.
+ * @param array $templateField this is the latest TemplateFieldData which will be used to sync CAVs in param 2
+ * @return mixed boolean|array Will return false when the TemplateField.type is unknown and therefore sync cannot be handled 
+ *						or array with data already in sync with corresponding modified TemplateFields data.
+ */
+	public function syncAppValues($appId, $outOfSyncData, $templateField) {
+		$type = $templateField['TemplateField']['type'];
+		$synced = array();
+
+		if ($type == 4 || $type == 5 || $type == 7) { //radio | percents | fees - all multi-choice (',' delimited) and multi-CAV types
+			//default_value contains delimited string of otions with structure <key>::<value>{[default value]||default}
+			$choices = explode(',', $templateField['TemplateField']['default_value']);
+			foreach ($choices as $keyValStr) {
+				$key = Hash::get(explode('::', $keyValStr), '0');
+				$val = Hash::get(explode('::', $keyValStr), '1');
+				$val = preg_replace('/\{.*\}$/', '', $val);//remove default option value from $val
+				$default = null;
+
+				//Type 4 radio's default if present indicates that the radio input should be active
+				if ($type == 4 && preg_match('/\{default\}/i', $keyValStr)) {
+					$default = 'true';
+				} else {
+					//For all others the default is potentially present in $keyValStr
+					preg_match('/\{(.+)\}/', $keyValStr, $matches); //$matches array will be filled with 2 entries
+					$default = Hash::get($matches, '1'); //we want the second match or null
+				}
+
+				//If there are no old values we need to create new ones
+				if (empty($outOfSyncData)) {
+					$synced[] = $this->_setNewCoAppVal($appId, $templateField, $key, $val, $default);
+				} else {
+					//Attempt to find unchaged data and keep it
+					$matchFound = false;
+					//Use Hash::extract to shrink $outOfSyncData on the fly without mesing up contiguity iteration
+					foreach (Hash::extract($outOfSyncData, '{n}') as $idx => $cavData) {
+						if (($cavData['CobrandedApplicationValues']['name'] === $templateField['TemplateField']['merge_field_name'] . $val) ||
+							($cavData['CobrandedApplicationValues']['name'] === $val)) {
+							//Set corresponding default CAV.value IFF is blank for existing data. (possibly the mergefield default value was changed that was made)
+							if (isset($default) && (is_null($cavData['CobrandedApplicationValues']['value']) || $cavData['CobrandedApplicationValues']['value'] === '')) {
+								$cavData['CobrandedApplicationValues']['value'] = $default;
+							}
+							//Add to collection of synced fields
+							$synced[] = $cavData['CobrandedApplicationValues'];
+
+							//remove processed CAV
+							unset($outOfSyncData[$idx]);
+							$matchFound = true;
+							break;//one to one field rel no need to continue loop after match found
+						}
+					}
+					//Create new CAV if there wasn't an existing one matching
+					if (!$matchFound) {
+						$synced[] = $this->_setNewCoAppVal($appId, $templateField, $key, $val, $default);
+					}
+				}
+			}
+			return $synced;
+		} else {
+			$default = null;
+			//extract any default value
+			if ($type == 20) { //select - special case is multi-choice but not multi-CAV
+				foreach (explode(',', $templateField['TemplateField']['default_value']) as $keyValStr) {
+					if (preg_match('/\{default\}/i', $keyValStr)) {
+						$default = Hash::get(explode('::', $keyValStr), '1'); //we want the option value set as the default
+						$default = preg_replace('/\{default\}$/', '', $default);//remove '{default}'' from default
+						break;
+					}
+				}
+			} else {
+				$default = $templateField['TemplateField']['default_value'];
+			}
+			if (empty($outOfSyncData)) {
+					$synced[] = $this->_setNewCoAppVal($appId, $templateField, '', '', $default);
+			} else {
+				$cavData = Hash::get($outOfSyncData, '0.CobrandedApplicationValues');
+				$cavData['name'] = $templateField['TemplateField']['merge_field_name'];
+				if (isset($default) && (is_null($cavData['value']) || $cavData['value'] === '')) {
+					$cavData['value'] = $default;
+				}
+				$synced[] = $cavData;
+			}
+			return $synced;
+		}
+
+		//for all other unknown field types return false
+		return false;
+	}
+
+	protected function _setNewCoAppVal($appId, $templateField, $mergeFieldKey, $mergeFieldVal, $mergeFieldDefaultVal = null) {
+		$newCAV = array(
+			'cobranded_application_id' => $appId,
+			'template_field_id' => $templateField['TemplateField']['id'],
+		);
+
+		if ($templateField['TemplateField']['type'] == 4 || $templateField['TemplateField']['type'] == 5) {
+			$newCAV['name'] = $templateField['TemplateField']['merge_field_name'] . $mergeFieldVal;
+		} elseif ($templateField['TemplateField']['type'] == 7) {
+			$newCAV['name'] = $mergeFieldVal;
+		} else {
+			$newCAV['name'] = $templateField['TemplateField']['merge_field_name'];
+		}
+		$newCAV['value'] = $mergeFieldDefaultVal;
+
+		//Add to collection of synced fields
+		return $newCAV;
 	}
 }
