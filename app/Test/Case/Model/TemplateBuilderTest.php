@@ -10,6 +10,7 @@ class TemplateBuilderTest extends CakeTestCase {
 
 	public $fixtures = array(
 		'app.onlineappUser',
+		'app.onlineappUsersTemplate',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -30,6 +31,7 @@ class TemplateBuilderTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->TemplateBuilder = ClassRegistry::init('TemplateBuilder');
+		$this->UsersTemplate = ClassRegistry::init('UsersTemplate');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
@@ -39,6 +41,7 @@ class TemplateBuilderTest extends CakeTestCase {
 
 		// load data
 		$this->loadFixtures('OnlineappUser');
+		$this->loadFixtures('OnlineappUsersTemplate');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
@@ -73,12 +76,11 @@ class TemplateBuilderTest extends CakeTestCase {
  */
 	public function testSetBuilderViewData($expected) {
 		$actual = $this->TemplateBuilder->setBuilderViewData(5);
+		unset($actual['templateList']);
 		$this->assertArrayHasKey('cobrands', $actual);
 		$this->assertArrayHasKey('logoPositionTypes', $actual);
 		$this->assertArrayHasKey('template', $actual);
-		$this->assertArrayHasKey('templateList', $actual);
 		$this->assertArrayHasKey('installTemplateList', $actual);
-		$this->assertSame(count($expected['templateList']), count($actual['templateList']));
 		$this->assertEquals($expected, $actual);
 	}
 
@@ -276,31 +278,6 @@ class TemplateBuilderTest extends CakeTestCase {
 							)
 						)
 					)
-				),
-				'templateList' => array(
-					'a_12701676_30b90f5acb3e4c298f7812db54275da7' => 'ACH_Authorization.pdf',
-					'a_20408697_6cba965939d6441e8ce0b0ce49cdd8a5' => 'AxiaMed_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_12.7.16__Editable.pdf',
-					'a_22024756_ad8ea678bbec41ca9416109c2cdb021d' => 'AxiaMed_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_12.7.16__Editable_-_Copy.pdf',
-					'a_20941894_fe1a3fae1f4b40a38b8a7044da864ccb' => 'AxiaMed_Flat_Rate_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_12.6.16__Editable.pdf',
-					'a_22078031_6a53077ce3b84b8ca98d800b96f4ca9b' => 'AxiaMed_Payment_Fusion_Combined_Flat_Rate_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_12.6.16__Editable.pdf',
-					'a_17763983_ad33f7dbf44f47cc9793af93554019ef' => 'AxiaTech_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_12.6.16__Editable.pdf',
-					'a_20941762_3d26dee147e84366a061cf49d8cf2956' => 'AxiaTech_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_12.7.16__Flat_Rate.pdf',
-					'a_10422450_37b37aa07c084fb384d1fe74275e80ed' => 'Axia_Merrick_Merchant_Agreement_with_Terms_and_Conditions__revised_4.22.15__Crowdster.pdf',
-					'a_12928505_274ee92971c64852bfe5e862a659b803' => 'Axia_Merrick_Merchant_Agreement_with_Terms_and_Conditions__revised_6.10.15__Breadcrumbs.pdf',
-					'a_10422496_0265c80643bb4978a29d765da11109c9' => 'Axia_Merrick_Non-Profit_Merchant_Agreement_with_Terms_and_Conditions__revised_6.10.15_.pdf',
-					'a_19945988_a0a6fb37d6ef4340bcdca6d6bf5a6e93' => 'Axia_Tech_Employee_NDA_Non-Solicit_Non-Disparagement_5-16.pdf',
-					'a_19945424_a94f48a9dfba41afa717fcaa32dc9b70' => 'Background_Investigation_Form.pdf',
-					'a_20498855_4d1b269add9c433ab81ad80cc65f091e' => 'Corral_Agreement_for_RightSignature_Complete_Provider_Resource__revised_12.6.16__Editable.pdf',
-					'a_20499152_37c0bef9d50a4d059bc056b4b8913f4d' => 'Corral_Agreement_for_RightSignature_Rehab_Net_Arkansas__revised_12.6.16__Editable.pdf',
-					'a_10509298_9a7acbbfeea4489c97c30717cac2407b' => 'Corral_Agreement_for_RightSignature__revised_12.6.16__Editable.pdf',
-					'a_10508841_8c16eeeefe42498e9eaf13bc5ca13ba7' => 'Corral_Agreement_with_ACH_RightSignature__revised_12.7.16__Editable.pdf',
-					'a_20552750_56c79090c00b401d9f17a44189ebe33f' => 'Corral_Sales_Agreement_I3Axia_rev_11.22.16.pdf',
-					'a_20575209_75128c7ae617494eb6808a1cbbf6295f' => 'Corral_Sales_Agreement_rev_11.22.16.pdf',
-					'a_21933214_7e74fcd0e3b2475dbe4dbc9c0d85e38c' => 'I3_Axia_Payments_Agreement_with_Terms_and_Conditions__revised_7.22.16__Editable.pdf',
-					'a_10382161_c7e20695693845f1b1f9fd3ddc79a3fa' => 'I3_Axia_Payments_Agreement_with_Terms_and_Conditions_for_RightSignature__revised_7.22.16_.pdf',
-					'a_12819196_9fc4bb1d1f72498f86574153233d0d35' => 'Loaner_Agreement.pdf',
-					'a_13392825_7b9cebb9f8db4e7abcdde06f5c980536' => 'Payment_Fusion_Sales_Agreement_-_Billed_to_Merchant_via_ACH_by_Payment_Fusion__Acquiring__rev_1.19.16.pdf',
-					'a_20767716_2ac3106997d44d97a3bf05ca9418ca2c' => 'Payment_Fusion_Sales_Agreement_-_Billed_to_Merchant_via_ACH_by_Payment_Fusion__Acquiring__rev_1.3.17.pdf'
 				),
 				'installTemplateList' => array(
 						'a_1370816_63b4c6fa71634ac5b2d35a9a69a7e64d' => 'Install Sheet - VAR - 7.16.12.pdf'
