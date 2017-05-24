@@ -77,10 +77,10 @@ class TemplateBuilderTest extends CakeTestCase {
 	public function testSetBuilderViewData($expected) {
 		$actual = $this->TemplateBuilder->setBuilderViewData(5);
 		unset($actual['templateList']);
+		unset($actual['installTemplateList']);
 		$this->assertArrayHasKey('cobrands', $actual);
 		$this->assertArrayHasKey('logoPositionTypes', $actual);
 		$this->assertArrayHasKey('template', $actual);
-		$this->assertArrayHasKey('installTemplateList', $actual);
 		$this->assertEquals($expected, $actual);
 	}
 
@@ -279,9 +279,6 @@ class TemplateBuilderTest extends CakeTestCase {
 						)
 					)
 				),
-				'installTemplateList' => array(
-						'a_1370816_63b4c6fa71634ac5b2d35a9a69a7e64d' => 'Install Sheet - VAR - 7.16.12.pdf'
-					)
 				)
 			)
 		);
