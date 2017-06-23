@@ -224,6 +224,7 @@ class UsersController extends AppController {
 		);
 		foreach ($modelsFields as $model => $fields) {
 			$varName = Inflector::variable(Inflector::tableize($model));
+			$modelIds = Hash::extract($data, "$model.{n}.id");
 			//If the data structure is from a form submission, we must persist request data.
 			if (array_key_exists($model, Hash::extract($data, $model)) && !empty($data[$model][$model])) {
 				if ($model === 'Template') {
@@ -237,12 +238,12 @@ class UsersController extends AppController {
 				}
 
 				$this->set($varName, $data[$model][$model]);
-			} elseif (!empty(Hash::extract($data, "$model.{n}.id"))) {
+			} elseif (!empty($modelIds)) {
 				if ($model === 'Template') {
-					$combinedData = $this->User->getCombinedCobrandTemplateList(Hash::extract($data, "$model.{n}.id"));
+					$combinedData = $this->User->getCombinedCobrandTemplateList($modelIds);
 					$this->set($varName, $combinedData);
 				} else {
-					$keys = Hash::extract($data, "$model.{n}.id");
+					$keys = $modelIds;
 					$vals = Hash::extract($data, "$model.{n}." . $fields[0]);
 					$this->set($varName, array_combine($keys, $vals));
 				}
