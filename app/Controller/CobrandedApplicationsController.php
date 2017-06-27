@@ -30,6 +30,7 @@ class CobrandedApplicationsController extends AppController {
 		'api_add' => array(User::API),
 		'retrieve' => array('*'),
 		'edit' => array(User::ADMIN, User::REP, User::MANAGER),
+		'syncApplication' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_index' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_add' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_edit' => array(User::ADMIN),
@@ -469,7 +470,7 @@ class CobrandedApplicationsController extends AppController {
 					}
 				} else {
 					$this->Paginator->settings['conditions'] = array(
-                                        	'CobrandedApplication.user_id' => $this->Auth->user('id')
+											'CobrandedApplication.user_id' => $this->Auth->user('id')
 					);
 				}
 				break;
@@ -826,7 +827,7 @@ class CobrandedApplicationsController extends AppController {
 				$achYes = false;
 
 				$valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($cobrandedApplication['CobrandedApplication']['id']);
-        			foreach ($valuesMap as $key => $val) {
+					foreach ($valuesMap as $key => $val) {
 					if (preg_match('/ACH-Yes/', $key)) {
 						$achYes = $val;
 					}
@@ -964,7 +965,7 @@ class CobrandedApplicationsController extends AppController {
 			}
 		}
 
-        if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
+		if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
 			$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
 			$appTemplateId = $data['CobrandedApplication']['template_id'];
 			$this->set('data', $data);
@@ -1267,32 +1268,56 @@ class CobrandedApplicationsController extends AppController {
  * @params
  *     $data array
  */
-    public function sendCoversheet($data) {
+	public function sendCoversheet($data) {
 		$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
 
-        $valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($coversheetData['CobrandedApplication']['id']);
-        foreach ($valuesMap as $key => $val) {
-            $coversheetData['CobrandedApplication'][$key] = $val;
-        }
+		$valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($coversheetData['CobrandedApplication']['id']);
+		foreach ($valuesMap as $key => $val) {
+			$coversheetData['CobrandedApplication'][$key] = $val;
+		}
 
-        $View = new View($this, false);
+		$View = new View($this, false);
 
-        if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
-            $View->set('cp',false);
-        } else {
-            $View->set('cp',true);
-        }
+		if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
+			$View->set('cp', false);
+		} else {
+			$View->set('cp', true);
+		}
 
-        $View->set('data', $coversheetData);
-        $View->viewPath = 'Elements';
-        $View->layout = false;
-        $viewData = $View->render('/Elements/coversheets/pdf_export');
+		$View->set('data', $coversheetData);
+		$View->viewPath = 'Elements';
+		$View->layout = false;
+		$viewData = $View->render('/Elements/coversheets/pdf_export');
 
 		if ($this->CobrandedApplication->Coversheet->pdfGen($data['Coversheet']['id'], $viewData)) {
 			if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
- 				if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
+				if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
 					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
 				}
+			}
+		}
+	}
+
+/**
+ * syncApplication()
+ *
+ * @param integer $id a CobrandedApplication.id
+ * @param integer $templateId the id of the template associated with the Cobrandedapplication.id
+ * @return void
+ */
+	public function syncApplication($id, $templateId) {
+		$this->CobrandedApplication->id = $id;
+		if (!$this->CobrandedApplication->exists()) {
+			$this->_failure(__('Error: Application does not exist!'), array('action' => 'index', 'admin' => true));
+		}
+
+		if (!$this->CobrandedApplication->Template->hasAny(array('id' => $templateId))) {
+			$this->_failure(__("The Application's Template could not be found! Application cannot be synchronized."), array('action' => 'index', 'admin' => true));
+		} else {
+			if ($this->CobrandedApplication->syncApp($id)) {
+				$this->_success(__("Application synchronized with its Template! Please review application, data has been synced and may have changed if corresponding Template Fields were modified."), array('action' => 'index', 'admin' => true));
+			} else {
+				$this->_failure(__("Error: Synchronization process failed!"), array('action' => 'index', 'admin' => true));
 			}
 		}
 	}

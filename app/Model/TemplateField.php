@@ -244,4 +244,95 @@ class TemplateField extends AppModel {
 		$data = $this->__getRelated($templateSectionId);
 		return Hash::get($data, 'TemplateSection');
 	}
+
+/**
+ * beforeSave callback
+ *
+ * @param $options array
+ * @return void
+ */
+	public function beforeSave($options = array()) {
+		//If a change was made add a new value to indicate so in the data.
+		//Then check for this value in the afterSave callback
+		$this->data['TemplateField']['record_changed'] = $this->_recordChanged($this->data);
+		return true;
+	}
+
+/**
+ * _recordChanged
+ * Analyzes any form-submitted data and determines if changes were actually made by comparing to current data of the same record in the DB.
+ *
+ * @param array $data array request data submitted from the view or same as $this->data
+ * @return boolean
+ */
+	protected function _recordChanged($data) {
+		if (!empty($data['TemplateField']['id']) &&
+				//Type label no need to track changes
+				$data['TemplateField']['type'] !== $this->fieldTypes[6] &&
+				//Type hr no need to track changes
+				$data['TemplateField']['type'] !== $this->fieldTypes[8]) {
+			//Get Existing data
+			$curData = $this->find('first', array('recursive' => -1, 'conditions' => array('id' => $data['TemplateField']['id'])));
+			//Check current data exists
+			if (empty($curData)) {
+				return false;
+			}
+			//get all existing fields;
+			$fields = $this->getColumnTypes();
+
+			//remove fields that aren't important for comparison
+			unset($fields['id']);
+			if (array_key_exists('created', $fields)) {
+				unset($fields['created']);
+			}
+			if (array_key_exists('modified', $fields)) {
+				unset($fields['modified']);
+			}
+			if (array_key_exists('section_id', $fields)) {
+				unset($fields['section_id']);
+			}
+
+			foreach ($fields as $key => $val) {
+				//Compare value not data type
+				if ($curData['TemplateField'][$key] != $data['TemplateField'][$key]) {
+					//If a change was made return true
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+/**
+ * afterSave callback
+ *
+ * @param boolean $created whether a new record was created
+ * @param $options array same options as calling save method
+ * @return void
+ */
+	public function afterSave($created, $options = array()) {
+		//call CobrandedApplication->setDataToSync if we are saving a new field
+		if ($created) {
+			$this->_setAppsOutOfSync($this->data);
+		} elseif (is_array($this->data) && Hash::get($this->data, 'TemplateField.record_changed') === true) {
+			//call CobrandedApplication->setDataToSync if record was changed
+			$this->_setAppsOutOfSync($this->data);
+		}
+	}
+
+/**
+ * _setAppsOutOfSync
+ *
+ * @param array $data TemplateData
+ * @return boolean true on success false on falure
+ * @visibility protected
+ */
+	protected function _setAppsOutOfSync($data) {
+		try {
+			return ClassRegistry::init('CobrandedApplication')->setDataToSync($this->data);
+		} catch (InvalidArgumentException $e) {
+			return false;
+		}
+	}
+
 }

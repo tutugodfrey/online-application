@@ -7,8 +7,6 @@ App::uses('CobrandedApplication', 'Model');
  */
 class CobrandedApplicationTest extends CakeTestCase {
 
-	
-
 	public $autoFixtures = false;
 
 /**
@@ -121,7 +119,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$cobrandedApplication = $this->CobrandedApplication->find('first', array('recursive' => -1));
 		$this->CobrandedApplication->id = $cobrandedApplication['CobrandedApplication']['id'];
 		$this->__cobrandedApplication = $this->CobrandedApplication->saveField('user_id', $this->__user['User']['id']);
-		
 		$this->loadFixtures('OnlineappCoversheet');
 	}
 
@@ -159,6 +156,847 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->EmailTimelineSubject);
 
 		parent::tearDown();
+	}
+
+/**
+ * testSyncAppValuesType4Change1()
+ * Test that a change to one of the options specified in the TemplateField.default_value
+ * syncs corresponding CobrandedApplicationValue
+ *
+ * @param array $existingTmpltFields TemplateFieldData emulating a Cobranded Aplication's existing template/TemplateFields
+ * @param array $newTmpltFields TemplateFieldData to use to add new emplateFields to existing Cobranded Aplication's Template
+ * @param array $changes Containes changes that will me appliced to he existing TemplateFields which will trigger desynchronizations of Applications
+ * @param array $expectations Espected results
+ * @covers CobrandedApplication::syncAppValues()
+ * @dataProvider providerSyncAppValuesType4And5
+ * @return void
+ */
+	public function testSyncAppValuesTypes4Andn5($existingTmpltFields, $newTmpltFields, $changes, $expectations) {
+		//*********BEGIN TEST SETUP
+		//Detach behavior irrelevant for this test
+		$this->__detachBehavior('OrderableChild');
+		//Create all data needed
+		$response = $this->__saveTstDataForAppSyncProcedure($existingTmpltFields);
+		$appId = $response['cobrandedApplication']['id'];
+		//Create counter of how many CAVs we expect to be created
+		$expectedCountOfCreatedCAVs = 0;
+		//*********END SETUP
+		//Apply all changes that will cause desynchronization with app
+		foreach ($existingTmpltFields as $idx => $tField) {
+			//Apply all changes
+			foreach ($changes as $change) {
+				//Apply changes to default_value
+				if (!empty($change['default_value'])) {
+					$existingTmpltFields[$idx]['default_value'] = $change['default_value'];
+				}
+				//Apply change merge_field_name
+				if (!empty($change['merge_field_name'])) {
+					$existingTmpltFields[$idx]['merge_field_name'] = $change['merge_field_name'];
+				}
+			}
+		}
+		//Count exptected CAVs
+		foreach ($existingTmpltFields as $idx => $tField) {
+			if ($tField['type'] === 4 || $tField['type'] === 5 || $tField['type'] === 7) {
+				$choices = explode(',', $tField['default_value']);
+				//For each choice of each one of these types we expect a new CAV to be created
+				$expectedCountOfCreatedCAVs += count($choices);
+			} else {
+				$expectedCountOfCreatedCAVs += 1;
+			}
+		}
+
+		$original = $this->CobrandedApplication->find('first', array(
+			'recursive' => -1,
+			'conditions' => array('id' => $appId),
+			'contain' => array('CobrandedApplicationValues')
+		));
+
+		//App should not be out of sync
+		$this->assertEmpty($original['CobrandedApplication']['data_to_sync']);
+
+		//Save changes to TemplateField
+		$this->TemplateField->saveMany($existingTmpltFields);
+
+		//App should now be out of sync
+		$dataToSync = $this->CobrandedApplication->field('data_to_sync', array('id' => $appId));
+		$this->assertNotEmpty($dataToSync);
+
+		//Perform sync.
+		$this->assertTrue($this->CobrandedApplication->syncApp($appId));
+
+		//Get synced App and CAVs
+		$syncedData = $this->CobrandedApplication->find('first', array(
+			'recursive' => -1,
+			'conditions' => array('id' => $appId),
+			'contain' => array('CobrandedApplicationValues')
+		));
+
+		//Count created CobrandedApplicationValues
+		$countTotalCreatedCAVs = count($syncedData['CobrandedApplicationValues']);
+
+		$hasCavNameExpectation = !empty(Hash::extract($expectations, '{n}.synced_CAV_name'));
+		$hasDefaultValsExpectation = !empty(Hash::extract($expectations, '{n}.expected_defaults'));
+
+		//Iterate through each synced CAV
+		foreach ($syncedData['CobrandedApplicationValues'] as $cav) {
+			$cavNameExpectationFulfilled = false;
+			$defaultValExpectationFulfilled = false;
+
+			foreach ($expectations as $expected) {
+				//Expected synhronized CobrandedApplicationValue.name (CAV)
+				if ($hasCavNameExpectation && $cavNameExpectationFulfilled === false) {
+					$expectedCAVname = $expected['synced_CAV_name'];
+					//Actual synhronized name CobrandedApplicationValue
+					$actualSyncedCavName = Hash::get($cav, "name");
+					$cavNameExpectationFulfilled = ($expectedCAVname === $actualSyncedCavName);
+					if ($cavNameExpectationFulfilled) {
+						$this->assertEqual($expectedCAVname, $actualSyncedCavName);
+					}
+				}
+
+				//Are we expecting default values being set?
+				if ($hasDefaultValsExpectation && $defaultValExpectationFulfilled === false) {
+					$defaultValExpectationFulfilled = ($expected['expected_defaults'] === $cav['value']);
+					if ($defaultValExpectationFulfilled) {
+						$this->assertEqual($expected['expected_defaults'], $cav['value']);
+					}
+				}
+
+			}
+			if ($hasCavNameExpectation && $cavNameExpectationFulfilled === false) {
+				$this->fail("Failed asserting that {$cav['name']} matches one of the exptected name values in: \n" . print_r(Hash::extract($expectations, '{n}.synced_CAV_name'), true));
+			}
+
+			if ($hasDefaultValsExpectation && $defaultValExpectationFulfilled === false) {
+				$this->fail("Failed asserting that syncronized CobrandedApplicationValues.value(s) match any expected defaults in: \n" . print_r(Hash::extract($expectations, '{n}.expected_defaults'), true));
+			}
+		}
+
+		/*---------------------------------------------------------------------------------------------
+			Next, test adding new TemplateFields to the existing CobrandedApplication's Template and sync
+		-----------------------------------------------------------------------------------------------*/
+		if (!empty($newTmpltFields)) {
+			$this->TemplateField->saveMany($newTmpltFields);
+
+			$outOfSync = $this->CobrandedApplication->find('first', array(
+				'recursive' => -1,
+				'conditions' => array('id' => $appId),
+				'contain' => array('CobrandedApplicationValues')
+			));
+
+			//App should now be out of sync
+			$this->assertNotEmpty($outOfSync['CobrandedApplication']['data_to_sync']);
+
+			//Perform sync.
+			$this->assertTrue($this->CobrandedApplication->syncApp($appId));
+
+			//Get synced App and CAVs
+			$syncedData = $this->CobrandedApplication->find('first', array(
+				'recursive' => -1,
+				'conditions' => array('id' => $appId),
+				'contain' => array('CobrandedApplicationValues')
+			));
+
+			//Verify CAVs that where already there before new ones were added did not get modified at all by the sync process
+			foreach (Hash::extract($syncedData, 'CobrandedApplicationValues') as $idx => $syncedVal) {
+				foreach ($outOfSync['CobrandedApplicationValues'] as $existingCav) {
+					if ($syncedVal['id'] === $existingCav['id']) {
+						$this->assertEquals($existingCav['cobranded_application_id'], $syncedVal['cobranded_application_id']);
+						$this->assertEquals($existingCav['template_field_id'], $syncedVal['template_field_id']);
+						$this->assertEquals($existingCav['name'], $syncedVal['name']);
+						$this->assertEquals($existingCav['value'], $syncedVal['value']);
+						unset($syncedData['CobrandedApplicationValues'][$idx]);
+					}
+				}
+			}
+
+			//Add new CAVs to counter
+			$countTotalCreatedCAVs += count($syncedData['CobrandedApplicationValues']);
+
+			//check new CAV are created for TemplateField
+			foreach ($newTmpltFields as $templateField) {
+				$type = $templateField['type'];
+
+				//Increment counters
+				if ($type === 4 || $type === 5 || $type === 7) {
+					$choices = explode(',', $templateField['default_value']);
+					//For each choice of each one of these types we expect a new CAV to be created
+					$expectedCountOfCreatedCAVs += count($choices);
+				} else {
+					$expectedCountOfCreatedCAVs += 1;
+				}
+
+				//Evalutate synchronicity
+				foreach ($syncedData['CobrandedApplicationValues'] as $syncedCav) {
+					if ($syncedCav['template_field_id'] === $templateField['id']) {
+						//check new CAV are created for each mult-choice template field
+						if ($type === 4 || $type === 5 || $type === 7) {
+							$choices = explode(',', $templateField['default_value']);
+							foreach ($choices as $keyValStr) {
+								//Extact options' values keys and any defaults
+								$key = Hash::get(explode('::', $keyValStr), '0');
+								$val = Hash::get(explode('::', $keyValStr), '1');
+								$val = preg_replace('/\{.*\}$/', '', $val);//remove default option value from $val
+								$default = null;
+								if ($type === 4 && preg_match('/\{default\}/i', $keyValStr)) {
+									$default = 'true';
+								} else {
+									//For all others the default is potentially present in $keyValStr
+									preg_match('/\{(.+)\}/', $keyValStr, $matches); //$matches array will be filled with 2 entries
+									$default = Hash::get($matches, '1'); //we want the second match or null
+								}
+
+								//Find name matching current CAV.name
+								if (($type === 4 || $type === 5) && $templateField['merge_field_name'] . $val === $syncedCav['name']) {
+									$this->assertEqual($templateField['merge_field_name'] . $val, $syncedCav['name']);
+									$matchFound = true;
+									break; //innermost for loop
+								} elseif ($type === 7 && $syncedCav['name'] === $val) {
+									$this->assertEqual($val, $syncedCav['name']);
+									$matchFound = true;
+									break; //innermost for loop
+								}
+							}// end innermost for loop
+
+							if (isset($matchFound)) {
+								unset($matchFound);
+								////Are we expecting default values being set?
+								if (!is_null($default)) {
+									$this->assertEqual($syncedCav['value'], $default);
+								}
+							} else {
+								$this->fail("Failed asserting CobrandedApplicationValues.name:\n '{$syncedCav['name']}' \nmatches any [TemplateField.merge_field_name] + [OptionKey] combination");
+							}
+						} else {
+							$default = null;
+							//check new CAV are created for each non-mult-choice template field
+							if ($type === 20) { //select - special case is multi-choice but not multi-CAV
+
+								foreach (explode(',', $templateField['default_value']) as $keyValStr) {
+									if (preg_match('/\{default\}/i', $keyValStr)) {
+										$default = Hash::get(explode('::', $keyValStr), '1'); //we want the option value set as the defalut
+										$default = preg_replace('/\{.*\}$/', '', $default);
+										break;
+									}
+								}
+							} else {
+								$default = $templateField['default_value'];
+							}
+							$this->assertEqual($templateField['merge_field_name'], $syncedCav['name']);
+							////Are we expecting default values being set?
+							if (!empty($default)) {
+								$this->assertEqual($syncedCav['value'], $default);
+							}
+						}
+					}
+				}
+			}
+		}
+		//The total number of crated CAVs must always match the number of TemplateFields and/or
+		//the number Key::Val options set in TemplateFields.default_value for multi-choice data types
+		$this->assertEqual($countTotalCreatedCAVs, $expectedCountOfCreatedCAVs);
+	}
+
+/**
+ * Provider for testSyncAppValuesTypes4Andn5
+ *
+ * @return array
+ */
+	public function providerSyncAppValuesType4And5() {
+		return array(
+		//******************Data set 1
+			array(
+				//existingTmpltFields - Data Structure is as required for saveMany operation
+				array(
+					//TemplateField Data type 4 radio
+					array(
+						'id' => 12345,
+						'name' => 'field sync',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 4, //radio type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1,Key2::Val2',
+						'merge_field_name' => 'radio_from_user_without_default-',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+					//TemplateField Data type 5 percents
+					array(
+						'id' => 12346,
+						'name' => 'field sync',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 5, //percents type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1,Key2::Val2',
+						'merge_field_name' => 'pcts_from_user_without_default-',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					)
+				),
+				array(
+					//newTmpltFields
+					//none for this set
+				),
+				//Changes param
+				array(
+					array(
+						//Change only default_value changing only Val1
+						'default_value' => 'Key1::ChangedVal1,Key2::Val2,Key3::Val3',
+						'merge_field_name' => null,
+					)
+				),
+				//Expected params ALL EXPECTATIONS MUST BE FULLFILLED
+				array(
+					array( //first option type 4
+						'synced_CAV_name' => 'radio_from_user_without_default-ChangedVal1',
+						'expected_defaults' => null //array
+					),
+					array( //second opiton type 4 expect nothing changed
+						'synced_CAV_name' => 'radio_from_user_without_default-Val2',
+						'expected_defaults' => null //array
+					),
+					array( //first option type 5
+						'synced_CAV_name' => 'pcts_from_user_without_default-ChangedVal1',
+						'expected_defaults' => null //array
+					),
+					array( //second opiton type 5 expect nothing changed
+						'synced_CAV_name' => 'pcts_from_user_without_default-Val2',
+						'expected_defaults' => null //array
+					),
+					array( //second opiton type 5 expect nothing changed
+						'synced_CAV_name' => 'pcts_from_user_without_default-Val3',
+						'expected_defaults' => null //array
+					),
+					array( //second opiton type 5 expect nothing changed
+						'synced_CAV_name' => 'radio_from_user_without_default-Val3',
+						'expected_defaults' => null //array
+					)
+				)
+			),
+		//******************Data set 2
+			array(
+					//existingTmpltFields - Data Structure is as required for saveMany operation
+				array(
+					//TemplateField Data type 7 fees
+					array(
+						'id' => 12345,
+						'name' => 'field sync',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 7, //radio type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1,Key2::Val2',
+						'merge_field_name' => '',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+				),
+				array(
+					//newTmpltFields
+					//none for this set
+				),
+				//Changes param
+				array(
+					array(
+						//Change values and add default fees for both options
+						'default_value' => 'Key1::ChangedVal1{5},Key2::ChangedVal2{6}',
+						'merge_field_name' => null,
+					)
+				),
+				//Expected params ALL EXPECTATIONS MUST BE FULLFILLED
+				array(
+					array( //first option type 7
+						'synced_CAV_name' => 'ChangedVal1', //name should be just the option value
+						'expected_defaults' => '5' //array
+					),
+					array( //second opiton type 7
+						'synced_CAV_name' => 'ChangedVal2', //name should be just the option value
+						'expected_defaults' => '6' //array
+					),
+				)
+			),
+		//******************Data set 3
+			array(
+					//existingTmpltFields - Data Structure is as required for saveMany operation
+				array(
+					//TemplateField Data type 20 fees
+					array(
+						'id' => 12345,
+						'name' => 'field sync',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 20, //select type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1,Key2::Val2,Key3::Val3,Key4::Val4,Key5::Val5,Key6::Val6',
+						'merge_field_name' => 'Select Menu',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+				),
+				array(
+					//newTmpltFields
+					//none for this set
+				),
+				//Changes param
+				array(
+					array(
+						//Change merge_field_name and add the very last option
+						'default_value' => 'Key1::Val1,Key2::Val2,Key3::Val3,Key4::Val4,Key5::Val5,Key6::ThisChanged,Key5::ThisIsNew',
+						'merge_field_name' => 'Changed Select Menu Name',
+					)
+				),
+				//Expected params ALL EXPECTATIONS MUST BE FULLFILLED
+				array(
+					array( //type 20
+						'synced_CAV_name' => 'Changed Select Menu Name', //name should be just the option value
+						'expected_defaults' => null //array
+					),
+				)
+			),
+		//******************Data set 4
+			array(
+					//existingTmpltFields - Data Structure is as required for saveMany operation
+				array(
+					//TemplateField Data type 20 fees
+					array(
+						'id' => 12345,
+						'name' => 'field sync',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 0, //text type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => null,
+						'merge_field_name' => 'TextField',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+				),
+				array(
+					//newTmpltFields add several new fields of diferent types
+					array(
+						'id' => 12345,
+						'name' => 'field sync',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 4, //radio type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1,Key2::Val2{default}',
+						'merge_field_name' => 'radio_from_user_with_default-',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+					array(
+						'id' => 11223,
+						'name' => 'field sync',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 20, //select type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1,Key2::Val2,Key3::Val3,Key4::Val4,Key5::Val5,Key6::Val6{default}',
+						'merge_field_name' => 'Select Menu With Defauit',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+					array(
+						'id' => 54321,
+						'name' => 'Additional text field',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 0, //text type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => null,
+						'merge_field_name' => 'AdditionalTextField',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+					array(
+						'id' => 44321,
+						'name' => 'Additional Percents fields',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 5, //percents type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1,Key2::Val2{10}',
+						'merge_field_name' => 'additional_pcts_with_default-',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					),
+					array(
+						'id' => 43321,
+						'name' => 'Additional Fees fields',
+						'width' => 12,
+						'description' => 'Test sync',
+						'type' => 7, //fees type
+						'required' => 1,
+						'source' => 1,
+						'default_value' => 'Key1::Val1{2},Key2::Val2{15}',
+						'merge_field_name' => 'additional_fees_with_default-',
+						'order' => 2,
+						'section_id' => 123,
+						'rep_only' => false,
+						'encrypt' => false,
+					)
+				),
+				//Changes param
+				array(
+					array(
+						//Change merge_field_name and set default
+						'default_value' => 'Some text',
+						'merge_field_name' => 'Changed Name',
+					)
+				),
+				//Expected params ALL EXPECTATIONS MUST BE FULLFILLED
+				array(
+					array( //type 20
+						'synced_CAV_name' => 'Changed Name', //name should be just the option value
+						'expected_defaults' => 'Some text' //array
+					),
+				)
+			),
+		);
+	}
+
+/**
+ * __detachBehavior()
+ * Utility method to detach behavior
+ *	
+ * @param array $templateFields template fields to save with test data, each in an its own array
+ * @return void
+ */
+	private function __detachBehavior($name) {
+		$this->TemplatePage->Behaviors->detach($name);
+		$this->TemplateSection->Behaviors->detach($name);
+		$this->TemplateField->Behaviors->detach($name);
+	}
+/**
+ * __saveTstDataForAppSyncProcedure()
+ * Utility method to create test associated Template data with 1 page, section and n field(s)
+ *	
+ * @param array $templateFields template fields to save with test data, each in an its own array
+ * @return void
+ */
+	private function __saveTstDataForAppSyncProcedure($templateFields) {
+		//Create new Template with 1 page, section and 1 field
+		$data = array(
+			'id' => 123,
+			'name' => 'Template 123',
+			'description' => 'Tst Sync',
+			'cobrand_id' => 123,
+			'logo_position' => 0,
+			'owner_equity_threshold' => 50,
+			'requires_coversheet' => false
+		);
+		$this->Template->create();
+		$this->Template->save($data);
+		$data = array(
+			'id' => 123,
+			'name' => 'Page 1',
+			'description' => 'Test Sync',
+			'template_id' => 123,
+			'order' => 0,
+			'rep_only' => false,
+		);
+		$this->TemplatePage->create();
+		$this->TemplatePage->save($data, array('validate' => false));
+		$data = array(
+			'id' => 123,
+			'name' => 'Page Section 1',
+			'width' => 12,
+			'rep_only' => false,
+			'description' => '',
+			'page_id' => 123,
+			'order' => 0,
+		);
+		$this->TemplateSection->create();
+		$this->TemplateSection->save($data);
+		$this->TemplateField->saveMany($templateFields);
+		$uuid = CakeText::uuid();
+		$user = array(
+			'id' => 123,
+			'uuid' => $uuid,
+			'template_id' => 123
+
+		);
+		//Create App w/new template
+		return $this->CobrandedApplication->createOnlineappForUser($user, $uuid);
+	}
+
+/**
+ * __saveTstCAVData()
+ * Utility method to create test CobrandedApplicationValues CAVs
+ *	
+ * @param array $cav CobrandedApplicationValues (CAVs) data structure sjould be compliant and ready for a saveMany operation
+ * @return void
+ */
+	private function __saveTstCAVData($cav) {
+		//saveMany with many - Sequential
+		if (array_keys($cav) === range(0, count($cav) -1)) {
+			$data = $cav;
+		} else {
+			//saveMany with only one - associative
+			//Make it sequential
+			$data = array($cav);
+		}
+		$this->CobrandedApplicationValue->saveMany($data);
+	}
+
+/**
+ * testSetDataExceptionThrown
+ *
+ * @covers CobrandedApplication::setDataToSync()
+ * @expectedException InvalidArgumentException
+ * @expectedExceptionMessage Expected TemplateField data is missing array argument.
+ * @return void
+ */
+	public function testSetDataToSyncExceptionThrown() {
+		$this->CobrandedApplication->setDataToSync(array('junk and stuff'));
+	}
+
+
+/**
+ * testSetDataToSyncNewData()
+ *
+ * @covers CobrandedApplication::setDataToSync()
+ * @return void
+ */
+	public function testSetDataToSyncNewData() {
+		$newData = array(
+			'user_id' => 1,
+			'template_id' => 4,
+			'uuid' => '59025600-cd20-40ae-820b-1e2934627ad4',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+			'status' => 'saved',
+		);
+
+		$this->CobrandedApplication->create();
+		$this->CobrandedApplication->save($newData);
+		//Expected should be in saveMany-like data structure
+		$expected[] = array(
+			'TemplateField' => array(
+				'id' => 99,
+				'name' => 'field type hr',
+				'width' => 12,
+				'description' => '',
+				'type' => 8,
+				'required' => 1,
+				'source' => 1,
+				'default_value' => '',
+				'merge_field_name' => 'hr',
+				'order' => 8,
+				'section_id' => 4,
+				'rep_only' => false,
+				'encrypt' => false,
+				'created' => '2013-12-18 14:10:17',
+				'modified' => '2013-12-18 14:10:17'
+			)
+		);
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($expected[0]));
+
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+	}
+
+/**
+ * testSetDataToSyncUpdateExistingData()
+ * Test that method updates existing data-to-be-synced and
+ *
+ * @covers CobrandedApplication::setDataToSync()
+ * @return void
+ */
+	public function testSetDataToSyncUpdateExistingData() {
+		//Expected should be in saveMany-like data structure
+		$existing[] = array(
+			'TemplateField' => array(
+				'id' => 99,
+				'name' => 'field type hr',
+				'width' => 12,
+				'description' => '',
+				'type' => 8,
+				'required' => 1,
+				'source' => 1,
+				'default_value' => '',
+				'merge_field_name' => 'hr',
+				'order' => 8,
+				'section_id' => 4,
+				'rep_only' => false,
+				'encrypt' => false,
+				'created' => '2013-12-18 14:10:17',
+				'modified' => '2013-12-18 14:10:17'
+			)
+		);
+		$newData = array(
+			'user_id' => 1,
+			'template_id' => 4,
+			'uuid' => '59025600-cd20-40ae-820b-1e2934627ad4',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+			'status' => 'saved',
+			'data_to_sync' => serialize($existing)
+		);
+		$this->CobrandedApplication->create();
+		$this->CobrandedApplication->save($newData);
+
+		$existing[0]['TemplateField']['width'] = 6;
+		$existing[0]['TemplateField']['description'] = 'This field has been modified';
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($existing[0]));
+
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+		$expected = $existing;
+
+		//Assert that existing serialized data was found and updated
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+		$this->assertContains('This field has been modified', $saved['CobrandedApplication']['data_to_sync']);
+		$expectedCount = count($expected);
+		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
+		$this->assertEqual($expectedCount, $actualCount);
+	}
+
+/**
+ * testSetDataToSyncUpdateOneInManyExistingData()
+ * Test that method updates only the specific field that was modified and leaves all other data-to-be-synced intact
+ *
+ * @covers CobrandedApplication::setDataToSync()
+ * @return void
+ */
+	public function testSetDataToSyncUpdateOneInManyExistingData() {
+		//Expected should be in saveMany-like data structure
+		//This TemplateField data emulates TemplateFields that were modified at a point in time before a second modification, which takes place at a later point in time, 
+		//in which only the second TemplateField below is modified
+		$existing = array(
+			array(
+				'TemplateField' => array(
+					'id' => 98,
+					'name' => 'field type hr',
+					'width' => 12,
+					'description' => 'field data-to-be-synced',
+					'type' => 8,
+					'required' => 1,
+					'source' => 1,
+					'default_value' => '',
+					'merge_field_name' => 'hr',
+					'order' => 8,
+					'section_id' => 4,
+					'rep_only' => false,
+					'encrypt' => false,
+					'created' => '2013-12-18 14:10:17',
+					'modified' => '2013-12-18 14:10:17'
+				)
+			),
+			array(
+				'TemplateField' => array(
+					'id' => 99,
+					'name' => 'field type hr',
+					'width' => 12,
+					'description' => 'field data-to-be-synced',
+					'type' => 8,
+					'required' => 1,
+					'source' => 1,
+					'default_value' => '',
+					'merge_field_name' => 'hr',
+					'order' => 8,
+					'section_id' => 4,
+					'rep_only' => false,
+					'encrypt' => false,
+					'created' => '2014-12-18 14:10:17',
+					'modified' => '2014-12-18 14:10:17'
+				)
+			),
+		);
+		$newData = array(
+			'user_id' => 1,
+			'template_id' => 4,
+			'uuid' => '59025600-cd20-40ae-820b-1e2934627ad4',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+			'status' => 'saved',
+			'data_to_sync' => serialize($existing)
+		);
+		$this->CobrandedApplication->create();
+		$this->CobrandedApplication->save($newData);
+
+		//*****This is the second mod to the moded field that was already awaiting synchronization
+		$existing[1]['TemplateField']['width'] = 6;
+		$existing[1]['TemplateField']['description'] = 'modify the modified field data-to-be-synced';
+
+		//By passing only the field that was modified we are amulating a call that TemplateField::[beforeDelete/afterSave] makes tho this method
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($existing[1]));
+
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+		$expected = $existing;
+
+		//Assert that existing serialized data was found and updated and no new records were added
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+		$this->assertContains('modify the modified field data-to-be-synced', $saved['CobrandedApplication']['data_to_sync']);
+		$expectedCount = count($expected);
+		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
+		$this->assertEqual($expectedCount, $actualCount);
+
+		//Lastly test a new item to sync is added to the existing collection
+		$newToSync = array(
+			array(
+				'TemplateField' => array(
+					'id' => 97,
+					'name' => 'field type hr',
+					'width' => 12,
+					'description' => 'New field data-to-be-synced',
+					'type' => 8,
+					'required' => 1,
+					'source' => 1,
+					'default_value' => '',
+					'merge_field_name' => 'hr',
+					'order' => 8,
+					'section_id' => 4,
+					'rep_only' => false,
+					'encrypt' => false,
+					'created' => '2013-12-18 14:10:17',
+					'modified' => '2013-12-18 14:10:17'
+				)
+			),
+		);
+		$this->assertTrue($this->CobrandedApplication->setDataToSync($newToSync[0]));
+		$expected = array_merge($existing, $newToSync);
+		$saved = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->CobrandedApplication->id)));
+
+		$this->assertSame(serialize($expected), $saved['CobrandedApplication']['data_to_sync']);
+		$this->assertSame(unserialize($saved['CobrandedApplication']['data_to_sync']), $expected);
+		$this->assertContains('New field data-to-be-synced', $saved['CobrandedApplication']['data_to_sync']);
+		$expectedCount = count($expected);
+		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
+		$this->assertEqual($expectedCount, $actualCount);
 	}
 
 	public function testValidation() {
@@ -209,6 +1047,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
+				'data_to_sync' => null
 			),
 			'Template' => array(
 				'id' => (int)1,
@@ -525,6 +1364,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
+				'data_to_sync' => null
 			),
 			'TemplateField' => array(
 				'id' => 1,
@@ -589,6 +1429,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
+				'data_to_sync' => null
 			),
 			'TemplateField' => array(
 				'id' => 4,
@@ -1935,6 +2776,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'status' => null,
 						'rightsignature_install_document_guid' => null,
 						'rightsignature_install_status' => null,
+						'data_to_sync' => null
 					),
 					'Cobrand' => array(
 						'id' => 1,

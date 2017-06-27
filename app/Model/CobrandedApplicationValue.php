@@ -231,7 +231,7 @@ class CobrandedApplicationValue extends AppModel {
 			case 19: // digits    - (#)+
 				$retVal = (preg_match("/\d+/", $trimmedDataValue) > 0);
 				break;
-				
+
 			case 20: // select - one of the options should be selected
 				if (!empty($templateField['default_value'])) {
 					foreach (split(',', $templateField['default_value']) as $keyValuePairStr) {

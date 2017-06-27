@@ -4,8 +4,6 @@
 
 class TemplateBuilderTest extends CakeTestCase {
 
-	
-
 	public $autoFixtures = false;
 
 	public $fixtures = array(
@@ -16,6 +14,8 @@ class TemplateBuilderTest extends CakeTestCase {
 		'app.onlineappTemplatePage',
 		'app.onlineappTemplateSection',
 		'app.onlineappTemplateField',
+		'app.onlineappUsersTemplate',
+		'app.onlineappCobrandedApplicationValue',
 		'app.onlineappCobrandedApplication',
 	);
 
@@ -48,6 +48,8 @@ class TemplateBuilderTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplateSection');
 		$this->loadFixtures('OnlineappTemplateField');
 		$this->loadFixtures('OnlineappCobrandedApplication');
+		$this->loadFixtures('OnlineappCobrandedApplicationValue');
+		$this->loadFixtures('OnlineappUsersTemplate');
 	}
 
 /**
@@ -278,7 +280,7 @@ class TemplateBuilderTest extends CakeTestCase {
 							)
 						)
 					)
-				),
+				)
 				)
 			)
 		);

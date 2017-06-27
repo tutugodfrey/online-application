@@ -155,17 +155,17 @@ class AppController extends Controller {
  */
 	public function admin_delete($id) {
 		if (!$this->request->is('post')) {
-			$this->_failure(" - Error 405:  Method Not Allowed!", $this->referer());
+			$this->_failure(__(" - Error 405:  Method Not Allowed!"), $this->referer());
 		}
 		$this->{$this->modelClass}->id = $id;
 		if (!$this->{$this->modelClass}->exists()) {
-			$this->_failure("Error: {$this->modelClass} id does not exist!", $this->referer());
+			$this->_failure(__("Error: {$this->modelClass} id does not exist!"), $this->referer());
 		}
 
 		if($this->{$this->modelClass}->delete()) {
-			$this->_success("{$this->modelClass} has been deleted!", $this->referer());
+			$this->_success(__("{$this->modelClass} has been deleted!"), $this->referer());
 		} else {
-			$this->_failure("Error: Could not delete {$this->modelClass}!", $this->referer());
+			$this->_failure(__("Error: Could not delete {$this->modelClass}!"), $this->referer());
 		}
 	}
 
