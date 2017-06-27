@@ -4,7 +4,7 @@
 	<?php echo $this->Element('cobranded_applications/search'); ?>
 	<table class="table table-condensed table-striped table-hover">
 		<tr>
-			<th> &nbsp</th>
+			<th><!--spacer--></th>
 			<th><?php echo $this->Paginator->sort('User.firstname', 'User Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('Cobrand.partner_name', 'Partner Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.template_id', 'Template'); ?></th>

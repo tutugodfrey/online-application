@@ -313,21 +313,21 @@ class TemplateField extends AppModel {
 	public function afterSave($created, $options = array()) {
 		//call CobrandedApplication->setDataToSync if we are saving a new field
 		if ($created) {
-			$this->_desyncronizeApplicaitons($this->data);
+			$this->_setAppsOutOfSync($this->data);
 		} elseif (is_array($this->data) && Hash::get($this->data, 'TemplateField.record_changed') === true) {
 			//call CobrandedApplication->setDataToSync if record was changed
-			$this->_desyncronizeApplicaitons($this->data);
+			$this->_setAppsOutOfSync($this->data);
 		}
 	}
 
 /**
- * _desyncronizeApplicaitons
+ * _setAppsOutOfSync
  *
  * @param array $data TemplateData
  * @return boolean true on success false on falure
  * @visibility protected
  */
-	protected function _desyncronizeApplicaitons($data) {
+	protected function _setAppsOutOfSync($data) {
 		try {
 			return ClassRegistry::init('CobrandedApplication')->setDataToSync($this->data);
 		} catch (InvalidArgumentException $e) {

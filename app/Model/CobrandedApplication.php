@@ -2871,7 +2871,6 @@ class CobrandedApplication extends AppModel {
 
 		//Updating existing prevalidated data no need to validate here
 		return $this->saveMany($updated, array('validate' => false));
-			
 	}
 
 /**
@@ -3097,6 +3096,16 @@ class CobrandedApplication extends AppModel {
 		return false;
 	}
 
+/**
+ * _setNewCoAppVal
+ * Sets the cobranded application field name and value in the proper format depending on field type.
+ *
+ * @param string $appId the cobranded application id that uses this merge field
+ * @param array $templateField the data of the template field
+ * @param string $mergeFieldKey the mergefield key originally defined as <key>::<value>{[default value]||default}
+ * @param mixed $mergeFieldVal the mergefield value originally defined as <key>::<value>{[default value]||default}
+ * @param mixed $mergeFieldDefaultVal the mergefield default value originally defined as <key>::<value>{[default value]||default}
+ */
 	protected function _setNewCoAppVal($appId, $templateField, $mergeFieldKey, $mergeFieldVal, $mergeFieldDefaultVal = null) {
 		$newCAV = array(
 			'cobranded_application_id' => $appId,
