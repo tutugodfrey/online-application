@@ -133,7 +133,7 @@
 									<p class="navbar-text">
 									<?php echo $this->Html->getCrumbs(' > ', array('text' => _('Axia Admin Home'), 'url' => '/admin/')); ?>
 									</p>
-									<p class="navbar-text navbar-right btn-group">
+									<p class="navbar-text navbar-right btn-group" style="margin-right:20px">
 										<?php
 										echo $this->Html->link(__('Applications'),
 											array(
