@@ -2813,7 +2813,7 @@ class CobrandedApplication extends AppModel {
  */
 	public function setDataToSync($data) {
 		if (!array_key_exists('TemplateField', $data) || empty($data['TemplateField']['section_id'])) {
-			throw new InvalidArgumentException("Expected TemplateField data is missing array argument.");
+			throw new InvalidArgumentException(__("Expected TemplateField data is missing array argument."));
 		}
 
 		$templateId = $this->_getAssociatedTemplateId($data);
@@ -2885,7 +2885,7 @@ class CobrandedApplication extends AppModel {
  */
 	protected function _getAssociatedTemplateId($templateFieldData) {
 		if (!array_key_exists('TemplateField', $templateFieldData) || empty($templateFieldData['TemplateField']['section_id'])) {
-			throw new InvalidArgumentException("Expected TemplateField data is missing array argument.");
+			throw new InvalidArgumentException(__("Expected TemplateField data is missing array argument."));
 		}
 		//We don't know whether data from associated Template/TemplatePage/TemplateSection models might have been deleted
 		//so can't use those models to find Template associated to the TemplateField.
