@@ -28,7 +28,7 @@ class ApipsController extends AppController {
 			if ($this->Apip->save($this->request->data)) {
 				$this->_success(Inflector::singularize($this->name) . " has been saved", $this->referer());
 			} else {
-				$this->_failure("Something went wrong " . Inflector::singularize($this->name) . " could not be saved!");
+				$this->_failure(__("Something went wrong " . Inflector::singularize($this->name) . " could not be saved!"));
 			}
 		}
 		if (!empty($id)) {

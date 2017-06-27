@@ -1308,7 +1308,7 @@ class CobrandedApplicationsController extends AppController {
 	public function syncApplication($id, $templateId) {
 		$this->CobrandedApplication->id = $id;
 		if (!$this->CobrandedApplication->exists()) {
-			$this->_failure('Error: Application does not exist!', array('action' => 'index', 'admin' => true));
+			$this->_failure(__('Error: Application does not exist!'), array('action' => 'index', 'admin' => true));
 		}
 
 		if (!$this->CobrandedApplication->Template->hasAny(array('id' => $templateId))) {
