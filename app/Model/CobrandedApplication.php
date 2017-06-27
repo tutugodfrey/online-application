@@ -3105,6 +3105,7 @@ class CobrandedApplication extends AppModel {
  * @param string $mergeFieldKey the mergefield key originally defined as <key>::<value>{[default value]||default}
  * @param mixed $mergeFieldVal the mergefield value originally defined as <key>::<value>{[default value]||default}
  * @param mixed $mergeFieldDefaultVal the mergefield default value originally defined as <key>::<value>{[default value]||default}
+ * @return array
  */
 	protected function _setNewCoAppVal($appId, $templateField, $mergeFieldKey, $mergeFieldVal, $mergeFieldDefaultVal = null) {
 		$newCAV = array(
