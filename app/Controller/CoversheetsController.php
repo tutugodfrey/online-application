@@ -98,7 +98,7 @@ class CoversheetsController extends AppController {
                 }
             } elseif (isset($this->request->data['uw'])) {
                 $term1AcceptDebit = 'no';
-                if ($data['CobrandedApplication']['TermAcceptDebit-Yes'] == true) {
+                if (Hash::get($data, 'CobrandedApplication.TermAcceptDebit-Yes') == true) {
                     $term1AcceptDebit = 'yes'; 
                 }
 
@@ -146,7 +146,14 @@ class CoversheetsController extends AppController {
                         $View->layout = false;
                         $viewData = $View->render('/Elements/coversheets/pdf_export'); 
 
-                        if ($this->Coversheet->pdfGen($id, $viewData)) {
+                        try {
+                        	$pdfReady = $this->Coversheet->pdfGen($id, $viewData);
+                        } catch (Exception $e) {
+                        	 $this->_failure(__($e->getMessage()));
+                        	 $this->redirect(array('controller' => 'coversheets', 'action' => 'index', 'admin' => true));
+                        }
+
+                        if ($pdfReady) {
                             if ($this->Coversheet->sendCoversheet($id)) {
                                 if ($this->Coversheet->unlinkCoversheet($id)) {
                                     $this->_success(__("The coversheet $id has been submitted to underwriting"));
