@@ -19,7 +19,7 @@
 					echo $this->Form->input('user_id', array('id' => 'appCopyUserIdDropDown'));
 					echo $this->Form->input('template_id', array('default' => $defaultTemplateId));
 					echo $this->Form->hidden('uuid');
-					if ($applicationId) {
+					if (isset($applicationId)) {
 						echo $this->Form->hidden('applicationId');
 					}
 					echo $this->Html->link('Cancel', array('controller' => 'CobrandedApplications', 'action' => 'index'), array('class' => 'btn btn-sm btn-danger col-md-offset-4 col-sm-offset-4'));

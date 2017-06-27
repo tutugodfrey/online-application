@@ -17,16 +17,15 @@
 		)
 	);
 
-	echo $this->Html->link('New Application', 
-		array(
-			'controller' => 'cobrandedApplications',
-			'action' => 'add',
-		),
-       		array(
-			'class' => 'btn btn-primary pull-right', 
-			'title' => 'New Application'
-		)
-	);
+	echo $this->Form->button('New Application',
+					array(
+						'type' => 'button',
+						'data-toggle' => 'modal',
+						'data-target' => '#dynamicModal',
+						'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/add/')",
+						'class' => 'btn btn-primary pull-right',
+					)
+				);
 	echo $this->Form->input('search',
 		array('placeholder' => 'Search Applications')
 	);
