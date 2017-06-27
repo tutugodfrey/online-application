@@ -8,6 +8,7 @@ class TemplateBuilderTest extends CakeTestCase {
 
 	public $fixtures = array(
 		'app.onlineappUser',
+		'app.onlineappUsersTemplate',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -30,6 +31,7 @@ class TemplateBuilderTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->TemplateBuilder = ClassRegistry::init('TemplateBuilder');
+		$this->UsersTemplate = ClassRegistry::init('UsersTemplate');
 		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
@@ -39,6 +41,7 @@ class TemplateBuilderTest extends CakeTestCase {
 
 		// load data
 		$this->loadFixtures('OnlineappUser');
+		$this->loadFixtures('OnlineappUsersTemplate');
 		$this->loadFixtures('OnlineappCobrand');
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
