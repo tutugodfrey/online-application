@@ -4,8 +4,8 @@
 	var allTemplates = <?php echo $allTemplates;?>;
  </script>
  <?php 
-$this->request->data['Managers'] = [];
-$managers = [];
+$this->request->data['Managers'] = array();
+$managers = array();
 echo $this->Form->create('User', array(
    'inputDefaults' => array(
 		'div' => 'form-group col-md-12',

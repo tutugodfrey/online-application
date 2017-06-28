@@ -32,7 +32,7 @@ class ApipsController extends AppController {
 			}
 		}
 		if (!empty($id)) {
-			$this->request->data = $this->Apip->find('first', ['conditions' => array('Apip.id' => $id)]);
+			$this->request->data = $this->Apip->find('first', array('conditions' => array('Apip.id' => $id)));
 		}
 		$users = $this->Apip->User->find('list', array('order' => 'fullname ASC'));
 		$this->set('users', $users);
