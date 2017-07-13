@@ -121,7 +121,8 @@ class TemplateBuilderTest extends CakeTestCase {
 						'rightsignature_template_guid' => null,
 						'rightsignature_install_template_guid' => null,
 						'owner_equity_threshold' => 50,
-						'requires_coversheet' => null
+						'requires_coversheet' => null,
+						'email_app_pdf' => null
 					),
 					'Cobrand' => array(
 						'id' => 2,

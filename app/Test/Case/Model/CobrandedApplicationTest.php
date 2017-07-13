@@ -158,6 +158,16 @@ class CobrandedApplicationTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
+	public function testGetAppPdfUrl() {
+		$applicationId = 4;
+	 	$url = $this->CobrandedApplication->getAppPdfUrl($applicationId);
+	 	$this->assertNotEmpty($url);
+
+		$applicationId = 1;
+	 	$url = $this->CobrandedApplication->getAppPdfUrl($applicationId);
+	 	$this->assertEmpty($url);
+	}
+
 /**
  * testSyncAppValuesType4Change1()
  * Test that a change to one of the options specified in the TemplateField.default_value
@@ -1062,6 +1072,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'rightsignature_install_template_guid' => null,
 				'owner_equity_threshold' => 50,
 				'requires_coversheet' => false,
+				'email_app_pdf' => true,
 				'Cobrand' => array(
 					'id' => (int)1,
 					'partner_name' => 'Partner Name 1',
@@ -1645,7 +1656,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Off",' .
 			'"Off",' .
 			'"",' .
-			'"4",' .
+			'"5",' .
 			'"",' .
 			'"",' .
 			'"",' .
@@ -1826,7 +1837,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"Yes",' .
 			'"Yes",' .
 			'"",' .
-			'"4",' .
+			'"5",' .
 			'"",' .
 			'"",' .
 			'"",' .

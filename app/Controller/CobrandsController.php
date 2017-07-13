@@ -34,7 +34,7 @@ class CobrandsController extends AppController {
 
 		$data = $this->Cobrand->getById($this->Cobrand->id);
 		$this->set('cobrand', $data);
-		
+		$this->_setViewNavData();
 		if (empty($this->request->data)) {
 			$this->request->data = $data;
 		} else {
