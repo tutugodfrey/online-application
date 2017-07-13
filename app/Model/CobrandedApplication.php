@@ -1425,10 +1425,10 @@ class CobrandedApplication extends AppModel {
 
 /**
  * getAppPdfUrl
- * Makes a RightSignature API call to retrieve the Sales Agreement PDF URL.
+ * Makes a RightSignature API call to retrieve the PDF URL.
  *
  * @param int $id Cobranded Application Id
- * @return string The URL where the Sales Aggreement PDF is located.
+ * @return string The URL where the PDF is located.
  */
 	public function getAppPdfUrl($id) {
 		$appData = $this->find('first', array(
