@@ -1395,6 +1395,7 @@ class CobrandedApplication extends AppModel {
 		$viewVars['rep'] = $cobrandedApplication['User']['email'];
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['link'] = Router::url('/users/login', true);
+		$viewVars['appPdfUrl'] = $this->getAppPdfUrl($applicationId);
 
 		if ($optionalTemplate != null) {
 			$template = $optionalTemplate;
@@ -1420,6 +1421,41 @@ class CobrandedApplication extends AppModel {
 		}
 
 		return $response;
+	}
+
+/**
+ * getAppPdfUrl
+ * Makes a RightSignature API call to retrieve the PDF URL.
+ *
+ * @param int $id Cobranded Application Id
+ * @return string The URL where the PDF is located.
+ */
+	public function getAppPdfUrl($id) {
+		$appData = $this->find('first', array(
+			'recursive' => -1,
+			'fields' => array(
+				'CobrandedApplication.rightsignature_document_guid',
+			),
+			'conditions' => array('CobrandedApplication.id' => $id),
+			'contain' => array('Template.email_app_pdf'),
+		));
+
+		$appPdfUrl = null;
+
+		if ($appData['Template']['email_app_pdf'] === true) {
+			$guid = $appData['CobrandedApplication']['rightsignature_document_guid'];
+			$client = $this->createRightSignatureClient();
+			$docDetals = $client->getDocumentDetails($guid);
+			$docData = json_decode($docDetals, true);
+
+			if (!empty($docData)) {
+				$appPdfUrl = Hash::get($docData, 'document.signed_pdf_url');
+				if (!empty($appPdfUrl)) {
+					$appPdfUrl = urldecode($appPdfUrl);
+				}
+			}
+		}
+		return $appPdfUrl;
 	}
 
 /**
