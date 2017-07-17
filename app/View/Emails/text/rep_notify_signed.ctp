@@ -6,7 +6,7 @@
 
 <?php 
 if (!empty($appPdfUrl)) {
-	echo "To review the signed sales agreement use the following link:";
+	echo "To review the signed sales agreement use the following link: \n";
 	echo $appPdfUrl;
 }
 ?>
