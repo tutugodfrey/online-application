@@ -175,7 +175,7 @@ class CobrandedApplicationsController extends AppController {
 	public function quickAdd($uuid = null) {
 		$this->layout = 'ajax';
 		$this->autoRender = false;
-		if($this->RequestHandler->isAjax()) {
+		if ($this->RequestHandler->isAjax()) {
 			if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 				throw new NotFoundException(__('Invalid application'));
 			}
@@ -194,16 +194,12 @@ class CobrandedApplicationsController extends AppController {
 				$this->set('_serialize', 'response');
 				$this->render('quickAdd');
 			} else {
-				$error = json_encode("Application Value could not be saved. Try later");
-				$this->set(compact('error'));
-				$this->set('_serialize', 'error');
-				$this->render('error');
+				//Unexpected internal error (client-side will notify user)
+				$this->response->statusCode(500);
 			}
 		} else {
-			$error = array("Not an Ajax request");
-			$this->set(compact('error'));
-			$this->set('_serialize', 'error');
-			$this->render('error');
+			//Bad Request
+			$this->response->statusCode(400);
 		}
 	}
 
