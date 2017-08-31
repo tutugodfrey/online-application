@@ -2796,7 +2796,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'Template' => array(
 						'id' => 1,
 						'name' => 'Template 1 for PN1',
-						'requires_coversheet' => false
+						'requires_coversheet' => false,
+						'email_app_pdf' => true
 					),
 					'User' => array(
 						'id' => 1,
