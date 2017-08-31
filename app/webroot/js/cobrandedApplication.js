@@ -97,7 +97,7 @@ var persist = function(data) {
 
 		document.getElementById(data['field_id']).removeAttribute("style");
 	}).error(function() {
-		alert('failed to update application value');
+		alert('Server Error: Failed to update application value');
 	});
 };
 
@@ -196,9 +196,13 @@ var totalStartUpFees = function() {
 	var newTotal = creditAppFee + creditEquipmentFee + creditExpediteFee + creditReprogramFee + creditVirtualTrainingFee + creditMobileSetupFee;
 
 	newTotal = newTotal.toFixed(3);
-	
-	$("[label*='Start Up Fees'][name='Total']").val(newTotal);
-	$("[label*='Start Up Fees'][name='Total']").trigger('change');
+	previousTotal = parseFloat($("[label*='Start Up Fees'][name='Total']").val()).toFixed(3);
+
+	//Trigger AJAX request to update total field IFF a change actually happened.
+	if (newTotal !== previousTotal) {
+		$("[label*='Start Up Fees'][name='Total']").val(newTotal);
+		$("[label*='Start Up Fees'][name='Total']").trigger('change');
+	}
 }
 
 var achHideOrShow = function() {

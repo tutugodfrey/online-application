@@ -145,19 +145,19 @@ class CobrandedApplicationValue extends AppModel {
 	}
 
 	public function save($data = null, $validate = true, $fieldList = array()) {
-        // clear modified field value before each save
-        $this->set($data);
-        if (isset($this->data[$this->alias]['modified'])) {
-            unset($this->data[$this->alias]['modified']);
-        }
+		// clear modified field value before each save
+		$this->set($data);
+		if (isset($this->data[$this->alias]['modified'])) {
+			unset($this->data[$this->alias]['modified']);
+		}
 
-        $dboSource = $this->CobrandedApplication->getDataSource();
+		$dboSource = $this->CobrandedApplication->getDataSource();
 
-        $this->CobrandedApplication->id = $this->data[$this->alias]['cobranded_application_id'];
-        $this->CobrandedApplication->saveField('modified', $dboSource->expression('LOCALTIMESTAMP(0)'));
+		$this->CobrandedApplication->id = $this->data[$this->alias]['cobranded_application_id'];
+		$this->CobrandedApplication->saveField('modified', $dboSource->expression('LOCALTIMESTAMP(0)'));
 
-        return parent::save($this->data, $validate, $fieldList);
-    }
+		return parent::save($this->data, $validate, $fieldList);
+	}
 
 	public function validApplicationValue($data, $fieldType, $templateField = null) {
 		$retVal = false;
@@ -231,7 +231,7 @@ class CobrandedApplicationValue extends AppModel {
 			case 19: // digits    - (#)+
 				$retVal = (preg_match("/\d+/", $trimmedDataValue) > 0);
 				break;
-				
+
 			case 20: // select - one of the options should be selected
 				if (!empty($templateField['default_value'])) {
 					foreach (split(',', $templateField['default_value']) as $keyValuePairStr) {
@@ -303,7 +303,7 @@ class CobrandedApplicationValue extends AppModel {
 								$stackTrace = $e->getTraceAsString();
 
 								if (strpos($stackTrace, 'createRightSignatureApplicationXml') !== false ||
-									strpos($stackTrace, 'CoversheetsController->getCobrandedApplicationValues') !== false ||
+									strpos($stackTrace, 'getValuesByAppId') !== false ||
 									strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false ||
 									strpos($stackTrace, 'CobrandedApplicationsController->create_rightsignature_document') !== false ||
 									strpos($stackTrace, 'CobrandedApplicationsController->api_add()') !== false) {
@@ -312,7 +312,7 @@ class CobrandedApplicationValue extends AppModel {
 
 								if ($maskValue) {
 									// mask all but last 4 values
-    								$dataArray = str_split($data);
+									$dataArray = str_split($data);
 									$dataLength = count($dataArray);
 									$data = '';
 									for ($x = 0; $x < $dataLength; $x++) {
@@ -363,5 +363,26 @@ class CobrandedApplicationValue extends AppModel {
 		} else {
 			return false;
 		}
+	}
+
+/**
+ * getValuesByAppId
+ *
+ * @param integer $appId A CobrandedApplication.id
+ * @param array $settings Settings for search query
+ * @return $valuesMap array
+ */
+	public function getValuesByAppId($appId, $settings = array()) {
+		$default = array(
+			'contain' => false
+		);
+		$settings = array_merge($default, $settings);
+		$settings['conditions']['cobranded_application_id'] = $appId;
+		$appValues = $this->find('all', $settings);
+		//Pop all up by one dim
+		$appValues = Hash::extract($appValues, '{n}.CobrandedApplicationValues');
+
+		$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValues);
+		return $valuesMap;
 	}
 }

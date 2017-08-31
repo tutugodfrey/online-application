@@ -21,6 +21,7 @@ class OnlineappCobrandedApplicationFixture extends CakeTestFixture {
 		'status' => array('type' => 'string', 'length' => 10, 'null' => true),
 		'rightsignature_install_document_guid' => array('type' => 'string', 'length' => 32, 'null' => true),
 		'rightsignature_install_status' => array('type' => 'string', 'length' => 10, 'null' => true),
+		'data_to_sync' => array('type' => 'text', 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'unique_uuid' => array('unique' => true, 'column' => 'uuid')
@@ -60,6 +61,16 @@ class OnlineappCobrandedApplicationFixture extends CakeTestFixture {
 			'created' => '2014-01-24 09:07:08',
 			'modified' => '2014-01-24 09:07:08',
 			'rightsignature_document_guid' => null,
+			'status' => 'signed',
+			'rightsignature_install_document_guid' => null,
+			'rightsignature_install_status' => null,
+		),
+		array(
+			'template_id' => 6,
+			'uuid' => 'e118ac22d3cd4ab49148b05d5254ed59',
+			'created' => '2014-01-24 09:07:08',
+			'modified' => '2014-01-24 09:07:08',
+			'rightsignature_document_guid' => 'AU7WN8IYL3TRHH56RVU93P',
 			'status' => 'signed',
 			'rightsignature_install_document_guid' => null,
 			'rightsignature_install_status' => null,

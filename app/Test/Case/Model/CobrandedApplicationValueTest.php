@@ -466,4 +466,22 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->assertEquals($valid, $actual['CobrandedApplicationValue']['value'], 'Saving a valid '.$typeString.' value should succeed.');
 	}
 
+/**
+ * testGetValuesByAppId
+ *
+ * @covers CobrandedApplicationValue::getValuesByAppId
+ * @return void
+ */
+	public function testGetValuesByAppId() {
+		$expected = array(
+			'Terminal2-' => 'true'
+		);
+		$appId = 3;
+		//Since the model alias was incorrectly named in plural form (CobrandedApplicationValues)
+		//and it is already being used everywhere we'll have to call via associated model
+		//rather than through initialized class instance.
+		$actual = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($appId);
+		$this->assertSame($expected, $actual);
+	}
+
 }

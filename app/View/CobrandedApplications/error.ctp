@@ -1,4 +1,4 @@
 An Error has occured...
 <?php
-debug($error);
+print_r($error);
 ?>

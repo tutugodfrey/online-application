@@ -4,6 +4,14 @@
 
 <?php echo $link; ?> 
 
+<?php 
+if (!empty($appPdfUrl)) {
+	echo "To review the signed sales agreement use the following link: \n";
+	echo $appPdfUrl;
+}
+?>
+
+
 Thank you,
 
 Axia Online Application

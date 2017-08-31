@@ -56,6 +56,8 @@ if (empty($requestData)) {
 $rCoverSheetAttr = array_merge($rCoverSheetAttr, array('class' => false, 'label' => array('class' => 'col-md-offset-7'), 'type' => 'checkbox'));
 echo $this->Form->input('requires_coversheet', $rCoverSheetAttr);
 
+echo $this->Form->input('email_app_pdf', array('class' => false, 'label' => array('text' => 'Email Signed PDF to Rep', 'class' => 'col-md-offset-7'), 'type' => 'checkbox'));
+
 echo $this->Form->input('description', array('class' => 'form-control', 'wrapInput' => 'col col-md-4'));
 
 echo $this->Form->input('rightsignature_template_guid',

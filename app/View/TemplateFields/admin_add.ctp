@@ -61,6 +61,7 @@ $this->Html->addCrumb(
 			echo $this->Form->input('merge_field_name');
 			echo $this->Form->input('description');
 			echo $this->Form->input('encrypt', array('label'=> array('class' => 'col-md-offset-7') ,'type' => 'checkbox', 'class' => null));
+			echo $this->Form->hidden('section_id', array('value' => $templateSection['id']));
 			echo $this->Form->end(array('label' => __('Submit'), 'div' => 'form-group col-md-12', 'class' => 'btn btn-sm btn-success')); ?>
 			</div>
 		</div>
