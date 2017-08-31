@@ -85,6 +85,23 @@
 						)
 					);
 				}
+
+				if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && $cobrandedApplication['Template']['email_app_pdf'] === true) {
+					echo $this->Html->link($this->Html->image('pdf-format.png', array('style' => 'margin:-1px -4px -4px -4px;vertical-align:top')),
+						array(
+							'action' => 'open_app_pdf',
+							$cobrandedApplication['CobrandedApplication']['id'],
+							'admin' => true
+						),
+						array(
+							'target' => '_blank',
+							'escape' => false,
+							'class' => 'btn btn-default btn-sm glyphicon',
+							'title' => __('Open ' . $cobrandedApplication['Template']['name'] . ' PDF')
+						)
+					);
+				}
+
 				if (!$appOutOfSync){
 					echo $this->Form->button(' ',
 						array(
