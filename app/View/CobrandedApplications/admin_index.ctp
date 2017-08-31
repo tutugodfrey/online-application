@@ -73,9 +73,7 @@
 			</td>
 			<td><?php echo $this->Time->format('m/d/y h:i A', $cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
 			<td><div class="btn-group"><?php
-				if (in_array($this->Session->read('Auth.User.group'), array('admin')) 
-					&& $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED 
-					&& $cobrandedApplication['Template']['email_app_pdf'] === true) {
+				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
 					echo $this->Html->link(' ',
 						array(
 							'action' => 'export',
@@ -86,6 +84,9 @@
 							'title' => __('Export')
 						)
 					);
+				}
+
+				if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && $cobrandedApplication['Template']['email_app_pdf'] === true) {
 					echo $this->Html->link($this->Html->image('pdf-format.png', array('style' => 'margin:-1px -4px -4px -4px;vertical-align:top')),
 						array(
 							'action' => 'open_app_pdf',
@@ -100,6 +101,7 @@
 						)
 					);
 				}
+
 				if (!$appOutOfSync){
 					echo $this->Form->button(' ',
 						array(
