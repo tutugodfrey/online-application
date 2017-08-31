@@ -1395,7 +1395,7 @@ class CobrandedApplication extends AppModel {
 		$viewVars['rep'] = $cobrandedApplication['User']['email'];
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['link'] = Router::url('/users/login', true);
-		$viewVars['appPdfUrl'] = $this->getAppPdfUrl($applicationId);
+		$viewVars['appPdfUrl'] = Router::url("/admin/CobrandedApplications/open_app_pdf/$applicationId", true);
 
 		if ($optionalTemplate != null) {
 			$template = $optionalTemplate;
@@ -2596,6 +2596,7 @@ class CobrandedApplication extends AppModel {
 				'Template.id',
 				'Template.name',
 				'Template.requires_coversheet',
+				'Template.email_app_pdf',
 				'User.id',
 				'User.firstname',
 				'User.lastname',

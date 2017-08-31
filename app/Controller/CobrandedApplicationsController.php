@@ -40,6 +40,7 @@ class CobrandedApplicationsController extends AppController {
 		'admin_email_timeline' => array(User::ADMIN, User::REP, User::MANAGER),
 		'complete_fields' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_app_status' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_open_app_pdf' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_app_extend' => array(User::ADMIN, User::REP, User::MANAGER),
 		'create_rightsignature_document' => array('*'),
 		'sign_rightsignature_document' => array('*'),
@@ -760,6 +761,21 @@ class CobrandedApplicationsController extends AppController {
 		}
 
 		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
+	}
+
+/**
+ * Redirects user to the application pdf
+ *
+ * @param integer $id application id
+ * @return void
+ */
+	function admin_open_app_pdf($id) {
+		$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($id);
+		if (!empty($pdfUrl)) {
+			$this->redirect($pdfUrl);
+		} else {
+			$this->_failure(__('Error: Application PDF could not be found!'), array('action' => index, 'admin' => true));
+		}
 	}
 
 /**
