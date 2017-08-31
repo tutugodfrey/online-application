@@ -100,11 +100,7 @@ class Template extends AppModel {
 	}
 
 	public function getCobrand($cobrandId) {
-		// is this the way to access another model?
-		$this->Cobrand->id = $cobrandId;
-		$this->Cobrand->recursive = -1;
-		$this->Cobrand->find('first');
-		return $this->Cobrand->read();
+		return $this->Cobrand->getById($cobrandId);
 	}
 
 	public function getTemplateApiFields($templateId) {
@@ -205,7 +201,6 @@ class Template extends AppModel {
 						);
 					}
 					break;
-				
 				case 'multirecord':
 					if (!empty($value['field']['default_value'])) {
 						$defaultValue = $value['field']['default_value'];
@@ -216,7 +211,6 @@ class Template extends AppModel {
 						);
 					}
 					break;
-
 				default:
 					$formattedData[$value['field']['merge_field_name']] = array(
 						"type" => $type,
@@ -228,18 +222,6 @@ class Template extends AppModel {
 		}
 
 		return $formattedData;
-	}
-
-	public function beforeDelete($cascade = true) {
-		$templateToDelete = $this->read();
-		$pages = !empty($templateToDelete)? Hash::get($templateToDelete, 'TemplatePages'): null;
-		if (count($pages) > 0) {
-			// delete the children
-			$templatePage = ClassRegistry::init('TemplatePage');
-			foreach ($pages as $page) {
-				$templatePage->delete($page['id']);
-			}
-		}
 	}
 
 	private function __buildMergeFieldName($pageName, $sectionName, $fieldName) {

@@ -53,8 +53,8 @@ $this->Html->addCrumb(
 					'class' => 'form-horizontal',
 				));
 
+			echo $this->Form->hidden('id');
 			echo $this->Form->input('name');
-
 			echo $this->Form->input('order', array('min' => 0));
 			echo $this->Form->input('width', array('options' => array_combine(range(1,12),range(1,12))));
 			echo $this->Form->input('type', array('options' => $fieldTypes));

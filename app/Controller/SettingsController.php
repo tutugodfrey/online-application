@@ -39,7 +39,7 @@ class SettingsController extends AppController {
 			}
 		}
 		if (!empty($id)) {
-			$this->request->data = $this->Setting->find('first', ['conditions' => array('key' => $id)]);
+			$this->request->data = $this->Setting->find('first', array('conditions' => array('key' => $id)));
 		}
 	}
 

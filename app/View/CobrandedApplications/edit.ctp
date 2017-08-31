@@ -278,11 +278,11 @@
 <?php 
 if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
 	$cAppVals = Hash::get($this->request->data, 'CobrandedApplicationValues');
-	$custEmails['Owner1Email'] = Hash::extract($cAppVals, '{n}[name=Owner1Email].value');
-	$custEmails['Owner2Email'] = Hash::extract($cAppVals, '{n}[name=Owner2Email].value');
-	$custEmails['EMail'] = Hash::extract($cAppVals, '{n}[name=EMail].value');
-	$custEmails['LocEMail'] = Hash::extract($cAppVals, '{n}[name=LocEMail].value');
-	$custEmails = array_combine(array_keys($custEmails), Hash::extract($custEmails, "{s}.0"));
+	$custEmails['Owner1Email'] = Hash::get(Hash::extract($cAppVals, '{n}[name=Owner1Email].value'), '0');
+	$custEmails['Owner2Email'] = Hash::get(Hash::extract($cAppVals, '{n}[name=Owner2Email].value'), '0');
+	$custEmails['EMail'] = Hash::get(Hash::extract($cAppVals, '{n}[name=EMail].value'), '0');
+	$custEmails['LocEMail'] = Hash::get(Hash::extract($cAppVals, '{n}[name=LocEMail].value'), '0');
+
 	echo $this->element('cobranded_applications/email_select_modal',
 		array(
 			'cobranded_application_id' => $this->request->data['CobrandedApplication']['id'],

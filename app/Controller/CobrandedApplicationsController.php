@@ -30,6 +30,7 @@ class CobrandedApplicationsController extends AppController {
 		'api_add' => array(User::API),
 		'retrieve' => array('*'),
 		'edit' => array(User::ADMIN, User::REP, User::MANAGER),
+		'syncApplication' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_index' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_add' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_edit' => array(User::ADMIN),
@@ -174,7 +175,7 @@ class CobrandedApplicationsController extends AppController {
 	public function quickAdd($uuid = null) {
 		$this->layout = 'ajax';
 		$this->autoRender = false;
-		if($this->RequestHandler->isAjax()) {
+		if ($this->RequestHandler->isAjax()) {
 			if (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
 				throw new NotFoundException(__('Invalid application'));
 			}
@@ -193,16 +194,12 @@ class CobrandedApplicationsController extends AppController {
 				$this->set('_serialize', 'response');
 				$this->render('quickAdd');
 			} else {
-				$error = json_encode("Application Value could not be saved. Try later");
-				$this->set(compact('error'));
-				$this->set('_serialize', 'error');
-				$this->render('error');
+				//Unexpected internal error (client-side will notify user)
+				$this->response->statusCode(500);
 			}
 		} else {
-			$error = array("Not an Ajax request");
-			$this->set(compact('error'));
-			$this->set('_serialize', 'error');
-			$this->render('error');
+			//Bad Request
+			$this->response->statusCode(400);
 		}
 	}
 
@@ -469,7 +466,7 @@ class CobrandedApplicationsController extends AppController {
 					}
 				} else {
 					$this->Paginator->settings['conditions'] = array(
-                                        	'CobrandedApplication.user_id' => $this->Auth->user('id')
+											'CobrandedApplication.user_id' => $this->Auth->user('id')
 					);
 				}
 				break;
@@ -505,12 +502,41 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function admin_add($applicationId = null) {
 		// look up the user to make sure we don't get stale session data
-		$user = $this->User->read(null, $this->Session->read('Auth.User.id'));
+		$this->User->id = $this->Session->read('Auth.User.id');
+		$user = $this->User->getById($this->User->id);
+		if ($this->request->is('ajax')) {
+			$this->autoRender = false;
+			$this->CobrandedApplication->create(
+				array(
+					'user_id' => $this->Session->read('Auth.User.id'),
+					'uuid' => CakeText::uuid()
+				)
+			);
+			$this->request->data = $this->CobrandedApplication->data;
+			$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
+			if (empty($users)) {
+				$users = $this->CobrandedApplication->User->find(
+					'list',
+					array(
+						'conditions' => array('User.id' => $this->Auth->user('id')),
+					)
+				);
+			}
 
-		if ($this->request->is('post')) {
+			$defaultTemplateId = $user['User']['template_id'];
+			$templates = $this->User->getTemplates($this->User->id);
+
+			if ($applicationId != null) {
+				$this->set('applicationId');
+			}
+
+			$this->set(compact('templates', 'users', 'defaultTemplateId'));
+			$this->render('admin_add');
+
+		} elseif ($this->request->is('post')) {
 			// if applicationId exists, we're copying the application
 			if ($applicationId) {
-				$this->redirect(array('action' => "/copy/".$applicationId."/".$this->request->data['CobrandedApplication']['template_id']));
+				$this->redirect(array('action' => "/copy/" . $applicationId . "/" . $this->request->data['CobrandedApplication']['template_id']));
 			}
 
 			// now try to save with the data from the user model
@@ -549,8 +575,8 @@ class CobrandedApplicationsController extends AppController {
 						'recursive' => -1
 					)
 				);
-				if(isset($appValue['CobrandedApplicationValue']['name'])) {
-					$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'].' '.$user['User']['lastname'];
+				if (isset($appValue['CobrandedApplicationValue']['name'])) {
+					$appValue['CobrandedApplicationValue']['value'] = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
 					$this->CobrandedApplicationValue->save($appValue);
 				}
 				$this->_success(__('Application created'));
@@ -558,67 +584,40 @@ class CobrandedApplicationsController extends AppController {
 			} else {
 				$this->_failure(__('The application could not be saved. Please, try again.'));
 			}
-		} else {
-			$this->CobrandedApplication->create(
-				array(
-					'user_id' => $this->Session->read('Auth.User.id'),
-					'uuid' => CakeText::uuid()
-				)
-			);
-			$this->request->data = $this->CobrandedApplication->data;
 		}
-
-		$users = $this->CobrandedApplication->User->assignableUsers($this->Auth->user('id'), $this->Auth->user('group_id'));
-
-		if (empty($users)) {
-			$users = $this->CobrandedApplication->User->find(
-				'list',
-				array(
-					'conditions' => array('User.id' => $this->Auth->user('id')),
-				)
-			);
-		}
-
-		$defaultTemplateId = $user['User']['template_id'];
-		$templates = $this->User->getTemplates($this->User->id);
-
-		if ($applicationId != null) {
-			$this->set('applicationId');
-		}
-
-		$this->set(compact('templates', 'users', 'defaultTemplateId'));
 	}
 
 /**
  * admin_edit method
  *
+ * @param string $id CobrandedApplication id
  * @throws NotFoundException
- * @param string $id
  * @return void
  */
 	public function admin_edit($id = null) {
 		if (!$this->CobrandedApplication->exists($id)) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->CobrandedApplication->save($this->request->data)) {
-				$this->_success(__("Application number $id has been saved"));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->_failure(__("Application number $id could not be saved. Please, try again."));
-			}
-		} else {
-			$options = array('conditions' => array(
-				'CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id,
-
+		if ($this->request->is('ajax')) {
+			$options = array(
+				'conditions' => array(
+					'CobrandedApplication.' . $this->CobrandedApplication->primaryKey => $id
 				),
 				'recursive' => -1
 			);
 			$this->request->data = $this->CobrandedApplication->find('first', $options);
+			$users = $this->CobrandedApplication->User->find('list',
+				array('order' => 'User.firstname ASC'));
+			$this->set(compact('users'));
+			$this->render('admin_edit');
+		} elseif ($this->request->is('post') || $this->request->is('put')) {
+			if ($this->CobrandedApplication->save($this->request->data)) {
+				$this->_success(__("Application number $id has been saved"));
+				$this->redirect(array('action' => 'index'));
+			} else {
+				$this->_failure(__("Application number $id could not be saved. Please, try again."), array('action' => 'index'));
+			}
 		}
-		$users = $this->CobrandedApplication->User->find('list',
-			array('order' => 'User.firstname ASC'));
-		$this->set(compact('users'));
 	}
 
 /**
@@ -708,19 +707,10 @@ class CobrandedApplicationsController extends AppController {
 			'limit' => 50,
 			'recursive' => -1
 		);
-
 		$data = $this->paginate('CobrandedApplication');
-
 		$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($data[0]['CobrandedApplicationValues']);
-
-		$dba = '';
-
-		if (!empty($valuesMap['DBA'])) {
-			$dba = $valuesMap['DBA'];
-		}
-
-		$data[0]['CobrandedApplication']['DBA'] = $dba;
 		$this->set('applications', $data);
+		$this->set('dba', Hash::get($valuesMap, 'DBA'));
 	}
 
 /**
@@ -748,18 +738,15 @@ class CobrandedApplicationsController extends AppController {
  * @param varchar $renew
  * RightSignature Document Guid Allows for extending life of application
  */
-	function admin_app_status($applicationId, $renew = null) {
-		$this->CobrandedApplication->id = $applicationId;
-		$cobrandedApplication = $this->CobrandedApplication->read();
+	function admin_app_status($id, $renew = null) {
+		$guid = $this->CobrandedApplication->field('rightsignature_document_guid', array('id' => $id));
 		$client = $this->CobrandedApplication->createRightSignatureClient();
-		$results = $client->getDocumentDetails($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']);
+		$results = $client->getDocumentDetails($guid);
 		$data = json_decode($results, true);
 		$pg = 'Personal Guarantee';
 		$app = 'Application';
 		$recipients = array_reverse($data['document']['recipients']);
 		$state = $data['document']['state'];
-		$guid = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
-		$id = $applicationId;
 
 		if ($renew != '') {
 			$renewed = $client->extendDocument($guid);
@@ -801,8 +788,8 @@ class CobrandedApplicationsController extends AppController {
 		if (!$this->CobrandedApplication->exists()) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-
-		$cobrandedApplication = $this->CobrandedApplication->read();
+		$settings = array('contain' => array('CobrandedApplicationValues', 'Template'));
+		$cobrandedApplication = $this->CobrandedApplication->getById($applicationId, $settings);
 
 		$response = null;
 
@@ -835,8 +822,8 @@ class CobrandedApplicationsController extends AppController {
 
 				$achYes = false;
 
-				$valuesMap = $this->getCobrandedApplicationValues($cobrandedApplication['CobrandedApplication']['id']);
-        			foreach ($valuesMap as $key => $val) {
+				$valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($cobrandedApplication['CobrandedApplication']['id']);
+					foreach ($valuesMap as $key => $val) {
 					if (preg_match('/ACH-Yes/', $key)) {
 						$achYes = $val;
 					}
@@ -974,7 +961,7 @@ class CobrandedApplicationsController extends AppController {
 			}
 		}
 
-        if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
+		if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
 			$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
 			$appTemplateId = $data['CobrandedApplication']['template_id'];
 			$this->set('data', $data);
@@ -1075,15 +1062,31 @@ class CobrandedApplicationsController extends AppController {
 					'CobrandedApplicationValues',
 					'Merchant' => array('EquipmentProgramming'),
 				),
-				'recursive' => 2
+				'recursive' => -1
 			)
 		);
 
+		if ($data['Merchant']['merchant_id'] == "") {
+			$this->Session->setFlash(
+					__('This Application Has not been boarded into the Database!'),
+					'Flash/installSheetAlert',
+					array('class' => 'alert-warning', 'subjectSubString' => 'not boarded', 'appId' => $data['CobrandedApplication']['id'])
+				);
+			$this->redirect($this->referer());
+		} elseif (empty($data['Merchant']['EquipmentProgramming'])) {
+			$this->Session->setFlash(
+					__('A terminal associated with that application has not yet been configured!'),
+					'Flash/installSheetAlert',
+					array('class' => 'alert-warning', 'subjectSubString' => 'no terminal configured', 'appId' => $data['CobrandedApplication']['id'])
+				);
+			$this->redirect($this->referer());
+		}
+
 		$this->set('data', $data);
 
-		if ($this->request->data) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			if (empty($this->request->data['CobrandedApplication']['select_terminal_type'])) {
-				$url = "/install_sheet_var/".$data['CobrandedApplication']['id'];
+				$url = "/install_sheet_var/" . $data['CobrandedApplication']['id'];
 				$this->_failure(__('error! terminal type not selected'));
 				$this->redirect(array('action' => $url));
 			}
@@ -1255,78 +1258,62 @@ class CobrandedApplicationsController extends AppController {
 		$this->render('end');
 	}
 
-/*
- * getCobrandedApplicationValues
- *
- * @param $applicationId integer
- * @param $valueConditions array
- * @param $recursive integer
- * @return $valuesMap array
- */
-    public function getCobrandedApplicationValues($applicationId, $valueConditions = array(), $recursive = null) {
-        $CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-
-        if (!isset($recursive)) {
-            $recursive = 1;
-        }
-
-        $conditions = array(
-            'conditions' => array(
-                'cobranded_application_id' => $applicationId,
-            ),
-            'recursive' => $recursive
-        );
-
-        if (!empty($valueConditions)) {
-            $conditions['conditions'][] = $valueConditions;
-        }
-
-        $appValues = $CobrandedApplicationValue->find(
-            'all',
-            $conditions
-        );
-
-        $appValueArray = array();
-        foreach ($appValues as $arr) {
-            $appValueArray[] = $arr['CobrandedApplicationValue'];
-        }
-
-        $valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($appValueArray);
-        return $valuesMap;
-    }
-
 /**
  * sendCoversheet
  *
  * @params
  *     $data array
  */
-    public function sendCoversheet($data) {
+	public function sendCoversheet($data) {
 		$coversheetData = $this->CobrandedApplication->Coversheet->findById($data['Coversheet']['id']);
 
-        $valuesMap = $this->getCobrandedApplicationValues($coversheetData['CobrandedApplication']['id']);
-        foreach ($valuesMap as $key => $val) {
-            $coversheetData['CobrandedApplication'][$key] = $val;
-        }
+		$valuesMap = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($coversheetData['CobrandedApplication']['id']);
+		foreach ($valuesMap as $key => $val) {
+			$coversheetData['CobrandedApplication'][$key] = $val;
+		}
 
-        $View = new View($this, false);
+		$View = new View($this, false);
 
-        if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
-            $View->set('cp',false);
-        } else {
-            $View->set('cp',true);
-        }
+		if ($coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Keyed'] + $coversheetData['CobrandedApplication']['MethodofSales-CardNotPresent-Internet'] >= '30') {
+			$View->set('cp', false);
+		} else {
+			$View->set('cp', true);
+		}
 
-        $View->set('data', $coversheetData);
-        $View->viewPath = 'Elements';
-        $View->layout = false;
-        $viewData = $View->render('/Elements/coversheets/pdf_export');
+		$View->set('data', $coversheetData);
+		$View->viewPath = 'Elements';
+		$View->layout = false;
+		$viewData = $View->render('/Elements/coversheets/pdf_export');
 
 		if ($this->CobrandedApplication->Coversheet->pdfGen($data['Coversheet']['id'], $viewData)) {
 			if ($this->CobrandedApplication->Coversheet->sendCoversheet($data['Coversheet']['id'])) {
- 				if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
+				if ($this->CobrandedApplication->Coversheet->unlinkCoversheet($data['Coversheet']['id'])) {
 					$this->CobrandedApplication->Coversheet->saveField('status', 'sent');
 				}
+			}
+		}
+	}
+
+/**
+ * syncApplication()
+ *
+ * @param integer $id a CobrandedApplication.id
+ * @param integer $templateId the id of the template associated with the Cobrandedapplication.id
+ * @return void
+ */
+	public function syncApplication($id, $templateId) {
+		$this->CobrandedApplication->id = $id;
+		if (!$this->CobrandedApplication->exists()) {
+			$this->_failure(__('Error: Application does not exist!'), array('action' => 'index', 'admin' => true));
+		}
+
+		if (!$this->CobrandedApplication->Template->hasAny(array('id' => $templateId))) {
+			$this->_failure(__("The Application's Template could not be found! Application cannot be synchronized."), array('action' => 'index', 'admin' => true));
+		} else {
+			if ($this->CobrandedApplication->syncApp($id)) {
+				$this->_success(__("Application synchronized with its Template! Please review application, data has been synced and may have changed if corresponding Template Fields were modified."), array('action' => 'index', 'admin' => true));
+			} else {
+				$this->_failure(__("Error: Synchronization process failed!"), array('action' => 'index', 'admin' => true));
 			}
 		}
 	}

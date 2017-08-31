@@ -173,7 +173,6 @@ class CobrandedApplication extends AppModel {
 
 	// tests will set this via dependency injection, using a mocked object
 	public $CakeEmail = null;
-
 /**
  * afterSave
  *
@@ -331,7 +330,6 @@ class CobrandedApplication extends AppModel {
 				)
 			)
 		);
-		//$application = $this->read();
 
 		// if user is not logged in, don't show rep-only fields
 		$conditions = '';
@@ -931,7 +929,8 @@ class CobrandedApplication extends AppModel {
 		);
 
 		if ($this->save()) {
-			$newApp = $this->read();
+			$settings = array('contain' => array('CobrandedApplicationValues'));
+			$newApp = $this->getById($this->id, $settings);
 
 			// copy each value over
 			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
@@ -1187,8 +1186,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'Template',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 
@@ -1289,8 +1291,10 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$hash = $cobrandedApplication['CobrandedApplication']['uuid'];
 
@@ -1369,8 +1373,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'User',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
@@ -1388,6 +1395,7 @@ class CobrandedApplication extends AppModel {
 		$viewVars['rep'] = $cobrandedApplication['User']['email'];
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['link'] = Router::url('/users/login', true);
+		$viewVars['appPdfUrl'] = $this->getAppPdfUrl($applicationId);
 
 		if ($optionalTemplate != null) {
 			$template = $optionalTemplate;
@@ -1416,6 +1424,41 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * getAppPdfUrl
+ * Makes a RightSignature API call to retrieve the PDF URL.
+ *
+ * @param int $id Cobranded Application Id
+ * @return string The URL where the PDF is located.
+ */
+	public function getAppPdfUrl($id) {
+		$appData = $this->find('first', array(
+			'recursive' => -1,
+			'fields' => array(
+				'CobrandedApplication.rightsignature_document_guid',
+			),
+			'conditions' => array('CobrandedApplication.id' => $id),
+			'contain' => array('Template.email_app_pdf'),
+		));
+
+		$appPdfUrl = null;
+
+		if ($appData['Template']['email_app_pdf'] === true) {
+			$guid = $appData['CobrandedApplication']['rightsignature_document_guid'];
+			$client = $this->createRightSignatureClient();
+			$docDetals = $client->getDocumentDetails($guid);
+			$docData = json_decode($docDetals, true);
+
+			if (!empty($docData)) {
+				$appPdfUrl = Hash::get($docData, 'document.signed_pdf_url');
+				if (!empty($appPdfUrl)) {
+					$appPdfUrl = urldecode($appPdfUrl);
+				}
+			}
+		}
+		return $appPdfUrl;
+	}
+
+/**
  * submitForReviewEmail
  *
  * @param int $applicationId Cobranded Application Id
@@ -1431,8 +1474,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'User',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
@@ -1490,8 +1536,11 @@ class CobrandedApplication extends AppModel {
 			return $response;
 		}
 
-		$this->id = $applicationId;
-		$cobrandedApplication = $this->read();
+		$settings = array('contain' => array(
+				'Template',
+				'CobrandedApplicationValues',
+			));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
 		$ownerName = '';
@@ -2541,6 +2590,7 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.status',
 				'CobrandedApplication.rightsignature_install_document_guid',
 				'CobrandedApplication.rightsignature_install_status',
+				'CobrandedApplication.data_to_sync',
 				'Cobrand.id',
 				'Cobrand.partner_name',
 				'Template.id',
@@ -2786,5 +2836,329 @@ class CobrandedApplication extends AppModel {
  */
 	private function __startsWith($haystack, $needle) {
 		return $needle === "" || strpos($haystack, $needle) === 0;
+	}
+
+/**
+ * setDataToSync
+ * Saves serialized data with which an application needs to be synced.
+ * This method updates all aplications that use the template field that was modified in some way.
+ *
+ * @param array $data containing a single TemplateField record which was modified/deleted/added.				
+ * @return boolean
+ * @throws InvalidArgumentException
+ */
+	public function setDataToSync($data) {
+		if (!array_key_exists('TemplateField', $data) || empty($data['TemplateField']['section_id'])) {
+			throw new InvalidArgumentException(__("Expected TemplateField data is missing array argument."));
+		}
+
+		$templateId = $this->_getAssociatedTemplateId($data);
+
+		//If no template id was found then no apps were ever using it and/or the template was deleted along with its fields
+		if (empty($templateId)) {
+			return true;
+		}
+
+		//Get all applications that use this template with their serialized data_to_sync string
+		$settings = array(
+			'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync'),
+			'conditions' => array(
+				'CobrandedApplication.status NOT IN' => array(self::STATUS_SIGNED, self::STATUS_COMPLETED)
+			)
+		);
+
+		$cbApps = $this->getByTemplateId($templateId, $settings);
+		if (empty($cbApps)) {
+			return true; //nothing out-of-sync
+		}
+		//Only want TemplateField data to be saved
+		$data['TemplateField'] = $data['TemplateField'];
+
+		//Iterate throug each app
+		foreach ($cbApps as $cpAppDat) {
+				$dataToSync = unserialize($cpAppDat['CobrandedApplication']['data_to_sync']); //decode as array
+				$id = $cpAppDat['CobrandedApplication']['id'];
+			if (empty($dataToSync)) {
+				//Encode TemplateField Data structure as {n}.TemplateField.{field}.{val}
+				$dataToSync = serialize(array($data));
+				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync);
+			} else {
+				//Iterate through and find existing data to sync in order to find a match and update it
+				$matchFound = false;
+				//We expect existing to-be-synced TemplateField Data structure to be {n}.TemplateField.{field}.{val}
+				foreach ($dataToSync as $idx => $oldDat) {
+					//Find a match and exit loop
+					if ($oldDat['TemplateField']['id'] === $data['TemplateField']['id']) {
+						$matchFound = true;
+						break;
+					}
+				}
+				if ($matchFound) {
+					//Use index at which the match was found to update data
+					$dataToSync[$idx]['TemplateField'] = $data['TemplateField'];
+				} else {
+					//Insert new data
+					$dataToSync[]['TemplateField'] = $data['TemplateField'];
+				}
+				$dataToSync = serialize($dataToSync);
+				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync);
+			}
+		}
+
+		//Updating existing prevalidated data no need to validate here
+		return $this->saveMany($updated, array('validate' => false));
+	}
+
+/**
+ * _getAssociatedTemplateId
+ * Finds template id associated with the TemplateField passed in the first param.
+ *
+ * @param array $templateFieldData A singe TemplateField record 
+ * @param array $settings query settings
+ * @visibility protected
+ * @return mixed string|null the template id if found
+ */
+	protected function _getAssociatedTemplateId($templateFieldData) {
+		if (!array_key_exists('TemplateField', $templateFieldData) || empty($templateFieldData['TemplateField']['section_id'])) {
+			throw new InvalidArgumentException(__("Expected TemplateField data is missing array argument."));
+		}
+		//We don't know whether data from associated Template/TemplatePage/TemplateSection models might have been deleted
+		//so can't use those models to find Template associated to the TemplateField.
+		//So first attempt to find a sample of a single CobrandedApplicationValue record that uses this field.
+		$sampleAppTemplate = $this->CobrandedApplicationValues->find('first', array(
+				'recursive' => -1,
+				'contain' => array('CobrandedApplication'),
+				'fields' => array('CobrandedApplication.template_id'), //we only care about this piece of data
+				'conditions' => array(
+						'CobrandedApplicationValues.template_field_id' => Hash::get($templateFieldData, 'TemplateField.id')
+					),
+			));
+
+		$templateId = Hash::get($sampleAppTemplate, 'CobrandedApplication.template_id');
+
+		//If not found then it could be a new field that no CobrandedApplicationValues is using yet
+		if (empty($templateId)) {
+			//Attempt to find Template id directly through the TemplateField class
+			$templateData = ClassRegistry::init('TemplateField')->getTemplate($templateFieldData['TemplateField']['section_id']);
+			$templateId = Hash::get($templateData, 'id');
+		}
+
+		return $templateId;
+	}
+/**
+ * getByTemplateId
+ * Finds a list of applications by template_id
+ *
+ * @param integer $templateId An associated Template.id
+ * @param array $settings query settings
+ * @return array
+ */
+	public function getByTemplateId($templateId, $settings) {
+		$default = array(
+				'contain' => false,
+			);
+		$settings = array_merge($default, $settings);
+		$settings['conditions']['CobrandedApplication.template_id'] = $templateId;
+		return $this->find('all', $settings);
+	}
+
+/**
+ * sycApp
+ * Uses datasource transactions
+ * Synchronizes Application with all the models that they are out of sync.
+ * Synchronizable Associated models are Template, TemplatePages, TemplateSection and TemplateFields
+ * 
+ * @param integer $id $this->id
+ * @return mixed | boolean false on falure otherwise an array with changes that were made to the TemplateField
+ */
+	public function syncApp($id) {
+		$appData = $this->find('first', array(
+				'recursive' => -1,
+				'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync'),
+				'conditions' => array('CobrandedApplication.id' => $id),
+			));
+		$dataToSync = unserialize($appData['CobrandedApplication']['data_to_sync']);
+		$updatedValues = array();
+		$outDatedIds = array();
+		$dataSource = $this->getDataSource();
+		//Begin transaction
+		$dataSource->begin();
+		foreach ($dataToSync as $modedField) {
+			$TemplateField = ClassRegistry::init('TemplateField');
+			//get App values that are using this field
+			$outOfSyncVals = $this->CobrandedApplicationValues->find('all', array(
+						'recursive' => -1,
+						'fields' => array(
+							'CobrandedApplicationValues.id',
+							'CobrandedApplicationValues.cobranded_application_id',
+							'CobrandedApplicationValues.template_field_id',
+							'CobrandedApplicationValues.name',
+							'CobrandedApplicationValues.value',
+						),
+						'conditions' => array(
+							'CobrandedApplicationValues.cobranded_application_id' => $id,
+							'CobrandedApplicationValues.template_field_id' => $modedField['TemplateField']['id']
+						)
+					)
+				);
+			//TemplateFields and CobrandedApplicationValue Model association is dependent,
+			$sycronized = $this->syncAppValues($appData['CobrandedApplication']['id'], $outOfSyncVals, $modedField);
+
+			if ($sycronized === false) {
+				return false;
+			} else {
+				$updatedValues = array_merge($updatedValues, $sycronized);
+				$outDatedIds = array_merge($outDatedIds, Hash::extract($outOfSyncVals, '{n}.CobrandedApplicationValues.id'));
+			}
+		}
+		$this->create();
+		$syncedDat = array('id' => $id, 'data_to_sync' => null);
+
+		//any outdated data to delete?
+		if (!empty($outDatedIds) && $this->CobrandedApplicationValues->deleteAll(array('CobrandedApplicationValues.id IN' => $outDatedIds)) === false) {
+			$dataSource->rollback();
+			return false;
+		}
+
+			//save updated data
+		if ($this->CobrandedApplicationValues->saveAll($updatedValues) === false ||
+
+			//Finally clear out data_to_sync
+			$this->save($syncedDat, array('validate' => false)) === false) {
+
+			//If any operation fails rollback
+			$dataSource->rollback();
+			return false;
+		}
+		$dataSource->commit();
+		//Get data to sync
+		return true;
+	}
+
+/**
+ * syncAppValues
+ * Synchronizes CobrabdedApplicationValues (CAVs) and corresponding TemplateFields
+ * Multiple CAVs will be created for multi-choice fields defined in TemplateFields.default_value
+ * CAVs will be removed if multi-choice definitions within TemplateFields.default_value are removed
+ * CAV.value if not set will be set with any default value(s) defined in TemplateFields.default_value
+ * 
+ * @param int $appId CobrandedApplication.id
+ * @param array $outOfSyncData this is the counterpart of the $modedTemplateField param which will be synced and added to param 1.
+ *				If this param is empty new CobrabdedApplicationValues will be created for each corresponding TemplateField.
+ * @param array $templateField this is the latest TemplateFieldData which will be used to sync CAVs in param 2
+ * @return mixed boolean|array Will return false when the TemplateField.type is unknown and therefore sync cannot be handled 
+ *						or array with data already in sync with corresponding modified TemplateFields data.
+ */
+	public function syncAppValues($appId, $outOfSyncData, $templateField) {
+		$type = $templateField['TemplateField']['type'];
+		$synced = array();
+
+		if ($type == 4 || $type == 5 || $type == 7) { //radio | percents | fees - all multi-choice (',' delimited) and multi-CAV types
+			//default_value contains delimited string of otions with structure <key>::<value>{[default value]||default}
+			$choices = explode(',', $templateField['TemplateField']['default_value']);
+			foreach ($choices as $keyValStr) {
+				$key = Hash::get(explode('::', $keyValStr), '0');
+				$val = Hash::get(explode('::', $keyValStr), '1');
+				$val = preg_replace('/\{.*\}$/', '', $val);//remove default option value from $val
+				$default = null;
+
+				//Type 4 radio's default if present indicates that the radio input should be active
+				if ($type == 4 && preg_match('/\{default\}/i', $keyValStr)) {
+					$default = 'true';
+				} else {
+					//For all others the default is potentially present in $keyValStr
+					preg_match('/\{(.+)\}/', $keyValStr, $matches); //$matches array will be filled with 2 entries
+					$default = Hash::get($matches, '1'); //we want the second match or null
+				}
+
+				//If there are no old values we need to create new ones
+				if (empty($outOfSyncData)) {
+					$synced[] = $this->_setNewCoAppVal($appId, $templateField, $key, $val, $default);
+				} else {
+					//Attempt to find unchaged data and keep it
+					$matchFound = false;
+					//Use Hash::extract to shrink $outOfSyncData on the fly without mesing up contiguity iteration
+					foreach (Hash::extract($outOfSyncData, '{n}') as $idx => $cavData) {
+						if (($cavData['CobrandedApplicationValues']['name'] === $templateField['TemplateField']['merge_field_name'] . $val) ||
+							($cavData['CobrandedApplicationValues']['name'] === $val)) {
+							//Set corresponding default CAV.value IFF is blank for existing data. (possibly the mergefield default value was changed that was made)
+							if (isset($default) && (is_null($cavData['CobrandedApplicationValues']['value']) || $cavData['CobrandedApplicationValues']['value'] === '')) {
+								$cavData['CobrandedApplicationValues']['value'] = $default;
+							}
+							//Add to collection of synced fields
+							$synced[] = $cavData['CobrandedApplicationValues'];
+
+							//remove processed CAV
+							unset($outOfSyncData[$idx]);
+							$matchFound = true;
+							break;//one to one field rel no need to continue loop after match found
+						}
+					}
+					//Create new CAV if there wasn't an existing one matching
+					if (!$matchFound) {
+						$synced[] = $this->_setNewCoAppVal($appId, $templateField, $key, $val, $default);
+					}
+				}
+			}
+			return $synced;
+		} else {
+			$default = null;
+			//extract any default value
+			if ($type == 20) { //select - special case is multi-choice but not multi-CAV
+				foreach (explode(',', $templateField['TemplateField']['default_value']) as $keyValStr) {
+					if (preg_match('/\{default\}/i', $keyValStr)) {
+						$default = Hash::get(explode('::', $keyValStr), '1'); //we want the option value set as the default
+						$default = preg_replace('/\{default\}$/', '', $default);//remove '{default}'' from default
+						break;
+					}
+				}
+			} else {
+				$default = $templateField['TemplateField']['default_value'];
+			}
+			if (empty($outOfSyncData)) {
+					$synced[] = $this->_setNewCoAppVal($appId, $templateField, '', '', $default);
+			} else {
+				$cavData = Hash::get($outOfSyncData, '0.CobrandedApplicationValues');
+				$cavData['name'] = $templateField['TemplateField']['merge_field_name'];
+				if (isset($default) && (is_null($cavData['value']) || $cavData['value'] === '')) {
+					$cavData['value'] = $default;
+				}
+				$synced[] = $cavData;
+			}
+			return $synced;
+		}
+
+		//for all other unknown field types return false
+		return false;
+	}
+
+/**
+ * _setNewCoAppVal
+ * Sets the cobranded application field name and value in the proper format depending on field type.
+ *
+ * @param string $appId the cobranded application id that uses this merge field
+ * @param array $templateField the data of the template field
+ * @param string $mergeFieldKey the mergefield key originally defined as <key>::<value>{[default value]||default}
+ * @param mixed $mergeFieldVal the mergefield value originally defined as <key>::<value>{[default value]||default}
+ * @param mixed $mergeFieldDefaultVal the mergefield default value originally defined as <key>::<value>{[default value]||default}
+ * @return array
+ */
+	protected function _setNewCoAppVal($appId, $templateField, $mergeFieldKey, $mergeFieldVal, $mergeFieldDefaultVal = null) {
+		$newCAV = array(
+			'cobranded_application_id' => $appId,
+			'template_field_id' => $templateField['TemplateField']['id'],
+		);
+
+		if ($templateField['TemplateField']['type'] == 4 || $templateField['TemplateField']['type'] == 5) {
+			$newCAV['name'] = $templateField['TemplateField']['merge_field_name'] . $mergeFieldVal;
+		} elseif ($templateField['TemplateField']['type'] == 7) {
+			$newCAV['name'] = $mergeFieldVal;
+		} else {
+			$newCAV['name'] = $templateField['TemplateField']['merge_field_name'];
+		}
+		$newCAV['value'] = $mergeFieldDefaultVal;
+
+		//Add to collection of synced fields
+		return $newCAV;
 	}
 }

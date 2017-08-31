@@ -126,7 +126,8 @@ class TemplatePageTest extends CakeTestCase {
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
 			'owner_equity_threshold' => 50,
-			'requires_coversheet' => false
+			'requires_coversheet' => false,
+			'email_app_pdf' => true
 		);
 		$returnedtemplate = $this->TemplatePage->getTemplate($templateId);
 		$this->assertEquals($expectedtemplate, $returnedtemplate);
@@ -144,7 +145,8 @@ class TemplatePageTest extends CakeTestCase {
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
 			'owner_equity_threshold' => 50,
-			'requires_coversheet' => null
+			'requires_coversheet' => null,
+			'email_app_pdf' => null
 		);
 		$returnedtemplate = $this->TemplatePage->getTemplate($templateId);
 		$this->assertEquals($expectedtemplate, $returnedtemplate);
@@ -162,7 +164,8 @@ class TemplatePageTest extends CakeTestCase {
 			'rightsignature_template_guid' => null,
 			'rightsignature_install_template_guid' => null,
 			'owner_equity_threshold' => 50,
-			'requires_coversheet' => null
+			'requires_coversheet' => null,
+			'email_app_pdf' => null
 		);
 		$returnedtemplate = $this->TemplatePage->getTemplate($templateId);
 		$this->assertEquals($expectedtemplate, $returnedtemplate);

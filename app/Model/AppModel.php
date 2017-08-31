@@ -39,5 +39,23 @@ class AppModel extends Model {
       'hasHeader' => true,
     )
   );
-  //    	public $recursive = 0;
+ 
+
+/**
+ * getById
+ * Returns a single record by its id. By Default no associated Model data is contained unless specified otherwise in settings param.
+ *
+ * @param integer $id a User.id
+ * @param array $settings to use for search
+ * @return array
+ */
+	public function getById($id, $settings = array()) {
+		$default = array(
+			'contain' => false
+		);
+		$settings = array_merge($default, $settings);
+		$settings['conditions']["{$this->alias}.id"] = $id;
+
+		return $this->find('first', $settings);
+	}
 }
