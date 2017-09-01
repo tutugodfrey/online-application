@@ -1,27 +1,27 @@
-<div  style="width: 350px; margin-left: auto; margin-right: auto; opacity:0;" id='loginContainer'>
+<div class='center-block' style="width: 300px;" id='loginContainer'>
 <?php
 	echo $this->Html->image(
 		'logo.png',
 		array(
-			'alt'=> __('Axia'),
+			'alt' => __('Axia'),
 			'border' => '0',
 			'class' => 'center-block',
 		)
 	);
 ?>
-<h3 class='text-center text-primary' >Welcome</h3>
+
 	<div style='margin-top:-15;opacity:0' id='loginFrmContainer'>
+		<p class='text-center'><strong>Application Portal.</strong> Please Login.</p>
 		<?php
 		echo $this->Form->create('BoostCake', array(
 			'inputDefaults' => array(
 				'div' => 'form-group',
 				'label' => array(
-					'class' => 'col col-md-3 control-label'
+					'class' => 'sr-only'
 				),
-				'wrapInput' => 'col col-md-9',
 				'class' => 'form-control'
 			),
-			'class' => 'well form-horizontal'
+			'class' => 'form-horizontal'
 		));
 		echo $this->Form->input('User.email', array(
 				'placeholder' => 'Email',
@@ -33,12 +33,11 @@
 			)); ?>
 			<div class="form-group">
 				<?php echo $this->Form->submit('Login', array(
-					'div' => 'col col-md-9 col-md-offset-3',
-					'class' => 'btn btn-default'
+					'class' => 'btn btn-default pull-right'
 				)); ?>
 			</div>
-		<?php 
-			echo $this->Form->end(); 
+		<?php
+			echo $this->Form->end();
 			echo $this->Session->flash();
 		?>
 	</div>
