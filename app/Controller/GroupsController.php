@@ -40,7 +40,7 @@ class GroupsController extends AppController {
 			}
 		}
 		if (!empty($id)) {
-			$this->request->data = $this->Group->find('first', array('conditions' => array('id' => $id));
+			$this->request->data = $this->Group->find('first', array('conditions' => array('id' => $id)));
 		}
 	}
 }
