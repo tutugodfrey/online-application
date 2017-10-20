@@ -1374,9 +1374,13 @@ class CobrandedApplication extends AppModel {
 		}
 
 		$settings = array('contain' => array(
-				'User',
-				'CobrandedApplicationValues',
-			));
+			'User',
+			'CobrandedApplicationValues',
+			'Template' => array(
+				'fields' => array('email_app_pdf', 'name'),
+				'Cobrand.partner_name'
+			),
+		));
 		$cobrandedApplication = $this->getById($applicationId, $settings);
 
 		$dbaBusinessName = '';
@@ -1386,16 +1390,20 @@ class CobrandedApplication extends AppModel {
 			$dbaBusinessName = $valuesMap['DBA'];
 		}
 
+		$description = "Application Description: ";
+		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = $cobrandedApplication['User']['email'];
 		$subject = $dbaBusinessName . ' - Online Application Signed';
 		$format = 'text';
 		$template = 'rep_notify_signed';
-		$viewVars = array();
 		$viewVars['rep'] = $cobrandedApplication['User']['email'];
 		$viewVars['merchant'] = $dbaBusinessName;
+		$viewVars['description'] = $description;
 		$viewVars['link'] = Router::url('/users/login', true);
-		$viewVars['appPdfUrl'] = Router::url("/admin/CobrandedApplications/open_app_pdf/$applicationId", true);
+		if (Hash::get($cobrandedApplication, 'Template.email_app_pdf')) {
+			$viewVars['appPdfUrl'] = Router::url("/admin/CobrandedApplications/open_app_pdf/$applicationId", true);
+		}
 
 		if ($optionalTemplate != null) {
 			$template = $optionalTemplate;
