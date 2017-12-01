@@ -993,7 +993,7 @@ class CobrandedApplication extends AppModel {
 					'CobrandedApplication.rightsignature_install_status',
 					'User.id',
 					'Template.id',
-					'Merchant.merchant_id',
+					'Merchant.id',
 					'Coversheet.id'
 				),
 				'joins' => array(
@@ -1018,7 +1018,7 @@ class CobrandedApplication extends AppModel {
 					'CobrandedApplication.rightsignature_install_status',
 					'User.id',
 					'Template.id',
-					'Merchant.merchant_id',
+					'Merchant.id',
 					'Coversheet.id'
 				),
 				'order' => 'CobrandedApplication.created desc'
@@ -2037,7 +2037,7 @@ class CobrandedApplication extends AppModel {
 
 			if ($mergeField['name'] == "MID") {
 				$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . "'>\n";
-				$xml .= "				<value>" . htmlspecialchars($cobrandedApplication['Merchant']['merchant_id']) . "</value>\n";
+				$xml .= "				<value>" . htmlspecialchars($cobrandedApplication['Merchant']['merchant_mid']) . "</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
@@ -2609,7 +2609,7 @@ class CobrandedApplication extends AppModel {
 				'Owner2Email.value',
 				'EMail.value',
 				'LocEMail.value',
-				'Merchant.merchant_id'
+				'Merchant.id'
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
@@ -2690,7 +2690,7 @@ class CobrandedApplication extends AppModel {
 						'CobrandedApplication.id = Coversheet.cobranded_application_id',
 					),
 				),
-				array('table' => 'merchant',
+				array('table' => 'merchants',
 					'alias' => 'Merchant',
 					'type' => 'LEFT',
 					'conditions' => array(

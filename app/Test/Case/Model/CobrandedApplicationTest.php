@@ -2830,7 +2830,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'value' => null,
 					),
 					'Merchant' => array(
-						'merchant_id' => null,
+						'id' => null,
 					)
 			),
 		);
