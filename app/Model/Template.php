@@ -10,8 +10,6 @@ class Template extends AppModel {
 
 	public $displayField = 'name';
 
-	public $useTable = 'onlineapp_templates';
-
 	public $actsAs = array(
 		'Search.Searchable',
 		'Containable',
@@ -34,7 +32,7 @@ class Template extends AppModel {
 
 	public $hasMany = array(
 		'Users' => array(
-			'className' => 'User', 
+			'className' => 'User',
 			'foreignKey' => 'template_id',
 			'dependent' => false,
 		),
@@ -191,9 +189,9 @@ class Template extends AppModel {
 				case 'percents': // 'percents':
 				case 'fees': // 'fees':
 					// split default_value on ',' and append split[1] to the merge_field_name
-					foreach (split(',', $value['field']['default_value']) as $keyValuePairStr) {
-						$keyValuePair = split('::', $keyValuePairStr);
-						$name = $value['field']['merge_field_name'].$keyValuePair[1];
+					foreach (explode(',', $value['field']['default_value']) as $keyValuePairStr) {
+						$keyValuePair = explode('::', $keyValuePairStr);
+						$name = $value['field']['merge_field_name'] . $keyValuePair[1];
 						$formattedData[$name] = array(
 								"type" => $type,
 								"required" => $value['field']['required'],

@@ -9,8 +9,6 @@ class TemplateSection extends AppModel {
 
 	public $displayField = 'name';
 
-	public $useTable = 'onlineapp_template_sections';
-
 	public $actsAs = array(
 		'Search.Searchable',
 		'Containable',
@@ -74,6 +72,7 @@ class TemplateSection extends AppModel {
  * @visibility private
  * @return array
  */
+
 	private function __getRelated($templatePageId) {
 		$data = $this->TemplatePage->find('first', array(
 				'recursive' => -1,
