@@ -11,8 +11,6 @@ class Cobrand extends AppModel {
 
 	public $displayField = 'partner_name';
 
-	public $useTable = 'onlineapp_cobrands';
-
 	public $responseUrlTypes = array(
 		1 => 'return nothing',
 		2 => 'return RS signing url',

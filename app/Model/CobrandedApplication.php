@@ -22,13 +22,6 @@ class CobrandedApplication extends AppModel {
 	const STATUS_SIGNED = "signed";
 
 /**
- * Table to use
- *
- * @var string
- */
-	public $useTable = 'onlineapp_cobranded_applications';
-
-/**
  * Behaviors
  *
  * @var array
@@ -180,6 +173,7 @@ class CobrandedApplication extends AppModel {
  * @param array $options Options passed from Model::save()
  * @return null
  */
+
 	public function afterSave($created, $options = array()) {
 		if ($created === true) {
 			$applicationId = $this->data['CobrandedApplication']['id'];
@@ -993,7 +987,7 @@ class CobrandedApplication extends AppModel {
 					'CobrandedApplication.rightsignature_install_status',
 					'User.id',
 					'Template.id',
-					'Merchant.merchant_id',
+					'Merchant.id',
 					'Coversheet.id'
 				),
 				'joins' => array(
@@ -1018,7 +1012,7 @@ class CobrandedApplication extends AppModel {
 					'CobrandedApplication.rightsignature_install_status',
 					'User.id',
 					'Template.id',
-					'Merchant.merchant_id',
+					'Merchant.id',
 					'Coversheet.id'
 				),
 				'order' => 'CobrandedApplication.created desc'
@@ -2045,7 +2039,7 @@ class CobrandedApplication extends AppModel {
 
 			if ($mergeField['name'] == "MID") {
 				$xml .= "			<merge_field merge_field_name='" . $mergeField['name'] . "'>\n";
-				$xml .= "				<value>" . htmlspecialchars($cobrandedApplication['Merchant']['merchant_id']) . "</value>\n";
+				$xml .= "				<value>" . htmlspecialchars($cobrandedApplication['Merchant']['merchant_mid']) . "</value>\n";
 				$xml .= "				<locked>true</locked>\n";
 				$xml .= "			</merge_field>\n";
 			}
@@ -2617,7 +2611,7 @@ class CobrandedApplication extends AppModel {
 				'Owner2Email.value',
 				'EMail.value',
 				'LocEMail.value',
-				'Merchant.merchant_id'
+				'Merchant.id'
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
@@ -2698,7 +2692,7 @@ class CobrandedApplication extends AppModel {
 						'CobrandedApplication.id = Coversheet.cobranded_application_id',
 					),
 				),
-				array('table' => 'merchant',
+				array('table' => 'merchants',
 					'alias' => 'Merchant',
 					'type' => 'LEFT',
 					'conditions' => array(
@@ -2716,6 +2710,7 @@ class CobrandedApplication extends AppModel {
 
 			}
 			return $query;
+
 		}
 		return $results;
 	}
@@ -2852,7 +2847,7 @@ class CobrandedApplication extends AppModel {
  * Saves serialized data with which an application needs to be synced.
  * This method updates all aplications that use the template field that was modified in some way.
  *
- * @param array $data containing a single TemplateField record which was modified/deleted/added.				
+ * @param array $data containing a single TemplateField record which was modified/deleted/added.
  * @return boolean
  * @throws InvalidArgumentException
  */
@@ -2922,7 +2917,7 @@ class CobrandedApplication extends AppModel {
  * _getAssociatedTemplateId
  * Finds template id associated with the TemplateField passed in the first param.
  *
- * @param array $templateFieldData A singe TemplateField record 
+ * @param array $templateFieldData A singe TemplateField record
  * @param array $settings query settings
  * @visibility protected
  * @return mixed string|null the template id if found
@@ -2976,7 +2971,7 @@ class CobrandedApplication extends AppModel {
  * Uses datasource transactions
  * Synchronizes Application with all the models that they are out of sync.
  * Synchronizable Associated models are Template, TemplatePages, TemplateSection and TemplateFields
- * 
+ *
  * @param integer $id $this->id
  * @return mixed | boolean false on falure otherwise an array with changes that were made to the TemplateField
  */
@@ -3050,12 +3045,12 @@ class CobrandedApplication extends AppModel {
  * Multiple CAVs will be created for multi-choice fields defined in TemplateFields.default_value
  * CAVs will be removed if multi-choice definitions within TemplateFields.default_value are removed
  * CAV.value if not set will be set with any default value(s) defined in TemplateFields.default_value
- * 
+ *
  * @param int $appId CobrandedApplication.id
  * @param array $outOfSyncData this is the counterpart of the $modedTemplateField param which will be synced and added to param 1.
  *				If this param is empty new CobrabdedApplicationValues will be created for each corresponding TemplateField.
  * @param array $templateField this is the latest TemplateFieldData which will be used to sync CAVs in param 2
- * @return mixed boolean|array Will return false when the TemplateField.type is unknown and therefore sync cannot be handled 
+ * @return mixed boolean|array Will return false when the TemplateField.type is unknown and therefore sync cannot be handled
  *						or array with data already in sync with corresponding modified TemplateFields data.
  */
 	public function syncAppValues($appId, $outOfSyncData, $templateField) {

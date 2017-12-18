@@ -14,8 +14,6 @@ class CobrandTest extends CakeTestCase {
 
 	public $autoFixtures = false;
 
-	
-
 	public function setUp() {
 		parent::setUp();
 		$this->Template = ClassRegistry::init('Template');

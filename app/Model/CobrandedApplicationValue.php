@@ -16,8 +16,6 @@ class CobrandedApplicationValue extends AppModel {
  */
 	public $displayField = 'name';
 
-	public $useTable = 'onlineapp_cobranded_application_values';
-
 	public $actsAs = array(
 		'Search.Searchable',
 	);
@@ -218,7 +216,7 @@ class CobrandedApplicationValue extends AppModel {
 				break;
 
 			//case 15: // lengthoftime - [#+] [year|month|day]s
-			//case 16: // creditcard - 
+			//case 16: // creditcard -
 
 			case 17: // url       - http(s)?://domain.com
 				$retVal = Validation::url($trimmedDataValue);
@@ -316,12 +314,12 @@ class CobrandedApplicationValue extends AppModel {
 									$dataLength = count($dataArray);
 									$data = '';
 									for ($x = 0; $x < $dataLength; $x++) {
-										if ($x < ($dataLength - 4)) {                   
-											$data .= 'X';                                   
-										}                                               
-										else {                                          
-											$data .= $dataArray[$x];                        
-										}                                               
+										if ($x < ($dataLength - 4)) {
+											$data .= 'X';
+										}
+										else {
+											$data .= $dataArray[$x];
+										}
 									}
 								}
 							}

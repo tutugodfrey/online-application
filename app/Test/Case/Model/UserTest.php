@@ -71,7 +71,7 @@ class UserTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
-/** 
+/**
  * testOrConditions
  *
  * @covers User::orConditions()
