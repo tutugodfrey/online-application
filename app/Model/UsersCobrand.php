@@ -2,12 +2,9 @@
 App::uses('AppModel', 'Model');
 
 /**
- * UsersCobrand Model
+ * UserCobrand Model
  *
  */
 class UsersCobrand extends AppModel {
-	
-    public $useTable = 'onlineapp_users_onlineapp_cobrands';
-}
 
-?>
+}

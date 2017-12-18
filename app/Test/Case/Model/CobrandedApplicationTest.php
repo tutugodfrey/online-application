@@ -699,7 +699,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 /**
  * __detachBehavior()
  * Utility method to detach behavior
- *	
+ *
  * @param array $templateFields template fields to save with test data, each in an its own array
  * @return void
  */
@@ -711,7 +711,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 /**
  * __saveTstDataForAppSyncProcedure()
  * Utility method to create test associated Template data with 1 page, section and n field(s)
- *	
+ *
  * @param array $templateFields template fields to save with test data, each in an its own array
  * @return void
  */
@@ -764,7 +764,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 /**
  * __saveTstCAVData()
  * Utility method to create test CobrandedApplicationValues CAVs
- *	
+ *
  * @param array $cav CobrandedApplicationValues (CAVs) data structure sjould be compliant and ready for a saveMany operation
  * @return void
  */
@@ -903,7 +903,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public function testSetDataToSyncUpdateOneInManyExistingData() {
 		//Expected should be in saveMany-like data structure
-		//This TemplateField data emulates TemplateFields that were modified at a point in time before a second modification, which takes place at a later point in time, 
+		//This TemplateField data emulates TemplateFields that were modified at a point in time before a second modification, which takes place at a later point in time,
 		//in which only the second TemplateField below is modified
 		$existing = array(
 			array(
@@ -2830,7 +2830,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'value' => null,
 					),
 					'Merchant' => array(
-						'merchant_id' => null,
+						'id' => null,
 					)
 			),
 		);

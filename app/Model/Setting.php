@@ -1,8 +1,10 @@
 <?php
 class Setting extends AppModel {
-	public $useTable = 'onlineapp_settings';
+
 	public $primaryKey = 'key';
+
 	public $displayField = 'key';
+
 	public $validate = array(
 		'key' => array(
 			'notBlank' => array(

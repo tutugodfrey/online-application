@@ -5,9 +5,10 @@ App::uses('EmailTimeline', 'Model');
 App::uses('CobrandedApplication', 'Model');
 
 class Coversheet extends AppModel {
-	public $useTable = 'onlineapp_coversheets';
+
 	public $displayField = 'cobranded_application_id';
-	public $actsAs = array('Containable','Search.Searchable');
+
+	public $actsAs = array('Containable', 'Search.Searchable');
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $validate = array(
@@ -104,7 +105,7 @@ class Coversheet extends AppModel {
 			'message' => 'Internet Merchants: Does the merchant store credit card numbers online?'
 		)
 	);
-	
+
 	public $findMethods = array('index' => true);
 
 	public $belongsTo = array(
@@ -140,7 +141,7 @@ class Coversheet extends AppModel {
 		}
 		return true;
 	}
-		
+
 	function tier4() {
 		if (($this->data['Coversheet']['setup_tier_select'] == '4')) {
 			if ($this->data['Coversheet']['setup_tier4'] != '1') {
@@ -148,9 +149,9 @@ class Coversheet extends AppModel {
 			}
 			return true;
 		}
-		return true;     
+		return true;
 	}
-		
+
 	function setup_tier5_financials() {
 		if (($this->data['Coversheet']['setup_tier_select'] == '5')) {
 			if ($this->data['Coversheet']['setup_tier5_financials'] != '1') {
@@ -168,7 +169,7 @@ class Coversheet extends AppModel {
 			}
 			return true;
 		}
-		return true; 
+		return true;
 	}
 
 	function setup_tier5_bank_statements() {
@@ -178,7 +179,7 @@ class Coversheet extends AppModel {
 			}
 			return true;
 		}
-		return true;  
+		return true;
 	}
 
 	function setup_starterkit() {
@@ -220,7 +221,7 @@ class Coversheet extends AppModel {
 		}
 		return true;
 	}
-		
+
 	function debit() {
 		if ($this->data['Coversheet']['debit'] == 'yes') {
 			if ($this->data['Coversheet']['cp_encrypted_sn'] == '' && $this->data['Coversheet']['cp_pinpad_ra_attached'] == '0') {
@@ -345,14 +346,14 @@ class Coversheet extends AppModel {
 				),
 				'recursive' => 1
 			);
-		
+
 			$CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
 
 			$appValues = $CobrandedApplicationValue->find(
 				'all',
-				$conditions     
+				$conditions
 			);
-	
+
 			$appValueArray = array();
 			foreach ($appValues as $arr) {
 				$appValueArray[] = $arr['CobrandedApplicationValue'];
@@ -446,7 +447,7 @@ class Coversheet extends AppModel {
 				array(
 					'table' => 'onlineapp_cobranded_applications',
 					'alias' => 'CobrandedApplication',
-					'type' => 'LEFT', 
+					'type' => 'LEFT',
 					'conditions' => array(
 						'Coversheet.cobranded_application_id = CobrandedApplication.id'
 					)
