@@ -16,13 +16,6 @@ class User extends AppModel {
 	const API = 'api';
 	const MANAGER = 'manager';
 
-	//User Constants
-	const HOOZA = 59;
-	const FIRE_SPRING = 102;
-	const INSPIRE_PAY = 69;
-
-	public $useTable = 'onlineapp_users';
-
 	public $validate = array(
 		'email' => array(
 			'email' => array(
@@ -150,14 +143,14 @@ class User extends AppModel {
 				'associationForeignKey' => 'user_id',
 		),
 		'Cobrand' => array(
-				'with' => 'UserCobrand',
+				'with' => 'UsersCobrand',
 				'className' => 'Cobrand',
 				'joinTable' => 'onlineapp_users_onlineapp_cobrands',
 				'foreignKey' => 'user_id',
 				'associationForeignKey' => 'cobrand_id',
 		),
 		'Template' => array(
-				'with' => 'UserTemplate',
+				'with' => 'UsersTemplate',
 				'className' => 'Template',
 				'joinTable' => 'onlineapp_users_onlineapp_templates',
 				'foreignKey' => 'user_id',
@@ -273,11 +266,11 @@ class User extends AppModel {
 	}
 
 /**
- * 
+ *
  * @param type $token
  * @return boolean
  * @throws Exception
- */  
+ */
 	public function getActiveUserList() {
 		return $this->find('list', array(
 				'fields' => array('User.id', 'User.fullname'),
@@ -290,7 +283,7 @@ class User extends AppModel {
 /**
  * assignableUsers
  * Return the list of users that can be assigned by the userId.
- * 
+ *
  * @param type $userId a user id
  * @param string $userGroupId the group of the user
  * @return array
@@ -314,7 +307,7 @@ class User extends AppModel {
 	}
 
 /**
- * getAllManagers 
+ * getAllManagers
  * Get a List of Managers
  *
  * @param integer $managerId the id of manger user group
@@ -329,7 +322,7 @@ class User extends AppModel {
 	}
 
 /**
- * getAssignedManagerIds 
+ * getAssignedManagerIds
  * Get an array of all the assigned user ids to a specific user
  *
  * @param integer $userId a user id
@@ -362,7 +355,7 @@ class User extends AppModel {
 
 
 /**
- * getAssignedUserIds 
+ * getAssignedUserIds
  * Get an array of all the assigned user ids to a specific user
  *
  * @param integer $userId a user id
@@ -380,7 +373,7 @@ class User extends AppModel {
 
 /**
  * useToken
- * 
+ *
  * @param string $token a string token max length 40 chars
  * @return boolean
  * @throws Exception
@@ -460,7 +453,7 @@ class User extends AppModel {
 
 /**
  * afterFind callback
- * 
+ *
  * @param array $results Array of results
  * @param boolean $primary a boolean primary param requied for callback
  * @return boolean
@@ -522,8 +515,8 @@ class User extends AppModel {
 					'limit' => 150
 				)
 		);
-		$user = Hash::remove($original, '{n}.Cobrand.{n}.UserCobrand');
-		$user = Hash::remove($user, '{n}.Template.{n}.UserTemplate');
+		$user = Hash::remove($original, '{n}.Cobrand.{n}.UsersCobrand');
+		$user = Hash::remove($user, '{n}.Template.{n}.UsersTemplate');
 		$user = Hash::remove($user, '{n}.Template.name');
 		$user = Hash::flatten($user);
 		foreach ($user as $key => $value) {
@@ -540,13 +533,13 @@ class User extends AppModel {
 
 /**
  * getCobrandIds
- * Get all UserCobrands that belong to a user
- * 
+ * Get all UsersCobrands that belong to a user
+ *
  * @param integer $userId a user id
  * @return array
  */
 	public function getCobrandIds($userId) {
-		$cobrandIds = $this->UserCobrand->find(
+		$cobrandIds = $this->UsersCobrand->find(
 			'all',
 			array(
 				'conditions' => array('user_id' => $userId),
@@ -554,19 +547,19 @@ class User extends AppModel {
 			)
 		);
 
-		$ids = Hash::extract($cobrandIds, '{n}.UserCobrand.cobrand_id');
+		$ids = Hash::extract($cobrandIds, '{n}.UsersCobrand.cobrand_id');
 		return $ids;
 	}
 
 /**
  * getTemplates
- * Get all UserTemplate that belong to a user
- * 
+ * Get all UsersTemplate that belong to a user
+ *
  * @param integer $userId a user id
  * @return array
  */
 	public function getTemplates($userId) {
-		$templateIds = $this->UserTemplate->find(
+		$templateIds = $this->UsersTemplate->find(
 			'list',
 			array(
 				'conditions' => array(
@@ -598,7 +591,7 @@ class User extends AppModel {
 
 	/**
 	 * getEditViewData
-	 * 
+	 *
 	 * @param integer $id a user id
 	 * @return array
 	 */

@@ -896,7 +896,7 @@ class TemplateTest extends CakeTestCase {
 
 /**
  * testGetTemplatesAndCobrands
- * 
+ *
  * @return void
  */
 	public function testGetTemplatesAndCobrands() {
@@ -919,7 +919,7 @@ class TemplateTest extends CakeTestCase {
 
 /**
  * testSetCobrandsTemplatesList
- * 
+ *
  * @return void
  */
 	public function testSetCobrandsTemplatesList() {

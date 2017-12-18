@@ -8,8 +8,6 @@ App::uses('Validation', 'Utility');
  */
 class CobrandedApplicationAch extends AppModel {
 
-	public $useTable = 'onlineapp_cobranded_application_aches';
-
 	/**
 	 * Attach Model Behavoirs
 	 * @var array
@@ -126,12 +124,3 @@ class CobrandedApplicationAch extends AppModel {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-

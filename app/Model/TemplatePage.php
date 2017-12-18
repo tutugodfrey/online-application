@@ -8,8 +8,6 @@ class TemplatePage extends AppModel {
 
 	public $displayField = 'name';
 
-	public $useTable = 'onlineapp_template_pages';
-
 	public $actsAs = array(
 		'Search.Searchable',
 		'Containable',
@@ -94,7 +92,7 @@ class TemplatePage extends AppModel {
 		$validateAppPageIndex = 0;
 		$pagesCount = count($pages);
 		if ($pagesCount > 1) {
-			for ($index=0; $index < $pagesCount; $index++) { 
+			for ($index = 0; $index < $pagesCount; $index++) {
 				if ($pages[$index]['name'] == 'Validate Application') {
 					$validateAppPageIndex = $index;
 				}
@@ -114,6 +112,5 @@ class TemplatePage extends AppModel {
 			}
 
 		}
-
 	}
 }

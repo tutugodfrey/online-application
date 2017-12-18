@@ -1,7 +1,7 @@
 <?php
 
 class EmailTimelineSubject extends AppModel {
-	public $useTable = 'onlineapp_email_timeline_subjects';
+
 	public $validate = array(
 		'subject' => array(
 			'notBlank' => array(
@@ -14,7 +14,6 @@ class EmailTimelineSubject extends AppModel {
 			),
 		),
 	);
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
 	public $hasMany = array(
 		'EmailTimeline' => array(
@@ -27,5 +26,3 @@ class EmailTimelineSubject extends AppModel {
 	);
 
 }
-
-?>
