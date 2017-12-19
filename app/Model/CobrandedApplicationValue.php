@@ -232,8 +232,8 @@ class CobrandedApplicationValue extends AppModel {
 
 			case 20: // select - one of the options should be selected
 				if (!empty($templateField['default_value'])) {
-					foreach (split(',', $templateField['default_value']) as $keyValuePairStr) {
-						$keyValuePair = split('::', $keyValuePairStr);
+					foreach (explode(',', $templateField['default_value']) as $keyValuePairStr) {
+						$keyValuePair = explode('::', $keyValuePairStr);
 						if ($trimmedDataValue == $keyValuePair[0] || $trimmedDataValue == $keyValuePair[1]) {
 							$retVal = true;
 							break;
