@@ -2088,7 +2088,7 @@ class CobrandedApplication extends AppModel {
 		$xml .= "			</merge_field>\n";
 
 		$xml .= "		</merge_fields>\n";
-		$xml .= "		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>\n";
+		$xml .= "		<callback_location>https://" . $hostname . "/cobranded_applications/document_callback</callback_location>\n";
 		$xml .= "	</template>\n";
 
 		return $xml;
