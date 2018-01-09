@@ -460,7 +460,13 @@
                                 <tr>
                                     <td style="width: 50px">Partner:</td>
                                     <td>
-                                        <?php echo $this->Form->input('setup_partner',array('div' => false, 'label' => false)); ?>
+										<?php echo $this->Form->input('setup_partner',
+											array(
+												'type' => 'text',
+												'div' => false,
+												'label' => false
+											)
+										); ?>
                                     </td>
                                     <td>
                                         Pmt Info:
