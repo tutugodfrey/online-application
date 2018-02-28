@@ -2862,7 +2862,7 @@ class CobrandedApplication extends AppModel {
 
 		//Get all applications that use this template with their serialized data_to_sync string
 		$settings = array(
-			'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync'),
+			'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync', 'CobrandedApplication.modified'),
 			'conditions' => array(
 				'CobrandedApplication.status NOT IN' => array(self::STATUS_SIGNED, self::STATUS_COMPLETED)
 			)
@@ -2879,10 +2879,12 @@ class CobrandedApplication extends AppModel {
 		foreach ($cbApps as $cpAppDat) {
 				$dataToSync = unserialize($cpAppDat['CobrandedApplication']['data_to_sync']); //decode as array
 				$id = $cpAppDat['CobrandedApplication']['id'];
+				//Keep original modified date, Sync operations shold not change it
+				$modDate = $cpAppDat['CobrandedApplication']['modified'];
 			if (empty($dataToSync)) {
 				//Encode TemplateField Data structure as {n}.TemplateField.{field}.{val}
 				$dataToSync = serialize(array($data));
-				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync);
+				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync, 'modified' => $modDate);
 			} else {
 				//Iterate through and find existing data to sync in order to find a match and update it
 				$matchFound = false;
@@ -2902,7 +2904,7 @@ class CobrandedApplication extends AppModel {
 					$dataToSync[]['TemplateField'] = $data['TemplateField'];
 				}
 				$dataToSync = serialize($dataToSync);
-				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync);
+				$updated[] = array('id' => $id, 'data_to_sync' => $dataToSync, 'modified' => $modDate);
 			}
 		}
 
@@ -2975,7 +2977,7 @@ class CobrandedApplication extends AppModel {
 	public function syncApp($id) {
 		$appData = $this->find('first', array(
 				'recursive' => -1,
-				'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync'),
+				'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync', 'CobrandedApplication.modified'),
 				'conditions' => array('CobrandedApplication.id' => $id),
 			));
 		$dataToSync = unserialize($appData['CobrandedApplication']['data_to_sync']);
@@ -3012,8 +3014,10 @@ class CobrandedApplication extends AppModel {
 				$outDatedIds = array_merge($outDatedIds, Hash::extract($outOfSyncVals, '{n}.CobrandedApplicationValues.id'));
 			}
 		}
+		//Keep original modified date, Sync operations shold not change it
+		$modDate = $appData['CobrandedApplication']['modified'];
 		$this->create();
-		$syncedDat = array('id' => $id, 'data_to_sync' => null);
+		$syncedDat = array('id' => $id, 'data_to_sync' => null, 'modified' => $modDate);
 
 		//any outdated data to delete?
 		if (!empty($outDatedIds) && $this->CobrandedApplicationValues->deleteAll(array('CobrandedApplicationValues.id IN' => $outDatedIds)) === false) {
