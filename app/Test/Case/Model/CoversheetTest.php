@@ -9,8 +9,6 @@ class CoversheetTest extends CakeTestCase {
 
 	public $autoFixtures = false;
 
-	
-
 /**
  * Fixtures
  *
@@ -29,6 +27,9 @@ class CoversheetTest extends CakeTestCase {
 		'app.onlineappCobrandedApplicationValue',
 		'app.onlineappEmailTimelineSubject',
 		'app.onlineappEmailTimeline',
+		'app.onlineappUsersManager',
+		'app.onlineappUsersTemplate',
+		'app.onlineappUsersCobrand',
 	);
 
 /**
@@ -68,6 +69,9 @@ class CoversheetTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappCoversheet');
 		$this->loadFixtures('OnlineappEmailTimelineSubject');
 		$this->loadFixtures('OnlineappEmailTimeline');
+		$this->loadFixtures('OnlineappUsersManager');
+		$this->loadFixtures('OnlineappUsersTemplate');
+		$this->loadFixtures('OnlineappUsersCobrand');
 	}
 
 /**

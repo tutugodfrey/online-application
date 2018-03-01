@@ -2994,7 +2994,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				<locked>true</locked>
 			</merge_field>
 		</merge_fields>
-		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>
+		<callback_location>https://" . $hostname . "/cobranded_applications/document_callback</callback_location>
 	</template>
 ";
 
@@ -3078,7 +3078,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				<locked>true</locked>
 			</merge_field>
 		</merge_fields>
-		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>
+		<callback_location>https://" . $hostname . "/cobranded_applications/document_callback</callback_location>
 	</template>
 ";
 
@@ -3153,7 +3153,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				<locked>true</locked>
 			</merge_field>
 		</merge_fields>
-		<callback_location>http://" . $hostname . "/cobranded_applications/document_callback</callback_location>
+		<callback_location>https://" . $hostname . "/cobranded_applications/document_callback</callback_location>
 	</template>
 ";
 
