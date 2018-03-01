@@ -1320,17 +1320,19 @@ class CobrandedApplicationsController extends AppController {
 	public function syncApplication($id, $templateId) {
 		$this->CobrandedApplication->id = $id;
 		if (!$this->CobrandedApplication->exists()) {
-			$this->_failure(__('Error: Application does not exist!'), array('action' => 'index', 'admin' => true));
+			$this->_failure(__('Error: Application does not exist!'));
+			$this->redirect($this->referer());
 		}
 
 		if (!$this->CobrandedApplication->Template->hasAny(array('id' => $templateId))) {
-			$this->_failure(__("The Application's Template could not be found! Application cannot be synchronized."), array('action' => 'index', 'admin' => true));
+			$this->_failure(__("The Application's Template could not be found! Application cannot be synchronized."));
 		} else {
 			if ($this->CobrandedApplication->syncApp($id)) {
-				$this->_success(__("Application synchronized with its Template! Please review application, data has been synced and may have changed if corresponding Template Fields were modified."), array('action' => 'index', 'admin' => true));
+				$this->_success(__("Application synchronized with its Template! Please review application, data has been synced and may have changed if corresponding Template Fields were modified."));
 			} else {
-				$this->_failure(__("Error: Synchronization process failed!"), array('action' => 'index', 'admin' => true));
+				$this->_failure(__("Error: Synchronization process failed!"));
 			}
 		}
+		$this->redirect($this->referer());
 	}
 }
