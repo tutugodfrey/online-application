@@ -40,8 +40,6 @@ class TemplateField extends AppModel {
 
 	public $displayName = 'name';
 
-	public $useTable = 'onlineapp_template_fields';
-
 	public $actsAs = array(
 		'Search.Searchable',
 		'Containable',

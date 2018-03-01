@@ -15,11 +15,9 @@ class Epayment extends AppModel {
 	const API_START_DATE = '2012-05-07';
 
 /**
- * Api request url 
+ * Api request url
  */
 	const API_REQ_URL = 'https://secure.axiaepay.com/interface/vendorapi/sourcekeys?output=xml&apikey=';
-
-	public $useTable = 'onlineapp_epayments';
 
 	public $belongsTo = array(
 		'User' => array(

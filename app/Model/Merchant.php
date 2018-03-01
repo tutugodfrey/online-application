@@ -1,10 +1,6 @@
 <?php
 class Merchant extends AppModel {
 
-	public $useTable = 'merchant';
-
-	public $primaryKey = 'merchant_id';
-
 	public $displayField = 'merchant_dba';
 
 	public $hasMany = array(
