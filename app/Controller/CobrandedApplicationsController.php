@@ -937,7 +937,7 @@ class CobrandedApplicationsController extends AppController {
 		$this->set('widgetWidth', $widgetWidth);
 
 		// Height of widget is changeable (Optional)
-		$widgetHeight = 600;
+		$widgetHeight = 900;
 		$this->set('widgetHeight', $widgetHeight);
 
 		$guid = htmlspecialchars($_REQUEST["guid"]);
@@ -958,7 +958,7 @@ class CobrandedApplicationsController extends AppController {
 		$result = Set::normalize($xml);
 		$this->set('xml', $xml);
 
-		$appTemplateId;
+		$appTemplateId = null;
 
 		$data = array();
 
@@ -976,7 +976,7 @@ class CobrandedApplicationsController extends AppController {
 				}
 			}
 		}
-
+		$varSigner = false;
 		if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
 			$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
 			$appTemplateId = $data['CobrandedApplication']['template_id'];
@@ -1000,7 +1000,7 @@ class CobrandedApplicationsController extends AppController {
 				}
 			}
 		}
-
+		$this->set('varSigner', $varSigner);
 		$template = $this->CobrandedApplication->User->Template->find(
 			'first',
 			array(
@@ -1008,8 +1008,8 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
-		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
+		$this->set('brand_logo_url', Hash::get($template, 'Cobrand.brand_logo_url'));
+		$this->set('cobrand_logo_url', Hash::get($template, 'Cobrand.cobrand_logo_url'));
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
 		$this->set('include_brand_logo', false);
@@ -1053,6 +1053,19 @@ class CobrandedApplicationsController extends AppController {
 			$alreadySigned = true;
 			$this->set('alreadySigned', $alreadySigned);
 		}
+		$appPdfUrl = null;
+		if ($alreadySigned === false) {
+			$docDetals = $client->getDocumentDetails($guid);
+			$docData = json_decode($docDetals, true);
+
+			if (!empty($docData)) {
+				$appPdfUrl = Hash::get($docData, 'document.pdf_url');
+				if (!empty($appPdfUrl)) {
+					$appPdfUrl = urldecode($appPdfUrl);
+				}
+			}
+		}
+		$this->set('appPdfUrl', $appPdfUrl);
 	}
 
 /**
