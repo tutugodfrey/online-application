@@ -3128,8 +3128,12 @@ class CobrandedApplication extends AppModel {
 			} else {
 				$cavData = Hash::get($outOfSyncData, '0.CobrandedApplicationValues');
 				$cavData['name'] = $templateField['TemplateField']['merge_field_name'];
-				if (isset($default) && (is_null($cavData['value']) || $cavData['value'] === '')) {
-					$cavData['value'] = $default;
+				if (isset($default)) {
+					//If the CAV does not validate, then it means that the template field option value that is supposed to match
+					//the corresponding current CAV has been removed or changed, therefore set it to default
+					if (empty($cavData['value']) || ($type == 20 && $this->CobrandedApplicationValues->validApplicationValue($cavData, $type, $templateField['TemplateField']) === false)) {
+						$cavData['value'] = $default;
+					}
 				}
 				$synced[] = $cavData;
 			}
