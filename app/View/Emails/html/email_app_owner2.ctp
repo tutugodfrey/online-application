@@ -1,6 +1,6 @@
 Dear <?php echo $ownerName; ?>,</br>
 </br>
-Please click on the following link to complete your Axia Merchant Application.
+Please click on the following link to complete your Axia Payments Application.
 </br>
 </br>
 <?php echo $this->Html->link($url, $url);  ?></br>
@@ -8,7 +8,7 @@ Please click on the following link to complete your Axia Merchant Application.
 </br>
 Thank you,</br>
 </br>
-Axia Merchant Services</br>
+Axia Payments</br>
 <?php echo "<a href=\"mailto:app@axiapayments.com?Subject=" . $merchant . "%20Online%20Application\">app@axiapayments.com</a>" ?>
 </br>
 877.875.6114
