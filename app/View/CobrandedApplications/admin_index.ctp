@@ -148,7 +148,7 @@
 					);
 				}
 
-				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['merchant_id'])) {
+				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['id'])) {
 					echo $this->Html->link(' ',
 						array(
 							'action' => 'install_sheet_var',

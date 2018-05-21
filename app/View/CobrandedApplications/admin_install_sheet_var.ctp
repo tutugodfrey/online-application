@@ -97,7 +97,7 @@ echo '<div class="row col-md-7">';
 	echo '<strong>City: </strong>' . $city . '<br/>';
 	echo '<strong>State: </strong>' . $state . '<br/>';
 	echo '<strong>Zip: </strong>' . $zip . '<br/>';
-	echo '<strong>Merchant ID: </strong>' . $data['Merchant']['merchant_id'] . '<br/><br/>';
+	echo '<strong>Merchant ID: </strong>' . $data['Merchant']['merchant_mid'] . '<br/><br/>';
 
 	$applications = explode(",", $applications, -1);
 	$applications = array_unique($applications);
