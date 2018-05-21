@@ -179,21 +179,14 @@ var motoQuestionnaireCheck = function(){
 };
 
 var totalStartUpFees = function() {
-	var creditAppFee = ($("[name=CreditAppFee]").length)? parseFloat($("[name=CreditAppFee]").val().replace(/,/g, '')) : false ;
-	var creditEquipmentFee = ($("[name=CreditEquipmentFee]").length)? parseFloat($("[name=CreditEquipmentFee]").val().replace(/,/g, '')) : false;
-	var creditExpediteFee = ($("[name=CreditExpediteFee]").length)? parseFloat($("[name=CreditExpediteFee]").val().replace(/,/g, '')) : false;
-	var creditReprogramFee = ($("[name=CreditReprogramFee]").length)? parseFloat($("[name=CreditReprogramFee]").val().replace(/,/g, '')) : false;
-	var creditVirtualTrainingFee = ($("[name=CreditVirtualTrainingFee]").length)? parseFloat($("[name=CreditVirtualTrainingFee]").val().replace(/,/g, '')) : false;
-	var creditMobileSetupFee = ($("[name=CreditMobileSetupFee]").length)? parseFloat($("[name=CreditMobileSetupFee]").val().replace(/,/g, '')) : false;
-
-	if (!creditAppFee) {creditAppFee = 0;}
-	if (!creditEquipmentFee) {creditEquipmentFee = 0;}
-	if (!creditExpediteFee) {creditExpediteFee = 0;}
-	if (!creditReprogramFee) {creditReprogramFee = 0;}
-	if (!creditVirtualTrainingFee) {creditVirtualTrainingFee = 0;}
-	if (!creditMobileSetupFee) {creditMobileSetupFee = 0;}
-
-	var newTotal = creditAppFee + creditEquipmentFee + creditExpediteFee + creditReprogramFee + creditVirtualTrainingFee + creditMobileSetupFee;
+	var newTotal = 0;
+	$("[label='Start Up Fees*']").each(function(index, item){
+		if ($(item).attr('id') !== 'Total') {
+			amount = parseFloat($(item).val().replace(/,/g, ''));
+			amount = isNaN(amount)? 0 : amount;
+			newTotal += parseFloat(amount);
+		}
+	});
 
 	newTotal = newTotal.toFixed(3);
 	previousTotal = parseFloat($("[label*='Start Up Fees'][name='Total']").val()).toFixed(3);
@@ -202,6 +195,27 @@ var totalStartUpFees = function() {
 	if (newTotal !== previousTotal) {
 		$("[label*='Start Up Fees'][name='Total']").val(newTotal);
 		$("[label*='Start Up Fees'][name='Total']").trigger('change');
+	}
+}
+
+
+var totalMonthlyVolume = function() {
+	var newTotalVol = 0;
+	$("[label$=' Volume*']").each(function(index, item){
+		if ($(item).attr('id').indexOf('Total') < 0) {
+			amount = parseFloat($(item).val().replace(/,/g, ''));
+			amount = isNaN(amount)? 0 : amount;
+			newTotalVol += parseFloat(amount);
+		}	
+	});
+
+	newTotalVol = newTotalVol.toFixed(3);
+	previousTotal = parseFloat($("[label^='Total Monthly Volume']").val()).toFixed(3);
+
+	//Trigger AJAX request to update total field IFF a change actually happened.
+	if (newTotalVol !== previousTotal) {
+		$("[label^='Total Monthly Volume']").val(newTotalVol);
+		$("[label^='Total Monthly Volume']").trigger('change');
 	}
 }
 
@@ -306,29 +320,13 @@ $(document).ready(function() {
 	$(":input").inputmask();
 
 	totalStartUpFees();
+	$("[label='Start Up Fees*']").on('blur', totalStartUpFees);
 
-	// set up the onBlur handlers for the Start Up Fees
-	$("[name='CreditAppFee']").on('blur', totalStartUpFees);
-	$("[name='CreditEquipmentFee']").on('blur', totalStartUpFees);
-	$("[name='CreditExpediteFee']").on('blur', totalStartUpFees);
-	$("[name='CreditReprogramFee']").on('blur', totalStartUpFees);
-	$("[name='CreditVirtualTrainingFee']").on('blur', totalStartUpFees);
-	$("[name='CreditMobileSetupFee']").on('blur', totalStartUpFees);
+	totalMonthlyVolume();
+	$("[label$=' Volume*']").on('blur', totalMonthlyVolume);
 
 	$('#ACH-Yes').on('change', achHideOrShow);
 	$('#ACH-No').on('change', achHideOrShow);
 
 	achHideOrShow();
 });
-
-
-
-
-
-
-
-
-
-
-
-
