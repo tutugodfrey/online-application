@@ -74,8 +74,12 @@ class CobrandsController extends AppController {
 	}
 
 	public function admin_delete($idToDelete) {
-		$this->Cobrand->delete($idToDelete);
-		$this->_success("Cobrand Deleted!");
+		try {
+			$this->Cobrand->delete($idToDelete);
+			$this->_success("Cobrand Deleted!");
+		} catch (Exception $e) {
+			$this->_failure("Cobrand is being used by other user(s) and/or by templates and can no longer be Deleted!");
+		}
 		$this->redirect($this->_listUrl);
 	}
 
