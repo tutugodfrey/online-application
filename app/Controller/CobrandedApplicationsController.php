@@ -1095,7 +1095,7 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		if ($data['Merchant']['merchant_id'] == "") {
+		if (empty($data['Merchant']['id'])) {
 			$this->Session->setFlash(
 					__('This Application Has not been boarded into the Database!'),
 					'Flash/installSheetAlert',
