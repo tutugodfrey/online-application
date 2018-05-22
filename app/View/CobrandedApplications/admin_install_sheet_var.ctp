@@ -110,13 +110,13 @@ echo '<div class="row col-md-7">';
 		$divString = 'show.hide';
 		echo '<strong>This Installation sheet was already sent for Signing.</strong><br/>';
 		echo $this->Html->link('Click to Send Again.', '', array('update' => $divString, 'loading' => 'Effect.Appear(\'' . $divString . '\')', )) . '<br/>';
-		echo $this->Html->div($divString, array('style' => 'display:none'));
+		echo $this->Html->div($divString, null, array('style' => 'display:none'));
 	}
 	if ($data['CobrandedApplication']['rightsignature_install_status'] == 'signed') {
 		$divString = 'show.hide';
 		echo '<strong>This Installation sheet has already been signed.</strong><br/>';
 		echo $this->Html->link('Click to Send Again.', '', array('update' => $divString, 'loading' => 'Effect.Appear(\'' . $divString . '\')', )) . '<br/>';
-		echo $this->Html->div($divString, array('style' => 'display:none'));
+		echo $this->Html->div($divString, null, array('style' => 'display:none'));
 	}
 
 	echo 'Please select or enter an email address for the Install Sheet Recipient <br/>';
