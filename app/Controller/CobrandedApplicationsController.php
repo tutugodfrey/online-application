@@ -462,7 +462,7 @@ class CobrandedApplicationsController extends AppController {
 				if (array_key_exists('search', $this->passedArgs)) {
 					if (in_array($this->passedArgs['user_id'], $userIds)) {
 						$this->Paginator->settings['conditions'] = $this->CobrandedApplication->parseCriteria($this->passedArgs);
-					} else if (!in_array($this->passedArgs['user_id'], $userIds)) {
+					} elseif (!in_array($this->passedArgs['user_id'], $userIds)) {
 						$this->Paginator->settings['conditions']['CobrandedApplication.user_id'] = $userIds;
 					}
 				} else {
@@ -472,7 +472,19 @@ class CobrandedApplicationsController extends AppController {
 				}
 				break;
 		}
-		$this->set('cobrandedApplications',  $this->Paginator->paginate());
+
+		if (empty($this->request->query['limit'])) {
+			$this->request->query['limit'] = 25;
+		}
+
+		$this->Paginator->settings['limit'] = $this->request->query['limit'];
+		try {
+			$this->set('cobrandedApplications', $this->Paginator->paginate());
+		} catch (NotFoundException $e) {
+			$lastPage = $this->request->params['paging']['CobrandedApplication']['options']['page'] - 1;
+			$queryParams = array_merge($this->request->query, array('limit' => $this->request->params['paging']['CobrandedApplication']['limit']));
+			$this->redirect(Router::url(array('action' => 'admin_index', 'page:' . $lastPage, '?' => $queryParams)));
+		}
 
 		$userTemplate = $this->User->Template->find(
 			'first',
