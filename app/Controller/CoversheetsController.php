@@ -267,7 +267,7 @@ class CoversheetsController extends AppController {
 
 		if (empty($users)) {
 			$users = $this->Coversheet->User->find(
-				'list', 
+				'list',
 				array(
 					'conditions' => array('User.id' => $this->Auth->user('id')),
 				)
@@ -296,7 +296,19 @@ class CoversheetsController extends AppController {
 				}
 				break;
 		}
-		$this->set('coversheets',  $this->Paginator->paginate());
+
+		if (empty($this->request->query['limit'])) {
+			$this->request->query['limit'] = 25;
+		}
+
+		$this->Paginator->settings['limit'] = $this->request->query['limit'];
+		try {
+			$this->set('coversheets', $this->Paginator->paginate());
+		} catch (NotFoundException $e) {
+			$lastPage = $this->request->params['paging']['Coversheet']['options']['page'] - 1;
+			$queryParams = array_merge($this->request->query, array('limit' => $this->request->params['paging']['Coversheet']['limit']));
+			$this->redirect(Router::url(array('action' => 'admin_index', 'page:' . $lastPage, '?' => $queryParams)));
+		}
 
 		$userTemplate = $this->User->Template->find(
 			'first',
@@ -309,7 +321,7 @@ class CoversheetsController extends AppController {
 		$this->set('users', $users);
 		$this->set('user_id', $this->Auth->user('id'));
 	}
-		
+
 /*
  * This should probably be a model function.
  * determines the underwriting guideline tiers based on data entered through the
@@ -317,7 +329,6 @@ class CoversheetsController extends AppController {
  */        
         protected function tier($id) {
             $data = $this->Coversheet->CobrandedApplication->findById($id);
-            //debug($data);
             $moto = false;
             $result = '';
 

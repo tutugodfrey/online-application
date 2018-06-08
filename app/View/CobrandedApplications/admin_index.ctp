@@ -1,7 +1,10 @@
 <!--Load status popover css customizations-->
 <link rel="stylesheet" type="text/css" href="/css/app_status_popover.css">
 <div class="CobrandedApplications">
-	<?php echo $this->Element('cobranded_applications/search'); ?>
+<?php echo $this->Element('cobranded_applications/search');
+	  echo $this->Element('resultLimitModifier');
+?>
+
 	<table class="table table-condensed table-striped table-hover">
 		<tr>
 			<th><!--spacer--></th>
@@ -224,8 +227,9 @@
 		</tr>
 		<?php endforeach; ?>
 	</table>
-	<?php 
-		echo $this->Element('paginatorBottomNav'); 
+	<?php
+		echo $this->Element('resultLimitModifier');
+		echo $this->Element('paginatorBottomNav');
 		echo $this->Element('Ajax/dynamicModal');
 	?>
 </div>
