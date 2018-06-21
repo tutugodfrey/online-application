@@ -210,7 +210,7 @@ var totalMonthlyVolume = function() {
 	});
 
 	newTotalVol = newTotalVol.toFixed(3);
-	previousTotal = parseFloat($("[label^='Total Monthly Volume']").val()).toFixed(3);
+	previousTotal = parseFloat($("[label^='Total Monthly Volume']").val().replace(/,/g, '')).toFixed(3);
 
 	//Trigger AJAX request to update total field IFF a change actually happened.
 	if (newTotalVol !== previousTotal) {
