@@ -879,6 +879,12 @@ class CobrandedApplication extends AppModel {
 				$values = $this->__addValue($values, $val);
 			}
 		}
+		//The following key value pairs are intended as a sort of META data which the database system requires and will recognize during the import if this CSV data.
+		//The database system will create the merchant account and will set it up based on which this META data key value pairs.
+		if (stripos(Hash::get($app, 'Template.name'), 'Payment Fusion') !== false) {
+			$keys = $this->__addKey($keys, 'PaymentFusion');
+			$values = $this->__addValue($values, 'YES');
+		}
 	}
 
 /**
