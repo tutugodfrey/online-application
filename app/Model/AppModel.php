@@ -22,6 +22,7 @@
  */
 
 App::uses('Model', 'Model');
+App::uses('CakeEmail', 'Network/Email');
 
 /**
  * Application model for Cake.
@@ -103,5 +104,85 @@ class AppModel extends Model {
 			return false;
 		}
 		return $this->data[$this->alias][$fieldName1] === $this->data[$this->alias][$fieldName2];
+	}
+
+/**
+ * getRandHash method
+ * Generates a pseudorandom md5 hash string which can be used as a unique idenfier.
+ * Should not to be used as a password!
+ * 
+ * @return string md5 hash
+ */
+	public function getRandHash() {
+		$alphaNum = implode('', array_merge(range('a', 'z'), range(0, 9)));
+		return md5(str_shuffle($alphaNum));
+	}
+
+/**
+ * sendEmail
+ *
+ * @param array $args arguments to control how the email should be composed
+ *
+ * @return $response array
+ */
+	public function sendEmail($args) {
+		$response = array(
+			'success' => false,
+			'msg' => 'Failed to send email.',
+		);
+
+		if (!$this->CakeEmail) {
+			$this->CakeEmail = new CakeEmail('default');
+		}
+
+		if (key_exists('from', $args)) {
+			$this->CakeEmail->from($args['from']);
+
+		} else {
+			$response['msg'] = 'from argument is missing.';
+			return $response;
+		}
+
+		if (key_exists('to', $args)) {
+			if (Validation::email($args['to'])) {
+				$this->CakeEmail->to($args['to']);
+			} else {
+				$response['msg'] = 'invalid email address submitted.';
+				return $response;
+			}
+		} else {
+			$response['msg'] = 'to argument is missing.';
+			return $response;
+		}
+
+		$subject = 'No subject';
+		if (key_exists('subject', $args)) {
+			$subject = $args['subject'];
+		}
+
+		$this->CakeEmail->subject($subject);
+
+		if (key_exists('format', $args)) {
+			$this->CakeEmail->emailFormat($args['format']);
+		}
+
+		if (key_exists('template', $args)) {
+			$this->CakeEmail->template($args['template']);
+		}
+
+		if (key_exists('viewVars', $args)) {
+			$this->CakeEmail->viewVars($args['viewVars']);
+		}
+
+		if (key_exists('attachments', $args) && !empty($args['attachments'])) {
+			$this->CakeEmail->attachments($args['attachments']);
+		}
+
+		if ($this->CakeEmail->send()) {
+			$response['success'] = true;
+			$response['msg'] = '';
+		}
+
+		return $response;
 	}
 }
