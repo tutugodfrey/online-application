@@ -8,7 +8,8 @@
 		"cakephp/debug_kit": "2.2.*",
 		"phpunit/phpunit": "3.7.32",
 		"slywalker/boost_cake": "*",
-		"josegonzalez/cakephp-upload": "1.1.1"
+		"josegonzalez/cakephp-upload": "1.1.1",
+		"ircmaxell/random-lib": "^1.2"
 	},
 	"extra": {
 		"installer-paths": {

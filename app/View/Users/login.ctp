@@ -12,6 +12,7 @@
 
 	<div style='margin-top:-15;opacity:0' id='loginFrmContainer'>
 		<p class='text-center'><strong>Application Portal.</strong> Please Login.</p>
+		<?php echo $this->Session->flash(); ?>
 		<?php
 		echo $this->Form->create('BoostCake', array(
 			'inputDefaults' => array(
@@ -36,9 +37,15 @@
 					'class' => 'btn btn-default pull-right'
 				)); ?>
 			</div>
+			<div class="form-group small pull-right">
+				<?php
+				echo $this->Html->link('Forgot Password', array('action' => 'request_pw_reset'), array('class' => 'btn btn-xs text-muted'));
+				echo $this->Html->link('Renew Password', array('action' => 'request_pw_reset', 1), array('class' => 'btn btn-xs text-muted'));
+				?>
+			</div>
 		<?php
 			echo $this->Form->end();
-			echo $this->Session->flash();
+			
 		?>
 	</div>
 </div>
