@@ -2,7 +2,6 @@
 App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
-App::uses('CakeEmail', 'Network/Email');
 App::uses('CakeTime', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
 
@@ -1603,74 +1602,6 @@ class CobrandedApplication extends AppModel {
 			$args['email_timeline_subject_id'] = EmailTimeline::INSTALL_SHEET_VAR;
 			$args['recipient'] = $email;
 			$response = $this->createEmailTimelineEntry($args);
-		}
-
-		return $response;
-	}
-
-/**
- * sendEmail
- *
- * @param array $args arguments to control how the email should be composed
- *
- * @return $response array
- */
-	public function sendEmail($args) {
-		$response = array(
-			'success' => false,
-			'msg' => 'Failed to send email.',
-		);
-
-		if (!$this->CakeEmail) {
-			$this->CakeEmail = new CakeEmail('default');
-		}
-
-		if (key_exists('from', $args)) {
-			$this->CakeEmail->from($args['from']);
-
-		} else {
-			$response['msg'] = 'from argument is missing.';
-			return $response;
-		}
-
-		if (key_exists('to', $args)) {
-			if (Validation::email($args['to'])) {
-				$this->CakeEmail->to($args['to']);
-			} else {
-				$response['msg'] = 'invalid email address submitted.';
-				return $response;
-			}
-		} else {
-			$response['msg'] = 'to argument is missing.';
-			return $response;
-		}
-
-		$subject = 'No subject';
-		if (key_exists('subject', $args)) {
-			$subject = $args['subject'];
-		}
-
-		$this->CakeEmail->subject($subject);
-
-		if (key_exists('format', $args)) {
-			$this->CakeEmail->emailFormat($args['format']);
-		}
-
-		if (key_exists('template', $args)) {
-			$this->CakeEmail->template($args['template']);
-		}
-
-		if (key_exists('viewVars', $args)) {
-			$this->CakeEmail->viewVars($args['viewVars']);
-		}
-
-		if (key_exists('attachments', $args) && !empty($args['attachments'])) {
-			$this->CakeEmail->attachments($args['attachments']);
-		}
-
-		if ($this->CakeEmail->send()) {
-			$response['success'] = true;
-			$response['msg'] = '';
 		}
 
 		return $response;

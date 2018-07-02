@@ -405,4 +405,44 @@ class UserTest extends CakeTestCase {
 		ksort($actual);//sort for consistency
 		$this->assertSame($expected, $actual);
 	}
+
+/**
+ * testGetPwResetEmailArgs
+ *
+ * @covers User::getTemplates
+ * @return void
+ */
+ 	public function testNewPwExpiration() {
+ 		$date = date('Y-m-d');
+ 		//Using different method for creating expectation of new date as control for test
+		$expected = date('Y-m-d', strtotime($date. ' + ' . Configure::read('App.pw_validity_age') . ' days'));
+ 		$actual = $this->User->newPwExpiration();
+ 		$this->assertSame($expected, $actual);
+ 	}
+
+/**
+ * testGetPwResetEmailArgs
+ *
+ * @covers User::getTemplates
+ * @return void
+ */
+	public function testGetPwResetEmailArgs() {
+		$expected = array(
+			'from' => array(
+					'newapps@axiapayments.com' => 'Axia Online Applications'
+			),
+			'to' => 'testing11@axiapayments.com',
+			'subject' => 'Axia Online App Account Password Reset',
+			'format' => 'html',
+			'template' => 'default',
+			'viewVars' => array(
+					'content' => "Hello John\n" .
+					"This is an automated request to reset your password please do not reply.\n" .
+					"If you are not aware of a password reset request for your account, you may disregard this.\n" .
+					"Otherwise, please follow the URL below to set a new password:\n" .
+					"http://localhost/Users/change_pw/11"
+				)
+			);
+		$this->assertSame($expected, $this->User->getPwResetEmailArgs(11));
+	}
 }
