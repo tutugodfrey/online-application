@@ -15,7 +15,7 @@ echo $this->Form->create('User', array(
 	),
 	'class' => 'form-horizontal',
 	'novalidate' => true));
-echo $this->Html->tag('div', null, array('class' => 'col-md-6'));
+	echo $this->Html->tag('div', null, array('class' => 'col-md-6'));
 	echo $this->Form->input('active', array('label'=> array('class' => 'col-md-10 control-label text-success'), 'type' => 'checkbox', 'class' => null));
 	if (!empty($this->request->data['User']['id'])) {
 		echo $this->Form->hidden('id');
@@ -23,8 +23,18 @@ echo $this->Html->tag('div', null, array('class' => 'col-md-6'));
 	echo $this->Form->input('firstname');
 	echo $this->Form->input('lastname');
 	echo $this->Form->input('email');
-	echo $this->Form->input('pwd', array('label'=> 'Password','type'=>'password', 'value'=>'', 'autocomplete'=>'off'));
-	echo $this->Form->input('password_confirm', array('type' => 'password', 'value'=>'', 'autocomplete'=>'off'));
+	//only the owner of this user profile can change password
+	if ($this->Session->read('Auth.User.id') == $this->request->data('User.id')) {
+		echo $this->Form->input('pwd', array('label'=> 'Password','type'=>'password', 'value'=>'', 'autocomplete'=>'off'));
+		echo $this->Form->input('password_confirm', array('type' => 'password', 'value'=>'', 'autocomplete'=>'off'));
+	} elseif (!empty($this->request->data('User.id'))) {
+		echo $this->element('users/resetPwPostLink', array(
+			'id' => $this->request->data('User.id'),
+			'settings' => array('inline' => false, 'class' => 'btn btn-sm btn-primary col-md-offset-4'),
+		));
+		echo '<br />';
+		echo '<br />';
+	}
 //-------------END FIRST INPUT COLUMN
 echo $this->Html->tag('/div');
 //-------------START SECOND INPUT COLUMN
@@ -195,4 +205,5 @@ echo $this->Html->tag('/div');
 <script type='text/javascript' src='/js/users/users-templates.js'></script>
 <?php
 echo $this->Form->end(array('label' => __('Save user'), 'div' => array('class' => 'col-md-12'), 'class' => 'btn btn-sm btn-success'));
+echo $this->fetch('postLink'); // output the post link form(s) outside of the main form
 ?>

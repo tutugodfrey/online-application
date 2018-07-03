@@ -4,6 +4,8 @@ class UsersController extends AppController {
 	public $permissions = array(
 		'login' => '*',
 		'logout' => '*',
+		'request_pw_reset' => '*',
+		'change_pw' => '*',
 		'get_user_templates' => '*'
 	);
 
@@ -17,7 +19,7 @@ class UsersController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		$this->Auth->allow(array('login', 'logout'));
+		$this->Auth->allow(array('login', 'logout', 'request_pw_reset', 'change_pw'));
 	}
 
 /**
@@ -57,12 +59,133 @@ class UsersController extends AppController {
 	public function login() {
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
+				$userId = $this->Auth->user('id');
+				$passwordValidDays = $this->User->getDaysTillPwExpires($userId);
+				if ($passwordValidDays < 0) {
+					$this->Session->destroy();
+					$this->Session->setFlash(__('Password expired! Please renew your password.'), 'default', ['class' => 'alert alert-warning strong']);
+					$this->redirect(array('action' => 'login'));
+				} elseif ($passwordValidDays <= 7) {
+					$msg = ($passwordValidDays === 0)? "You password expires today!" : "Your password will expire in $passwordValidDays day" . (($passwordValidDays > 1)? 's.' : '.');
+					$msg .= " Please renew your password from the login page.";
+					$this->Session->setFlash(__($msg), 'default', ['class' => 'alert-danger strong text-center']);
+				}
 				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
 				$this->redirect($this->Auth->redirect());
 			} else {
-				$this->_failure(__('Invalid e-mail / password combination.'));
+				$this->_failure(__('Invalid e-mail/password.'));
 			}
 		}
+	}
+/**
+ * request_pw_reset
+ * Handles requests to reset the user's password.
+ * Generates a unique psudo-random md5 hash for one-time use as URI parameter to reset the user password.
+ * This md5 hash is saved in the user's record and deleted after the password is reset, efectively expiring the URL that was sent to the user to reset the password.
+ * 
+ * @param boolean $hasExpired whether the request to reset password is because it hasExpired
+ * @param string $id a user id
+ * @param boolean $setRandPw whether to assign a randomized password to the user
+ * @return void
+ */
+	public function request_pw_reset($hasExpired = false, $id = null, $setRandPw = false) {
+		if ($this->request->is('post')) {
+			if (!empty($id)) {
+				$conditions = ['id' => $id];
+			} else {
+				$conditions = ['email' => $this->request->data('User.email')];
+			}
+			$user = $this->User->find('first', [
+				'recursive' => -1,
+				'conditions' => $conditions,
+				'fields' => ['id', 'email']
+			]);
+
+			if (!empty($user['User']['id']) && !empty($user['User']['email'])) {
+				$data['pw_reset_hash'] = $pwResetHash = $this->User->getRandHash();
+				if ($setRandPw) {
+					$data['pwd'] = $this->User->generateRandPw();
+					//Set expriation date to sometime in the past to prevent user from logging in without updating the temporary password
+					$data['pw_expiry_date'] = '1999-01-01';
+				}
+				$this->User->id = $user['User']['id'];
+				if (!$this->User->save($data, ['validate' => false])) {
+					$this->_failure(__('Error: Failed to persist temporary password reset hash parameter. Try again later.'));
+				} else {
+					$tmpPwMsg = '';
+					if ($setRandPw) {
+						$tmpPwMsg = "and the following temporary password has been assigned to your account: {$data['pwd']}\n";
+					}
+					$msg = "A request to reset/renew your password has been submitted\n";
+					$msg .= $tmpPwMsg;
+					$msg .= "Follow the link below to change your password:\n";
+					$msg .= Router::url(['controller' => 'Users', 'action' => 'change_pw', (int)$hasExpired, $pwResetHash], true) . "\n";
+					$args['viewVars'] = ['content' => $msg];
+					$args = $this->User->getPwResetEmailArgs($user['User']['id'], $args);
+					$this->User->sendEmail($args);
+				}
+				$redirectTo = ['action' => 'login'];
+				if ($this->Session->check('Auth.User.id')) {
+					if ($this->Session->read('Auth.User.id') == $id) {
+						$this->Session->destroy();
+					} else {
+						$redirectTo = $this->referer();
+					}
+				}
+				$this->_success(__('A password reset link has been emailed to the user.'), $redirectTo, 'alert alert-success');
+				if ($setRandPw) {
+					$this->redirect($this->referer());
+				} else {
+					$this->redirect($redirectTo);
+				}
+			} else {
+				$this->_failure(__('That is not a valid registered email'));
+			}
+		}
+	}
+
+/**
+ * Users change_pw method implements first time login functionality
+ *
+ * @param boolean $renew whether this request is to renew password
+ * @param string $pwResetHash the md5 hash for one-time use as URI parameter to reset the user password 
+ * @return void
+ */
+	public function change_pw($renew, $pwResetHash) {
+		$this->User->setPwFieldsValidation($renew);
+		$id = $this->User->field('id', ['pw_reset_hash' => $pwResetHash]);
+
+		if (empty($id) || !isset($renew) || !isset($pwResetHash)) {
+			$this->set('name', 'ERROR 404: Page Not Found Or Has Expired.');
+			$this->set('url', Router::url(['controller' => 'Users', 'action' => 'change_pw', $renew, $pwResetHash], true));
+			$this->render('/Errors/error404');
+		}
+
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($renew) {
+				$newPW = $this->request->data['User']['pwd'];
+				$currentPW = $this->request->data['User']['cur_password'];
+				if ($this->User->pwIsValid($this->request->data['User']['id'], $currentPW) === false) {
+					$this->_failure(__('Current password is invalid.'));
+					$this->redirect(['action' => 'change_pw', $renew, $pwResetHash]);
+				}
+				if ($newPW === $currentPW) {
+					$this->_failure(__('New password must be different from current.'));
+					$this->redirect(['action' => 'change_pw', $renew, $pwResetHash]);
+				}
+			}
+			//save pw_reset_hash as null
+			$this->request->data['User']['pw_reset_hash'] = null;
+			if ($this->User->save($this->request->data['User'])) {
+				$this->_success(__('Password updated!'), ['action' => 'login'], 'alert-success');
+			} else {
+				$this->_failure(__('Failed to update password.'));
+			}
+
+		}
+		$this->request->data['User']['id'] = $id;
+		$this->set('id', $id);
+		$this->set('renewingPw', $renew);
 	}
 
 /**
@@ -121,9 +244,19 @@ class UsersController extends AppController {
 	public function admin_add() {
 		$this->_setViewNavData('');
 		if ($this->request->is('post')) {
+			$this->request->data['User']['pw_reset_hash'] = $this->User->getRandHash();
+			$this->request->data['User']['pwd'] = $this->request->data['User']['password_confirm'] = $this->User->generateRandPw();
+			//Set expriation date to sometime in the past to prevent user from logging in without updating the temporary password
+			$this->request->data['User']['pw_expiry_date'] = '1999-01-01';
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
-				$this->_success(__('The User has been created'));
+				$notificationStr = '';
+				if (!empty($this->request->data('User.email'))) {
+					$args = $this->_getNewUserEmailParams($this->request->data);
+					$this->User->sendEmail($args);
+					$notificationStr = 'User has been notified of this via email.';
+				}
+				$this->_success(__("User has been created and assigned a random password. $notificationStr"));
 				$this->redirect(array('action' => 'index', 'admin' => true));
 			} else {
 				unset($this->request->data['User']['pwd']);
@@ -138,6 +271,26 @@ class UsersController extends AppController {
 		$this->_persistMultiselectData($this->request->data);
 	}
 
+/**
+ * _getNewUserEmailParams
+ *
+ * @return array
+ */
+	protected function _getNewUserEmailParams($newUserData) {
+		$msg = "Hello " . $newUserData['User']['firstname'] . "\n";
+		$msg .= "Your user acount has been created for the Axia Online App company site\n";
+		$msg .= "and the following temporary password has been assigned to your account: {$newUserData['User']['pwd']}\n";
+		$msg .= "Before you can access the site please follow the link below to change this temporary password:\n";
+		$msg .= Router::url(['controller' => 'Users', 'action' => 'change_pw', 'admin' => false, 1, $newUserData['User']['pw_reset_hash']], true) . "\n";
+		return [
+			'from' => ['newapps@axiapayments.com' => 'Axia Online Applications'],
+			'to' => $newUserData['User']['email'],
+			'subject' => 'Axia Online App Account Password Reset',
+			'format' => 'html',
+			'template' => 'default',
+			'viewVars' => ['content' => $msg],
+		];
+	}
 /**
  * Provides Bulk Edit functionality
  *

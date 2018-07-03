@@ -129,3 +129,6 @@ Configure::write('Cryptable.cipher', 'rijndael-192');
 Configure::write('Cryptable.key', '5sd4qtNcsYKCLRTzWxmxHPuG');
 Configure::write('Cryptable.iv', base64_decode('eEYFL7oDTX9mUIhZ/AL5vX6oZc7136ky'));
 //-- End New code added 04/09/12
+
+//Number of days users password's are valid, after which they will expire.
+Configure::write('App.pw_validity_age', 180);

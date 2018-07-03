@@ -240,6 +240,152 @@ class User extends AppModel {
 	}
 
 /**
+ * generateRandPw
+ * Generates a 32bit Cryptographically secure pseudo-random password string
+ *
+ * @return mixed boolean|array
+ */
+	public function generateRandPw() {
+		$factory = new RandomLib\Factory;
+		$generator = $factory->getMediumStrengthGenerator();
+		$intList = $generator->generateInt(1000, 99999);
+		$alphaList = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$symbolList = '!?.$&_+/#?$-!';
+		$chars = $alphaList . $intList . $symbolList;
+		
+		return $generator->generateString(32, $chars);
+	}
+
+/**
+ * getPwResetEmailArgs
+ * Returns an array of email arguments to use for sending a CakeEmail
+ *
+ * @param string $userId the id of the user that the email wool be sent to
+ * @param array $args optinal email metadata arguments to use instead of defaults
+ * @return mixed boolean|array
+ */
+	public function getPwResetEmailArgs($userId, $args = []) {
+		$email = $this->field('email', ['id' => $userId]);
+		$userName = $this->field('firstname', ['id' => $userId]);
+
+		if (empty($email)) {
+			return false;
+		}
+		$msgBody = "Hello $userName\n";
+		$msgBody .= "This is an automated request to reset your password please do not reply.\n";
+		$msgBody .= "If you are not aware of a password reset request for your account, you may disregard this.\n";
+		$msgBody .= "Otherwise, please follow the URL below to set a new password:\n";
+		$msgBody .= Router::url(['controller' => 'Users', 'action' => 'change_pw', $userId], true);
+		$defaults = [
+			'from' => ['newapps@axiapayments.com' => 'Axia Online Applications'],
+			'to' => $email,
+			'subject' => 'Axia Online App Account Password Reset',
+			'format' => 'html',
+			'template' => 'default',
+			'viewVars' => ['content' => $msgBody],
+		];
+		$args = array_merge($defaults, $args);
+		return $args;
+
+	}
+/**
+ * newPwExpiration
+ * Generates a date to be used as new user password expiration based on App's Configured pw validity age in bootstrap.
+ * 
+ * @return string representation of new password expiration date.
+ */
+	public function newPwExpiration() {
+		$date = new DateTime(date('Y-m-d'));
+		$interval = "P" . Configure::read('App.pw_validity_age') . "D";
+		$date->add(new DateInterval($interval));
+		return $date->format('Y-m-d');
+	}
+
+/**
+ * return the number of days until a user password expires
+ *
+ * @param string $id User id
+ * @return bool
+ */
+	public function getDaysTillPwExpires($id) {
+		$pwExpDate = $this->field('pw_expiry_date', ['id' => $id]);
+		$now = date_create(date('Y-m-d'));
+		$pwExpDate = date_create($pwExpDate);
+		$diff = date_diff($now, $pwExpDate);
+		return (int)$diff->format("%R%a");
+	}
+
+/**
+ * pwIsValid
+ * Checks whether the password submitted is different from users current password
+ *
+ * @param string $id User id
+ * @param string $pw a password to compare against the users current password
+ * @return bool
+ */
+	public function pwIsValid($id, $pw) {
+		$pw = Security::hash($pw, null, true);
+		return $this->hasAny(['id' => $id, 'password' => $pw]);
+	}
+
+/**
+ * setPwFieldsValidation
+ * Sets validation rules that apply to the password reset/renewal UI fields
+ *
+ * @param boolean $validateCurPass whether to add validation for current password
+ * @return void
+ */
+	public function setPwFieldsValidation($validateCurPass = false) {
+		//remove all rules since they are not relevant for password resetting
+		foreach ($this->validate as $field => $rules) {
+			$this->validator()->remove($field);
+		}
+		$this->validator()->add('pwd', [
+				'required' => [
+					'rule' => ['notBlank'],
+					'message' => 'Password is required!',
+					'required' => true,
+					'allowEmpty' => false,
+				],
+				'matches' => [
+					'rule' => ['validateFieldsEqual', 'pwd', 'repeat_password'],
+					'message' => 'Passwords do not match!',
+					'allowEmpty' => true,
+				]
+		])->add('repeat_password', [
+				'required' => [
+					'rule' => ['notBlank'],
+					'message' => 'Repeat Password is required!',
+					'required' => true,
+					'last' => false,
+					'allowEmpty' => false,
+				],
+				'matches' => [
+					'rule' => ['validateFieldsEqual', 'pwd', 'repeat_password'],
+					'message' => 'Passwords do not match!',
+					'last' => false,
+					'allowEmpty' => true,
+				],
+				'minLength' => [
+					'rule' => ['minLength', 8],
+					'message' => 'Passwords should have 8 characters or more',
+					'last' => false,
+				],
+			]
+		);
+		if ( $validateCurPass) {
+			$this->validator()->add('cur_password', [
+					'required' => [
+						'rule' => ['notBlank'],
+						'message' => 'Password is required!',
+						'required' => true,
+						'allowEmpty' => false,
+					]
+			]);
+		}
+	}
+
+/**
  * templatesMatchCobrand
  * Custom validation rule checks for any Templates for which no corresponding cobrands were selected
  *
@@ -435,6 +581,10 @@ class User extends AppModel {
 		parent::beforeSave($options);
 		if (!empty($this->data[$this->alias]['pwd'])) {
 			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['pwd']);
+			//update expidation date whenever new password is saved
+			if (!isset($this->data[$this->alias]['pw_expiry_date'])) {
+				$this->data[$this->alias]['pw_expiry_date'] = $this->newPwExpiration();
+			}
 		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
 			$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
