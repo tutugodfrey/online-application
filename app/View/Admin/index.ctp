@@ -4,7 +4,8 @@
 		'logo.png',
 		array(
 			'alt'=> __('Axia'),
-			'class' => 'center-block'
+			'class' => 'center-block',
+      'style' => 'width:300px'
 		)
 	);
 ?>
