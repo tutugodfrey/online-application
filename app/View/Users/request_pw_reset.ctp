@@ -6,7 +6,7 @@ echo $this->Html->image(
 		'alt' => __('Axia'),
 		'border' => '0',
 		'class' => 'center-block',
-		'style' => 'margin-top:25%;margin-bottom:5%',
+		'style' => 'margin-top:25%;margin-bottom:5%;width:inherit;',
 	)
 );
 echo $this->Html->tag('div', __('Reset My Password'),
