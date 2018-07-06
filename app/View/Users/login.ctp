@@ -6,6 +6,7 @@
 			'alt' => __('Axia'),
 			'border' => '0',
 			'class' => 'center-block',
+			'style' => 'width: inherit;',
 		)
 	);
 ?>
