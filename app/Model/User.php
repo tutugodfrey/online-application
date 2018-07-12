@@ -246,6 +246,7 @@ class User extends AppModel {
  * @return mixed boolean|array
  */
 	public function generateRandPw() {
+		App::import('Vendor', 'Factory', array('file' => 'ircmaxwell' . DS . 'RandomLib' . DS . 'Factory.php'));
 		$factory = new RandomLib\Factory;
 		$generator = $factory->getMediumStrengthGenerator();
 		$intList = $generator->generateInt(1000, 99999);
