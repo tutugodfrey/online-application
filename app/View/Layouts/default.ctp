@@ -183,7 +183,7 @@
 								<?php
 									if (!empty($brand_logo_url) || !empty($cobrand_logo_url)) {
 
-										$brand_logo = $this->Html->image($brand_logo_url, array('class' => 'pull-right'));
+										$brand_logo = $this->Html->image($brand_logo_url, array('class' => 'pull-right', "style" => "max-height:100px"));
 										$cobrand_logo = $this->Html->image($cobrand_logo_url, array('height' => '50px'));
 
 										if (strlen($cobrand_logo_url) == 0) {
