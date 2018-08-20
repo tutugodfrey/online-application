@@ -20,9 +20,11 @@ echo $this->Form->create('User', array(
 	if (!empty($this->request->data['User']['id'])) {
 		echo $this->Form->hidden('id');
 	}
+	echo $this->Form->input('group_id');
 	echo $this->Form->input('firstname');
 	echo $this->Form->input('lastname');
 	echo $this->Form->input('email');
+	echo $this->Form->input('extension');
 	//only the owner of this user profile can change password
 	if ($this->Session->read('Auth.User.id') == $this->request->data('User.id')) {
 		echo $this->Form->input('pwd', array('label'=> 'Password','type'=>'password', 'value'=>'', 'autocomplete'=>'off'));
@@ -38,23 +40,41 @@ echo $this->Form->create('User', array(
 //-------------END FIRST INPUT COLUMN
 echo $this->Html->tag('/div');
 //-------------START SECOND INPUT COLUMN
-echo $this->Html->tag('div', null, array('class' => 'col-md-6'));
-	echo $this->Form->input('api_enabled', array('label'=> array('text' => 'Enable API', 'class' => 'col-md-11 control-label'),'type'=>'checkbox', 'class' => null));        
-	echo $this->Form->input('api_password', array('label'=> 'Api Password','type'=>'password', 'value'=>'', 'autocomplete'=>'off'));
-	echo $this->Form->input('group_id');
-	echo $this->Form->input('extension');
-	if ($this->request->data('User.api_enabled')) {
-		echo $this->Form->input('token');
-		echo $this->Html->tag('div', null, array('class' => 'form-group col-md-12'));
-		echo $this->Form->label('User.token_used', 'Token Used On', array('class' => 'col-md-4 control-label'));
-		echo $this->Form->dateTime('token_used', 'MDY', '12', array(
-			'wrapInput' => 'col-md-7',
-			'class' => null,
-			'maxYear' => date('Y') + 2,
-			'empty' => true));
-		echo $this->Html->tag('/div');
-		echo $this->Form->input('token_uses');
-	}
+echo $this->Html->tag('div', null, array('class' => 'col-md-5'));
+echo '<br />';
+	echo $this->Html->tag('div', null, array('class' => 'panel panel-success'));
+	$apiBtnCss = 'btn btn-xs pull-right ';
+	$apiBtnCss .= ($this->request->data('User.api_enabled') || empty($this->request->data('User.id')))? 'btn-default disabled' : 'btn-success';
+	echo $this->Html->tag('div', '<strong><span class="glyphicon glyphicon-lock pull-left"></span>API Access Information</strong>' . 
+			$this->Html->link('<span class="glyphicon glyphicon-check"></span>' . __(' Enable API'),
+				array(
+					'action' => 'token',
+					'admin' => true,
+					$this->request->data('User.id')
+				), 
+				array('escape' => false, 'class' => $apiBtnCss	)
+			),
+	array('class' => 'panel-heading text-center'));
+		echo $this->Html->tag('div', null, array('class' => 'panel-body'));
+			if ($this->request->data('User.api_enabled')) {
+				echo $this->Form->input('api_enabled', array('label'=> array('text' => 'API Enabled', 'class' => 'col-md-11 control-label'),'type'=>'checkbox', 'class' => null));
+				echo $this->Html->tag('div',
+					$this->Form->label('User.token', 'Token', array('class' => 'col-md-4 control-label')) .
+					$this->Html->tag('pre', $this->request->data('User.token')),
+					array('class' => 'form-group col-md-12'));
+				echo $this->Html->tag('div', null, array('class' => 'form-group col-md-12'));
+					echo $this->Form->label('User.token_used', 'Token Used On', array('class' => 'col-md-4 control-label'));
+					echo $this->Html->tag('pre', $this->Time->format('F jS, Y h:i A', $this->request->data('User.token_used')). '&nbsp;');
+				echo $this->Html->tag('/div');
+				echo $this->Form->input('token_uses');
+			} else {
+				$noApiMsg = (empty($this->request->data('User.id')))? ' Cannot enable API while creating a new user. New user must be saved first.': ' API Access not enabled';
+				echo $this->Html->tag('pre', 
+					$this->Html->tag('span', null, ['class' => 'glyphicon glyphicon-ban-circle']) . $this->Html->tag('/span') . $noApiMsg,
+					['class' => 'text-center text-muted']);
+			}
+	echo $this->Html->tag('/div');
+	echo $this->Html->tag('/div');
 echo $this->Html->tag('/div');
 //Begin Multiselect
 ?>

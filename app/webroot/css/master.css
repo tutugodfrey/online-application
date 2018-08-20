@@ -1,5 +1,4 @@
 body {
-    /*width: 742px;*/
     margin: 0 auto;
     padding: 10px;
     background-color: #fff;
@@ -23,18 +22,17 @@ label {
     display: block;
     font-size: 12px;
 }
-/*
-input[type="text"], input[type="email"], textarea {
-    width: 348px;
-    border: 2px inset;
-    margin-top: 2px;
-    padding: 1px 0px;
-}
-*/
+
 #flashMessage, #authMessage {
     margin-top: 10px;
     font-weight: bold;
     font-style: italic;
+}
+#authMessage {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: #a94442;
 }
 #header {
     padding-left: 7px;

@@ -1,7 +1,7 @@
 /* 
  * Developed by Oscar Mota 2012
  * 
- * Copyright Axia Technologies
+ * Copyright Axia Med
  */
 
 

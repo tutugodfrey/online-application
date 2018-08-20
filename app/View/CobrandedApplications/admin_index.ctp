@@ -230,7 +230,6 @@
 	<?php
 		echo $this->Element('resultLimitModifier');
 		echo $this->Element('paginatorBottomNav');
-		echo $this->Element('Ajax/dynamicModal');
 	?>
 </div>
 

@@ -17,4 +17,5 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<?php echo $content; ?>
+<?php echo $content; 
+echo $this->element('email/text/generic_signature'); ?>
