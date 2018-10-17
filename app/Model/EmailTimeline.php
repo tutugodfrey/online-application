@@ -16,6 +16,7 @@ class EmailTimeline extends AppModel {
 
 	//Senders and Recipients
 	const UNDERWRITING_EMAIL = 'underwriting@axiapayments.com';
+	const I3_UNDERWRITING_EMAIL = 'axiaapps@i3verticals.com';
 	const NEWAPPS_EMAIL = 'newapps@axiapayments.com';
 	const HOOZA_EMAIL = 'hooza@axiapayments.com';
 	const DATA_ENTRY_EMAIL = 'dataentry@axiapayments.com';

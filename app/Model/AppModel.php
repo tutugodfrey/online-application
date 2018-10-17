@@ -155,6 +155,15 @@ class AppModel extends Model {
 			return $response;
 		}
 
+		if (key_exists('cc', $args)) {
+			if (Validation::email($args['cc'])) {
+				$this->CakeEmail->cc($args['cc']);
+			} else {
+				$response['msg'] = 'invalid CC email address submitted.';
+				return $response;
+			}
+		}
+
 		$subject = 'No subject';
 		if (key_exists('subject', $args)) {
 			$subject = $args['subject'];
