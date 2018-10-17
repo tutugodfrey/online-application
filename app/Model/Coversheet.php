@@ -373,7 +373,8 @@ class Coversheet extends AppModel {
 			}
 
 			$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
-			$to = EmailTimeline::UNDERWRITING_EMAIL;
+			$to = EmailTimeline::I3_UNDERWRITING_EMAIL;
+			$cc = EmailTimeline::DATA_ENTRY_EMAIL;
 
 			if (!empty($args['to'])) {
 				$to = $args['to'];
@@ -390,6 +391,7 @@ class Coversheet extends AppModel {
 			$args = array(
 				'from' => $from,
 				'to' => $to,
+				'cc' => $cc,
 				'subject' => $subject,
 				'format' => $format,
 				'template' => $template,
