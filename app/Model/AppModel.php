@@ -144,7 +144,18 @@ class AppModel extends Model {
 		}
 
 		if (key_exists('to', $args)) {
-			if (Validation::email($args['to'])) {
+			$validEmail = true;
+			if (is_array($args['to'])) {
+				foreach($args['to'] as $emailStr) {
+					if (!Validation::email($emailStr)) {
+						$validEmail = false;
+						break;
+					}
+				}
+			} else {
+				$validEmail = Validation::email($args['to']);
+			}
+			if ($validEmail) {
 				$this->CakeEmail->to($args['to']);
 			} else {
 				$response['msg'] = 'invalid email address submitted.';

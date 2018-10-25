@@ -405,4 +405,3 @@ class CoversheetsController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 }
-?>
