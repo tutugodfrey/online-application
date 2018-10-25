@@ -13,9 +13,13 @@ class EmailTimeline extends AppModel {
 	const COVERSHEET_TO_UW = 8;
 	const MULTIPASS_COMPLETE = 9;
 	const NEW_API_APPLICATION = 10;
-
+	//Companies/entities email domain names
+	const ENTITY1_EMAIL_DOMAIN = 'axiamed';
+	const ENTITY2_EMAIL_DOMAIN = 'axiapayments';
 	//Senders and Recipients
+	const ENTITY1_NEWAPPS_EMAIL = 'newapps@axiamed.com';
 	const UNDERWRITING_EMAIL = 'underwriting@axiapayments.com';
+	const ENTITY2_APPS_EMAIL = 'rm@axiapayments.com';
 	const I3_UNDERWRITING_EMAIL = 'axiaapps@i3verticals.com';
 	const NEWAPPS_EMAIL = 'newapps@axiapayments.com';
 	const HOOZA_EMAIL = 'hooza@axiapayments.com';
