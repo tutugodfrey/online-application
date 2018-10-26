@@ -1431,7 +1431,7 @@ class CobrandedApplication extends AppModel {
 		if ($response['success'] == true) {
 			$args['cobranded_application_id'] = $applicationId;
 			$args['email_timeline_subject_id'] = EmailTimeline::MERCHANT_SIGNED;
-			$args['recipient'] = $cobrandedApplication['User']['email'];
+			$args['recipient'] = implode(';', $to);
 			$response = $this->createEmailTimelineEntry($args);
 		}
 

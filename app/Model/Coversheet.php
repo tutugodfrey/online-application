@@ -408,7 +408,7 @@ class Coversheet extends AppModel {
 			if ($response['success'] == true) {
 				$args['cobranded_application_id'] = $data['CobrandedApplication']['id'];
 				$args['email_timeline_subject_id'] = EmailTimeline::COVERSHEET_TO_UW;
-				$args['recipient'] = $to;
+				$args['recipient'] = is_array($to)? implode(';', $to) : $to;
 				$response = $this->CobrandedApplication->createEmailTimelineEntry($args);
 
 				if ($response['success'] == true) {
