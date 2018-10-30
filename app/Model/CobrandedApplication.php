@@ -1419,7 +1419,6 @@ class CobrandedApplication extends AppModel {
 		$args = array(
 			'from' => $from,
 			'to' => $to,
-			'cc' => "webmaster@axiamed.com",
 			'subject' => $subject,
 			'format' => $format,
 			'template' => $template,
