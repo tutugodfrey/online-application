@@ -1395,12 +1395,7 @@ class CobrandedApplication extends AppModel {
 		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = array($cobrandedApplication['User']['email']);
-		if (stripos($cobrandedApplication['User']['email'], EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
-			$to[] = EmailTimeline::I3_UNDERWRITING_EMAIL;
-			$to[] = EmailTimeline::DATA_ENTRY_EMAIL;
-		} else {
-			$to[] = EmailTimeline::ENTITY2_APPS_EMAIL;
-		}
+
 		$subject = $dbaBusinessName . ' - Online Application Signed';
 		$format = 'text';
 		$template = 'rep_notify_signed';
