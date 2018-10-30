@@ -1467,15 +1467,15 @@ class CobrandedApplication extends AppModel {
 
 		$description = "Application Description: ";
 		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
-		$to = array("omota@axiamed.com");
-		// if (stripos($cobrandedApplication['User']['email'], EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
+
+		if (stripos($cobrandedApplication['User']['email'], EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
 			$from = array(EmailTimeline::ENTITY1_NEWAPPS_EMAIL => 'Axia Online Applications');
-		// 	$to[] = EmailTimeline::I3_UNDERWRITING_EMAIL;
-		// 	$to[] = EmailTimeline::DATA_ENTRY_EMAIL;
-		// } else {
-		// 	$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
-		// 	$to = array(EmailTimeline::ENTITY2_APPS_EMAIL);
-		// }
+			$to[] = EmailTimeline::I3_UNDERWRITING_EMAIL;
+			$to[] = EmailTimeline::DATA_ENTRY_EMAIL;
+		} else {
+			$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
+			$to = array(EmailTimeline::ENTITY2_APPS_EMAIL);
+		}
 
 		$subject = $dbaBusinessName . ' - Online Application Signed';
 		$format = 'text';
