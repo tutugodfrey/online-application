@@ -1395,6 +1395,12 @@ class CobrandedApplication extends AppModel {
 		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = array($cobrandedApplication['User']['email']);
+		if (stripos($cobrandedApplication['User']['email'], EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
+			$to[] = EmailTimeline::I3_UNDERWRITING_EMAIL;
+			$to[] = EmailTimeline::DATA_ENTRY_EMAIL;
+		} else {
+			$to[] = EmailTimeline::ENTITY2_APPS_EMAIL;
+		}
 		$subject = $dbaBusinessName . ' - Online Application Signed';
 		$format = 'text';
 		$template = 'rep_notify_signed';
@@ -1413,7 +1419,6 @@ class CobrandedApplication extends AppModel {
 		$args = array(
 			'from' => $from,
 			'to' => $to,
-			'cc' => "webmaster@axiamed.com",
 			'subject' => $subject,
 			'format' => $format,
 			'template' => $template,
@@ -1433,109 +1438,14 @@ class CobrandedApplication extends AppModel {
 		return $response;
 	}
 
-
-/**
- * emailUwSignedApp
- *
- * @param int $applicationId Cobranded Application Id
- * @return $response array
- */
-	public function emailUwSignedApp($applicationId) {
-		if (!$this->exists($applicationId)) {
-			$response = array(
-				'success' => false,
-				'msg' => 'Invalid application.',
-			);
-			return $response;
-		}
-
-		$settings = array('contain' => array(
-			'User' => array('fields' => 'email'),
-			'CobrandedApplicationValues',
-			'Template' => array(
-				'fields' => array('email_app_pdf', 'name'),
-				'Cobrand.partner_name'
-			),
-		));
-		$cobrandedApplication = $this->getById($applicationId, $settings);
-		$dbaBusinessName = '';
-		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
-
-		if (!empty($valuesMap['DBA'])) {
-			$dbaBusinessName = $valuesMap['DBA'];
-		}
-
-		$description = "Application Description: ";
-		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
-
-		if (stripos($cobrandedApplication['User']['email'], EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
-			$from = array(EmailTimeline::ENTITY1_NEWAPPS_EMAIL => 'Axia Online Applications');
-			$to[] = EmailTimeline::I3_UNDERWRITING_EMAIL;
-			$to[] = EmailTimeline::DATA_ENTRY_EMAIL;
-		} else {
-			$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
-			$to = array(EmailTimeline::ENTITY2_APPS_EMAIL);
-		}
-
-		$subject = $dbaBusinessName . ' - Online Application Signed';
-		$format = 'text';
-		$template = 'rep_notify_signed';
-		$viewVars['rep'] = "Underwriter";
-		$viewVars['merchant'] = $dbaBusinessName;
-		$viewVars['description'] = $description;
-		$viewVars['link'] = null;
-
-		$pdfUrl = $this->getAppPdfUrl($applicationId, true);
-		$expireDate = $this->parseExtractPdfUrlExpiration($pdfUrl);
-		if (!empty($pdfUrl)) {
-			$urlNoticeLine = "(LINK WILL EXPIRE $expireDate AND WILL NO LONGER BE ACCESSIBLE. Please download PDF document now)\n\n$pdfUrl";
-			$viewVars['appPdfUrl'] = $urlNoticeLine;
-		}
-
-		$args = array(
-			'from' => $from,
-			'to' => $to,
-			'subject' => $subject,
-			'format' => $format,
-			'template' => $template,
-			'viewVars' => $viewVars
-		);
-
-		$response = $this->sendEmail($args);
-		unset($args);
-
-		if ($response['success'] == true) {
-			$args['cobranded_application_id'] = $applicationId;
-			$args['email_timeline_subject_id'] = EmailTimeline::MERCHANT_SIGNED;
-			$args['recipient'] = implode(';', $to);
-			$response = $this->createEmailTimelineEntry($args);
-		}
-		
-		return $response;
-	}
-
-/**
- * parseExtractPdfUrlExpiration
- * Parses the application PDF URL string that was previously extracted from the document details data reteived from making a RightSignature API call.
- * After parsing it extracts the expiration data which is an integer number of seconds (Unix epoc) and returns it as a human readable date/time string
- *
- * @param string appPdfUrl 
- * @return string a human readable date/time when the PDF URL will expre
- */
-	public function parseExtractPdfUrlExpiration($appPdfUrl) {
-		parse_str($appPdfUrl, $result);
- 		$epoch = $result['Expires'];
- 		return date("D M jS Y \a\\t h:i:s a", $epoch);
-	}
 /**
  * getAppPdfUrl
  * Makes a RightSignature API call to retrieve the PDF URL.
  *
  * @param int $id Cobranded Application Id
- * @param boolean $overrideTemplate When true the PDF URL will be retrieved without checking Template for whether the PDFs are allowed to be retieved/emailed
  * @return string The URL where the PDF is located.
  */
-	public function getAppPdfUrl($id, $overrideTemplate = false) {
+	public function getAppPdfUrl($id) {
 		$appData = $this->find('first', array(
 			'recursive' => -1,
 			'fields' => array(
@@ -1547,7 +1457,7 @@ class CobrandedApplication extends AppModel {
 
 		$appPdfUrl = null;
 
-		if ($overrideTemplate === true || ($appData['Template']['email_app_pdf'] === true)) {
+		if ($appData['Template']['email_app_pdf'] === true) {
 			$guid = $appData['CobrandedApplication']['rightsignature_document_guid'];
 			$client = $this->createRightSignatureClient();
 			$docDetals = $client->getDocumentDetails($guid);
