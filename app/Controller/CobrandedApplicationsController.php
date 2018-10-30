@@ -1271,7 +1271,6 @@ class CobrandedApplicationsController extends AppController {
 				$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
 				$this->CobrandedApplication->saveField('status', 'signed');
 				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
-				$this->CobrandedApplication->emailUwSignedApp($data['CobrandedApplication']['id']);
 			}
 		}
 
