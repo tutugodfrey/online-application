@@ -7,7 +7,7 @@
 	<!--<?php if ($error)
 		//login_bar();
 	?>-->
-        <? if (!$alreadySigned) { ?>
+        <?php if (!$alreadySigned) { ?>
 	<div class="container">
 	<div class="panel panel-primary">
 		<div class="panel-heading bottom">
