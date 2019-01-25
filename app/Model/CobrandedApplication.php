@@ -2680,8 +2680,10 @@ class CobrandedApplication extends AppModel {
 				'recursive' => -1
 			)
 		);
-		if ((CakeTime::wasWithinLast('30 days',
-			$application['CobrandedApplication']['modified'])) &&
+
+		//Use date without time
+		$modDate = CakeTime::format($application['CobrandedApplication']['modified'], '%Y-%m-%d');
+		if ((CakeTime::wasWithinLast('30 days', $modDate)) &&
 			$application['CobrandedApplication']['status'] !== 'signed') {
 
 			return false;

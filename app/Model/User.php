@@ -21,6 +21,10 @@ class User extends AppModel {
 			'email' => array(
 				'rule' => array('email'),
 			),
+			'unique_email' => array(
+				'rule' => array('isUnique'),
+				'message' => 'Emails are used as usernames to log in and must be unique. This one is already in use.'
+			),
 		),
 		'pwd' => array(
 			'notBlank' => array(

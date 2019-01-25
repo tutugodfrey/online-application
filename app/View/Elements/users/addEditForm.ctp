@@ -204,6 +204,11 @@ echo $this->Html->tag('/div');
 ?>
 <script type='text/javascript' src='/js/users/users-templates.js'></script>
 <?php
+if ($this->action === 'admin_add') {
+	echo $this->Form->hidden('pw_expiry_date');
+	echo $this->Form->hidden('password');
+	echo $this->Form->hidden('pw_reset_hash');
+}
 echo $this->Form->end(array('label' => __('Save user'), 'div' => array('class' => 'col-md-12'), 'class' => 'btn btn-sm btn-success'));
 echo $this->fetch('postLink'); // output the post link form(s) outside of the main form
 ?>
