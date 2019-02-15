@@ -458,6 +458,52 @@
 
                             <table class="table table-condensed">
                                 <tr>
+                                    <td>
+                                        Org. Name
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('org_name',
+                                            array(
+                                                'div' => false,
+                                                'label' => false,
+                                                'after' => '<span class="small text-primary"><strong>Please pick Organization from list<br>if it\'s shown as you type.</strong></span>'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        Region Name
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('region_name',
+                                            array(
+                                                'div' => false,
+                                                'label' => false,
+                                                'after' => '<span class="small text-primary"><strong>Please pick Region from list if<br>it\'s shown as you type.</strong></span>'
+                                            )
+                                        ); ?>
+                                    </td>
+                                    <td>
+                                        Sub-Region
+                                    </td>
+                                    <td>
+                                        <?php echo $this->Form->input('subregion_name',
+                                            array(
+                                                'div' => false,
+                                                'label' => false,
+                                                'after' => '<span class="small text-primary"><strong>Please pick Sub-Region from list<br>if it\'s shown as you type.</strong></span>'
+                                            )
+                                        ); ?>
+                                    </td>
+
+                                </tr>
+                            </table>
+                            <script>
+                                enableAutocomplete('#CoversheetOrgName', '/Coversheets/get_orgs_suggestions');
+                                enableAutocomplete('#CoversheetRegionName', '/Coversheets/get_regions_suggestions');
+                                enableAutocomplete('#CoversheetSubregionName', '/Coversheets/get_subregions_suggestions');
+                            </script>
+                            <table class="table table-condensed">
+                                <tr>
                                     <td style="width: 50px">Partner:</td>
                                     <td>
 										<?php echo $this->Form->input('setup_partner',
