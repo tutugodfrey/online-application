@@ -128,7 +128,10 @@
 				<div id="header">
 						<?php
 						$additionalMarginTop = 0;
-						if ($this->Session->check('Auth.User.id')) : ?>
+						if ($this->Session->check('Auth.User.id')) :
+							echo $this->Element('Ajax/dynamicModal');
+						 ?>
+
 								<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 									<span class="navbar-text">
 									<?php echo $this->Html->getCrumbs(' > ', array('text' => _('Axia Admin Home'), 'url' => '/admin/')); ?>
@@ -155,24 +158,7 @@
 												'class' => 'btn btn-default'
 											)
 										);
-										$logoutLink = $this->Html->link(__('Logout') . $this->Html->tag('span', null, array('class' => 'glyphicon glyphicon-log-out pull-right')) . $this->Html->tag('/span'),
-											array(
-												'controller' => 'users',
-												'action' => 'logout',
-												'admin' => false,
-											),
-											array('escape' => false)
-										);
-										$resetPwLink = $this->element('users/resetPwPostLink', array('id' => $this->Session->read('Auth.User.id')));
-										echo '<span class="btn btn-default dropdown">
-										    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-												<span class="glyphicon glyphicon-user"></span><span class="caret"></span>
-											</a>
-											<ul class="dropdown-menu">
-										        <li>' . $logoutLink . '</li>
-												<li>' . $resetPwLink . '</li>
-										    </ul>
-										</span>';
+										echo $this->element('users/navbarDropDown');
 									?>
 								</span>
 							</nav>

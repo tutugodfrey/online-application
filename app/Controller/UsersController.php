@@ -1,4 +1,5 @@
 <?php
+App::uses('User', 'Model');
 class UsersController extends AppController {
 
 	public $permissions = array(
@@ -6,7 +7,8 @@ class UsersController extends AppController {
 		'logout' => '*',
 		'request_pw_reset' => '*',
 		'change_pw' => '*',
-		'get_user_templates' => '*'
+		'get_user_templates' => '*',
+		'reset_api_info' => array(User::ADMIN, User::REP, User::MANAGER, User::API)
 	);
 
 	public $components = array('Search.Prg');
@@ -34,19 +36,53 @@ class UsersController extends AppController {
 		$conditions = array('conditions' => array('User.id' => $id), 'recursive' => -1);
 		$data = $this->User->find('first', $conditions);
 		if ($data['User']['api_enabled'] === true) {
-			$this->_failure('This User already has Valid API Credentials!');
-			$this->redirect('/admin/users');
+			$this->_failure('This user already has valid API Credentials! To reset credentials this user must log in and perform a reset.');
+			$this->redirect($this->referer());
 		} else {
 			$token = sha1(CakeText::uuid());
-			$password = substr(sha1(CakeText::uuid()), 5, 14);
-
-			$this->User->set(array('token' => $token, 'api_password' => $password, 'api_enabled' => true, 'api' => true));
+			$this->User->set(array('token' => $token, 'api_enabled' => true, 'api' => true));
 			if (!$this->User->save()) {
 				$token = null;
 				$this->_failure('There was an error generating this token');
 			}
-			$this->_success('API access has been enabled for this user');
-			$this->set(compact('token', 'password', 'id'));
+
+			if ($this->Session->read('Auth.User.id') == $id) {
+				$this->Session->write('Auth.User.api_enabled', true);
+			}
+			$msg = "Hello and Welcome to our API!\n";
+			$msg .= Configure::read('Axia.ApiUserEmailBody');
+			$msg .= "\nOnline App Login Page: " . Router::url(['controller' => 'Users', 'action' => 'login'], true);
+			$msg .= "\nPlease contact us if you need any assistance.";
+			$args['subject'] = 'AxiaMed Online Application System API';
+			$args['viewVars'] = ['content' => $msg];
+			$args = $this->User->getEmailArgs($id, $args);
+			$this->User->sendEmail($args);
+			$this->_success('API access enabled and username/token generated. Email sent to user with instructions to generate their API password.');
+			$this->redirect($this->referer());
+		}
+	}
+
+/**
+ * admin_edit method
+ *
+ * @param string $id CobrandedApplication id
+ * @param boolean $reset CobrandedApplication id
+ * @throws NotFoundException
+ * @return void
+ */
+	public function reset_api_info($id = null, $reset = false) {
+		if ($this->request->is('ajax') && $this->Session->check('Auth.User.id')) {
+			$apiToken = $this->User->field('token', ['id' => $id]);
+			$this->set(compact('apiToken'));
+			if ($reset === false) {
+				$this->render('/Elements/Ajax/api_info');
+			} else {
+				$apiPassword = $this->User->generateRandPw();
+				$this->set(compact('apiPassword'));
+				$this->render('/Elements/Ajax/api_info_content');
+			}
+		} elseif (!$this->Session->check('Auth.User.id')) {
+			$this->response->statusCode(403);
 		}
 	}
 
@@ -71,7 +107,11 @@ class UsersController extends AppController {
 					$this->Session->setFlash(__($msg), 'default', ['class' => 'alert-danger strong text-center']);
 				}
 				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
-				$this->redirect($this->Auth->redirect());
+				if ($this->Auth->user('group_id') === User::API_GROUP_ID){
+					$this->redirect(['controller' => 'admin', 'action' => 'index']);
+				} else {
+					$this->redirect($this->Auth->redirect());
+				}
 			} else {
 				$this->_failure(__('Invalid e-mail/password.'));
 			}
@@ -121,7 +161,7 @@ class UsersController extends AppController {
 					$msg .= "Follow the link below to change your password:\n";
 					$msg .= Router::url(['controller' => 'Users', 'action' => 'change_pw', (int)$hasExpired, $pwResetHash], true) . "\n";
 					$args['viewVars'] = ['content' => $msg];
-					$args = $this->User->getPwResetEmailArgs($user['User']['id'], $args);
+					$args = $this->User->getEmailArgs($user['User']['id'], $args);
 					$this->User->sendEmail($args);
 				}
 				$redirectTo = ['action' => 'login'];
@@ -228,8 +268,7 @@ class UsersController extends AppController {
 		if (!empty($params)) {
 			$this->Paginator->settings['conditions'] = $this->User->parseCriteria($this->Prg->parsedParams());
 		}
-		//		$groups = $this->User->Group->find('list');
-		//		$templates = $this->User->Template->getList();
+
 		$users = $this->paginate();
 		$this->_setViewNavData($queryString);
 		$this->set(compact('users'));
@@ -342,6 +381,9 @@ class UsersController extends AppController {
 				unset($this->request->data['User']['password_confirm']);
 			}
 			if ($this->User->saveAll($this->request->data)) {
+				if (array_key_exists('api_enabled', $this->request->data['User'])) {
+					$this->Session->write('Auth.User.api_enabled', (bool)$this->request->data('User.api_enabled'));
+				}
 				$this->_success(__("User Saved!"));
 				$this->redirect('/admin/users');
 			} else {
