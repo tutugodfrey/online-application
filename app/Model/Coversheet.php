@@ -5,6 +5,13 @@ App::uses('EmailTimeline', 'Model');
 App::uses('CobrandedApplication', 'Model');
 
 class Coversheet extends AppModel {
+	/**
+	* MIN_LEV
+	* Minimum levenshtein distance allowed to consider two worrds similar enough to safely assume they are the same word
+	*
+	* @var
+	*/
+	const MIN_LEV = 2;
 
 	public $displayField = 'cobranded_application_id';
 
@@ -103,7 +110,25 @@ class Coversheet extends AppModel {
 		'moto_online_chd' => array(
 			'rule' => array('moto'),
 			'message' => 'Internet Merchants: Does the merchant store credit card numbers online?'
-		)
+		),
+		'org_name' => array(
+			'checkOrgRegionSubRegion' => array(
+				'rule' => array('checkOrgRegionSubRegion'),
+				'required' => false
+			),
+		),
+		'region_name' => array(
+			'checkOrgRegionSubRegion' => array(
+				'rule' => array('checkOrgRegionSubRegion'),
+				'required' => false
+			),
+		),
+		'subregion_name' => array(
+			'checkOrgRegionSubRegion' => array(
+				'rule' => array('checkOrgRegionSubRegion'),
+				'required' => false
+			),
+		),
 	);
 
 	public $findMethods = array('index' => true);
@@ -125,6 +150,347 @@ class Coversheet extends AppModel {
 		)
 	);
 
+/**
+ * checkOrgRegionSubRegion
+ * Custom validation rule checks whether Organization was in inputted when a Region and/or a subregion was submitted and vicecersa
+ * If no Org entered then cannot enter a region and subregion
+ * If Org entered but not a Region then cannot enter a subregion
+ * if no Org and Region then cannot enter subregion
+ * 
+ * @param array $check an associated model's Region id
+ * @return array list of subregions that belong to the passed region
+ */
+	public function checkOrgRegionSubRegion($check) {
+		$field = key($check);
+		$fieldName = Inflector::humanize($field);
+		$org = $this->data['Coversheet']['org_name'];
+		$region = $this->data['Coversheet']['region_name'];
+		$subregion = $this->data['Coversheet']['subregion_name'];
+
+		if ($field === 'org_name' && empty($org) && (!empty($region) || !empty($subregion))) {
+			return __("A parent Organization is required if Region or Subregion are entered");
+		} elseif ($field === 'region_name' && empty($region) && !empty($subregion)) {
+			return __("Region is required if adding a Subregion");
+		}
+		return true;
+	}
+
+/**
+ * afterSave callback
+ *
+ * @param $created boolean
+ * @param $options array
+ * @return void
+ */
+	public function afterSave($created, $options = array()) {
+		if (!empty($this->data['Coversheet']['org_name']) || !empty($this->data['Coversheet']['region_name']) || !empty($this->data['Coversheet']['subregion_name'])) {
+			$this->distinctSaveOrgData($this->data);
+		}
+	}
+
+/**
+ * distinctSaveOrgData
+ * Function validates that organization region and sub-region values do not already exist in the database
+ * and saves them IFF they are new.
+ * Data may not to save associated child region and subregion data if the provided names for existing parent organization or parent region are not found.
+ *
+ * @param array $data Coversheet data containing org_name, region_name and/or subregion_name fields
+ * @return boolean true on success | false on falure
+ */
+	public function distinctSaveOrgData($data) {
+		if (!empty(Hash::get($data, 'Coversheet'))) {
+			$data = Hash::get($data, 'Coversheet');
+		}
+		//Sanitize strings
+		$data['org_name'] = $this->trimExtra(Hash::get($data, 'org_name'));
+		$data['region_name'] = $this->trimExtra(Hash::get($data, 'region_name'));
+		$data['subregion_name'] = $this->trimExtra(Hash::get($data, 'subregion_name'));
+		$orgId = null;
+		$regionId = null;
+		$isNewOrg = false;
+		$isNewRegion = false;
+		if (!empty($data['org_name'])) {
+			//Check if org exists
+			if ($this->isUniqueOrgName($data)) {
+				$orgId = CakeText::uuid();
+				$isNewOrg = true;
+			} else {
+				//get organization.id
+				$org = $this->getSimilarOrgs($data['org_name']);
+				if (!empty($org)) {
+					foreach ($org as $organization) {
+						if ($this->wordsAreWithinMinLevenshtein($data['org_name'], [$organization['Organization']['name']], self::MIN_LEV) !== false) {
+							$orgId = $organization['Organization']['id'];
+							break;
+						}
+					}
+				}
+			}
+		}
+		//cannot save associated data if existing parent Organization is not found using provided org_name.
+		if ($isNewOrg === false && empty($orgId) && (!empty($data['region_name']) || !empty($data['subregion_name']))) {
+			return false;
+		} elseif ($isNewOrg) {
+			//Save Org IFF isNewOrg
+			try {
+				$OrgModel = new Model(array('table' => 'organizations', 'ds' => $this->connection));
+				if (!$OrgModel->save(['id' => $orgId, 'name' => $data['org_name']])) {
+					return false;
+				}
+			} catch (Exception $e) {
+				return false;
+			}
+		}
+
+		$parentOrgId = ($isNewOrg)? null : $orgId;
+		if (!empty($data['region_name'])) {
+			//Check if region exists
+			if ($this->isUniqueRegionName($data, $parentOrgId)) {
+				$regionId = CakeText::uuid();
+				$isNewRegion = true;
+			} else {
+				//get region.id
+				$regions = $this->getSimilarRegions($data['region_name'], $parentOrgId);
+				if (!empty($regions)) {
+					foreach ($regions as $region) {
+						if ($this->wordsAreWithinMinLevenshtein($data['region_name'], [$region['Region']['name']], self::MIN_LEV) !== false) {
+							$regionId = $region['Region']['id'];
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		//cannot save associated data if existing parent region is not found using provided region_name.
+		if ($isNewRegion === false && empty($regionId) && !empty($data['subregion_name'])) {
+			return false;
+		} elseif ($isNewRegion) {
+			//Save Region IFF is new
+			try {
+				$RegionModel = new Model(array('table' => 'regions', 'ds' => $this->connection));
+				if (!$RegionModel->save(['id' => $regionId, 'organization_id' =>$orgId, 'name' => $data['region_name']])) {
+					return false;
+				}
+			} catch (Exception $e) {
+				return false;
+			}
+		}
+
+		$parentRegionId = ($isNewRegion)? null : $regionId;
+		if (!empty($data['subregion_name'])) {
+			//Check if subregion exists
+			if ($this->isUniqueSubRegionName($data, $parentOrgId, $parentRegionId)) {
+				try {
+					$SubRegionModel = new Model(array('table' => 'subregions', 'ds' => $this->connection));
+					if (!$SubRegionModel->save(['region_id' => $regionId, 'organization_id' => $orgId, 'name' => $data['subregion_name']])) {
+						return false;
+					}
+				} catch (Exception $e) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+/**
+ * isUniqueOrgData
+ * Check uniqueness of Organization names
+ * 
+ * @param array $data sungle dimentional array containing org_name field
+ * @return mixed boolean false when value is empty or a matching record is found otherwise true
+ */
+	public function isUniqueOrgName($data) {
+		$orgName = Hash::get($data, 'org_name');
+		if (empty($orgName)) {
+			return false;
+		}
+		$result = $this->getSimilarOrgs($orgName);
+		if (empty($result) ) {
+			return true;
+		} elseif ($this->wordsAreWithinMinLevenshtein($orgName, Hash::extract($result, '{n}.Organization.name'), self::MIN_LEV) === false) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * isUniqueRegionName
+ * Check uniqueness of Region names
+ * This function will check whether the Conversheet.org_name exists and has an associated Conversheet.region_name
+ * Function will return false if Conversheet.org_name and orgId parameter are both empty or when Conversheet.org_name field is empty
+ * 
+ * @param array $data sungle dimentional array containing org_name and region_name fields
+ * @param string $orgId optional if known, the organization.id that is or should be associated with the region name
+ * @return mixed boolean false when:
+ *   Conversheet.org_name and orgId parameter are both empty or when Conversheet.org_name field is empty
+ *	 Value is empty or a matching record is found otherwise
+ *	 boolean true when no existing record exist
+ */
+	public function isUniqueRegionName($data, $orgId = null) {
+		$orgName = Hash::get($data, 'org_name');
+		$regionName = Hash::get($data, 'region_name');
+		if ((empty($regionName) && empty($orgName)) || (empty($orgName) && empty($orgId))) {
+			return false;
+		}
+
+		if (empty($orgId)) {
+			$orgData = $this->getSimilarOrgs($orgName);
+			if (count($orgData) > 1) {
+				foreach ($orgData as $organization) {
+					if ($this->wordsAreWithinMinLevenshtein($orgName, [$organization['Organization']['name']], self::MIN_LEV) !== false) {
+						$orgId = $organization['Organization']['id'];
+						break;
+					}
+				}
+			} else {
+				$orgId = Hash::get($orgData, '0.Organization.id');
+			}
+		}
+
+		$result = $this->getSimilarRegions($regionName, $orgId);
+		if (empty($result) ) {
+			return true;
+		} elseif ($this->wordsAreWithinMinLevenshtein($regionName, Hash::extract($result, '{n}.Region.name'), self::MIN_LEV) === false) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * isUniqueSubRegionName
+ * Check uniqueness of SubRegion names
+ * This function will check whether the Conversheet.org_name exists and has an associated Conversheet.region_name
+ * Function will return false if Conversheet.org_name and orgId parameter are both empty or when Conversheet.org_name field is empty
+ * 
+ * @param array $data sungle dimentional array containing all org_name, region_name and subregion_name fields
+ * @param string $orgId optional if known, the organization.id that is or should be associated with the child region and subregion
+ * @param string $regionId optional if known, the region.id that is or should be associated with the subregion name
+ * @return mixed boolean false when:
+ *   Conversheet.org_name and orgId parameter are both empty or when Conversheet.org_name and $regionId are both empty
+ *	 Value is empty or a matching record is found otherwise
+ *	 boolean true when no existing record exist
+ */
+	public function isUniqueSubRegionName($data, $orgId = null, $regionId = null) {
+		$orgName = Hash::get($data, 'org_name');
+		$regionName = Hash::get($data, 'region_name');
+		$subRegionName = Hash::get($data, 'subregion_name');
+		if (empty($subRegionName) || (empty($regionName) && empty($regionId)) || (empty($orgName) && empty($orgId))) {
+			return false;
+		}
+
+		if (empty($orgId)) {
+			$orgData = $this->getSimilarOrgs($orgName);
+			if (count($orgData) > 1) {
+				foreach ($orgData as $organization) {
+					if ($this->wordsAreWithinMinLevenshtein($orgName, [$organization['Organization']['name']], self::MIN_LEV) !== false) {
+						$orgId = $organization['Organization']['id'];
+						break;
+					}
+				}
+			} else {
+				$orgId = Hash::get($orgData, '0.Organization.id');
+			}
+		}
+
+		if (empty($regionId)) {
+			$regionData = $this->getSimilarRegions($regionName);
+			if (count($regionData) > 1) {
+				foreach ($regionData as $region) {
+					if ($this->wordsAreWithinMinLevenshtein($regionName, [$region['Region']['name']], self::MIN_LEV) !== false) {
+						$regionId = $region['Region']['id'];
+						break;
+					}
+				}
+			} else {
+				$regionId = Hash::get($regionData, '0.Region.id');
+			}
+		}
+
+		$result = $this->getSimilarSubregions($subRegionName, $regionId, $orgId);
+		if (empty($result) ) {
+			return true;
+		} elseif ($this->wordsAreWithinMinLevenshtein($subRegionName, Hash::extract($result, '{n}.SubRegion.name'), self::MIN_LEV) === false) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * getSimilarOrgs
+	 * Finds data of organizations that are textually similar to the provided org name
+	 *
+	 * @param string $orgName the name of an organization
+	 * @return array
+	 */
+	public function getSimilarOrgs($orgName) {
+		$Organization = new Model(array('name' => 'Organization', 'table' => 'organizations', 'ds' => $this->connection));
+		return $Organization->find('all', array('conditions' => array(
+			'OR' => array(
+				array('lower(name)' => strtolower($orgName)),
+				//Must check LIKENESS in both directions because
+				//("Word" ILIKE "Words") === false but ("Words ILIKE Word") === true
+				//but they are all the same word obviously
+				array("name ILIKE '%$orgName%'"),
+				array("'$orgName' ILIKE '%'|| name ||'%'")
+			)
+		)));
+	}
+
+/**
+ * getSimilarRegions
+ * Finds a list of regions that are textually similar to the provided name
+ *
+ * @param string $name the name of an organization
+ * @param string $parentOrgId optional organization.id associated with or is the parent of the region
+ * @return array
+	 */
+	public function getSimilarRegions($regionName, $parentOrgId = null) {
+		$conditions = array();
+		if (!empty($parentOrgId)) {
+			$conditions['organization_id'] = $parentOrgId;
+		}
+		$conditions['OR'] = array(
+			array('lower(name)' => strtolower($regionName)),
+			//Must check LIKENESS in both directions because
+			//("Word" ILIKE "Words") === false but ("Words ILIKE Word") === true
+			//but they are all the same word obviously
+			array("name ILIKE '%$regionName%'"),
+			array("'$regionName' ILIKE '%'|| name ||'%'")
+		);
+		$Region = new Model(array('name' => 'Region', 'table' => 'regions', 'ds' => $this->connection));
+		return $Region->find('all', array('conditions' => $conditions));
+	}
+
+/**
+ * getSimilarSubregions
+ * Finds a list of subregions that are textually similar to the provided name
+ *
+ * @param string $subRegionName the name of an subregion
+ * @param string $parentRegionId optional region.id associated with or is the parent of the subregion
+ * @param string $parentOrgId optional organization.id associated with or is the parent of the subregion
+ * @return array
+ */
+	public function getSimilarSubregions($subRegionName, $parentRegionId = null, $parentOrgId = null) {
+		$conditions = array();
+		if (!empty($parentRegionId)) {
+			$conditions['region_id'] = $parentRegionId;
+		}
+		if (!empty($parentOrgId)) {
+			$conditions['organization_id'] = $parentOrgId;
+		}
+		$conditions['OR'] = array(
+			array('lower(name)' => strtolower($subRegionName)),
+			//Must check LIKENESS in both directions because
+			//("Word" ILIKE "Words") === false but ("Words ILIKE Word") === true
+			//but they are all the same word obviously
+			array("name ILIKE '%$subRegionName%'"),
+			array("'$subRegionName' ILIKE '%'|| name ||'%'")
+		);
+		$SubRegion = new Model(array('name' => 'SubRegion', 'table' => 'subregions', 'ds' => $this->connection));
+		return $SubRegion->find('all', array('conditions' => $conditions));
+	}
 	function equipment() {
 		if ($this->data['Coversheet']['setup_equipment_terminal'] != '1' && $this->data['Coversheet']['setup_equipment_gateway'] != '1') {
 			return false;
