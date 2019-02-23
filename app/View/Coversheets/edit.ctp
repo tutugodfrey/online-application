@@ -14,6 +14,7 @@
                 jQuery.noConflict();  
 
                 jQuery(document).ready(function () {
+                    jQuery('.text-danger').addClass('error-message');
                     jQuery(":input").inputmask();
 
                     jQuery('input[type=submit]').click(function(e) {
@@ -791,12 +792,12 @@
                                     </td>
                                     <td >
                                         <div class="label label-default">
-                                            <?php echo $data['CobrandedApplication']['TermAcceptDebit-Yes'] == 'true' ? 'Yes' : 'No'; ?>
+                                            <?php echo Hash::get($data, 'CobrandedApplication.TermAcceptDebit-Yes') == 'true' ? 'Yes' : 'No'; ?>
                                         </div>
                                     </td>
                                     <td style="width: 21%;">Pin Pad Type?
-                                        <div <?php echo ($data['CobrandedApplication']['PinPad1']) ? 'class="label label-default"' : ''; ?> >
-                                            <?php echo $data['CobrandedApplication']['PinPad1'];?>
+                                        <div <?php echo (Hash::get($data, 'CobrandedApplication.PinPad1')) ? 'class="label label-default"' : ''; ?> >
+                                            <?php echo Hash::get($data, 'CobrandedApplication.PinPad1');?>
                                         </div>
                                     </td>
                                     <td >
@@ -818,11 +819,11 @@
                                     </td>
                                     <td style="width: 12%;">
                                         <div class="label label-default">
-                                            <?php echo $data['CobrandedApplication']['DoYouUseAutoclose-Autoclose'] == 'true' ? 'Yes' : 'No'; ?>
+                                            <?php echo Hash::get($data, 'CobrandedApplication.DoYouUseAutoclose-Autoclose') == 'true' ? 'Yes' : 'No'; ?>
                                         </div>
                                     </td>
                                     <td>
-                                        Time: <div <?php echo ($data['CobrandedApplication']['Autoclose Time 1']) ? 'class="label label-default"' : ''; ?> ><?php echo $data['CobrandedApplication']['Autoclose Time 1']; ?></div>
+                                        Time: <div <?php echo (Hash::get($data, 'CobrandedApplication.Autoclose Time 1')) ? 'class="label label-default"' : ''; ?> ><?php echo Hash::get($data, 'CobrandedApplication.Autoclose Time 1'); ?></div>
                                     </td>
                                     <td >
                                         <?php
@@ -969,7 +970,7 @@
                                     </td>
                                     <td>
                                         <div class="label label-default">
-                                            <?php echo $data['CobrandedApplication']['Tips'] == 'true' ? 'Yes' : 'No'; ?>
+                                            <?php echo Hash::get($data, 'CobrandedApplication.Tips') == 'true' ? 'Yes' : 'No'; ?>
                                         </div>
                                     </td>
                                     <td>
@@ -984,7 +985,7 @@
                                     </td>
                                     <td>
                                         <div class="label label-default">
-                                            <?php echo $data['CobrandedApplication']['Server'] == 'true' ? 'Yes' : 'No'; ?>
+                                            <?php echo Hash::get($data, 'CobrandedApplication.Server') == 'true' ? 'Yes' : 'No'; ?>
                                         </div>
                                     </td>
                                     <td>
@@ -1417,7 +1418,6 @@
                         Effect.Appear('Moto');
                         Effect.Appear('HideMotoLink');
                         Effect.Fade('ShowMotoLink');
-
                     </script>
                 <?php } ?>
 

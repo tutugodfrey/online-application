@@ -162,6 +162,7 @@ class CoversheetsController extends AppController {
 
 		if ($id && !empty($this->request->data)) {
 			if(isset($this->request->data['save'])) {
+
 				if ($this->request->data['Coversheet']['gateway_package'] != 'gold') {
 					$this->request->data['Coversheet']['gateway_gold_subpackage'] = '';
 				}
@@ -326,7 +327,7 @@ class CoversheetsController extends AppController {
 	public function admin_index() {
 		//reset all of the search parameters
 		if(isset($this->request->data['reset'])) {
-			foreach($this->request->data['Coversheet'] as $i => $value){
+			foreach($this->request->data['Coversheet'] as $i => $value) {
 				$this->request->data['Coversheet'][$i]= '';
 			}
 		}

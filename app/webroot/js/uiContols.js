@@ -145,7 +145,6 @@ function endSlide(objname){
  * 
 */
 function enableAutocomplete(inputObj, requestUri) {
-    console.log(inputObj);
     jQuery(inputObj).autocomplete({
         source: function(request, response) {
             jQuery.ajax({
