@@ -1,7 +1,7 @@
 /* 
  * Developed by Oscar Mota 2012
  * 
- * Copyright Axia Technologies
+ * Copyright Axia Med
  */
 
 
@@ -129,3 +129,36 @@ function endSlide(objname){
             return $(x).text() < $(y).text() ? -1 : 1;
         }));
     }
+
+/*
+ * Autocomplete functionality - requires JQuery UI library
+ * Can be enabled onto any text field by simply passing its id attribute
+ * 
+ * Implements a function callback to allow Ajax functionality 
+ * 
+ * @param string inputObj, DOM object id to pass as the jquery selector for the . Ej: "#objId"
+ * @param string requestUri, a URI to perform ajax request for suggestions data to populate suggestions list.
+ *                          URI FORMAT: '/ControllerName/action'
+ * request = user input
+ * response = Returns JSON encoded array of matching suggestions depending on user input
+ * Response is passed as the source which requires an array or a JSON encoded object acting as associative array.
+ * 
+*/
+function enableAutocomplete(inputObj, requestUri) {
+    jQuery(inputObj).autocomplete({
+        source: function(request, response) {
+            jQuery.ajax({
+                type: "POST",
+                url: requestUri + "/" + request.term,
+                dataType: 'html',
+                success: function(data) {
+                    response(JSON.parse(data));
+                },
+                error: function(data) {
+                    //pass an empty array to close the menu if it was initially opened
+                    response([]);
+                }
+            });/*end ajax*/
+        }
+    });
+}

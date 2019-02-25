@@ -92,13 +92,6 @@
 				),
 				__('Are you sure you want to delete') . ' #' . $user['User']['id']
 			) . "\n";
-			echo "\t\t\t" . $this->Html->link(__('Create Token'),
-				array(
-					'action' => 'token',
-					'admin' => true,
-					$user['User']['id']
-				)
-			) . "\n";
 			echo "\t\t</td>\n";
 			echo "\t</tr>\n";
 
