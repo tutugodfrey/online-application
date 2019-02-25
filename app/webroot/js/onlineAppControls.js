@@ -42,10 +42,10 @@ function renderContentAJAX(controller, action, id, containerID, actionPath) {
 				/*If user session expired the server will return a Unathorized status 401
 				 *Refreshing the page will redirect the user to the login page thus preventing it from inserting into the DOM*/
 					if(data.status === 401) {
-						$('#'+containerID).html('<div class="alert alert-danger">Error 401: Unathorized.</div>');
+						$('#'+containerID).html('<div class="error-message">Error 401: Unathorized.</div>');
 					 	location.reload();
 					}
-					$('#'+containerID).html('<div class="alert alert-danger">Server Request Error: Sorry try again later.</div>');
+					$('#'+containerID).html('<div class="error-message">Server Request Error: Sorry try again later.</div>');
 				  }
 		});
 }

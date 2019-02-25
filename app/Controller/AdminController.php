@@ -4,7 +4,7 @@ class AdminController extends AppController {
 	public $uses = array();
 
 	public $permissions = array(
-		'index' => array('admin', 'rep', 'manager', 'api'),
+		'index' => array('admin', 'rep', 'manager'),
 	);
 
 	public function beforeFilter() {

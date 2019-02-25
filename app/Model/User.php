@@ -246,8 +246,7 @@ class User extends AppModel {
 /**
  * generateRandPw
  * Generates a 32bit Cryptographically secure pseudo-random password string
- * and utilizes unreserved characters (section 2.3 of RFC3986 spec).
- * 
+ *
  * @return mixed boolean|array
  */
 	public function generateRandPw() {
@@ -255,21 +254,21 @@ class User extends AppModel {
 		$generator = $factory->getMediumStrengthGenerator();
 		$intList = $generator->generateInt(1000, 99999);
 		$alphaList = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$unreservedSymbolList = '._+-~';
-		$chars = $alphaList . $intList . $unreservedSymbolList;
+		$symbolList = '!?.$&_+/#?$-!';
+		$chars = $alphaList . $intList . $symbolList;
 		
 		return $generator->generateString(32, $chars);
 	}
 
 /**
- * getEmailArgs
+ * getPwResetEmailArgs
  * Returns an array of email arguments to use for sending a CakeEmail
  *
  * @param string $userId the id of the user that the email wool be sent to
  * @param array $args optinal email metadata arguments to use instead of defaults
  * @return mixed boolean|array
  */
-	public function getEmailArgs($userId, $args = []) {
+	public function getPwResetEmailArgs($userId, $args = []) {
 		$email = $this->field('email', ['id' => $userId]);
 		$userName = $this->field('firstname', ['id' => $userId]);
 
@@ -282,7 +281,7 @@ class User extends AppModel {
 		$msgBody .= "Otherwise, please follow the URL below to set a new password:\n";
 		$msgBody .= Router::url(['controller' => 'Users', 'action' => 'change_pw', $userId], true);
 		$defaults = [
-			'from' => ['webmaster@axiamed.com' => 'Axia Online Applications'],
+			'from' => ['newapps@axiapayments.com' => 'Axia Online Applications'],
 			'to' => $email,
 			'subject' => 'Axia Online App Account Password Reset',
 			'format' => 'html',
