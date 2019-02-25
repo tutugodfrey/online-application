@@ -407,7 +407,7 @@ class UserTest extends CakeTestCase {
 	}
 
 /**
- * testNewPwExpiration
+ * testGetPwResetEmailArgs
  *
  * @covers User::getTemplates
  * @return void
@@ -421,15 +421,15 @@ class UserTest extends CakeTestCase {
  	}
 
 /**
- * testGetEmailArgs
+ * testGetPwResetEmailArgs
  *
  * @covers User::getTemplates
  * @return void
  */
-	public function testGetEmailArgs() {
+	public function testGetPwResetEmailArgs() {
 		$expected = array(
 			'from' => array(
-					'webmaster@axiamed.com' => 'Axia Online Applications'
+					'newapps@axiapayments.com' => 'Axia Online Applications'
 			),
 			'to' => 'testing11@axiapayments.com',
 			'subject' => 'Axia Online App Account Password Reset',
@@ -443,7 +443,6 @@ class UserTest extends CakeTestCase {
 					"http://localhost/Users/change_pw/11"
 				)
 			);
-
-		$this->assertSame($expected, $this->User->getEmailArgs(11));
+		$this->assertSame($expected, $this->User->getPwResetEmailArgs(11));
 	}
 }

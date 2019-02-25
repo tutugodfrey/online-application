@@ -11,7 +11,7 @@
 		<link href="/favicon.ico" type="image/x-icon" rel="icon" >
 		<link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" >
 
-		<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="/js/onlineAppControls.js"></script>
@@ -128,10 +128,7 @@
 				<div id="header">
 						<?php
 						$additionalMarginTop = 0;
-						if ($this->Session->check('Auth.User.id')) :
-							echo $this->Element('Ajax/dynamicModal');
-						 ?>
-
+						if ($this->Session->check('Auth.User.id')) : ?>
 								<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 									<span class="navbar-text">
 									<?php echo $this->Html->getCrumbs(' > ', array('text' => _('Axia Admin Home'), 'url' => '/admin/')); ?>
@@ -158,7 +155,24 @@
 												'class' => 'btn btn-default'
 											)
 										);
-										echo $this->element('users/navbarDropDown');
+										$logoutLink = $this->Html->link(__('Logout') . $this->Html->tag('span', null, array('class' => 'glyphicon glyphicon-log-out pull-right')) . $this->Html->tag('/span'),
+											array(
+												'controller' => 'users',
+												'action' => 'logout',
+												'admin' => false,
+											),
+											array('escape' => false)
+										);
+										$resetPwLink = $this->element('users/resetPwPostLink', array('id' => $this->Session->read('Auth.User.id')));
+										echo '<span class="btn btn-default dropdown">
+										    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+												<span class="glyphicon glyphicon-user"></span><span class="caret"></span>
+											</a>
+											<ul class="dropdown-menu">
+										        <li>' . $logoutLink . '</li>
+												<li>' . $resetPwLink . '</li>
+										    </ul>
+										</span>';
 									?>
 								</span>
 							</nav>

@@ -205,39 +205,4 @@ class AppModel extends Model {
 
 		return $response;
 	}
-
-/**
- * trimExtra
- * Removes not only trailing spaces but also any extra spaces in between words in a string.
- * Turns multiple spaces between words into sigle space. 
- * Example the string: " Monday  -  Tuesday " becomes "Monday - Tuesday"
- * 
- * @param string $str the string to sanitize
- * @return string the sanitized string
- */
-	public function trimExtra($str) {
-		$pattern = '/(\s+)/i';
-		$replacement = " ";
-		return preg_replace($pattern, $replacement, trim($str));
-	}
-
-/**
- * wordsAreWithinMinLevenshtein
- * Will return false if the input string is not within the provided minimum distance threshold when compared to all of the strings in an array.
- * Otherwise will retirn the first most similar string that is within the minDistance threshold.
- * 
- * @param string $input to find closest Levenshtein distace agains an array of strings
- * @param array $strings one dimention array of strings to compare agains input
- * @param integer $minDistance a number representing the tolerace threshold at or below which the $input string will be considered to be very highly similar to one the $strings
- * @return mixed boolean | string.
- */
-	public function wordsAreWithinMinLevenshtein($input, $strings, $minDistance) {
-		foreach ($strings as $str) {
-			$lev = levenshtein($input, $str);
-			if ($lev <= $minDistance) {
-				return $str;
-			}
-		}
-		return false;
-	}
 }

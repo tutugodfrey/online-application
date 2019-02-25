@@ -10,88 +10,12 @@ class CoversheetsController extends AppController {
 		'admin_index' => array('rep', 'admin', 'manager'),
 		'add' => array('rep', 'admin', 'manager'),
 		'edit' => array('rep', 'admin', 'manager'),
-		'admin_delete' => array('rep', 'admin', 'manager'),
-		'get_orgs_suggestions' => array(User::ADMIN, User::REP, User::MANAGER),
-		'get_regions_suggestions' => array(User::ADMIN, User::REP, User::MANAGER),
-		'get_subregions_suggestions' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_delete' => array('rep', 'admin', 'manager')
 	);
 
 	function beforeFilter() {
 		parent::beforeFilter(); 
 	}
-
-/**
- * get_orgs_suggestions
- * Method handles ajaxRequests to get organizations
- * 
- * @param string $orgName all or part of the name of a region which may or may not exist in the database
- * @return void
- */
-	public function get_orgs_suggestions($orgName) {
-		//this method can handle ajax and non-ajax calls
-		$this->autoRender = false;
-		$orgName = trim($orgName);
-		if (strlen($orgName) <= 1) {
-			echo json_encode([]);
-			return;
-		}
-		$Org = new Model(array('table' => 'organizations', 'ds' => $this->Coversheet->connection));
-		$orgs = $Org->find('list', [
-			'fields' => ['name'],
-			'conditions' => ["name ILIKE '%$orgName%'"]
-		]);
-
-		echo json_encode($orgs);
-	}
-
-/**
- * get_regions_suggestions
- * Method handles ajaxRequests to get regions
- * 
- * @param string $regionName all or part of the name of a region which may or may not exist in the database
- * @return void
- */
-	public function get_regions_suggestions($regionName) {
-		//this method can handle ajax and non-ajax calls
-		$this->autoRender = false;
-		$regionName = trim($regionName);
-		if (strlen($regionName) <= 1) {
-			echo json_encode([]);
-			return;
-		}
-		$Region = new Model(array('table' => 'regions', 'ds' => $this->Coversheet->connection));
-		$regions = $Region->find('list', [
-			'fields' => ['name'],
-			'conditions' => ["name ILIKE '%$regionName%'"]
-		]);
-
-		echo json_encode($regions);
-	}
-
-/**
- * get_subregions_suggestions
- * Method handles ajaxRequests to get subregions
- * 
- * @param string $subRegionName all or part of the name of a subregion which may or may not exist in the database
- * @return void
- */
-	public function get_subregions_suggestions($subRegionName) {
-		//this method can handle ajax and non-ajax calls
-		$this->autoRender = false;
-		$subRegionName = trim($subRegionName);
-		if (strlen($subRegionName) <= 1) {
-			echo json_encode([]);
-			return;
-		}
-		$SubRegion = new Model(array('table' => 'subregions', 'ds' => $this->Coversheet->connection));
-		$subregions = $SubRegion->find('list', [
-			'fields' => ['name'],
-			'conditions' => ["name ILIKE '%$subRegionName%'"]
-		]);
-
-		echo json_encode($subregions);
-	}
-
 
 	public function add($oid = null,$uid = null,$id = null) {
 		if (!$id && empty($this->request->data)) {
@@ -162,7 +86,6 @@ class CoversheetsController extends AppController {
 
 		if ($id && !empty($this->request->data)) {
 			if(isset($this->request->data['save'])) {
-
 				if ($this->request->data['Coversheet']['gateway_package'] != 'gold') {
 					$this->request->data['Coversheet']['gateway_gold_subpackage'] = '';
 				}
@@ -327,7 +250,7 @@ class CoversheetsController extends AppController {
 	public function admin_index() {
 		//reset all of the search parameters
 		if(isset($this->request->data['reset'])) {
-			foreach($this->request->data['Coversheet'] as $i => $value) {
+			foreach($this->request->data['Coversheet'] as $i => $value){
 				$this->request->data['Coversheet'][$i]= '';
 			}
 		}
@@ -482,3 +405,4 @@ class CoversheetsController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 }
+?>
