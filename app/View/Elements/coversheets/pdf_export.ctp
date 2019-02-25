@@ -92,6 +92,10 @@
 <field name="POSContactInfo"><value><?php echo htmlspecialchars($data['Coversheet']['cp_pos_contact']);?></value></field>
 <field name="POSGateway"><value><?php echo ($data['Coversheet']['setup_equipment_gateway'] === true)? 'Yes': 'Off';?></value></field>
 <field name="Platinum"><value><?php echo ($data['Coversheet']['gateway_package'] == 'platinum')? 'Yes': 'Off';?></value></field>
+<field name="OrgName"><value><?php echo htmlspecialchars($data['Coversheet']['org_name']); ?></value></field>
+<field name="RegionName"><value><?php echo htmlspecialchars($data['Coversheet']['region_name']); ?></value></field>
+<field name="SubRegionName"><value><?php echo htmlspecialchars($data['Coversheet']['subregion_name']); ?></value></field>
+
 <field name="Partner"><value><?php echo htmlspecialchars($data['Coversheet']['setup_partner']); ?></value></field>
 <field name="Text7.0.2.0.0"><value><?php echo htmlspecialchars($data['Coversheet']['setup_partner_pct_profit']); ?></value></field>
 <field name="Text7.0.2.0.1"><value><?php echo htmlspecialchars($data['Coversheet']['setup_partner_pct_volume']); ?></value></field>
