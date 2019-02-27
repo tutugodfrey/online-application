@@ -129,6 +129,13 @@ class Coversheet extends AppModel {
 				'required' => false
 			),
 		),
+		'expected_install_date' => array(
+			'dateIsNotInThePast' => array(
+				'rule' => array('dateIsNotInThePast'),
+				'required' => false,
+				'allowEmpty' => true
+			),
+		),
 	);
 
 	public $findMethods = array('index' => true);
@@ -149,6 +156,28 @@ class Coversheet extends AppModel {
 			'order' => ''
 		)
 	);
+
+/**
+ * dateIsNotInThePast
+ * Custom validation rule checks whether a date is in the past
+ * 
+ * @param array $check an associated model's Region id
+ * @return array list of subregions that belong to the passed region
+ */
+	public function dateIsNotInThePast($check) {
+		$field = key($check);
+		$fieldName = Inflector::humanize($field);
+		$dateVal = Hash::get($check, $field);
+		if (empty($dateVal)) {
+			return true;
+		}
+		$checkTimeStamp = strtotime($dateVal);
+		$curTimeStamp = strtotime(date('Y-m-d'));
+		if ($checkTimeStamp < $curTimeStamp) {
+			return "$fieldName cannot be in the past!";
+		}
+		return true;
+	}
 
 /**
  * checkOrgRegionSubRegion
