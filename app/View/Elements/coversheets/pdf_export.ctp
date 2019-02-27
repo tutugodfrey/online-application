@@ -74,7 +74,7 @@
 <field name="Install_Axia"><value><?php echo ($data['Coversheet']['setup_install'] == 'axia')? 'Yes': 'Off';?></value></field>
 <field name="Install_POS"><value><?php echo ($data['Coversheet']['setup_install'] == 'pos')? 'Yes': 'Off';?></value></field>
 <field name="Install_Rep"><value><?php echo ($data['Coversheet']['setup_install'] == 'rep')? 'Yes': 'Off';?></value></field>
-<field name="ExpectedInsDate"><value><?php echo (!empty($data['Coversheet']['expected_install_date']))? $this->Time->format('M j, Y', $data['Coversheet']['expected_install_date']);: null;?></value></field>
+<field name="ExpectedInsDate"><value><?php echo (!empty($data['Coversheet']['expected_install_date']))? $this->Time->format('M j, Y', $data['Coversheet']['expected_install_date']) : null; ?></value></field>
     <?php if($cp === true) { ?>
 <field name="JRs encryptedSN"><value><?php echo htmlspecialchars($data['Coversheet']['cp_encrypted_sn']); ?></value></field>
 <?php } ?>

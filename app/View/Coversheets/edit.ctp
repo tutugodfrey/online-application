@@ -436,7 +436,13 @@
                                                 'minYear' => date('Y'),
                                                 'maxYear' => date('Y') + 10,
                                                 'orderYear' => 'asc',
-                                                'empty' => '--'
+                                                'empty' => '--',
+                                                //Default to empty values
+                                                'value' => array(
+                                                    'day' => '--',
+                                                    'month' => '--',
+                                                    'year' => '--',
+                                                ),
                                             ));
                                         ?>
                                     </td>
