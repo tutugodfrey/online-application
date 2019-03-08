@@ -413,22 +413,37 @@
                                                 echo 'Install to be done by:';
                                         ?>
                                     </td>
-                                    <td>
+                                    <td colspan='2'>
                                         <?php 
                                             $options = array('rep' => 'Rep');
-                                            echo $this->Form->radio('setup_install', $options);
+                                            echo $this->Form->radio('setup_install', $options, ['class'=> 'col-md-6 col-lg-6 col-sm-6']);
+
+                                             $options = array('axia' => 'Axia');                       
+                                            echo $this->Form->radio('setup_install', $options, array_merge($attributes, ['class'=> 'col-md-6 col-lg-6 col-sm-6']));
                                         ?>
                                     </td>
-                                    <td>
-                                        <?php 
-                                            $options = array('axia' => 'Axia');                       
-                                            echo $this->Form->radio('setup_install', $options, $attributes);
-                                        ?>
-                                    </td>    
-                                    <td colspan="3">
+                                    <td >
                                         <?php 
                                             $options = array('pos' => 'POS/Gateway Provider');
-                                            echo $this->Form->radio('setup_install', $options, $attributes);
+                                            echo $this->Form->radio('setup_install', $options, array_merge($attributes, ['class'=> false]));
+                                        ?>
+                                    </td>    
+                                    <td>
+                                        <?php 
+                                            echo $this->Form->input('expected_install_date', array(
+                                                'type' => 'date',
+                                                'dateFormat' => 'MDY',
+                                                'minYear' => date('Y'),
+                                                'maxYear' => date('Y') + 10,
+                                                'orderYear' => 'asc',
+                                                'empty' => '--',
+                                                //Default to empty values
+                                                'value' => array(
+                                                    'day' => '--',
+                                                    'month' => '--',
+                                                    'year' => '--',
+                                                ),
+                                            ));
                                         ?>
                                     </td>
                                </tr>
