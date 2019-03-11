@@ -173,6 +173,7 @@ class Coversheet extends AppModel {
 		}
 		$checkTimeStamp = strtotime($dateVal);
 		$curTimeStamp = strtotime(date('Y-m-d'));
+
 		if ($checkTimeStamp < $curTimeStamp) {
 			return "$fieldName cannot be in the past!";
 		}
