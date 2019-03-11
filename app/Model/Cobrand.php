@@ -17,6 +17,10 @@ class Cobrand extends AppModel {
 		3 => 'return online app url'
 	);
 
+	public $brandNames = array(
+		'Axia Med' => 'Axia Med',
+	);
+
 	public $actsAs = array(
         'Upload.Upload' => array(
             'cobrand_logo' => array(

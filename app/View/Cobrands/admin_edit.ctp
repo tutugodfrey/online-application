@@ -149,6 +149,7 @@
 
 				echo $this->Form->input('description');
 				echo $this->Form->input('response_url_type', array('options' => $responseUrlTypes));
+				echo $this->Form->input('brand_name', array('label' => 'Company Brand', 'options' => $brandNames, 'empty' => ''));
 				echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success')); ?>
 		</div>
 	</div>
