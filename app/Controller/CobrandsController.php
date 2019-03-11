@@ -13,6 +13,7 @@ class CobrandsController extends AppController {
 	public function admin_add() {
 		$this->set('title_for_layout', 'Add Cobrand');
 		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
+		$this->set('brandNames', $this->Cobrand->brandNames);
 		$this->set('existingLogos', $this->Cobrand->getExistingLogos());
 		$this->_setViewNavData();
 		if ($this->request->is('post')) {
@@ -30,6 +31,7 @@ class CobrandsController extends AppController {
 	public function admin_edit($idToEdit) {
 		$this->Cobrand->id = $idToEdit;
 		$this->set('responseUrlTypes', $this->Cobrand->responseUrlTypes);
+		$this->set('brandNames', $this->Cobrand->brandNames);
 		$this->set('existingLogos', $this->Cobrand->getExistingLogos());
 
 		$data = $this->Cobrand->getById($this->Cobrand->id);

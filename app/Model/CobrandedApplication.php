@@ -770,6 +770,13 @@ class CobrandedApplication extends AppModel {
 			'conditions' => array(
 				'CobrandedApplication.' . $this->primaryKey => $appId
 			),
+			'contain' => array(
+				'CobrandedApplicationValues',
+				'Template' => array('fields' => array('Template.name', 'Template.cobrand_id')),
+				'Coversheet',
+				'CobrandedApplicationAches',
+			)
+
 		);
 		$app = $this->find('first', $options);
 
@@ -778,6 +785,9 @@ class CobrandedApplication extends AppModel {
 		$referrals = array('', '', '');
 
 		$this->TemplateField = ClassRegistry::init('TemplateField');
+		//Insert company brand name from cobrands
+		$keys = $this->__addKey($keys, 'CompanyBrandName');
+		$values = $this->__addValue($values, $this->Template->Cobrand->field('brand_name', array('id' => $app['Template']['cobrand_id'])));
 
 		foreach ($app['CobrandedApplicationValues'] as $appKey => $appValue) {
 			// could use strrpos != false to check for these names
