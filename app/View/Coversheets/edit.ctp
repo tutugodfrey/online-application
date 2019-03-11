@@ -430,20 +430,18 @@
                                     </td>    
                                     <td>
                                         <?php 
-                                            echo $this->Form->input('expected_install_date', array(
+                                        $expInsDateSettings = array(
                                                 'type' => 'date',
                                                 'dateFormat' => 'MDY',
                                                 'minYear' => date('Y'),
                                                 'maxYear' => date('Y') + 10,
                                                 'orderYear' => 'asc',
                                                 'empty' => '--',
-                                                //Default to empty values
-                                                'value' => array(
-                                                    'day' => '--',
-                                                    'month' => '--',
-                                                    'year' => '--',
-                                                ),
-                                            ));
+                                            );
+                                        if (empty($this->request->data('Coversheet.expected_install_date'))) {
+                                                $expInsDateSettings['value'] = array('day' => '--', 'month' => '--', 'year' => '--');
+                                        }
+                                        echo $this->Form->input('Coversheet.expected_install_date', $expInsDateSettings);
                                         ?>
                                     </td>
                                </tr>
