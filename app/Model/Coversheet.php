@@ -789,7 +789,7 @@ class Coversheet extends AppModel {
 
 			$args = array(
 				'from' => $from,
-				'to' => 'omota@axiamed.com',//$to,
+				'to' => $to,
 				'subject' => $subject,
 				'format' => $format,
 				'template' => $template,
