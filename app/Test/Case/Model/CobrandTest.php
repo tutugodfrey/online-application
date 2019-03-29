@@ -62,7 +62,8 @@ class CobrandTest extends CakeTestCase {
 			'created' => '2007-03-18 10:41:31',
 			'modified' => '2007-03-18 10:41:31',
 			'response_url_type' => null,
-			'brand_logo_url' => 'PN1 logo_url'
+			'brand_logo_url' => 'PN1 logo_url',
+			'brand_name' => null
 		);
 
 		$result = $this->Cobrand->setLogoUrl($cobrand);
@@ -83,7 +84,8 @@ class CobrandTest extends CakeTestCase {
 			),
 			'brand_logo' => array(
 				'name' => 'brand_logo_test'
-			)
+			),
+			'brand_name' => null
 		);
 
 		$cobrand['Cobrand']['cobrand_logo']['name'] = 'cobrand_logo_test';
