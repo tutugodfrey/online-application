@@ -758,14 +758,35 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * setExportedDate
+ *
+ * @param int $id Cobranded Application ID
+ * @param boolean apiExported whether the data was exported via API
+ * @return void
+ */
+	public function setExportedDate($id, $apiExported) {
+		$modified = $this->field('modified', array('id' => $id));
+		$data = array(
+			'id' => $id,
+			'modified' => $modified //keep modified date unchanged
+		);
+		if ($apiExported) {
+			$data['api_exported_date'] = date("Y-m-d H:i:s");
+		} else {
+			$data['csv_exported_date'] = date("Y-m-d H:i:s");
+		}
+		$this->save($data, array('validate' => false, 'callbacks' => false));
+	}
+/**
  * buildExportData
  *
  * @param int $appId Cobranded Application ID
  * @param array &$keys array of keys for the values to be exported
  * @param array &$values array of values to be exported
+ * @param boolean $asArray if true the keys and values will be set as arrays instead of a coma delimited strings
  * @return array
  */
-	public function buildExportData($appId, &$keys = '', &$values = '') {
+	public function buildExportData($appId, &$keys, &$values, $asArray = false) {
 		$options = array(
 			'conditions' => array(
 				'CobrandedApplication.' . $this->primaryKey => $appId
@@ -779,15 +800,15 @@ class CobrandedApplication extends AppModel {
 
 		);
 		$app = $this->find('first', $options);
-
-		$keys = '"MID"';
-		$values = '""';
+		$enquote = !$asArray; //no quotes when $asArray = true
+		$keys = ($enquote)? '"MID"' : 'MID';
+		$values = ($enquote)? '""' : '';
 		$referrals = array('', '', '');
 
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		//Insert company brand name from cobrands
-		$keys = $this->__addKey($keys, 'CompanyBrandName');
-		$values = $this->__addValue($values, $this->Template->Cobrand->field('brand_name', array('id' => $app['Template']['cobrand_id'])));
+		$keys = $this->__addKey($keys, 'CompanyBrandName', $enquote);
+		$values = $this->__addValue($values, $this->Template->Cobrand->field('brand_name', array('id' => $app['Template']['cobrand_id'])), $enquote);
 
 		foreach ($app['CobrandedApplicationValues'] as $appKey => $appValue) {
 			// could use strrpos != false to check for these names
@@ -810,8 +831,8 @@ class CobrandedApplication extends AppModel {
 
 				$referrals[0] = $referrals[0] . ' ' . $app['CobrandedApplicationValues'][$appKey]['value'];
 				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral1Phone") {
-					$keys = $this->__addKey($keys, 'Referral1');
-					$values = $this->__addValue($values, $referrals[0]);
+					$keys = $this->__addKey($keys, 'Referral1', $enquote);
+					$values = $this->__addValue($values, $referrals[0], $enquote);
 				}
 			} elseif ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Business" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Owner/Officer" ||
@@ -819,8 +840,8 @@ class CobrandedApplication extends AppModel {
 
 				$referrals[1] = $referrals[1] . ' ' . $app['CobrandedApplicationValues'][$appKey]['value'];
 				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral2Phone") {
-					$keys = $this->__addKey($keys, 'Referral2');
-					$values = $this->__addValue($values, $referrals[1]);
+					$keys = $this->__addKey($keys, 'Referral2', $enquote);
+					$values = $this->__addValue($values, $referrals[1], $enquote);
 				}
 			} elseif ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Business" ||
 				$app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Owner/Officer" ||
@@ -828,12 +849,12 @@ class CobrandedApplication extends AppModel {
 
 				$referrals[2] = $referrals[2] . ' ' . $app['CobrandedApplicationValues'][$appKey]['value'];
 				if ($app['CobrandedApplicationValues'][$appKey]['name'] == "Referral3Phone") {
-					$keys = $this->__addKey($keys, 'Referral3');
-					$values = $this->__addValue($values, $referrals[2]);
+					$keys = $this->__addKey($keys, 'Referral3', $enquote);
+					$values = $this->__addValue($values, $referrals[2], $enquote);
 				}
 			} else {
 				// just addit
-				$keys = $this->__addKey($keys, $app['CobrandedApplicationValues'][$appKey]['name']);
+				$keys = $this->__addKey($keys, $app['CobrandedApplicationValues'][$appKey]['name'], $enquote);
 
 				// look up the template field that this value was built from
 				$templateField = $this->TemplateField->find(
@@ -848,15 +869,15 @@ class CobrandedApplication extends AppModel {
 					// need to special case the OwnerType because it expects "Yes"/"Off" instead of "On"/"Off"
 					if ($app['CobrandedApplicationValues'][$appKey]['value'] == 'true') {
 						if ($this->__startsWith($app['CobrandedApplicationValues'][$appKey]['name'], "OwnerType-")) {
-							$values = $this->__addValue($values, 'Yes');
+							$values = $this->__addValue($values, 'Yes', $enquote);
 						} else {
-							$values = $this->__addValue($values, 'On');
+							$values = $this->__addValue($values, 'On', $enquote);
 						}
 					} else {
-						$values = $this->__addValue($values, 'Off');
+						$values = $this->__addValue($values, 'Off', $enquote);
 					}
 				} else {
-					$values = $this->__addValue($values, $app['CobrandedApplicationValues'][$appKey]['value']);
+					$values = $this->__addValue($values, $app['CobrandedApplicationValues'][$appKey]['value'], $enquote);
 				}
 			}
 		}
@@ -873,8 +894,8 @@ class CobrandedApplication extends AppModel {
 						$val = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 									base64_decode($val), 'cbc', Configure::read('Cryptable.iv')));
 					}
-					$keys = $this->__addKey($keys, 'AddlACH-' . $key . '-' . $index);
-					$values = $this->__addValue($values, $val);
+					$keys = $this->__addKey($keys, 'AddlACH-' . $key . '-' . $index, $enquote);
+					$values = $this->__addValue($values, $val, $enquote);
 				}
 			}
 		}
@@ -884,15 +905,19 @@ class CobrandedApplication extends AppModel {
 				if ($key == 'id' || $key == 'cobranded_application_id') {
 					continue;
 				}
-				$keys = $this->__addKey($keys, $key);
-				$values = $this->__addValue($values, $val);
+				$keys = $this->__addKey($keys, $key, $enquote);
+				$values = $this->__addValue($values, $val, $enquote);
 			}
 		}
 		//The following key value pairs are intended as a sort of META data which the database system requires and will recognize during the import if this CSV data.
 		//The database system will create the merchant account and will set it up based on which this META data key value pairs.
 		if (stripos(Hash::get($app, 'Template.name'), 'Payment Fusion') !== false) {
-			$keys = $this->__addKey($keys, 'PaymentFusion');
-			$values = $this->__addValue($values, 'YES');
+			$keys = $this->__addKey($keys, 'PaymentFusion', $enquote);
+			$values = $this->__addValue($values, 'YES', $enquote);
+		}
+		if ($asArray) {
+			$keys = explode(',', $keys);
+			$values = explode(',', $values);
 		}
 	}
 
@@ -2540,6 +2565,8 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.modified',
 				'CobrandedApplication.rightsignature_document_guid',
 				'CobrandedApplication.status',
+				'CobrandedApplication.api_exported_date',
+				'CobrandedApplication.csv_exported_date',
 				'CobrandedApplication.rightsignature_install_document_guid',
 				'CobrandedApplication.rightsignature_install_status',
 				'CobrandedApplication.data_to_sync',
@@ -2753,22 +2780,30 @@ class CobrandedApplication extends AppModel {
  * __addKey
  *
  * @params
- *     $keys array
- *     $newKey string
+ * @param string $keys string to keys to concatenate to
+ * @param string $newKey new key to concatenate
+ * @param boolean $enquote whether add double quotation marks around the new key 
  */
-	private function __addKey($keys, $newKey) {
-		return $keys . ',"' . $newKey . '"';
+	private function __addKey($keys, $newKey, $enquote = true) {
+		if ($enquote) {
+			return $keys . ',"' . $newKey . '"';
+		}
+		return $keys . ',' . $newKey;
 	}
 
 /**
  * __addValue
  *
  * @params
- *     $values array
- *     $newValue string
+ * @param string $values string to values to concatenate to
+ * @param string $newValue new value to concatenate
+ * @param boolean $enquote whether add double quotation marks around the new value
  */
-	private function __addValue($values, $newValue) {
-		return $values . ',"' . trim($newValue) . '"';
+	private function __addValue($values, $newValue, $enquote = true) {
+		if ($enquote) {
+			return $values . ',"' . trim($newValue) . '"';
+		}
+		return $values . ',' . trim($newValue);
 	}
 
 /**

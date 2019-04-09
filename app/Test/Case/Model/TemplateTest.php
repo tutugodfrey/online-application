@@ -129,6 +129,7 @@ class TemplateTest extends CakeTestCase {
 				'cobrand_logo_url' => 'PN1 logo_url',
 				'response_url_type' => null,
 				'brand_logo_url' => 'PN1 logo_url',
+				'brand_name' => null
 			),
 		);
 		$returnedCobrand = $this->Template->getCobrand(1);
@@ -145,6 +146,7 @@ class TemplateTest extends CakeTestCase {
 				'cobrand_logo_url' => 'PN2 logo_url',
 				'response_url_type' => null,
 				'brand_logo_url' => 'PN2 logo_url',
+				'brand_name' => null
 			),
 		);
 		$returnedCobrand = $this->Template->getCobrand(2);
@@ -161,6 +163,7 @@ class TemplateTest extends CakeTestCase {
 				'cobrand_logo_url' => 'PN3 logo_url',
 				'response_url_type' => null,
 				'brand_logo_url' => 'PN3 logo_url',
+				'brand_name' => null
 			),
 		);
 		$returnedCobrand = $this->Template->getCobrand(3);

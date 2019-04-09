@@ -1057,7 +1057,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
-				'data_to_sync' => null
+				'data_to_sync' => null,
+				'api_exported_date' => null,
+				'csv_exported_date' => null
 			),
 			'Template' => array(
 				'id' => (int)1,
@@ -1083,6 +1085,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'modified' => '2007-03-18 10:41:31',
 					'response_url_type' => null,
 					'brand_logo_url' => 'PN1 logo_url',
+					'brand_name' => null
 				),
 				'TemplatePages' => array(
 					(int)0 => array(
@@ -1375,7 +1378,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
-				'data_to_sync' => null
+				'data_to_sync' => null,
+				'api_exported_date' => null,
+				'csv_exported_date' => null
 			),
 			'TemplateField' => array(
 				'id' => 1,
@@ -1440,7 +1445,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'status' => null,
 				'rightsignature_install_document_guid' => null,
 				'rightsignature_install_status' => null,
-				'data_to_sync' => null
+				'data_to_sync' => null,
+				'api_exported_date' => null,
+				'csv_exported_date' => null
 			),
 			'TemplateField' => array(
 				'id' => 4,
@@ -1514,6 +1521,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// export an empty application
 		$expectedKeys =
 			'"MID",' .
+			'"CompanyBrandName",' .
 			'"required_text_from_user_without_default",' .
 			'"required_date_from_user_without_default",' .
 			'"required_time_from_user_without_default",' .
@@ -1621,6 +1629,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'"gateway_epay_charge_licenses"';
 
 		$expectedValues =
+			'"",' .
 			'"",' .
 			'"",' .
 			'"",' .
@@ -1802,6 +1811,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->Coversheet->save($coversheetData, false);
 
 		$expectedValues =
+			'"",' .
 			'"",' .
 			'"text",' .
 			'"2000-01-01",' .
@@ -2787,7 +2797,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'status' => null,
 						'rightsignature_install_document_guid' => null,
 						'rightsignature_install_status' => null,
-						'data_to_sync' => null
+						'data_to_sync' => null,
+						'api_exported_date' => null,
+						'csv_exported_date' => null
 					),
 					'Cobrand' => array(
 						'id' => 1,
