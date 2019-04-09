@@ -644,8 +644,6 @@ class CobrandedApplicationsController extends AppController {
 		if (!$this->CobrandedApplication->exists($id)) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-		$keys = '';
-		$values = '';
 		//first render menu from which user can select the method of export
 		if ($this->request->is('ajax')) {
 			$this->autoRender = false;
@@ -657,7 +655,8 @@ class CobrandedApplicationsController extends AppController {
 			if (empty($this->request->data('CobrandedApplication.assign_mid'))) {
 				$this->_failure(__("Cannot export without assigning an MID!"), array('action' => 'index'));
 			}
-
+			$keys = '';
+			$values = '';
 			$this->CobrandedApplication->buildExportData($id, $keys, $values, true);
 			$data = array_combine($keys, $values);
 			$data['MID'] = trim($this->request->data('CobrandedApplication.assign_mid'));
@@ -665,7 +664,6 @@ class CobrandedApplicationsController extends AppController {
 			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient();
 			$reponse = $axDbApiClient->post('https://db.axiatech.com/api/Merchants/add', $data);
 			$responseData = json_decode($reponse->body, true);
-
 			$alertMsg = $responseData['messages'];
 
 			if (is_array($alertMsg)) {
@@ -681,7 +679,8 @@ class CobrandedApplicationsController extends AppController {
 			}
 		//User opts to export as CSV file
 		} else {
-			
+			$keys = '';
+			$values = '';
 			$this->CobrandedApplication->buildExportData($id, $keys, $values);
 
 			// the easy way...

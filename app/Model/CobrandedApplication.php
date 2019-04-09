@@ -884,8 +884,13 @@ class CobrandedApplication extends AppModel {
 		unset($this->TemplateField);
 
 		// add "oaID", "api", "aggregated" to the end of the keys and values
-		$keys = $keys . ',"oaID","api","aggregated"';
-		$values = $values . ',"' . $app['CobrandedApplication']['id'] . '","",""';
+		if ($enquote) {
+			$keys = $keys . ',"oaID","api","aggregated"';
+			$values = $values . ',"' . $app['CobrandedApplication']['id'] . '","",""';
+		} else {
+			$keys = $keys . '|oaID|api|aggregated';
+			$values = $values . '|' . $app['CobrandedApplication']['id'] . '||';
+		}
 
 		if (!empty($app['CobrandedApplicationAches'])) {
 			foreach ($app['CobrandedApplicationAches'] as $index => $array) {
@@ -916,8 +921,8 @@ class CobrandedApplication extends AppModel {
 			$values = $this->__addValue($values, 'YES', $enquote);
 		}
 		if ($asArray) {
-			$keys = explode(',', $keys);
-			$values = explode(',', $values);
+			$keys = explode('|', $keys);
+			$values = explode('|', $values);
 		}
 	}
 
@@ -2788,7 +2793,7 @@ class CobrandedApplication extends AppModel {
 		if ($enquote) {
 			return $keys . ',"' . $newKey . '"';
 		}
-		return $keys . ',' . $newKey;
+		return $keys . '|' . $newKey;
 	}
 
 /**
@@ -2803,7 +2808,7 @@ class CobrandedApplication extends AppModel {
 		if ($enquote) {
 			return $values . ',"' . trim($newValue) . '"';
 		}
-		return $values . ',' . trim($newValue);
+		return $values . '|' . trim($newValue);
 	}
 
 /**
