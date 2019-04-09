@@ -17,6 +17,7 @@ class OnlineappCobrandFixture extends CakeTestFixture {
 		'modified' => array('type' => 'datetime', 'null' => false),
 		'response_url_type' => array('type' => 'integer'),
 		'brand_logo_url' => array('type' => 'string', 'null' => true, 'default' => null),
+		'brand_name' => array('type' => 'string', 'length' => 100),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id')
 		),

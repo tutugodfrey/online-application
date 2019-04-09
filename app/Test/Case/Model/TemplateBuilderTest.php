@@ -133,7 +133,8 @@ class TemplateBuilderTest extends CakeTestCase {
 						'created' => '2007-03-18 10:41:31',
 						'modified' => '2007-03-18 10:41:31',
 						'response_url_type' => null,
-						'brand_logo_url' => 'PN2 logo_url'
+						'brand_logo_url' => 'PN2 logo_url',
+						'brand_name' => null
 					),
 					'TemplatePages' => array(
 						array(

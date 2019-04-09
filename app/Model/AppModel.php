@@ -23,6 +23,7 @@
 
 App::uses('Model', 'Model');
 App::uses('CakeEmail', 'Network/Email');
+App::uses('HttpSocket', 'Network/Http');
 
 /**
  * Application model for Cake.
@@ -239,5 +240,17 @@ class AppModel extends Model {
 			}
 		}
 		return false;
+	}
+
+/**
+ * createAxiaDbApiAuthClient
+ * Creates an HttpSocket with the authentication configuration required to connect to the external Axia Database API
+ * 
+ * @return HttpSocket object
+ */
+	public function createAxiaDbApiAuthClient() {
+		$http = new HttpSocket();
+		$http->configAuth('Basic', Configure::read('AxiaDbAPI.access_token'), Configure::read('AxiaDbAPI.password'));
+		return $http;
 	}
 }

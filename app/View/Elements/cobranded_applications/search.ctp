@@ -29,11 +29,12 @@
 	echo $this->Form->input('search',
 		array('placeholder' => 'Search Applications')
 	);
-                        
+	//set default only for non-admin users
+	$defaultUsrSelect = (in_array($this->Session->read('Auth.User.group'), array('admin')))? null : $user_id;
 	echo $this->Form->input('user_id',
 		array(
 			'options' => array($users),
-			'default' => $user_id,
+			'default' => $defaultUsrSelect,
 			'empty' => 'Users - All'
 		)
 	); 

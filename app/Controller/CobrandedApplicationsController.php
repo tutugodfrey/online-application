@@ -644,22 +644,58 @@ class CobrandedApplicationsController extends AppController {
 		if (!$this->CobrandedApplication->exists($id)) {
 			throw new NotFoundException(__('Invalid application'));
 		}
-
 		$keys = '';
 		$values = '';
-		$this->CobrandedApplication->buildExportData($id, $keys, $values);
+		//first render menu from which user can select the method of export
+		if ($this->request->is('ajax')) {
+			$this->autoRender = false;
+			$this->set('appId', $id);
+			$this->render('/Elements/cobranded_applications/export_menu', 'ajax');
 
-		// the easy way...
-		$this->set('keys', $keys);
-		$this->set('values', $values);
+		//If User opts to export via API a POST requiest will be made
+		} elseif ($this->request->is('post')) {
+			if (empty($this->request->data('CobrandedApplication.assign_mid'))) {
+				$this->_failure(__("Cannot export without assigning an MID!"), array('action' => 'index'));
+			}
 
-		header("Content-type: text/csv");
-		header("Content-Disposition: attachment; filename=\"{$id}.csv\"");
-		header("Expires: 0");
-		header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
-		header("Pragma: public");
+			$this->CobrandedApplication->buildExportData($id, $keys, $values, true);
+			$data = array_combine($keys, $values);
+			$data['MID'] = trim($this->request->data('CobrandedApplication.assign_mid'));
+			$data = json_encode($data);
+			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient();
+			$reponse = $axDbApiClient->post('https://datawarehouse.axiatech.com/api/Merchants/add', $data);
+			$responseData = json_decode($reponse->body, true);
 
-		$csv = $this->render('/Elements/cobranded_applications/export', false);
+			$alertMsg = $responseData['messages'];
+
+			if (is_array($alertMsg)) {
+				$alertMsg = implode("\n", $responseData['messages']);
+				$alertMsg = nl2br($alertMsg);
+			}
+			if ($responseData['status'] == 'success') {
+				$this->CobrandedApplication->setExportedDate($id, true);
+				$this->_success(__($alertMsg), array('action' => 'index'), 'alert alert-success');
+			}
+			if ($responseData['status'] == 'failed') {
+				$this->_success(__(nl2br("EXPORT FAILED! The request returned the following error(s):\n") . $alertMsg), array('action' => 'index'), 'alert alert-danger strong');
+			}
+		//User opts to export as CSV file
+		} else {
+			
+			$this->CobrandedApplication->buildExportData($id, $keys, $values);
+
+			// the easy way...
+			$this->set('keys', $keys);
+			$this->set('values', $values);
+			$this->CobrandedApplication->setExportedDate($id, false);
+			header("Content-type: text/csv");
+			header("Content-Disposition: attachment; filename=\"{$id}.csv\"");
+			header("Expires: 0");
+			header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+			header("Pragma: public");
+
+			$csv = $this->render('/Elements/cobranded_applications/export', false);
+		}
 	}
 
 /**

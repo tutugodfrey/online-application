@@ -14,6 +14,9 @@
 			<th><?php echo $this->Paginator->sort('Dba.value', 'DBA'); ?></th>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.status', 'Status'); ?></th>
 			<th><?php echo $this->Paginator->sort('CobrandedApplication.modified', 'Modified'); ?></th>
+			<?php if (in_array($this->Session->read('Auth.User.group'), array('admin'))): ?>
+				<th><?php echo $this->Paginator->sort('CobrandedApplication.exported_date', 'Exported'); ?></th>
+			<?php endif; ?>
 			<th><?php echo 'Actions'; ?></th>
 		</tr>
 		<?php foreach ($cobrandedApplications as $cobrandedApplication): 
@@ -75,14 +78,37 @@
 	?>&nbsp;
 			</td>
 			<td><?php echo $this->Time->format('m/d/y h:i A', $cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
+			<?php if (in_array($this->Session->read('Auth.User.group'), array('admin'))): ?>
+			<td><?php
+					if (!empty($cobrandedApplication['CobrandedApplication']['api_exported_date'])) {
+						echo $this->Html->tag('span', $this->Html->tag('span',null,array('class' => 'glyphicon glyphicon-ok')) . $this->Html->tag('/span') . ' API',
+							array(
+								'class' => 'label label-success',
+								'data-toggle' => 'tooltip',
+								'data-placement' => 'top',
+								'data-original-title' => "Exported directly to Axia Database on: " . $this->Time->format($cobrandedApplication['CobrandedApplication']['api_exported_date'], '%b %e, %Y %H:%M %p')
+							));
+						echo '&nbsp;';
+					}
+					if (!empty($cobrandedApplication['CobrandedApplication']['csv_exported_date'])) {
+						echo $this->Html->tag('span', $this->Html->tag('span',null, array('class' => 'glyphicon glyphicon-ok')) . $this->Html->tag('/span') . ' CSV',
+							array(
+								'class' => 'label label-info',
+								'data-toggle' => 'tooltip',
+								'data-placement' => 'top',
+								'data-original-title' => 'Exported as CSV file on: ' . $this->Time->format($cobrandedApplication['CobrandedApplication']['csv_exported_date'], '%b %e, %Y %H:%M %p')
+							));
+					}
+			 ?></td>
+			<?php endif; ?>
 			<td><div class="btn-group"><?php
 				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-					echo $this->Html->link(' ',
+					echo $this->Form->button(' ',
 						array(
-							'action' => 'export',
-							$cobrandedApplication['CobrandedApplication']['id']
-						),
-						array(
+							'type' => 'button',
+							'data-toggle' => 'modal',
+							'data-target' => '#dynamicModal',
+							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/export/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
 							'class' => 'btn btn-default btn-sm glyphicon glyphicon-export',
 							'title' => __('Export')
 						)
