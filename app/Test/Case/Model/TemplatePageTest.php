@@ -87,6 +87,7 @@ class TemplatePageTest extends CakeTestCase {
 			'cobrand_logo_url' => 'PN1 logo_url',
 			'response_url_type' => null,
 			'brand_logo_url' => 'PN1 logo_url',
+			 'brand_name' => null
 		);
 		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
 		$this->assertEquals($expectedCobrand, $returnedCobrand);
@@ -102,6 +103,7 @@ class TemplatePageTest extends CakeTestCase {
 			'cobrand_logo_url' => 'PN2 logo_url',
 			'response_url_type' => null,
 			'brand_logo_url' => 'PN2 logo_url',
+			'brand_name' => null
 		);
 		$returnedCobrand = $this->TemplatePage->getCobrand($templateId);
 		$this->assertEquals($expectedCobrand, $returnedCobrand);
