@@ -662,7 +662,7 @@ class CobrandedApplicationsController extends AppController {
 			$data['MID'] = trim($this->request->data('CobrandedApplication.assign_mid'));
 			$data = json_encode($data);
 			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient();
-			$reponse = $axDbApiClient->post('https://datawarehouse.axiatech.com/api/Merchants/add', $data);
+			$reponse = $axDbApiClient->post('https://db.axiatech.com/api/Merchants/add', $data);
 			$responseData = json_decode($reponse->body, true);
 			$alertMsg = $responseData['messages'];
 
