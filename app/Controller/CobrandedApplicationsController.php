@@ -647,6 +647,32 @@ class CobrandedApplicationsController extends AppController {
 		//first render menu from which user can select the method of export
 		if ($this->request->is('ajax')) {
 			$this->autoRender = false;
+			$appRep = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($id, array('conditions' => array('name' => 'ContractorID')));
+			$csPartner = $this->CobrandedApplication->Coversheet->field('setup_partner', array('cobranded_application_id' => $id));
+			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient();
+			$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Users/get_reps', array('user_name' =>  Hash::get($appRep, 'ContractorID')));
+			$responseData = json_decode($reponse->body, true);
+			$repList = array();
+			$assocPartnerList = array();
+			if ($responseData['status'] === 'failed') {
+				$this->_failure(__("API request failed! {$responseData['messages']}"));
+			} elseif (empty($responseData['data'])) {
+				$this->_success(__("Warning: Axia database could not find any users with names similar to " .'"'. Hash::get($appRep, 'ContractorID') .'".' . 
+									" Export may fail if Rep account hasn't been created & configured in the database system."), null, 'alert alert-warning');
+			} else {
+				foreach ($responseData['data'] as $rep) {
+					$repList[$rep['user_id']] = "{$rep['first_name']} {$rep['last_name']}";
+					if ($rep['status'] == 'inactive') {
+						$repList[$rep['user_id']] .= " (DB user inactive)";
+					}
+					$assocPartnerList[$rep['user_id']] = $rep['assoc_partners'];
+				}
+				$assocPartnerList = json_encode($assocPartnerList);
+				$repName = Hash::get($appRep, 'ContractorID');
+				$this->set('repName', $repName);
+				$this->set(compact('assocPartnerList', 'repList', 'appRep', 'csPartner'));
+			}
+
 			$this->set('appId', $id);
 			$this->render('/Elements/cobranded_applications/export_menu', 'ajax');
 
@@ -655,11 +681,18 @@ class CobrandedApplicationsController extends AppController {
 			if (empty($this->request->data('CobrandedApplication.assign_mid'))) {
 				$this->_failure(__("Cannot export without assigning an MID!"), array('action' => 'index'));
 			}
+
 			$keys = '';
 			$values = '';
 			$this->CobrandedApplication->buildExportData($id, $keys, $values, true);
 			$data = array_combine($keys, $values);
 			$data['MID'] = trim($this->request->data('CobrandedApplication.assign_mid'));
+			if (!empty($this->request->data('CobrandedApplication.ContractorID'))) {
+				$data['ContractorID'] = $this->request->data('CobrandedApplication.ContractorID');
+			}
+			if (!empty($this->request->data('CobrandedApplication.setup_partner'))) {
+				$data['setup_partner'] = $this->request->data('CobrandedApplication.setup_partner');
+			}
 			$data = json_encode($data);
 			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient();
 			$reponse = $axDbApiClient->post('https://db.axiatech.com/api/Merchants/add', $data);
