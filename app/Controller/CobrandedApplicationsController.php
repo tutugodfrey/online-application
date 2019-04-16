@@ -654,8 +654,8 @@ class CobrandedApplicationsController extends AppController {
 			$responseData = json_decode($reponse->body, true);
 			$repList = array();
 			$assocPartnerList = array();
-			if ($responseData['status'] === 'failed') {
-				$this->_failure(__("API request failed! {$responseData['messages']}"));
+			if (empty($responseData) || $responseData['status'] === 'failed') {
+				$this->_failure(__("API request failed! Please try again"));
 			} elseif (empty($responseData['data'])) {
 				$this->_success(__("Warning: Axia database could not find any users with names similar to " .'"'. Hash::get($appRep, 'ContractorID') .'".' . 
 									" Export may fail if Rep account hasn't been created & configured in the database system."), null, 'alert alert-warning');
@@ -665,14 +665,16 @@ class CobrandedApplicationsController extends AppController {
 					if ($rep['status'] == 'inactive') {
 						$repList[$rep['user_id']] .= " (DB user inactive)";
 					}
-					$assocPartnerList[$rep['user_id']] = $rep['assoc_partners'];
+					if (is_array($rep['assoc_partners'])) {
+						$assocPartnerList[$rep['user_id']] = $rep['assoc_partners'];
+					}
 				}
-				$assocPartnerList = json_encode($assocPartnerList);
+				
 				$repName = Hash::get($appRep, 'ContractorID');
 				$this->set('repName', $repName);
-				$this->set(compact('assocPartnerList', 'repList', 'appRep', 'csPartner'));
 			}
-
+			$assocPartnerList = json_encode($assocPartnerList);
+			$this->set(compact('assocPartnerList', 'repList', 'appRep', 'csPartner'));
 			$this->set('appId', $id);
 			$this->render('/Elements/cobranded_applications/export_menu', 'ajax');
 

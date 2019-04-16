@@ -21,7 +21,7 @@
 					'class' => 'form-inline'
 				));
 				echo $this->Form->hidden('id', array('value' => $appId));
-				echo $this->Html->tag('p', "The Rep and Partner on this app must exactly match their names in the Axia Database. Correct any miss-matches below, or <strong><u>leave blank if names match</u></strong>. Keep in mind some Reps have multiple accounts in the database system.");
+				echo $this->Html->tag('p', "The Rep and Partner names must exactly match their names in the Axia Database. Correct any miss-matches below, keep in mind some Reps have multiple accounts in the database system. (If names already match you can skip selecting a rep/partner name.)");
 
 				if (empty($repList)) {
 					echo '<ul class="list-group">' .
