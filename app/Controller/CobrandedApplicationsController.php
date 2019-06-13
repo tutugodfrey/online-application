@@ -624,8 +624,18 @@ class CobrandedApplicationsController extends AppController {
 			$this->set(compact('users'));
 			$this->render('admin_edit');
 		} elseif ($this->request->is('post') || $this->request->is('put')) {
+			//If original status was changed from not signed to signed and send_coversheet option was selected then send
+			$csSentMsg = "";
+			if ($this->request->data('CobrandedApplication.status') === 'signed' && $this->request->data('CobrandedApplication.send_coversheet') == 1 &&
+				$this->CobrandedApplication->hasAny(array('id' => $this->request->data('CobrandedApplication.id'), 'status' => 'signed')) === false) {
+				$data = $this->CobrandedApplication->findById($this->request->data('CobrandedApplication.id'));
+				if ($data['Coversheet']['status'] == 'validated') {
+					$this->sendCoversheet($data);
+					$csSentMsg = ", and coversheet sent to underwriting.";
+				}
+			}
 			if ($this->CobrandedApplication->save($this->request->data)) {
-				$this->_success(__("Application number $id has been saved"));
+				$this->_success(__("Application number $id has been saved" . $csSentMsg));
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->_failure(__("Application number $id could not be saved. Please, try again."), array('action' => 'index'));

@@ -32,6 +32,9 @@
 								'empty' => 'Show All'
 							)
 						);
+				echo $this->Html->tag('div',
+					$this->Form->checkbox('send_coversheet') . "<strong> Send Coversheet</strong> <small><i>(if it hasn't been sent)</i></small>.", array('class' => 'text-center form-group col-md-12'));
+
 				echo $this->Form->input('rightsignature_document_guid');
 				echo $this->Form->input('rightsignature_install_document_guid');
 				echo $this->Html->link('Cancel', array('controller' => 'CobrandedApplications', 'action' => 'index'), array('class' => 'btn btn-sm btn-danger col-md-offset-4 col-sm-offset-4'));
@@ -42,3 +45,22 @@
 	</div>
   </div>
 </div>
+<script>
+$(document).ready(function(){
+	var enableSendCv = function () {
+		if ($("#CobrandedApplicationStatus option:selected").text() === 'signed') {
+			$("#CobrandedApplicationSendCoversheet").removeClass('disabled');
+			$('#CobrandedApplicationSendCoversheet').prop('disabled', false);
+			$('#CobrandedApplicationSendCoversheet').prop('checked', true);
+		} else {
+			$("#CobrandedApplicationSendCoversheet").addClass('disabled');
+			$('#CobrandedApplicationSendCoversheet').prop('disabled', true);
+			$('#CobrandedApplicationSendCoversheet').prop('checked', false);
+		}
+	}
+	enableSendCv();
+	$("#CobrandedApplicationStatus").on('change', function(){
+		enableSendCv();
+	});
+});
+</script>
