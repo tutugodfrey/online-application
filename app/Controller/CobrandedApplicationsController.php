@@ -629,7 +629,7 @@ class CobrandedApplicationsController extends AppController {
 			if ($this->request->data('CobrandedApplication.status') === 'signed' && $this->request->data('CobrandedApplication.send_coversheet') == 1 &&
 				$this->CobrandedApplication->hasAny(array('id' => $this->request->data('CobrandedApplication.id'), 'status' => 'signed')) === false) {
 				$data = $this->CobrandedApplication->findById($this->request->data('CobrandedApplication.id'));
-				if ($data['Coversheet']['status'] == 'validated') {
+				if (Hash::get($data, 'Coversheet.status') == 'validated') {
 					$this->sendCoversheet($data);
 					$csSentMsg = ", and coversheet sent to underwriting.";
 				}
