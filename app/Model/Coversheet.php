@@ -785,11 +785,12 @@ class Coversheet extends AppModel {
 			$viewVars = array();
 			$viewVars['business_name'] = $corpName;
 			$viewVars['dba'] = $dbaBusinessName;
-			$attachments = array($dbaBusinessName . ' coversheet.pdf' => WWW_ROOT . 'files' . DS . 'axia_' . $id . '_coversheet.pdf');
+			$attachments = array(preg_replace("/\"|'/", "", $dbaBusinessName) . ' coversheet.pdf' => WWW_ROOT . 'files' . DS . 'axia_' . $id . '_coversheet.pdf');
 
 			$args = array(
 				'from' => $from,
-				'to' => $to,
+				// 'to' => $to,
+'to' => 'omota@axiamed.com',
 				'subject' => $subject,
 				'format' => $format,
 				'template' => $template,
