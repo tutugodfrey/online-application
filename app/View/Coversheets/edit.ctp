@@ -524,9 +524,11 @@
 											array(
 												'type' => 'text',
 												'div' => false,
-												'label' => false
+												'label' => false,
+                                                'after' => '<span class="small text-primary"><strong>Please pick Partner from list<br>if it\'s shown as you type.</strong></span>'
 											)
-										); ?>
+										); 
+                                        ?>
                                     </td>
                                     <td>
                                         Pmt Info:
@@ -1451,3 +1453,13 @@
     </div>
     </div>    
 </div>    
+<script>
+<?php
+    echo "var assocPartners = ". $dbUserAssocParters . ";\n";
+?>
+jQuery(function() {
+    jQuery( "#CoversheetSetupPartner" ).autocomplete({
+        source: assocPartners
+    });
+  });
+</script>
