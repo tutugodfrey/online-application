@@ -16,28 +16,15 @@
 					'novalidate' => true,
 				)
 			);
-// @todo create mechanism for creating coversheets from coversheets view
-// this will require, application_id and user_id			
-/*			echo $this->Html->link('New Coversheet',
-          			array(
-                       			'controller' => 'coversheets',
-                        		'action' => 'add',
-					'admin' => false
-				),
-				array(
-					'class' => 'btn btn-primary pull-right',
-					'title' => 'New Coversheet'
-				)
-			);
-*/
 			echo $this->Form->input('search', 
 				array('placeholder' => 'Search Coversheets')
 			);
-                        
+             //set default only for non-admin users
+			$defaultUsrSelect = (in_array($this->Session->read('Auth.User.group'), array('admin')))? null : $user_id;
 			echo $this->Form->input('user_id', 
 				array(
 					'options' => array($users), 
-					'default' => $user_id,
+					'default' => $defaultUsrSelect,
 					'empty' => 'Users - All',
 				)
 			); 
