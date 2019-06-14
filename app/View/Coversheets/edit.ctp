@@ -1016,7 +1016,7 @@
                                 if ($cp != true) { echo '</div>'; }
                              }
                              if($data['Coversheet']['status'] == 'saved') {
-                                 if ($micros != true) {
+                                 if (isset($micros) && $micros != true) {
                                  ?>
                             <table class="table table-condensed">
                                 <tr>
@@ -1092,11 +1092,11 @@
                             <?php 
                             }
                             if($data['Coversheet']['status'] == 'saved') {
-                            if ($micros != true) {echo '</div>';}
+                            if (isset($micros) && $micros != true) {echo '</div>';}
                             }?>
                             <?php 
                             if($data['Coversheet']['status'] == 'saved') {
-                                if ($gateway != true) {
+                                if (isset($gateway) && $gateway != true) {
                                     echo '<table class="table table-condensed">';
                                     echo '<tr>';
                                     echo '<td>';
@@ -1269,10 +1269,10 @@
                             <?php
                             }
                             if($data['Coversheet']['status'] == 'saved') {
-                            if ($gateway != 1) {echo '</div>';}
+                            if (isset($gateway) && $gateway != 1) {echo '</div>';}
                             }
                             if($data['Coversheet']['status'] == 'saved' && $data['Coversheet']['moto_online_chd'] == '') {
-                              if ($moto != true) {
+                              if (isset($moto) && $moto != true) {
                                 ?>
                             <table class="table table-condensed">
                                 <tr>
@@ -1411,7 +1411,7 @@
                             <?php
                                  }
                             if($data['Coversheet']['status'] == 'saved' && $data['Coversheet']['moto_online_chd'] != '') {
-                                if ($moto != true) {echo '</div>';}
+                                if (isset($moto) && $moto != true) {echo '</div>';}
                             }?>
                     </fieldset>
 
