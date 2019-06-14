@@ -73,5 +73,7 @@
 		)
 	);
 	echo $this->Form->end();
+	$dataTest = array("CobrandedApplication" => array('Autoclose Time 1' => 'works'));
+	debug(Hash::get($dataTest, 'CobrandedApplication.Autoclose Time 1'));
 ?>
 

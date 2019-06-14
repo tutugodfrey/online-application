@@ -25,11 +25,11 @@
 <field name="2"><value><?php echo ($data['Coversheet']['moto_online_chd'] == 'no')? 'Yes': 'Off';?></value></field>
 </field>
     <?php } if($cp === true) { ?>
-<field name="1_N"><value><?php echo ($data['CobrandedApplication']['TermAcceptDebit-No'] == 'true')? 'Yes': 'Off';?></value></field>
-<field name="1_Y"><value><?php echo ($data['CobrandedApplication']['TermAcceptDebit-Yes'] == 'true')? 'Yes': 'Off';?></value></field>
-<field name="2_N"><value><?php echo ($data['CobrandedApplication']['DoYouUseAutoclose-NoAutoclose'] == 'true')? 'Yes': 'Off';?></value></field>
-<field name="2_P"><value><?php echo ($data['Coversheet']['cp_pinpad_ra_attached'] === true)? 'Yes': 'Off';?></value></field>
-<field name="2_Y"><value><?php echo ($data['CobrandedApplication']['DoYouUseAutoclose-Autoclose'] == 'true')? 'Yes': 'Off';?></value></field>
+<field name="1_N"><value><?php echo (Hash::get($data, 'CobrandedApplication.TermAcceptDebit-No') == 'true')? 'Yes': 'Off';?></value></field>
+<field name="1_Y"><value><?php echo (Hash::get($data, 'CobrandedApplication.TermAcceptDebit-Yes') == 'true')? 'Yes': 'Off';?></value></field>
+<field name="2_N"><value><?php echo (Hash::get($data, 'CobrandedApplication.DoYouUseAutoclose-NoAutoclose') == 'true')? 'Yes': 'Off';?></value></field>
+<field name="2_P"><value><?php echo (Hash::get($data, 'Coversheet.cp_pinpad_ra_attached') === true)? 'Yes': 'Off';?></value></field>
+<field name="2_Y"><value><?php echo (Hash::get($data, 'CobrandedApplication.DoYouUseAutoclose-Autoclose') == 'true')? 'Yes': 'Off';?></value></field>
 <?php } ?>
 <field name="3MoStmts"><value><?php echo ($data['Coversheet']['setup_banking'] === true)? 'Yes': 'Off';?></value></field>
     <?php if($cp === true) { ?>
@@ -44,12 +44,12 @@
 
 <field name="6_N"><value><?php echo ($data['CobrandedApplication']['DoYouWantToAcceptDisc-NotNew'] == 'true')? 'Yes': 'Off';?></value></field>
 <field name="6_Y"><value><?php echo ($data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true')? 'Yes': 'Off';?></value></field>
-<field name="7_N"><value><?php echo ($data['Coversheet']['cp_pos'] == 'no')? 'Yes': 'Off';?></value></field>
-<field name="7_Y"><value><?php echo ($data['Coversheet']['cp_pos'] == 'yes')? 'Yes': 'Off';?></value></field>
-<field name="8_N"><value><?php echo ($data['CobrandedApplication']['Server'] == false)? 'Yes': 'Off';?></value></field>
-<field name="8_Y"><value><?php echo ($data['CobrandedApplication']['Server'] == true)? 'Yes': 'Off';?></value></field>
-<field name="9_N"><value><?php echo ($data['CobrandedApplication']['Tips'] == false)? 'Yes': 'Off';?></value></field>
-<field name="9_Y"><value><?php echo ($data['CobrandedApplication']['Tips'] == true)? 'Yes': 'Off';?></value></field>
+<field name="7_N"><value><?php echo (Hash::get($data, 'Coversheet.cp_pos') == 'no')? 'Yes': 'Off';?></value></field>
+<field name="7_Y"><value><?php echo (Hash::get($data, 'Coversheet.cp_pos') == 'yes')? 'Yes': 'Off';?></value></field>
+<field name="8_N"><value><?php echo (Hash::get($data, 'CobrandedApplication.Server') == false)? 'Yes': 'Off';?></value></field>
+<field name="8_Y"><value><?php echo (Hash::get($data, 'CobrandedApplication.Server') == true)? 'Yes': 'Off';?></value></field>
+<field name="9_N"><value><?php echo (Hash::get($data, 'CobrandedApplication.Tips') == false)? 'Yes': 'Off';?></value></field>
+<field name="9_Y"><value><?php echo (Hash::get($data, 'CobrandedApplication.Tips') == true)? 'Yes': 'Off';?></value></field>
 <?php } ?>
 <field name="Banking"><value><?php echo ($data['Coversheet']['setup_banking'] === true)? 'Yes': 'Off';?></value></field>
 <field name="BusLicenseUtilityBill"><value>><?php echo ($data['Coversheet']['setup_business_license'] === true)? 'Yes': 'Off';?></value></field>
@@ -124,7 +124,7 @@
 <field name="3"><value><?php echo ($data['Coversheet']['setup_tier5_bank_statements'] === true)? 'Yes': 'Off';?></value></field>
 </field>
     <?php if($cp === true) { ?>
-<field name="Time"><value><?php echo htmlspecialchars($data['CobrandedApplication']['Autoclose Time 1']);?></value></field>
+<field name="Time"><value><?php echo htmlspecialchars(Hash::get($data, 'CobrandedApplication.Autoclose Time 1'));?></value></field>
 <?php } ?>
 <field name="ePay_N"><value><?php echo ($data['Coversheet']['gateway_epay'] == 'no')? 'Yes': 'Off';?></value></field>
 <field name="ePay_Y"><value><?php echo ($data['Coversheet']['gateway_epay'] == 'yes')? 'Yes': 'Off';?></value></field>
