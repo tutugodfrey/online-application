@@ -24,7 +24,7 @@ class OnlineappUserFixture extends CakeTestFixture {
 		'lastname' => array('type' => 'string', 'null' => true, 'length' => 40),
 		'extension' => array('type' => 'integer', 'null' => true),
 		'active' => array('type' => 'boolean', 'null' => true, 'default' => true),
-		'api_password' => array('type' => 'string', 'null' => true, 'length' => 50),
+		'api_password' => array('type' => 'string', 'null' => true, 'length' => 200),
 		'api_enabled' => array('type' => 'boolean', 'null' => true),
 		'template_id' => array('type' => 'integer', 'null' => true),
 		'indexes' => array(

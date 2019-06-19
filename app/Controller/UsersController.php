@@ -78,6 +78,7 @@ class UsersController extends AppController {
 				$this->render('/Elements/Ajax/api_info');
 			} else {
 				$apiPassword = $this->User->generateRandPw();
+				$this->User->save(['id' => $id, 'api_password' => $apiPassword]);
 				$this->set(compact('apiPassword'));
 				$this->render('/Elements/Ajax/api_info_content');
 			}
