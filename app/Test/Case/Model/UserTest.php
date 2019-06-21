@@ -307,15 +307,15 @@ class UserTest extends CakeTestCase {
 				'api_password' => 'apiPassword123'
 			)
 		);
+		$passwordHasher = new BlowfishPasswordHasher();
 		$encPwd = AuthComponent::password('password123');
-		$encApiPwd = AuthComponent::password('apiPassword123');
+		$encApiPwd = $passwordHasher->hash('apiPassword123');
 		$this->User->set($data);
 		$this->User->beforeSave();
 		$expected = $data;
-		$expected['User']['password'] = $encPwd;
-		$expected['User']['api_password'] = $encApiPwd;
+		$expected['User']['password'] = $encPwd;		
 		$this->assertSame($expected['User']['password'], $this->User->data['User']['password']);
-		$this->assertSame($expected['User']['api_password'], $this->User->data['User']['api_password']);
+		$this->assertTrue( $passwordHasher->check('apiPassword123', $this->User->data['User']['api_password']));
 	}
 
 /**
@@ -445,5 +445,48 @@ class UserTest extends CakeTestCase {
 			);
 
 		$this->assertSame($expected, $this->User->getEmailArgs(11));
+	}
+
+/**
+ * testAllTemplates
+ *
+ * @covers User::allTemplates
+ * @return void
+ */
+	public function testAllTemplates() {
+		//Set HABTM data structure
+		$user = array(
+			'User' => array(
+				'id' => 1,
+			),
+			'Cobrand' => array(
+				'Cobrand' => array(1, 2)
+			),
+			'Template' => array(
+				'Template' => array(
+					1,
+					2,
+					3
+				)
+			),
+		);
+		//save new Cobrands/Templates for user
+		$this->User->saveAll($user);
+		$expected = array(1, 2);
+		$actual = $this->User->allTemplates(1);
+
+		$this->assertCount(3, $actual);
+		$tstActualVals = Hash::extract($actual, '{n}.name');
+		$this->assertContains('Template 1 for PN1', $tstActualVals);
+		$this->assertContains('Template 2 for PN1', $tstActualVals);
+		$this->assertContains('Template 1 for PN2', $tstActualVals);
+		$tstActualVals = Hash::extract($actual, '{n}.cobrand_id');
+		$this->assertContains(1, $tstActualVals);
+		$this->assertContains(2, $tstActualVals);
+		$tstActualVals = Hash::extract($actual, '{n}.id');
+		$this->assertContains(1, $tstActualVals);
+		$this->assertContains(2, $tstActualVals);
+		$this->assertContains(3, $tstActualVals);
+		// $this->assertSame($expected, $actual);
 	}
 }
