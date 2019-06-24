@@ -1,6 +1,7 @@
 <?php
 App::uses('AppModel', 'Model');
 App::uses('AuthComponent', 'Controller/Component');
+App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 class User extends AppModel {
 
 	public $actsAs = array('Search.Searchable', 'Containable');
@@ -592,7 +593,8 @@ class User extends AppModel {
 			}
 		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
-			$this->data[$this->alias]['api_password'] = AuthComponent::password($this->data[$this->alias]['api_password']);
+			$passwordHasher = new BlowfishPasswordHasher();
+			$this->data[$this->alias]['api_password'] = $passwordHasher->hash($this->data[$this->alias]['api_password']);
 		}
 
 		//Modify any HABTM data structures so that the data can be saved
@@ -742,6 +744,49 @@ class User extends AppModel {
 
 		$templates = Hash::combine($templates, '{n}.Template.id', array('%2$s - %1$s', '{n}.Template.name', '{n}.Cobrand.partner_name'));
 		return $templates;
+	}
+
+/**
+ * allTemplates
+ * Get all UsersTemplate that belong to a user with detailed Template data.
+ *
+ * @param integer $userId a user id
+ * @return array indexed array containing detail Template data arrays 
+ */
+	public function allTemplates($userId) {
+		$templates = $this->UsersTemplate->find('all', array(
+				'conditions' => array('UsersTemplate.user_id' => $userId),
+				'fields' => array(
+					'Template.id',
+					'Template.cobrand_id',
+					'Template.name',
+					'Template.description',
+					'Template.requires_coversheet',
+					'Template.created',
+					'(CASE WHEN "User"."template_id" = "Template"."id" THEN \'YES\' ELSE \'NO\' END) AS "Template__is_default_user_template"',
+				),
+				'joins' => array(
+					array(
+						'table' => 'onlineapp_templates',
+						'alias' => 'Template',
+						'type' => 'INNER',
+						'conditions' => array(
+							'UsersTemplate.template_id = Template.id'
+						)
+					),
+					array(
+						'table' => 'onlineapp_users',
+						'alias' => 'User',
+						'type' => 'LEFT',
+						'conditions' => array(
+							'UsersTemplate.user_id = User.id'
+						)
+					)
+				)
+			)
+		);
+		
+		return Hash::extract($templates, '{n}.Template');
 	}
 
 	/**

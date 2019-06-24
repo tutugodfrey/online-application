@@ -36,11 +36,6 @@ class Template extends AppModel {
 			'foreignKey' => 'template_id',
 			'dependent' => false,
 		),
-		'Users' => array(
-			'className' => 'User',
-			'foreignKey' => 'template_id',
-			'dependent' => false,
-		),
 		'UsersTemplate' => array(
 			'className' => 'UsersTemplate',
 			'foreignKey' => 'template_id',
