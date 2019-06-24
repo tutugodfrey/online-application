@@ -37,8 +37,7 @@ class AppController extends Controller {
 			$this->redirect('https://' . env('HTTP_HOST') . $this->request->here);
 		}
 
-		if ($this->params['prefix'] == 'api' || $this->params['ext'] == 'json' ||
-			$this->request->accepts('application/json')) {
+		if ($this->requestIsApiJson()) {
 
 			$this->Auth->authenticate = array(
 				'Basic' => array(
@@ -56,10 +55,14 @@ class AppController extends Controller {
 
 	}
 
+ 	public function requestIsApiJson() {
+ 		return $this->params['prefix'] == 'api' || $this->params['ext'] == 'json' || $this->request->accepts('application/json');
+ 	}
+
 	public function isAuthorized() {
 		// Load the User model to retrieve group info
 		$this->loadModel('User');
-		if ($this->params['prefix'] == 'api' || $this->params['ext'] == 'json' || $this->request->accepts('application/json')){
+		if ($this->requestIsApiJson()){
 			$this->apiLog();
 			$conditions = array('Apip.ip_address >>=' => $this->request->clientIP(), 'Apip.user_id' => $this->Auth->user('id'));
 			if ($this->User->Apip->find('first', array('conditions' => $conditions))) {
@@ -106,7 +109,7 @@ class AppController extends Controller {
 	 * @return boolean
 	 */
 	function apiLog() {
-		if ($this->params['prefix'] == 'api' || $this->params['ext'] == 'json' || $this->request->accepts('application/json')){
+		if ($this->requestIsApiJson()){
 			$this->loadModel('ApiLog');
 			if ($this->request->is('post') || $this->request->is('put')) {
 				$data = $this->request->input('json_decode', true);
@@ -219,4 +222,3 @@ class AppController extends Controller {
 	}
 
 }
-?>

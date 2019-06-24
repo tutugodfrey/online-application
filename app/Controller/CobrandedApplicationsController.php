@@ -67,7 +67,7 @@ class CobrandedApplicationsController extends AppController {
 
 		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'document_callback');
 
-		if (($this->params['ext'] == 'json' || $this->request->accepts('application/json'))) {
+		if ($this->requestIsApiJson()) {
 			$this->Security->unlockedActions= array('api_add');
 		} else {
 			// are we authenticated?
