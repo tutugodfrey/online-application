@@ -1,8 +1,53 @@
 <?php
+App::uses('User', 'Model');
 App::uses('NestedResourceController', 'Controller');
 /**
- * OnlineappTemplates Controller
+ * Templates Controller
  *
+ */
+ /**
+ * @OA\Tag(name="Templates", description="Operation and data about Templates")
+ *
+ * @OA\Schema(
+ *	   schema="Templates",
+ *     description="Templates database table schema",
+ *     title="Templates",
+ *     @OA\Property(
+ *			description="Template id",
+ *			property="id",
+ *			type="integer"
+ *     ),
+ *     @OA\Property(
+ *			description="The cobrand associated with the template",
+ *			property="cobrand_id",
+ *			type="integer"
+ *     ),
+ *     @OA\Property(
+ *			description="Template name",
+ *			property="name",
+ *			type="string"
+ *     ),
+ *     @OA\Property(
+ *			description="Template description",
+ *			property="description",
+ *			type="string"
+ *     ),
+ *     @OA\Property(
+ *			description="Template requires coversheet? true/false",
+ *			property="requires_coversheet",
+ *			type="boolean"
+ *     ),
+ *     @OA\Property(
+ *			description="Template creation date",
+ *			property="created",
+ *			type="date"
+ *     ),
+ *     @OA\Property(
+ *			description="Whether this is the user's default template (YES/NO). ",
+ *			property="is_default_user_template",
+ *			type="string"
+ *     ),
+ * )
  */
 class TemplatesController extends NestedResourceController {
 
@@ -10,13 +55,60 @@ class TemplatesController extends NestedResourceController {
 
 	protected $_controllerName = "Templates";
 
-	public $permissions = array(		
+	public $permissions = array(
+		'api_index' => array(User::API),
 		'admin_index' => array('admin', 'rep', 'manager'),
 		'admin_add' => array('admin', 'rep', 'manager'),
 		'admin_edit' => array('admin', 'rep', 'manager'),
 		'admin_delete' => array('admin', 'rep', 'manager'),
 		'admin_preview' => array('admin', 'rep', 'manager'),
 	);
+
+
+/**
+ *
+ * Handles API GET request for a list of Templates assigned to the API consumer performing the request.
+ * Request requires no parameters, any parameters in request query will be ignored.
+ * A full list of all templates assigned to authenticated user will be returned
+ *
+ * @OA\Get(
+ *   path="/api/Templates/index",
+ *	 tags={"Templates"},
+ *   summary="list user templates",
+ *	 @OA\Response(
+ *     response=200,
+ *     @OA\MediaType(
+ *         mediaType="application/json",
+ *		   example={"id": 50, "cobrand_id": 2, "name": "Payment Fusion Sales Agreement", "description": "Payment Fusion Sales Agreement", "requires_coversheet": false, "created": "2017-05-30 12:28:30", "is_default_user_template": "NO"},
+ *         @OA\Schema(
+ *	   	   	 ref="#/components/schemas/Templates",
+ *         )
+ *     ),
+ *     description="
+ * 			status=success detailed JSON array of user's templates (empty if no templates have been assigned to the authenticated user).
+ *   ),
+ *   @OA\Response(
+ *     response=405,
+ *     description="HTTP method not allowed when request method is not GET"
+ *   )
+ * )
+ *
+ * @return void
+ */
+	public function api_index() {
+		$this->autoRender = false;
+		$response = array('status' => 'failed', 'messages' => 'HTTP method not allowed');
+		if ($this->request->is('get')) {
+			$response['status'] = 'success';
+			$response['messages'] = null;
+			$response['data'] = $this->Template->Users->allTemplates($this->Auth->user('id'));
+		} else {
+			$this->response->statusCode(405); //405 Method Not Allowed
+		}
+
+		$this->response->type('application/json');
+		$this->response->body(json_encode($response));
+	}
 
 	public function admin_add() {
 		if ($this->request->is('post')) {

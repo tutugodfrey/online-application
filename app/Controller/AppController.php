@@ -37,28 +37,32 @@ class AppController extends Controller {
 			$this->redirect('https://' . env('HTTP_HOST') . $this->request->here);
 		}
 
-		if ($this->params['ext'] == 'json' ||
-			$this->request->accepts('application/json')) {
+		if ($this->requestIsApiJson()) {
 
 			$this->Auth->authenticate = array(
 				'Basic' => array(
 					'realm' => 'api',
+					'passwordHasher' => 'Blowfish',
 					'fields' => array('username' => 'token','password' => 'api_password'),
 					'scope' => array('User.active' => 1)
 				)
 			);
+			$this->Auth->authorize = array('Controller');
+			$this->Auth->unauthorizedRedirect = false;
+			AuthComponent::$sessionKey = false;
 
-			if (!$this->Auth->login()) {
-				$this->apiLog();
-			}
 		}
+
 	}
+
+ 	public function requestIsApiJson() {
+ 		return $this->params['prefix'] == 'api' || $this->params['ext'] == 'json' || $this->request->accepts('application/json');
+ 	}
 
 	public function isAuthorized() {
 		// Load the User model to retrieve group info
 		$this->loadModel('User');
-
-		if ($this->params['ext'] == 'json' || $this->request->accepts('application/json')){
+		if ($this->requestIsApiJson()){
 			$this->apiLog();
 			$conditions = array('Apip.ip_address >>=' => $this->request->clientIP(), 'Apip.user_id' => $this->Auth->user('id'));
 			if ($this->User->Apip->find('first', array('conditions' => $conditions))) {
@@ -80,7 +84,6 @@ class AppController extends Controller {
 
 		// Check permissions
 		if ($group == 'admin') return true; // Remove this line if you don't want admins to have access to everything by default
-
 		if (!empty($this->permissions[$this->request->action])) {
 			if ($this->permissions[$this->request->action] == '*') return true;
 			if (in_array($group, $this->permissions[$this->request->action])) return true;
@@ -106,7 +109,7 @@ class AppController extends Controller {
 	 * @return boolean
 	 */
 	function apiLog() {
-		if ($this->params['ext'] == 'json' || $this->request->accepts('application/json')){
+		if ($this->requestIsApiJson()){
 			$this->loadModel('ApiLog');
 			if ($this->request->is('post') || $this->request->is('put')) {
 				$data = $this->request->input('json_decode', true);
@@ -118,7 +121,7 @@ class AppController extends Controller {
 			} elseif($this->request->is('get')) {
 				$request = serialize($this->request->query);
 			}
-			
+
 			$apiUser = $this->ApiLog->User->find('first', array(
 				'conditions' => array('User.token' => env('PHP_AUTH_USER'),
 					array("NOT" => array('User.token' => null))),
@@ -219,4 +222,3 @@ class AppController extends Controller {
 	}
 
 }
-?>
