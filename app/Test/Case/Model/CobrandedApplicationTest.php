@@ -2895,7 +2895,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'Owner1Email.value ILIKE' => '%test%',
 			'EMail.value ILIKE' => '%test%',
 			'LocEMail.value ILIKE' => '%test%',
-			'CAST(CobrandedApplication.id AS TEXT) ILIKE' => '% test%'
+			'CAST(CobrandedApplication.id AS TEXT) ILIKE' => '%test%'
 		);
 
 		$response = $this->CobrandedApplication->orConditions(array('search' => 'test'));

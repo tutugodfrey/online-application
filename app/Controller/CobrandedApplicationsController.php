@@ -9,11 +9,35 @@ App::uses('User', 'Model');
 /**
  * CobrandedApplications Controller
  *
- * @property CobrandedApplication $CobrandedApplication
- * @property 'EmailComponent $'Email
- * @property RequestHandlerComponent $RequestHandler
- * @property SecurityComponent $Security
- * @property Search.Prg'Component $Search.Prg'
+ */
+/**
+ * @OA\Tag(name="CobrandedApplications", description="Operation and data about Applications")
+ *
+ * @OA\Schema(
+ *	   schema="CobrandedApplications",
+ *     description="CobrandedApplications database table schema",
+ *     title="CobrandedApplications",
+ *     @OA\Property(
+ *			description="CobrandedApplication id",
+ *			property="id",
+ *			type="integer"
+ *     ),
+ *     @OA\Property(
+ *			description="The id of the template used by the application",
+ *			property="template_id",
+ *			type="integer"
+ *     ),
+ *     @OA\Property(
+ *			description="String representation of date and time when the Application was last modified in unix format yyyy-mm-dd hh:mm:ss",
+ *			property="modified",
+ *			type="string"
+ *     ),
+ *     @OA\Property(
+ *			description="Application's current process status. ",
+ *			property="status",
+ *			type="string"
+ *     )
+ * )
  */
 class CobrandedApplicationsController extends AppController {
 
@@ -28,6 +52,7 @@ class CobrandedApplicationsController extends AppController {
 		'index' => array('*'),
 		'add' => array(User::ADMIN, User::REP, User::MANAGER),
 		'api_add' => array(User::API),
+		'api_index' => array(User::API),
 		'retrieve' => array('*'),
 		'edit' => array(User::ADMIN, User::REP, User::MANAGER),
 		'syncApplication' => array(User::ADMIN, User::REP, User::MANAGER),
@@ -426,7 +451,91 @@ class CobrandedApplicationsController extends AppController {
 			$this->Session->write('applicationStatus', $this->request->data['CobrandedApplication']['status']);
 		}
 	}
+/**
+ *
+ * Handles API GET request for a list of Applications assigned to the API consumer performing the request.
+ * Request parameters are all optional.
+ * A full list of all applications assigned to the authenticated API consumer will be returned when no parameters are passed in query
+ *
+ * @OA\Get(
+ *   path="/api/CobrandedApplications/index?search={text to seach for in application}&status={one of: saved/pending/validate/completed/signed}",
+ *	 tags={"CobrandedApplications"},
+ *   summary="list applications assigned to current authehticated user",
+ *	 @OA\Parameter(
+ *		   name="search",
+ *		   description="Text to search for in the application, for example the company name, or DBA or even the integer id of the application if known.
+ *	 			Example 1: Health Systems Corp,
+ *	 			Example 2: John Doe (a company contact name),
+ *	 			Example 3: 99521 (an application id)",
+ *         in="query",
+ *         @OA\Schema(type="string")
+ *   ),
+ *	 @OA\Parameter(
+ *		   name="status",
+ *		   description="Searches for applications with given status. Available statuses are: saved/pending/validate/completed/signed.
+ *	 			Example 1: saved,
+ *	 			Example 2: signed",
+ *         in="query",
+ *         @OA\Schema(type="string")
+ *   ),
+ *	 @OA\Response(
+ *     response=200,
+ *     @OA\MediaType(
+ *         mediaType="application/json",
+ *		   example={{"id": 1234,"user_id": 1234,"status": "signed","partner_name": "Experian","template_id": 1234,"template_name": "Default with BO","dba": "Test Co (DBA)","corp_name": "Test Co.","modified": "2030-06-13 14:40:21"}},
+ *         @OA\Schema(
+ *	   	   	 ref="#/components/schemas/CobrandedApplications",
+ *         )
+ *     ),
+ *     description="
+ * 			status=success detailed JSON array of user's applications (empty if no aplications found with given search parameters for authenticated user).",
+ *   ),
+ *   @OA\Response(
+ *     response=405,
+ *     description="HTTP method not allowed when request method is not GET"
+ *   )
+ * )
+ *
+ * @return void
+ */
+	public function api_index() {
+		$this->autoRender = false;
+		$response = array('status' => 'failed', 'messages' => 'HTTP method not allowed');
+		if ($this->request->is('get')) {
+			$this->request->query['user_id'] = $this->Auth->user('id');
+			$conditions = $this->CobrandedApplication->parseCriteria($this->request->query);
+			$appData = $this->CobrandedApplication->find('index', array(
+				'conditions' => $conditions,
+				'order' => array('CobrandedApplication.modified DESC')
+				)
+			);
+			$response['data'] = [];
+			$response['status'] = 'success';
+			if (!empty($appData)) {
+				$response['messages'] = null;
+				foreach($appData as $application) {
+					$response['data'][] = array(
+						'id' => $application['CobrandedApplication']['id'],
+						'user_id' => $application['CobrandedApplication']['user_id'],
+						'status' => $application['CobrandedApplication']['status'],
+						'partner_name' => $application['Cobrand']['partner_name'],
+						'template_id' => $application['Template']['id'],
+						'template_name' => $application['Template']['name'],
+						'dba' => $application['Dba']['value'],
+						'corp_name' => $application['CorpName']['value'],
+						'modified' => $application['CobrandedApplication']['modified'],
+					);
+				}
+			} else {
+				$response['messages'] = "No aplications found for current user and/or specified search parameters.";
+			}
+		} else {
+			$this->response->statusCode(405); //405 Method Not Allowed
+		}
 
+		$this->response->type('application/json');
+		$this->response->body(json_encode($response));
+	}
 /**
  * admin_index method
  *
