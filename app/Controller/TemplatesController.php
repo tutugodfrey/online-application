@@ -38,15 +38,15 @@ App::uses('NestedResourceController', 'Controller');
  *			type="boolean"
  *     ),
  *     @OA\Property(
- *			description="Template creation date",
+ *			description="String representation of Template creation date and time in unix format yyyy-mm-dd hh:mm:ss",
  *			property="created",
- *			type="date"
+ *			type="string"
  *     ),
  *     @OA\Property(
  *			description="Whether this is the user's default template (YES/NO). ",
  *			property="is_default_user_template",
  *			type="string"
- *     ),
+ *     )
  * )
  */
 class TemplatesController extends NestedResourceController {
@@ -75,7 +75,7 @@ class TemplatesController extends NestedResourceController {
  * @OA\Get(
  *   path="/api/Templates/index",
  *	 tags={"Templates"},
- *   summary="list user templates",
+ *   summary="list autheticated user templates",
  *	 @OA\Response(
  *     response=200,
  *     @OA\MediaType(
@@ -86,7 +86,7 @@ class TemplatesController extends NestedResourceController {
  *         )
  *     ),
  *     description="
- * 			status=success detailed JSON array of user's templates (empty if no templates have been assigned to the authenticated user).
+ * 			status=success detailed JSON array of user's templates (empty if no templates have been assigned to the authenticated user).",
  *   ),
  *   @OA\Response(
  *     response=405,
