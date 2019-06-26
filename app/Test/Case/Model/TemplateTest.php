@@ -210,11 +210,13 @@ class TemplateTest extends CakeTestCase {
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'required_text_from_api_without_default_source_2' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'multirecord_from_api_with_default' => array(
 					array(
@@ -249,31 +251,37 @@ class TemplateTest extends CakeTestCase {
 					'type' => 'radio',
 					'required' => false,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-SoleProp' => array(
 					'type' => 'radio',
 					'required' => false,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-LLC' => array(
 					'type' => 'radio',
 					'required' => false,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-Partnership' => array(
 					'type' => 'radio',
 					'required' => false,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-NonProfit' => array(
 					'type' => 'radio',
 					'required' => false,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-Other' => array(
 					'type' => 'radio',
 					'required' => false,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 			), // one field from the user
 			array() // all fields are expected to be from the user
@@ -293,27 +301,32 @@ class TemplateTest extends CakeTestCase {
 				'required_text_from_user_without_default' => array(
 					'type' => 'text',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 3'
 				),
 				'required_radio_from_user_without_defaultvalue1' => Array (
 					'type' => 'radio',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 4'
 				),
 				'required_radio_from_user_without_defaultvalue2' => Array (
 					'type' => 'radio',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 4'
 				),
 				'required_radio_from_user_without_defaultvalue3' => Array (
 					'type' => 'radio',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 4'
 				),
 				'rep_only_true_field_for_testing_rep_only_view_logic' => Array (
 					'type' => 'text',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'Text field 1'
 				),
 			),
 			array(), // all fields are expected to be from the user
@@ -323,211 +336,247 @@ class TemplateTest extends CakeTestCase {
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type text',
 				),
 				'required_date_from_user_without_default' => array(
 					'type' => 'date',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type date',
 				),
 				'required_time_from_user_without_default' => array(
 					'type' => 'time',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type time',
 				),
 				'required_checkbox_from_user_without_default' => array(
 					'type' => 'checkbox',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type checkbox',
 				),
 				'required_radio_from_user_without_defaultvalue1' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type radio',
 				),
 				'required_radio_from_user_without_defaultvalue2' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type radio',
 				),
 				'required_radio_from_user_without_defaultvalue3' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type radio',
 				),
 				'required_percents_from_user_without_defaultvalue1' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type percents',
 				),
 				'required_percents_from_user_without_defaultvalue2' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type percents',
 				),
 				'required_percents_from_user_without_defaultvalue3' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
-				),
-				'label' => array(
-					'type' => 'label',
-					'required' => true,
-					'description' => '',
+					'name' => 'field type percents',
 				),
 				'required_fees_from_user_without_defaultvalue1' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type fees',
 				),
 				'required_fees_from_user_without_defaultvalue2' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type fees',
 				),
 				'required_fees_from_user_without_defaultvalue3' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type fees',
 				),
 				'hr' => array(
 					'type' => 'hr',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type hr',
 				),
 				'required_phoneUS_from_user_without_default' => array(
 					'type' => 'phoneUS',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type phoneUS',
 				),
 				'required_money_from_user_without_default' => array(
 					'type' => 'money',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type money',
 				),
 				'required_percent_from_user_without_default' => array(
 					'type' => 'percent',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type percent',
 				),
 				'required_ssn_from_user_without_default' => array(
 					'type' => 'ssn',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type ssn',
 				),
 				'required_zipcodeUS_from_user_without_default' => array(
 					'type' => 'zipcodeUS',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type zip',
 				),
 				'required_email_from_user_without_default' => array(
 					'type' => 'email',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type email',
 				),
 				'required_url_from_user_without_default' => array(
 					'type' => 'url',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type url',
 				),
 				'required_number_from_user_without_default' => array(
 					'type' => 'number',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type number',
 				),
 				'required_digits_from_user_without_default' => array(
 					'type' => 'digits',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type digits',
 				),
 				'required_select_from_user_without_default' => array(
 					'type' => 'select',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type select',
 				),
 				'required_textArea_from_user_without_default' => array(
 					'type' => 'textArea',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type textArea',
 				),
 				'Referral1Business' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral1Business',
 				),
 				'Referral1Owner/Officer' => Array (
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral1Owner/Officer',
 				),
 				'Referral1Phone' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral1Phone',
 				),
 				'Referral2Business' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral2Business',
 				),
 				'Referral2Owner/Officer' => Array (
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral2Owner/Officer',
 				),
 				'Referral2Phone' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral2Phone',
 				),
 				'Referral3Business' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral3Business',
 				),
 				'Referral3Owner/Officer' => Array (
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral3Owner/Officer',
 				),
 				'Referral3Phone' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral3Phone',
 				),
 				'OwnerType-Corp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-SoleProp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-LLC' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-Partnership' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-NonProfit' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-Other' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'Unknown Type for testing' => Array (
 					'type' => 'unknown',
 					'required' => true,
 					'description' => '',
+					'name' => 'Unknown Type for testing'
 				),
 			),
 			array(
@@ -535,26 +584,31 @@ class TemplateTest extends CakeTestCase {
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'required_text_from_api_without_default_source_2' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'required_text_from_user_without_default_repOnly' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'required_text_from_user_without_default_textfield' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'required_text_from_user_without_default_textfield1' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field 1'
 				),
 			), // one field from the user
 			array() // all fields are expected to be from the user
@@ -575,27 +629,32 @@ class TemplateTest extends CakeTestCase {
 				'required_text_from_user_without_default' => array(
 					'type' => 'text',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 3'
 				),
 				'required_radio_from_user_without_defaultvalue1' => Array (
 					'type' => 'radio',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 4'
 				),
 				'required_radio_from_user_without_defaultvalue2' => Array (
 					'type' => 'radio',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 4'
 				),
 				'required_radio_from_user_without_defaultvalue3' => Array (
 					'type' => 'radio',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'field 4'
 				),
 				'rep_only_true_field_for_testing_rep_only_view_logic' => Array (
 					'type' => 'text',
 					'required' => true,
-					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+					'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+					'name' => 'Text field 1'
 				),
 			),
 			array(), // all fields are expected to be from the user
@@ -605,211 +664,247 @@ class TemplateTest extends CakeTestCase {
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type text'
 				),
 				'required_date_from_user_without_default' => array(
 					'type' => 'date',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type date'
 				),
 				'required_time_from_user_without_default' => array(
 					'type' => 'time',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type time'
 				),
 				'required_checkbox_from_user_without_default' => array(
 					'type' => 'checkbox',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type checkbox'
 				),
 				'required_radio_from_user_without_defaultvalue1' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type radio'
 				),
 				'required_radio_from_user_without_defaultvalue2' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type radio'
 				),
 				'required_radio_from_user_without_defaultvalue3' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type radio'
 				),
 				'required_percents_from_user_without_defaultvalue1' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type percents'
 				),
 				'required_percents_from_user_without_defaultvalue2' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type percents'
 				),
 				'required_percents_from_user_without_defaultvalue3' => array(
 					'type' => 'percents',
 					'required' => true,
 					'description' => '',
-				),
-				'label' => array(
-					'type' => 'label',
-					'required' => true,
-					'description' => '',
+					'name' => 'field type percents'
 				),
 				'required_fees_from_user_without_defaultvalue1' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type fees'
 				),
 				'required_fees_from_user_without_defaultvalue2' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type fees'
 				),
 				'required_fees_from_user_without_defaultvalue3' => array(
 					'type' => 'fees',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type fees'
 				),
 				'hr' => array(
 					'type' => 'hr',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type hr'
 				),
 				'required_phoneUS_from_user_without_default' => array(
 					'type' => 'phoneUS',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type phoneUS'
 				),
 				'required_money_from_user_without_default' => array(
 					'type' => 'money',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type money'
 				),
 				'required_percent_from_user_without_default' => array(
 					'type' => 'percent',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type percent'
 				),
 				'required_ssn_from_user_without_default' => array(
 					'type' => 'ssn',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type ssn'
 				),
 				'required_zipcodeUS_from_user_without_default' => array(
 					'type' => 'zipcodeUS',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type zip'
 				),
 				'required_email_from_user_without_default' => array(
 					'type' => 'email',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type email'
 				),
 				'required_url_from_user_without_default' => array(
 					'type' => 'url',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type url'
 				),
 				'required_number_from_user_without_default' => array(
 					'type' => 'number',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type number'
 				),
 				'required_digits_from_user_without_default' => array(
 					'type' => 'digits',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type digits'
 				),
 				'required_select_from_user_without_default' => array(
 					'type' => 'select',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type select'
 				),
 				'required_textArea_from_user_without_default' => array(
 					'type' => 'textArea',
 					'required' => true,
 					'description' => '',
+					'name' => 'field type textArea'
 				),
 				'Referral1Business' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral1Business'
 				),
 				'Referral1Owner/Officer' => Array (
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral1Owner/Officer'
 				),
 				'Referral1Phone' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral1Phone'
 				),
 				'Referral2Business' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral2Business'
 				),
 				'Referral2Owner/Officer' => Array (
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral2Owner/Officer'
 				),
 				'Referral2Phone' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral2Phone'
 				),
 				'Referral3Business' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral3Business'
 				),
 				'Referral3Owner/Officer' => Array (
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral3Owner/Officer'
 				),
 				'Referral3Phone' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Referral3Phone'
 				),
 				'OwnerType-Corp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-SoleProp' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-LLC' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-Partnership' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-NonProfit' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'OwnerType-Other' => array(
 					'type' => 'radio',
 					'required' => true,
 					'description' => '',
+					'name' => 'Owner Type - '
 				),
 				'Unknown Type for testing' => Array (
 					'type' => 'unknown',
 					'required' => true,
 					'description' => '',
+					'name' => 'Unknown Type for testing'
 				),
 			),
 			array(
@@ -817,16 +912,19 @@ class TemplateTest extends CakeTestCase {
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'required_text_from_user_without_default_textfield' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field'
 				),
 				'required_text_from_user_without_default_textfield1' => array(
 					'type' => 'text',
 					'required' => true,
 					'description' => '',
+					'name' => 'Text field 1'
 				),
 			), // one field from the user
 			array() // all fields are expected to be from the user
