@@ -38,15 +38,15 @@ App::uses('NestedResourceController', 'Controller');
  *			type="boolean"
  *     ),
  *     @OA\Property(
- *			description="Template creation date",
+ *			description="String representation of Template creation date and time in unix format yyyy-mm-dd hh:mm:ss",
  *			property="created",
- *			type="date"
+ *			type="string"
  *     ),
  *     @OA\Property(
  *			description="Whether this is the user's default template (YES/NO). ",
  *			property="is_default_user_template",
  *			type="string"
- *     ),
+ *     )
  * )
  */
 class TemplatesController extends NestedResourceController {
@@ -57,6 +57,7 @@ class TemplatesController extends NestedResourceController {
 
 	public $permissions = array(
 		'api_index' => array(User::API),
+		'api_view' => array(User::API),
 		'admin_index' => array('admin', 'rep', 'manager'),
 		'admin_add' => array('admin', 'rep', 'manager'),
 		'admin_edit' => array('admin', 'rep', 'manager'),
@@ -74,7 +75,7 @@ class TemplatesController extends NestedResourceController {
  * @OA\Get(
  *   path="/api/Templates/index",
  *	 tags={"Templates"},
- *   summary="list user templates",
+ *   summary="list autheticated user templates",
  *	 @OA\Response(
  *     response=200,
  *     @OA\MediaType(
@@ -85,7 +86,7 @@ class TemplatesController extends NestedResourceController {
  *         )
  *     ),
  *     description="
- * 			status=success detailed JSON array of user's templates (empty if no templates have been assigned to the authenticated user).
+ * 			status=success detailed JSON array of user's templates (empty if no templates have been assigned to the authenticated user).",
  *   ),
  *   @OA\Response(
  *     response=405,
@@ -108,6 +109,75 @@ class TemplatesController extends NestedResourceController {
 
 		$this->response->type('application/json');
 		$this->response->body(json_encode($response));
+	}
+
+/**
+ *
+ * Handles API GET request to view details about the fields used by specific Template. API consumers can use this detailed list of fields to create or update an application.
+ * Accepts request query data containig a template id to search for.
+ * The id query param value cannot be emtpty
+ *
+ * @OA\Get(
+ *   path="/api/Templates/view?id={template id}",
+ *	 tags={"Templates"},
+ *   summary="Returns Template fields details",
+ *	 @OA\Parameter(
+ *		   name="id",
+ *		   description="The id of the template being requested. Empty id parameter value is not allowed.
+ *	 			Example 1: 25
+ *	 			Example 2: 2",
+ *         in="query",
+ *         @OA\Schema(type="integer")
+ *   ),
+ *	 @OA\Response(
+ *     response=200,
+ *     @OA\MediaType(
+ *         mediaType="application/json",
+ *		   example={"<merge_field_name>": {"type":"<data type or field type>", "required": <boolean>, "name": "<field name>","description": "<a description>"}, "CorpName": {"type": "text","required": true,"name": "Legal Business Name","description": ""}},
+ *         @OA\Schema(
+ *	   	   	 ref="#/components/schemas/TemplateFields",
+ *         )
+ *     ),
+ *     description="
+ * 			status=success message JSON list of Template Fields (empty when template id is not found).
+ *			status=failed message Missing or invalid Template id parameter",
+ *   ),
+ *   @OA\Response(
+ *     response=405,
+ *     description="HTTP method not allowed when request method is not GET"
+ *   ),
+ *   @OA\Response(
+ *     response=400,
+ *     description="Missing or invalid Template id parameter"
+ *   )
+ * )
+ *
+ * @return void
+ */
+	public function api_view() {
+		$this->autoRender = false;
+		$response = array('status' => 'failed', 'messages' => 'HTTP method not allowed');
+		if ($this->request->is('get')) {
+			$id = Hash::get($this->request->query, 'id');
+			if (!empty($id)) {
+				$response['status'] = 'success';
+				$response['messages'] = null;
+				$response['data'] = $this->Template->getTemplateFields($id, 0, false);
+				if (empty($response['data'])) {
+					$response['messages'] = "No template fields found for given template id.";
+				}
+			} else {
+				$response['messages'] = 'Missing or invalid Template id parameter.';
+				$this->response->statusCode(400);
+			}
+		} else {
+			$this->response->statusCode(405); //405 Method Not Allowed
+		}
+
+		$this->response->type('application/json');
+		$this->response->body(json_encode($response));
+
+
 	}
 
 	public function admin_add() {

@@ -136,6 +136,8 @@ class Template extends AppModel {
 			$conditions['field.required'] = $required;
 		}
 
+		$conditions[] = "field.type != 6"; //fieldType 6 = label
+
 		$fields = $this->find('all',
 			array(
 				'joins' => array(
@@ -144,7 +146,7 @@ class Template extends AppModel {
 						'alias' => 'page',
 						'foreignKey' => 'onlineapp_template_pages.template_id',
 						'conditions' => array(
-							'page.template_id = Template.id'
+							"page.template_id = {$this->alias}.id"
 						),
 					),
 					array(
@@ -164,7 +166,7 @@ class Template extends AppModel {
 				),
 				'fields' => $fields,
 				'conditions' => array(
-					'"Template".id' => $templateId
+					"{$this->alias}.id" => $templateId
 				),
 				'order' => array('field.id'),
 			)
@@ -190,6 +192,7 @@ class Template extends AppModel {
 						$formattedData[$name] = array(
 								"type" => $type,
 								"required" => $value['field']['required'],
+								"name" => $value['field']['name'],
 								"description" => $value['field']['description'],
 						);
 					}
@@ -208,6 +211,7 @@ class Template extends AppModel {
 					$formattedData[$value['field']['merge_field_name']] = array(
 						"type" => $type,
 						"required" => $value['field']['required'],
+						"name" => $value['field']['name'],
 						"description" => $value['field']['description'],
 					);
 					break;

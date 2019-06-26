@@ -66,7 +66,6 @@
 	Router::connect('/applications/document_callback',
 		array('controller' => 'cobranded_applications', 'action' => 'document_callback', 'admin' => false));
 
-
 /**
  * Allow JSON extensions to be properly parsed
  */
