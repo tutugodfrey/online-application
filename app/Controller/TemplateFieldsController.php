@@ -4,6 +4,45 @@ App::uses('NestedResourceController', 'Controller');
  * TemplateFields Controller
  *
  */
+ /**
+ * @OA\Tag(name="TemplateFields", description="Operation and data about TemplateFields")
+ *
+ * @OA\Schema(
+ *	   schema="TemplateFields",
+ *     description="TemplateFields database table schema",
+ *     title="TemplateFields",
+ *     @OA\Property(
+ *			description="TemplateField id",
+ *			property="id",
+ *			type="integer"
+ *     ),
+ *	   @OA\Property(
+ *			description="This important property is used to uniquely identify the field across platforms and must be used exactly as shown (case sensitive).",
+ *			property="merge_field_name",
+ *			type="string"
+ *     ),
+ *     @OA\Property(
+ *			description="This property's purpose is to simply provide a human readable name.",
+ *			property="name",
+ *			type="string"
+ *     ),
+ *     @OA\Property(
+ *			description="The template field description may contain additional details about the field",
+ *			property="description",
+ *			type="string"
+ *     ),
+ *     @OA\Property(
+ *			description="The Field types include radio and checkbox field types are boolean data types, fees type is a monetary data type, etc. Requests will display with a proper type description rather than an integer in the response.",
+ *			property="type",
+ *			type="integer"
+ *     ),
+ *     @OA\Property(
+ *			description="Indicates whether the template field is required for an application to pass validation",
+ *			property="required",
+ *			type="boolean"
+ *     )
+ * )
+ */
 class TemplateFieldsController extends NestedResourceController {
 
 	protected $_parentCtrlName = 'TemplateSections';
