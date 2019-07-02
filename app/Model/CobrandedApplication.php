@@ -10,6 +10,142 @@ App::uses('HttpSocket', 'Network/Http');
  *
  * @property CobrandedApplications $CobrandedApplications
  */
+/*********Begin API Annotations for swagger-php for CobrandedApplicationsController::api_add() method ***/
+/**
+ * 
+ * Use this API endpoint to create applications for signing up potentially new clients.
+ * The data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.
+ * If the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key "m2m" to be present in the data being submitted
+ * in order to disable interactive creation of applications.
+ * With m2m set to true {"m2m":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the "DBA" and "EMail" (Company contact email address).
+ * With m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.
+ * 
+ * IMPORTANT: The data submitted varies depending on Template used, therefore the example shown here shoud not be considered a compehensive or definitive data structure for all requests.
+ * Information about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.
+ * 
+ * @OA\Post(
+ *   path="/api/CobrandedApplications/add",
+ *	 tags={"CobrandedApplications"},
+ *   summary="Create a new client application.",
+ *   @OA\RequestBody(
+ *      @OA\MediaType(
+ *          mediaType="application/json",
+ *          @OA\Schema(
+ *              @OA\Property(
+ *                  property="template_id",
+ *                  type="integer",
+ *					description="Integer id of the template that should be used to create this application (Always required). See api/Templates/index for a list of templates",
+ *					example=1234
+ *              ),
+ *              @OA\Property(
+ *                  property="external_record_id",
+ *                  type="string",
+ *					description="If the systems submitting the data require this record to be updated back in that system, a record id must be provided to locate this record in that system.",
+ *					example="<id format varies from system to system>"
+ *              ),
+ *              @OA\Property(
+ *                  property="m2m",
+ *                  type="boolean",
+ *					description="
+ *	 					When set to true, API calls will be non-interactive and assumed be made by another system, therefore data validation will be turned off for most fields except for DBA and Email.
+ *						When false or when absent from the JSON data, data validation will be enabled and the application will only be created when all data submitted passes validation.",
+ *					example="<"m2m":true>"
+ *              ),
+ *              @OA\Property(
+ *                  property="CorpName",
+ *                  type="string",
+ *					maxLength=150,
+ *					description="Corporation/Company Name",
+ *					example="Family Health Service"
+ *              ),
+ *              @OA\Property(
+ *                  property="DBA",
+ *                  type="string",
+ *					maxLength=100,
+ *					description="DBA Name (Required)",
+ *					example="Family Health"
+ *              ),
+ *              @OA\Property(
+ *                  property="CorpAddress",
+ *                  type="string",
+ *					maxLength=100,
+ *					description="Address",
+ *					example="1234 Narrow Street"
+ *              ),
+ *              @OA\Property(
+ *                  property="CorpCity",
+ *                  type="string",
+ *					maxLength=50,
+ *					description="City",
+ *					example="Red Bluff"
+ *              ),
+ *              @OA\Property(
+ *                  property="CorpState",
+ *                  type="string",
+ *					maxLength=2,
+ *					description="Two-letter State",
+ *					example="CA"
+ *              ),
+ *              @OA\Property(
+ *                  property="CorpZip",
+ *                  type="string",
+ *					maxLength=20,
+ *					description="Zip code",
+ *					example="96080"
+ *              ),
+ *              @OA\Property(
+ *                  property="CorpPhone",
+ *                  type="string",
+ *					maxLength=20,
+ *					description="Phone",
+ *					example="(530)555-5789"
+ *              ),
+ *              @OA\Property(
+ *                  property="EMail",
+ *                  type="string",
+ *					maxLength=50,
+ *					description="Company contact email (Required)",
+ *					example="janedoe@nomail.com"
+ *              ),
+ *              example={
+ *					"external_record_id": "abcdef123456",
+ *					"m2m": true,
+ *					"CorpName": "Family Health Service",
+ *					"DBA": "Family Health",
+ *					"CorpAddress": "1234 Narrow Street",
+ *					"CorpCity": "Red Bluff",
+ *					"CorpState": "CA",
+ *					"CorpZip": "96080",
+ *					"CorpPhone": "(530)555-5789",
+ *					"EMail": "janedoe@nomail.com",
+ *				}
+ *          )
+ *      )
+ *   ),
+ *	 @OA\Response(
+ *     response=200,
+ *     @OA\MediaType(
+ *         mediaType="application/json",
+ *		   example={"status": "[success/failed]", "messages": "[string or single dimentional array of status related messages]"},
+ *     ),
+ *     description="
+ * 			On status success: 
+ *				{'status': 'success', 'messages': 'Application created!', 'application_id':[uuid]}
+ *
+ *			On failure status, a string or array of operation-specific errors will be returned as the value for the 'messages' array key.
+ *			Messages may include data validation errors and/or other API response error messages.
+ *			Furthermore, if no data is sent operation will return status:failed"
+ *   ),
+ *   @OA\Response(
+ *     response=405,
+ *     description="HTTP method not allowed when request method is not POST",
+ *	   @OA\MediaType(
+ *         mediaType="application/json",
+ *  	   example={"status": "failed", "messages": "HTTP method not allowed"},
+ *     ),
+ *   ),
+ * )
+ */
 class CobrandedApplication extends AppModel {
 
 	const RIGHTSIGNATURE_NO_TEMPLATE_ERROR = "error! The signature template has not been configured";
@@ -449,17 +585,19 @@ class CobrandedApplication extends AppModel {
  *         success [true|false] depending on if the onlineapp was created
  *         cobrandedApplicationId int
  */
-	public function createOnlineappForUser($user, $uuid = null) {
+	public function createOnlineappForUser($user, $uuid = null, $templateId = null, $externalForeignId = null) {
 		$response = array('success' => false, 'cobrandedApplication' => array('id' => null, 'uuid' => null));
 		if (is_null($uuid)) {
 			$uuid = CakeText::uuid();
 		}
-
+		//use user's template_id value by default (may or may not be the user's default template)
+		$templateId = (is_null($templateId))? $user['template_id'] : $templateId;
 		$this->create(
 			array(
 				'user_id' => $user['id'],
 				'uuid' => $uuid,
-				'template_id' => $user['template_id'],
+				'template_id' => $templateId,
+				'external_foreign_id' => empty($externalForeignId)? null : $externalForeignId, //no zero length strings
 				'status' => 'saved'
 			)
 		);
@@ -492,6 +630,9 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function saveFields($user, $fieldsData) {
+		if (empty(Hash::get($fieldsData, 'template_id')) || $this->Template->hasAny(array('id' => Hash::get($fieldsData, 'template_id'))) === false) {
+			return array('status' => AppModel::API_FAILS, 'messages' => "A Template with id = '" . Hash::get($fieldsData, 'template_id') . "' does not exist.");
+		}
 		// default our response
 		$response = array(
 			'success' => false,
@@ -499,11 +640,29 @@ class CobrandedApplication extends AppModel {
 			'application_id' => null,
 			'application_url' => null
 		);
-
+		$isM2mRequest = Hash::get($fieldsData, 'm2m');
+		$templateId = Hash::get($fieldsData, 'template_id');
+		$externalForeignId = Hash::get($fieldsData, 'external_record_id');
+		unset($fieldsData['template_id'], $fieldsData['m2m'], $fieldsData['external_record_id']);
+		if ($isM2mRequest) {
+			if (!Hash::get($fieldsData, 'DBA', false)) {
+				$errMsgs[] = "DBA is required.";
+			}
+			if (!Hash::get($fieldsData, 'EMail', false)) {
+				$errMsgs[] = "EMail is required.";
+			}
+			if (isset($errMsgs)) {
+				return array(
+					'status' => AppModel::API_FAILS,
+					'messages' => $errMsgs
+				);
+			}
+		}
 		// create an application for $userId
-		$createAppResponse = $this->createOnlineappForUser($user);
+		$createAppResponse = $this->createOnlineappForUser($user, null, $templateId, $externalForeignId);
+		
+		
 		$newApp = null;
-
 		if ($createAppResponse['success'] == true) {
 			// populate it with the passed $fieldsData
 			$newApp = $this->find(
@@ -515,12 +674,9 @@ class CobrandedApplication extends AppModel {
 				)
 			);
 
-			$this->Session = ClassRegistry::init('Session');
 			$this->Cobrand = ClassRegistry::init('Cobrand');
 			$this->TemplateField = ClassRegistry::init('TemplateField');
 			$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
-
-			$templateFieldIdMap = array();
 
 			// save the application values
 			foreach ($fieldsData as $key => $value) {
@@ -530,12 +686,12 @@ class CobrandedApplication extends AppModel {
 				}
 
 				// look up the field type from the name
-				$appValue = $this->CobrandedApplicationValues->find(
+				$appValue = $this->CobrandedApplicationValue->find(
 					'first',
 					array(
 						'conditions' => array(
 							'cobranded_application_id' => $newApp['CobrandedApplication']['id'],
-							'CobrandedApplicationValues.name' => $key
+							'CobrandedApplicationValue.name' => $key
 						)
 					)
 				);
@@ -551,11 +707,11 @@ class CobrandedApplication extends AppModel {
 						'first',
 						array(
 							'conditions' => array(
-								'TemplateField.id' => $appValue['CobrandedApplicationValues']['template_field_id']
+								'TemplateField.id' => Hash::get($appValue, 'CobrandedApplicationValue.template_field_id')
 							)
 						)
 					);
-					$templateField = $templateField['TemplateField'];
+					$templateField = Hash::get($templateField, 'TemplateField');
 				}
 
 				// if the field is rep_only == true, skip it because this value cannot be set via the api
@@ -601,7 +757,7 @@ class CobrandedApplication extends AppModel {
 						);
 
 						foreach ($radioOptions as $radioOption) {
-							if ($radioOption['CobrandedApplicationValue']['id'] != $appValue['CobrandedApplicationValues']['id']) {
+							if ($radioOption['CobrandedApplicationValue']['id'] != $appValue['CobrandedApplicationValue']['id']) {
 								// udpate the value to null
 								$radioOption['CobrandedApplicationValue']['value'] = null;
 								if (!$this->CobrandedApplicationValue->save($radioOption)) {
@@ -613,14 +769,37 @@ class CobrandedApplication extends AppModel {
 					}
 
 					// update the value
-					$appValue['CobrandedApplicationValues']['value'] = $value;
+					$appValue['CobrandedApplicationValue']['value'] = $value;
+					//machine to machine API requests only require DBA and email data
+					if ($isM2mRequest == true) {
 
-					// handle required and empty first
-					if ($templateField['required'] == true && empty($value) == true) {
+						$requiredFieldsPresent = ($appValue['CobrandedApplicationValue']['name'] == 'DBA' || strpos($appValue['CobrandedApplicationValue']['name'], 'EMail') !== false);
+						if ($requiredFieldsPresent && !empty($value)) {
+							if ($this->CobrandedApplicationValue->validApplicationValue($appValue['CobrandedApplicationValue'], $templateField['type'], $templateField)) {
+								// save it
+								$this->CobrandedApplicationValue->save($appValue);
+							} else {
+								// update our validationErrors array
+								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], "Invalid format for $typeStr: $value");
+							}
+						} elseif($requiredFieldsPresent && empty($value)) {
+							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'required');
+						} elseif ($requiredFieldsPresent == false) {
+							$response['validationErrors']['DBA'] = 'required';
+							$response['validationErrors']['EMail'] = 'required';
+						}
+						if (count($response['validationErrors']) == 0) {
+							$tmpResponse['success'] = true;
+						} else {
+							$tmpResponse['success'] = false;
+							$tmpResponse['validationErrors'] = $response['validationErrors'];
+						}
+						// handle required and empty first
+					} elseif ($templateField['required'] == true && empty($value) == true) {
 
 						// SSN should not be required if Ownership Type is Non Profit
-						if ($appValue['CobrandedApplicationValues']['name'] == 'OwnerSSN' ||
-							$appValue['CobrandedApplicationValues']['name'] == 'Owner2SSN') {
+						if ($appValue['CobrandedApplicationValue']['name'] == 'OwnerSSN' || $appValue['CobrandedApplicationValue']['name'] == 'Owner2SSN') {
 
 							if ($fieldsData['OwnerType-NonProfit'] == true) {
 								continue;
@@ -633,22 +812,22 @@ class CobrandedApplication extends AppModel {
 						// only validate if we are not empty
 						if (isset($value)) {
 							// if social security number is missing dashes, add them in
-							if ($appValue['CobrandedApplicationValues']['name'] == 'OwnerSSN' ||
-								$appValue['CobrandedApplicationValues']['name'] == 'Owner2SSN') {
+							if ($appValue['CobrandedApplicationValue']['name'] == 'OwnerSSN' ||
+								$appValue['CobrandedApplicationValue']['name'] == 'Owner2SSN') {
 
-									$tmpValue = $appValue['CobrandedApplicationValues']['value'];
+									$tmpValue = $appValue['CobrandedApplicationValue']['value'];
 
 									if (preg_match('/([0-9]{3})-?([0-9]{2})-?([0-9]{4})/', $tmpValue, $matches)) {
 										$tmpValue = $matches[1] . "-" . $matches[2] . "-" . $matches[3];
-										$appValue['CobrandedApplicationValues']['value'] = $tmpValue;
+										$appValue['CobrandedApplicationValue']['value'] = $tmpValue;
 									}
 							}
 
 							// is the value valid?
-							$validValue = $this->CobrandedApplicationValues->validApplicationValue($appValue['CobrandedApplicationValues'], $templateField['type'], $templateField);
+							$validValue = $this->CobrandedApplicationValue->validApplicationValue($appValue['CobrandedApplicationValue'], $templateField['type'], $templateField);
 							if ($validValue) {
 								// save it
-								$this->CobrandedApplicationValues->save($appValue);
+								$this->CobrandedApplicationValue->save($appValue);
 							} else {
 								// update our validationErrors array
 								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
@@ -673,7 +852,9 @@ class CobrandedApplication extends AppModel {
 			)
 		);
 
-		$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
+		if ($isM2mRequest == false) {
+			$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
+		}
 
 		if ($response['success'] == false || $tmpResponse['success'] == false) {
 			// delete the app
@@ -710,7 +891,7 @@ class CobrandedApplication extends AppModel {
 
 					if ($getTemplateResponse && $getTemplateResponse['template']['type'] == 'Document' && $getTemplateResponse['template']['guid']) {
 						$applicationXml = $this->createRightSignatureApplicationXml(
-							$createAppResponse['cobrandedApplication']['id'], $this->Session->read('Auth.User.email'), $getTemplateResponse['template']);
+							$createAppResponse['cobrandedApplication']['id'], $user['email'], $getTemplateResponse['template']);
 							$createResponse = $this->createRightSignatureDocument($client, $applicationXml);
 							$createResponse = json_decode($createResponse, true);
 
@@ -746,14 +927,15 @@ class CobrandedApplication extends AppModel {
 			}
 		}
 
-		$response['success'] = (count($response['validationErrors']) == 0);
-
-		if ($response['success'] == false) {
+		if (count($response['validationErrors']) > 0 ) {
 			// delete the app
 			$this->delete($createAppResponse['cobrandedApplication']['id']);
-			$response['success'] = false;
+			$response['status'] = AppModel::API_FAILS;
+		} else {
+			$response['status'] = AppModel::API_SUCCESS;
+			$response['messages'][] = 'Application created';
 		}
-
+		unset($response['success']);
 		return $response;
 	}
 

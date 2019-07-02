@@ -168,7 +168,7 @@ class Template extends AppModel {
 				'conditions' => array(
 					"{$this->alias}.id" => $templateId
 				),
-				'order' => array('field.id'),
+				'order' => array('field.merge_field_name'),
 			)
 		);
 

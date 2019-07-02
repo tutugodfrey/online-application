@@ -83,6 +83,7 @@ class TemplateBuilderTest extends CakeTestCase {
 		$this->assertArrayHasKey('cobrands', $actual);
 		$this->assertArrayHasKey('logoPositionTypes', $actual);
 		$this->assertArrayHasKey('template', $actual);
+
 		$this->assertEquals($expected, $actual);
 	}
 
@@ -160,6 +161,40 @@ class TemplateBuilderTest extends CakeTestCase {
 										'TemplateFields' => array(
 												array(
 														'id' => 36,
+														'name' => 'DBA',
+														'description' => 'DBA',
+														'rep_only' => false,
+														'width' => 12,
+														'type' => 0,
+														'required' => true,
+														'source' => 2,
+														'default_value' => '',
+														'merge_field_name' => 'DBA',
+														'order' => 0,
+														'section_id' => 5,
+														'encrypt' => false,
+														'created' => '2013-12-18 14:10:17',
+														'modified' => '2013-12-18 14:10:17'
+												),
+												array(
+														'id' => 37,
+														'name' => 'EMail',
+														'description' => 'EMail',
+														'rep_only' => false,
+														'width' => 12,
+														'type' => 14,
+														'required' => true,
+														'source' => 2,
+														'default_value' => '',
+														'merge_field_name' => 'EMail',
+														'order' => 0,
+														'section_id' => 5,
+														'encrypt' => false,
+														'created' => '2013-12-18 14:10:17',
+														'modified' => '2013-12-18 14:10:17'
+												),
+												array(
+														'id' => 38,
 														'name' => 'Text field',
 														'description' => '',
 														'rep_only' => false,
@@ -176,7 +211,7 @@ class TemplateBuilderTest extends CakeTestCase {
 														'modified' => '2013-12-18 14:10:17'
 												),
 												array(
-														'id' => 37,
+														'id' => 39,
 														'name' => 'Text field',
 														'description' => '',
 														'rep_only' => false,
@@ -193,7 +228,7 @@ class TemplateBuilderTest extends CakeTestCase {
 														'modified' => '2013-12-18 14:10:17'
 												),
 												array(
-														'id' => 38,
+														'id' => 40,
 														'name' => 'Text field',
 														'description' => '',
 														'rep_only' => false,
@@ -210,7 +245,7 @@ class TemplateBuilderTest extends CakeTestCase {
 														'modified' => '2013-12-18 14:10:17'
 												),
 												array(
-														'id' => 39,
+														'id' => 41,
 														'name' => 'Text field',
 														'description' => '',
 														'rep_only' => false,
@@ -227,7 +262,7 @@ class TemplateBuilderTest extends CakeTestCase {
 														'modified' => '2013-12-18 14:10:17'
 												),
 												array(
-														'id' => 40,
+														'id' => 42,
 														'name' => 'Text field 1',
 														'description' => '',
 														'rep_only' => false,
@@ -244,7 +279,7 @@ class TemplateBuilderTest extends CakeTestCase {
 														'modified' => '2013-12-18 14:10:17'
 												),
 												array(
-														'id' => 41,
+														'id' => 43,
 														'name' => 'Multirecord field',
 														'description' => '',
 														'rep_only' => false,
@@ -261,7 +296,7 @@ class TemplateBuilderTest extends CakeTestCase {
 														'modified' => '2013-12-18 14:10:17'
 												),
 												array(
-														'id' => 42,
+														'id' => 44,
 														'name' => 'Owner Type - ',
 														'description' => '',
 														'rep_only' => false,
