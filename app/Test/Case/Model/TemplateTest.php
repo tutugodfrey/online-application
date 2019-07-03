@@ -218,6 +218,18 @@ class TemplateTest extends CakeTestCase {
 					'description' => '',
 					'name' => 'Text field'
 				),
+				'DBA' => array(
+					'type' => 'text',
+					'required' => true,
+					'name' => 'DBA',
+					'description' => 'DBA'
+				),
+				'EMail' => array(
+						'type' => 'email',
+						'required' => true,
+						'name' => 'EMail',
+						'description' => 'EMail'
+				),
 				'multirecord_from_api_with_default' => array(
 					array(
 						'description' => array(
@@ -580,6 +592,18 @@ class TemplateTest extends CakeTestCase {
 				),
 			),
 			array(
+				 'DBA' => array(
+					'type' => 'text',
+					'required' => true,
+					'name' => 'DBA',
+					'description' => 'DBA'
+				),
+				'EMail' => array(
+					'type' => 'email',
+					'required' => true,
+					'name' => 'EMail',
+					'description' => 'EMail'
+				),
 				'required_text_from_api_without_default' => array(
 					'type' => 'text',
 					'required' => true,

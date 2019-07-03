@@ -35,6 +35,9 @@ App::uses('HttpSocket', 'Network/Http');
  */
 class AppModel extends Model {
 
+	const API_SUCCESS = 'success';
+	const API_FAILS = 'failed';
+
 	public $actsAs = array(
 		'Containable',
 		'Utils.CsvImport' => array(

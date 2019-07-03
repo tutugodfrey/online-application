@@ -630,6 +630,38 @@ class OnlineappTemplateFieldFixture extends CakeTestFixture {
 		Add TemplateFields for 
 		*/
 		array(
+			'name' => 'DBA',
+			'width' => 12,
+			'description' => 'DBA',
+			'type' => 0,
+			'required' => 1,
+			'source' => 2,
+			'default_value' => '',
+			'merge_field_name' => 'DBA',
+			'order' => 0,
+			'section_id' => 5,
+			'rep_only' => false,
+			'encrypt' => false,
+			'created' => '2013-12-18 14:10:17',
+			'modified' => '2013-12-18 14:10:17'
+		),
+		array(
+			'name' => 'EMail',
+			'width' => 12,
+			'description' => 'EMail',
+			'type' => 14,
+			'required' => 1,
+			'source' => 2,
+			'default_value' => '',
+			'merge_field_name' => 'EMail',
+			'order' => 0,
+			'section_id' => 5,
+			'rep_only' => false,
+			'encrypt' => false,
+			'created' => '2013-12-18 14:10:17',
+			'modified' => '2013-12-18 14:10:17'
+		),
+		array(
 			'name' => 'Text field',
 			'width' => 12,
 			'description' => '',
