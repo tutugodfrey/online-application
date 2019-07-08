@@ -261,7 +261,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 					$actualSyncedCavName = Hash::get($cav, "name");
 					$cavNameExpectationFulfilled = ($expectedCAVname === $actualSyncedCavName);
 					if ($cavNameExpectationFulfilled) {
-						$this->assertEqual($expectedCAVname, $actualSyncedCavName);
+						$this->assertEquals($expectedCAVname, $actualSyncedCavName);
 					}
 				}
 
@@ -269,7 +269,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				if ($hasDefaultValsExpectation && $defaultValExpectationFulfilled === false) {
 					$defaultValExpectationFulfilled = ($expected['expected_defaults'] === $cav['value']);
 					if ($defaultValExpectationFulfilled) {
-						$this->assertEqual($expected['expected_defaults'], $cav['value']);
+						$this->assertEquals($expected['expected_defaults'], $cav['value']);
 					}
 				}
 
@@ -359,11 +359,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 								//Find name matching current CAV.name
 								if (($type === 4 || $type === 5) && $templateField['merge_field_name'] . $val === $syncedCav['name']) {
-									$this->assertEqual($templateField['merge_field_name'] . $val, $syncedCav['name']);
+									$this->assertEquals($templateField['merge_field_name'] . $val, $syncedCav['name']);
 									$matchFound = true;
 									break; //innermost for loop
 								} elseif ($type === 7 && $syncedCav['name'] === $val) {
-									$this->assertEqual($val, $syncedCav['name']);
+									$this->assertEquals($val, $syncedCav['name']);
 									$matchFound = true;
 									break; //innermost for loop
 								}
@@ -373,7 +373,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 								unset($matchFound);
 								////Are we expecting default values being set?
 								if (!is_null($default)) {
-									$this->assertEqual($syncedCav['value'], $default);
+									$this->assertEquals($syncedCav['value'], $default);
 								}
 							} else {
 								$this->fail("Failed asserting CobrandedApplicationValues.name:\n '{$syncedCav['name']}' \nmatches any [TemplateField.merge_field_name] + [OptionKey] combination");
@@ -393,10 +393,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 							} else {
 								$default = $templateField['default_value'];
 							}
-							$this->assertEqual($templateField['merge_field_name'], $syncedCav['name']);
+							$this->assertEquals($templateField['merge_field_name'], $syncedCav['name']);
 							////Are we expecting default values being set?
 							if (!empty($default)) {
-								$this->assertEqual($syncedCav['value'], $default);
+								$this->assertEquals($syncedCav['value'], $default);
 							}
 						}
 					}
@@ -405,7 +405,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		}
 		//The total number of crated CAVs must always match the number of TemplateFields and/or
 		//the number Key::Val options set in TemplateFields.default_value for multi-choice data types
-		$this->assertEqual($countTotalCreatedCAVs, $expectedCountOfCreatedCAVs);
+		$this->assertEquals($countTotalCreatedCAVs, $expectedCountOfCreatedCAVs);
 	}
 
 /**
@@ -891,7 +891,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertContains('This field has been modified', $saved['CobrandedApplication']['data_to_sync']);
 		$expectedCount = count($expected);
 		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
-		$this->assertEqual($expectedCount, $actualCount);
+		$this->assertEquals($expectedCount, $actualCount);
 	}
 
 /**
@@ -973,7 +973,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertContains('modify the modified field data-to-be-synced', $saved['CobrandedApplication']['data_to_sync']);
 		$expectedCount = count($expected);
 		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
-		$this->assertEqual($expectedCount, $actualCount);
+		$this->assertEquals($expectedCount, $actualCount);
 
 		//Lastly test a new item to sync is added to the existing collection
 		$newToSync = array(
@@ -1006,7 +1006,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertContains('New field data-to-be-synced', $saved['CobrandedApplication']['data_to_sync']);
 		$expectedCount = count($expected);
 		$actualCount = count(unserialize($saved['CobrandedApplication']['data_to_sync']));
-		$this->assertEqual($expectedCount, $actualCount);
+		$this->assertEquals($expectedCount, $actualCount);
 	}
 
 	public function testValidation() {
@@ -1960,13 +1960,13 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// test passinng no template_id
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-		$this->assertEqual($actualResponse['status'], AppModel::API_FAILS);
-		$this->assertEqual($actualResponse['messages'], "A Template with id = '' does not exist.");
+		$this->assertEquals($actualResponse['status'], AppModel::API_FAILS);
+		$this->assertEquals($actualResponse['messages'], "A Template with id = '' does not exist.");
 		// test passinng invalid template_id
 		$fieldsData = ['template_id' => 99999];
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-		$this->assertEqual($actualResponse['status'], AppModel::API_FAILS);
-		$this->assertEqual($actualResponse['messages'], "A Template with id = '99999' does not exist.");
+		$this->assertEquals($actualResponse['status'], AppModel::API_FAILS);
+		$this->assertEquals($actualResponse['messages'], "A Template with id = '99999' does not exist.");
 
 		// pass valid template, emulate machine to machine API requiest with missing minimally requied values
 		$fieldsData = array(
@@ -1974,7 +1974,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'm2m' => true,
 		);
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-		$this->assertEqual($actualResponse['status'], AppModel::API_FAILS);
+		$this->assertEquals($actualResponse['status'], AppModel::API_FAILS);
 		$this->assertContains("DBA is required.", $actualResponse['messages']);
 		$this->assertContains("EMail is required.", $actualResponse['messages']);
 
@@ -1983,7 +1983,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$fieldsData['EMail'] = "";
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
 
-		$this->assertEqual($actualResponse['status'], AppModel::API_FAILS);
+		$this->assertEquals($actualResponse['status'], AppModel::API_FAILS);
 		$this->assertContains("DBA is required.", $actualResponse['messages']);
 		$this->assertContains("EMail is required.", $actualResponse['messages']);
 
@@ -2009,7 +2009,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// execute the method under test
 		$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
 		// assertions
-		$this->assertEqual($actualResponse['status'], AppModel::API_FAILS);
+		$this->assertEquals($actualResponse['status'], AppModel::API_FAILS);
 		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
 		$applications = $this->CobrandedApplication->find(
 			'all',
@@ -2051,7 +2051,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// assertions
 		//saveFields with valid data should succeed
-		$this->assertEqual($actualResponse['status'], AppModel::API_SUCCESS);
+		$this->assertEquals($actualResponse['status'], AppModel::API_SUCCESS);
 		$this->assertEquals(array(), $actualResponse['validationErrors'], 'Expected no validation errors for valid $fieldsData');
 
 		// test with bad routing number
@@ -2086,7 +2086,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// assertions
 		//saveFields with invalid value for required field should fail
-		$this->assertEqual($actualResponse['status'], AppModel::API_FAILS);
+		$this->assertEquals($actualResponse['status'], AppModel::API_FAILS);
 		$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match');
 
 		unset($fieldsData);
@@ -2136,7 +2136,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 					// execute the method under test
 					$actualResponse = $this->CobrandedApplication->saveFields($user, $fieldsData);
-					$this->assertEqual($actualResponse['status'], AppModel::API_FAILS, 'saveFields with empty value for required field should fail. $index ['.$index.']');
+					$this->assertEquals($actualResponse['status'], AppModel::API_FAILS, 'saveFields with empty value for required field should fail. $index ['.$index.']');
 // !! NEED TO REVISIT THE FOLLOWING TEST
 					//$this->assertEquals($expectedValidationErrors, $actualResponse['validationErrors'], 'Expected validation errors did not match ['.$index.']');
 				}
