@@ -68,9 +68,11 @@ class TemplatesController extends NestedResourceController {
 
 /**
  *
- * Handles API GET request for a list of Templates assigned to the API consumer performing the request.
- * Request requires no parameters, any parameters in request query will be ignored.
- * A full list of all templates assigned to authenticated user will be returned
+ * Handles API GET request for a list of Templates assigned to the API user performing the request.
+ * Each user is given access to the set of templates the the need to use. 
+ * Knowing which template to use is important in order to be able to create an application for a client.
+ * This endpoint will return full list of all templates assigned to the authenticated user.
+ * Request requires no parameters.
  *
  * @OA\Get(
  *   path="/api/Templates/index",
@@ -98,9 +100,9 @@ class TemplatesController extends NestedResourceController {
  */
 	public function api_index() {
 		$this->autoRender = false;
-		$response = array('status' => 'failed', 'messages' => 'HTTP method not allowed');
+		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
 		if ($this->request->is('get')) {
-			$response['status'] = 'success';
+			$response['status'] = API_SUCCESS;
 			$response['messages'] = null;
 			$response['data'] = $this->Template->Users->allTemplates($this->Auth->user('id'));
 		} else {
@@ -114,8 +116,8 @@ class TemplatesController extends NestedResourceController {
 /**
  *
  * Handles API GET request to view details about the fields used by specific Template. API consumers can use this detailed list of fields to create or update an application.
- * Accepts request query data containig a template id to search for.
- * The id query param value cannot be emtpty
+ * The returned JSON data will consist of an array of arrays. The key at the top array level is called the merge_field_name and is the one required to submit application data. For more details see information on adding CobrandedApplications.
+ * Request requires a query parameter containig a template id to search for. The id param value cannot be empty.
  *
  * @OA\Get(
  *   path="/api/Templates/view?id={template id}",
@@ -156,11 +158,11 @@ class TemplatesController extends NestedResourceController {
  */
 	public function api_view() {
 		$this->autoRender = false;
-		$response = array('status' => 'failed', 'messages' => 'HTTP method not allowed');
+		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
 		if ($this->request->is('get')) {
 			$id = Hash::get($this->request->query, 'id');
 			if (!empty($id)) {
-				$response['status'] = 'success';
+				$response['status'] = AppModel::API_SUCCESS;
 				$response['messages'] = null;
 				$response['data'] = $this->Template->getTemplateFields($id, 0, false);
 				if (empty($response['data'])) {

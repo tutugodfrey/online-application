@@ -237,142 +237,28 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function api_add() {
 		$this->autoRender = false;
-		$response = array('success' => false);
-
-		$user = $this->User->find(
-			'first',
-			array(
-				'conditions' => array('User.id' => $this->Auth->user('id')),
-			)
-		);
-
-		if ($this->request->is('get')) {
-			// dump the template form
-			// pull the template_id from the db because the Auth object could be cached
-			if (!is_null($user['User']['template_id'])) {
-				$response['success'] = true;
-				$response['template'] = array(
-					'fields' => $this->User->Template->getTemplateApiFields($user['User']['template_id']),
-				);
+		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
+		if ($this->request->is('post')) {
+			//get data from request object
+			$data = $this->request->input('json_decode', true);
+			//if left side is true then assign and check again
+			if ((empty($data)) && (empty($data = $this->request->data))) {
+				//response if JSON data or form data was not passed
+				$response['messages'] = 'No data was sent';
 			} else {
-				$response = Hash::insert(
-					$response,
-					'msg',
-					'A template has not been configured for partners with id ['.$user['User']['cobrand_id'].']');
-			}
-		} else if ($this->request->is('post')) {
-			// make sure user is api_enabled
-			if ($user['User']['api_enabled']) {
-				// also make sure a template is setup
-				if (!is_null($user['User']['template_id'])) {
-					$data = $this->request->input('json_decode', true);
-
-					if ($data == NULL) {
-						$data = $this->request->data;
-					}
-
+				if (!empty(Hash::get($data, 'template_id'))) {
+					$user = $this->User->find('first', array('conditions' => array('User.id' => $this->Auth->User('id'))));
 					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
 
-					if ($response['success'] == true) {
-
-						$keys = '';
-						$values = '';
-						$this->CobrandedApplication->buildExportData($response['application_id'], $keys, $values);
-
-						$this->set('keys', $keys);
-						$this->set('values', $values);
-
-						$csv = $this->render('/Elements/cobranded_applications/export', false);
-
-						$dba = $data['DBA'];
-						$dba = preg_replace('/\s+/', '_', $dba);
-
-						$filepath = '/tmp/new_api_application_'.$dba.'.csv';
-
-						file_put_contents("$filepath", $csv);
-
-						$this->Cobrand = ClassRegistry::init('Cobrand');
-						$this->Template = ClassRegistry::init('Template');
-
-						$template = $this->Template->find(
-							'first',
-							array(
-								'conditions' => array('Template.id' => $user['User']['template_id']),
-							)
-						);
-
-						$cobrand = $this->Cobrand->find(
-							'first',
-							array(
-								'conditions' => array('Cobrand.id' => $template['Template']['cobrand_id']),
-							)
-						);
-
-						$args = array(
-							'cobrand' => $cobrand['Cobrand']['partner_name'],
-							'link' => $response['application_url_for_email'],
-							'attachments' => array($filepath)
-						);
-
-						// send email to data entry
-						$emailResponse = $this->CobrandedApplication->sendNewApiApplicationEmail($args);
-
-						unset($response['application_url_for_email']);
-						unlink($filepath);
-
-						if ($emailResponse['success'] == true) {
-							// add email timeline event
-							unset($args);
-							$args = array(
-								'cobranded_application_id' => $response['application_id']
-							);
-							$timelineResponse = $this->CobrandedApplication->createNewApiApplicationEmailTimelineEntry($args);
-
-							$status = '';
-
-							if ($response['partner_name'] == 'Appfolio') {
-								$status = 'signed';
-							} else {
-								if ($response['response_url_type'] == 1) { // return nothing
-									$status = 'saved';
-								} elseif ($response['response_url_type'] == 2) { // return RS signing url
-									$status = 'completed';
-								} elseif ($response['response_url_type'] == 3) { // return online app url
-									$status = 'saved';
-								} else {
-									$status = 'saved';
-								}
-							}
-
-							$this->CobrandedApplication->id = $response['application_id'];
-							$this->CobrandedApplication->saveField('status', $status);
-						}
-
-						$this->set('keys', '');
-						$this->set('values', '');
-						$csv = $this->render('/Elements/cobranded_applications/export', false);
-					}
 				} else {
-					$response = Hash::insert(
-					$response,
-					'msg',
-					'A template has not been configured for partners with id ['.$user['User']['cobrand_id'].']');
+					$response['messages'] = 'A template_id is required to create an application.';
 				}
-			} else {
-				$response = Hash::insert(
-					$response,
-					'msg',
-					'This API has not been enabled for partners with id ['.$this->Auth->user('cobrand_id').']');
 			}
 		} else {
-			$response = Hash::insert($response, 'msg', 'Expecting POST data.');
+			$this->response->statusCode(405); //405 Method Not Allowed
 		}
-
-		unset($response['partner_name']);
-		unset($response['response_url_type']);
-
-		echo json_encode($response);
-		$this->redirect(null, 200);
+		$this->response->type('application/json');
+		$this->response->body(json_encode($response));
 	}
 
 /**
@@ -500,7 +386,7 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function api_index() {
 		$this->autoRender = false;
-		$response = array('status' => 'failed', 'messages' => 'HTTP method not allowed');
+		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
 		if ($this->request->is('get')) {
 			$this->request->query['user_id'] = $this->Auth->user('id');
 			$conditions = $this->CobrandedApplication->parseCriteria($this->request->query);
@@ -510,7 +396,7 @@ class CobrandedApplicationsController extends AppController {
 				)
 			);
 			$response['data'] = [];
-			$response['status'] = 'success';
+			$response['status'] = API_SUCCESS;
 			if (!empty($appData)) {
 				$response['messages'] = null;
 				foreach($appData as $application) {
