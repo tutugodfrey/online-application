@@ -126,14 +126,14 @@ App::uses('HttpSocket', 'Network/Http');
  *     response=200,
  *     @OA\MediaType(
  *         mediaType="application/json",
- *		   example={"status": "[success/failed]", "messages": "[string or single dimentional array of status related messages]"},
+ *		   example={"validationErrors": [], "application_id": "<UUID>", "application_url": null, "application_gui_url":"<web URL to edit application>", "response_url_type":"<pre-configured int val controls the returned application_url>", "partner_name":"<partner associated with template if any>"  "status": "<success/failed>", "messages": "<string or single dimentional array of status related messages>"},
  *     ),
  *     description="
  * 			On status success: 
- *				{'status': 'success', 'messages': 'Application created!', 'application_id':[uuid]}
- *
+ *				{'validationErrors': [],'status': 'success', 'messages': ['Application created!'], 'application_id':'d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'application_url': null, 'application_gui_url': '"https://app.<domain_name>.com/cobranded_applications/edit/d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'response_url_type': 1, 'partner_name': 'ABC Partners'}
+ *			The value for the application_url may vary in the future and it will depend on how the response_url_type value was configured for the template. Currently for most applications the application_url value will be null.
  *			On failure status, a string or array of operation-specific errors will be returned as the value for the 'messages' array key.
- *			Messages may include data validation errors and/or other API response error messages.
+ *			If any validation errors ocurr, they will be listed in the 'validationErrors' array.
  *			Furthermore, if no data is sent operation will return status:failed"
  *   ),
  *   @OA\Response(
@@ -874,8 +874,8 @@ class CobrandedApplication extends AppModel {
 				)
 			);
 
-			$response['application_id'] = $createAppResponse['cobrandedApplication']['id'];
-			$response['application_url_for_email'] = Router::url('/cobranded_applications/edit/', true) . $createAppResponse['cobrandedApplication']['uuid'];
+			$response['application_id'] = $createAppResponse['cobrandedApplication']['uuid'];
+			$response['application_gui_url'] = Router::url('/cobranded_applications/edit/', true) . $createAppResponse['cobrandedApplication']['uuid'];
 			$response['response_url_type'] = $cobrand['Cobrand']['response_url_type'];
 			$response['partner_name'] = $cobrand['Cobrand']['partner_name'];
 
