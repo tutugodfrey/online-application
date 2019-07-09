@@ -770,7 +770,7 @@ class Coversheet extends AppModel {
 
 			$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 			if (stripos($userEmail, EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
-				$to = array(EmailTimeline::I3_UNDERWRITING_EMAIL, EmailTimeline::DATA_ENTRY_EMAIL);
+				$to = array(EmailTimeline::I3_UNDERWRITING_EMAIL);
 			} else {
 				$to = EmailTimeline::ENTITY2_APPS_EMAIL;
 			}
