@@ -2045,7 +2045,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$application = $this->CobrandedApplication->find(
 			'first',
 			array(
-				'conditions' => array('CobrandedApplication.id' => $actualResponse['application_id']),
+				'conditions' => array('CobrandedApplication.uuid' => $actualResponse['application_id']),
 			)
 		);
 
@@ -2938,6 +2938,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'Owner1Email.value ILIKE' => '%test%',
 			'EMail.value ILIKE' => '%test%',
 			'LocEMail.value ILIKE' => '%test%',
+			"CobrandedApplication.uuid" => 'test',
 			'CAST(CobrandedApplication.id AS TEXT) ILIKE' => '%test%'
 		);
 
