@@ -18,9 +18,9 @@ App::uses('User', 'Model');
  *     description="CobrandedApplications database table schema",
  *     title="CobrandedApplications",
  *     @OA\Property(
- *			description="CobrandedApplication id",
- *			property="id",
- *			type="integer"
+ *			description="The Application id is an UUID string",
+ *			property="application_id",
+ *			type="string"
  *     ),
  *     @OA\Property(
  *			description="The id of the template used by the application",
@@ -53,6 +53,7 @@ class CobrandedApplicationsController extends AppController {
 		'add' => array(User::ADMIN, User::REP, User::MANAGER),
 		'api_add' => array(User::API),
 		'api_index' => array(User::API),
+		'api_view' => array(User::API),
 		'retrieve' => array('*'),
 		'edit' => array(User::ADMIN, User::REP, User::MANAGER),
 		'syncApplication' => array(User::ADMIN, User::REP, User::MANAGER),
@@ -231,6 +232,8 @@ class CobrandedApplicationsController extends AppController {
 
 /**
  * api_add method
+ * Sagger Documentation for this API endpoint was moved to the top CobrandedApplications Model due to its large size.
+ * 
  *
  * @param none (post data)
  * @return void
@@ -349,10 +352,10 @@ class CobrandedApplicationsController extends AppController {
  *   summary="list applications assigned to current authehticated user",
  *	 @OA\Parameter(
  *		   name="search",
- *		   description="Text to search for in the application, for example the company name, or DBA or even the integer id of the application if known.
+ *		   description="Text to search for in the application, for example the company name, or DBA or even the string uuid of the application.
  *	 			Example 1: Health Systems Corp,
  *	 			Example 2: John Doe (a company contact name),
- *	 			Example 3: 99521 (an application id)",
+ *	 			Example 3: d1b5ba0c-d614-4856-a49e-fdd6b86682a0 (an application_id)",
  *         in="query",
  *         @OA\Schema(type="string")
  *   ),
@@ -368,7 +371,7 @@ class CobrandedApplicationsController extends AppController {
  *     response=200,
  *     @OA\MediaType(
  *         mediaType="application/json",
- *		   example={{"id": 1234,"user_id": 1234,"status": "signed","partner_name": "Experian","template_id": 1234,"template_name": "Default with BO","dba": "Test Co (DBA)","corp_name": "Test Co.","modified": "2030-06-13 14:40:21"}},
+ *		   example={{"application_id": "d1b5ba0c-d614-4856-a49e-fdd6b86682a0","user_id": 1234,"status": "signed","partner_name": "Experian","template_id": 1234,"template_name": "Default with BO","dba": "Test Co (DBA)","corp_name": "Test Co.","modified": "2030-06-13 14:40:21"}},
  *         @OA\Schema(
  *	   	   	 ref="#/components/schemas/CobrandedApplications",
  *         )
@@ -396,12 +399,12 @@ class CobrandedApplicationsController extends AppController {
 				)
 			);
 			$response['data'] = [];
-			$response['status'] = API_SUCCESS;
+			$response['status'] = AppModel::API_SUCCESS;
 			if (!empty($appData)) {
 				$response['messages'] = null;
 				foreach($appData as $application) {
 					$response['data'][] = array(
-						'id' => $application['CobrandedApplication']['id'],
+						'application_id' => $application['CobrandedApplication']['uuid'],
 						'user_id' => $application['CobrandedApplication']['user_id'],
 						'status' => $application['CobrandedApplication']['status'],
 						'partner_name' => $application['Cobrand']['partner_name'],
@@ -414,6 +417,81 @@ class CobrandedApplicationsController extends AppController {
 				}
 			} else {
 				$response['messages'] = "No aplications found for current user and/or specified search parameters.";
+			}
+		} else {
+			$this->response->statusCode(405); //405 Method Not Allowed
+		}
+
+		$this->response->type('application/json');
+		$this->response->body(json_encode($response));
+	}
+
+/**
+ *
+ * Handles API GET request to view the data for an existing Application that the authenticated API consumer has access to.
+ * Request parameter is required.
+ * An array containing all data including empty fields or fields that lack data will be returned.
+ *
+ * @OA\Get(
+ *   path="/api/CobrandedApplications/view?application_id={uuid string for the application}",
+ *	 tags={"CobrandedApplications"},
+ *   summary="Returns JSON array containing all data for a specific application including empty fields.",
+ *	 @OA\Parameter(
+ *		   name="application_id",
+ *		   description="A universally unique id (UUID) of an existing application, which the authenticated API consumer can access.
+ *	 			Example 1: d1b5ba0c-d614-4856-a49e-fdd6b86682a0,
+ *         in="query",
+ *         @OA\Schema(type="string")
+ *   ),
+ *	 @OA\Response(
+ *     response=200,
+ *     @OA\MediaType(
+ *         mediaType="application/json",
+ *		   example={"status": "success","messages": null, "data": {"status": "saved", "fieldName1":"value", "fieldName2":"value", "etc":"..."}},
+ *         @OA\Schema(
+ *	   	   	 ref="#/components/schemas/CobrandedApplications",
+ *         )
+ *     ),
+ *     description="
+ * 			status=success JSON array containing all application data, including application status. The array keys are the field names which differ depending on the Template that was used to create the application.",
+ * 			status=failed when no application is found for the currently authenticated API consumer and the given application_id parameter",
+ *   ),
+ *   @OA\Response(
+ *     response=400,
+ *     description="Bad Request when required parameter is missing or is not a uuid string"
+ *   )
+ *   @OA\Response(
+ *     response=405,
+ *     description="HTTP method not allowed when request method is not GET"
+ *   )
+ * )
+ *
+ * @return void
+ */
+	public function api_view() {
+		$this->autoRender = false;
+		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
+		if ($this->request->is('get')) {
+			if (!empty($this->request->query['application_id']) && Validation::uuid($this->request->query['application_id'])) {
+				$userId = $this->Auth->user('id');
+				$appUuid = $this->request->query['application_id'];
+				if ($this->CobrandedApplication->hasAny(['user_id' => $userId, 'uuid' => $appUuid])) {
+					$keys = '';
+					$values = '';
+					$id = $this->CobrandedApplication->field('id', ['uuid' => $appUuid]);
+					$status = $this->CobrandedApplication->field('status', ['id' => $id]);
+					$this->CobrandedApplication->buildExportData($id, $keys, $values, true);
+					//combine key=>vals and prepend app status not included in returned data
+					$data = array('status' => $status) + array_combine($keys, $values); 
+					$response['data'] = $data;
+					$response['status'] = AppModel::API_SUCCESS;
+					$response['messages'] = null;
+				} else {
+					$response['messages'] = "No aplication found for current user and specified application_id.";
+				}
+			} else {
+				$this->response->statusCode(400); //400 Bad Request
+				$response['messages'] = 'Missing or invalid query parameter.';
 			}
 		} else {
 			$this->response->statusCode(405); //405 Method Not Allowed
