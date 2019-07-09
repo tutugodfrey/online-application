@@ -2940,6 +2940,7 @@ class CobrandedApplication extends AppModel {
 					'Owner1Email.value ILIKE' => '%' . $filter . '%',
 					'EMail.value ILIKE' => '%' . $filter . '%',
 					'LocEMail.value ILIKE' => '%' . $filter . '%',
+					"{$this->alias}.uuid" => $filter,
 					'CAST(' . $this->alias . '.id AS TEXT) ILIKE' => '%' . $filter . '%',
 				)
 			);
