@@ -52,6 +52,7 @@ class CobrandedApplicationsController extends AppController {
 		'index' => array('*'),
 		'add' => array(User::ADMIN, User::REP, User::MANAGER),
 		'api_add' => array(User::API),
+		'api_edit' => array(User::API),
 		'api_index' => array(User::API),
 		'api_view' => array(User::API),
 		'retrieve' => array('*'),
@@ -94,7 +95,7 @@ class CobrandedApplicationsController extends AppController {
 		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'document_callback');
 
 		if ($this->requestIsApiJson()) {
-			$this->Security->unlockedActions= array('api_add');
+			$this->Security->unlockedActions= array('api_add', 'api_edit');
 		} else {
 			// are we authenticated?
 			if (is_null($this->Auth->user('id'))) {
@@ -231,40 +232,6 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
- * api_add method
- * Sagger Documentation for this API endpoint was moved to the top CobrandedApplications Model due to its large size.
- * 
- *
- * @param none (post data)
- * @return void
- */
-	public function api_add() {
-		$this->autoRender = false;
-		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
-		if ($this->request->is('post')) {
-			//get data from request object
-			$data = $this->request->input('json_decode', true);
-			//if left side is true then assign and check again
-			if ((empty($data)) && (empty($data = $this->request->data))) {
-				//response if JSON data or form data was not passed
-				$response['messages'] = 'No data was sent';
-			} else {
-				if (!empty(Hash::get($data, 'template_id'))) {
-					$user = $this->User->find('first', array('conditions' => array('User.id' => $this->Auth->User('id'))));
-					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
-
-				} else {
-					$response['messages'] = 'A template_id is required to create an application.';
-				}
-			}
-		} else {
-			$this->response->statusCode(405); //405 Method Not Allowed
-		}
-		$this->response->type('application/json');
-		$this->response->body(json_encode($response));
-	}
-
-/**
  * retrieve
  *
  *
@@ -340,6 +307,126 @@ class CobrandedApplicationsController extends AppController {
 			$this->Session->write('applicationStatus', $this->request->data['CobrandedApplication']['status']);
 		}
 	}
+
+/**
+ * api_add method
+ * Sagger Documentation for this API endpoint was moved to the top CobrandedApplications Model due to its large size.
+ * 
+ *
+ * @param none (post data)
+ * @return void
+ */
+	public function api_add() {
+		$this->autoRender = false;
+		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
+		if ($this->request->is('post')) {
+			//get data from request object
+			$data = $this->request->input('json_decode', true);
+			//if left side is true then assign and check again
+			if ((empty($data)) && (empty($data = $this->request->data))) {
+				//response if JSON data or form data was not passed
+				$response['messages'] = 'No data was sent';
+			} else {
+				if (!empty(Hash::get($data, 'template_id'))) {
+					$user = $this->User->find('first', array('conditions' => array('User.id' => $this->Auth->User('id'))));
+					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
+
+				} else {
+					$response['messages'] = 'A template_id is required to create an application.';
+				}
+			}
+		} else {
+			$this->response->statusCode(405); //405 Method Not Allowed
+		}
+		$this->response->type('application/json');
+		$this->response->body(json_encode($response));
+	}
+
+/**
+ *
+ * Update existing application data.
+ * The data to be submitted varies depending on the Template used to create the applicaton.
+ * API consumers may perform an API call to /api/CobrandedApplications/view?application_id={uuid string for the application} and use an updated version of the returned JSON data to perform this update. 
+ * 
+ * @OA\Post(
+ *   path="/api/CobrandedApplications/edit/{application_id}",
+ *	 tags={"CobrandedApplications"},
+ *   summary="Updates application data with JSON data. Any non-required fields that do not need to be updated should be omitted from the JSON data",
+ *	 @OA\RequestBody(ref="#/components/requestBodies/CobrandedApplications"),
+ *   @OA\Parameter(
+ *     name="application_id",
+ *     in="path",
+ *     description="UUID of application that needs to be updated",
+ *     required=true,
+ *     @OA\Schema(
+ *         type="string",
+ *         format="/^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$/"
+ *     )
+ *   ),
+ *	 @OA\Response(
+ *     response=200,
+ *     @OA\MediaType(
+ *         mediaType="application/json",
+ *		   example={"status": "success","messages": null, "data": {"status": "saved", "fieldName1":"value", "fieldName2":"value", "etc":"..."}},
+ *         @OA\Schema(
+ *	   	   	 ref="#/components/schemas/CobrandedApplications",
+ *         )
+ *     ),
+ *     description="
+ * 			status=success when all data passed validation and was saved successfully.",
+ * 			status=failed when application status is 'completed' or 'signed' and can no longer be edited",
+ * 			status=failed when some or all data fails to save due to data validation errors. Fields listed in the 'validationErrors' array will not be updated but all others that do pass validation will indeed be updated,
+ * 			status=failed when no application is found for the currently authenticated API consumer and the given application_id parameter",
+ * 			status=failed when no data was sent",
+ *   ),
+ *   @OA\Response(
+ *     response=400,
+ *     description="Bad Request when required parameter is missing or is not a uuid string"
+ *   )
+ *   @OA\Response(
+ *     response=405,
+ *     description="HTTP method not allowed when request method is not GET"
+ *   )
+ * )
+ */
+	public function api_edit($appUuid) {
+		$this->autoRender = false;
+		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
+		if ($this->request->is('post')) {
+			if (!empty($appUuid) && Validation::uuid($appUuid)) {
+				$appStatus = $this->CobrandedApplication->field('status', ['user_id' => $this->Auth->user('id'), 'uuid' => $appUuid]);
+				//if false the application does not exist
+				if ($appStatus !== false && $appStatus === CobrandedApplication::STATUS_SAVED) {
+					//get data from request object
+					$data = $this->request->input('json_decode', true);
+					if (empty($data)){
+						$data = $this->request->data;
+					}
+					//response if JSON data or form data was not passed
+					$response = array('status'=>'failed', 'messages'=>'No data was sent');
+					if (!empty($data)) {
+						$user = $this->User->find('first', array('conditions' => array('User.id' => $this->Auth->User('id'))));
+						$data['uuid'] = $appUuid;
+						$response = $this->CobrandedApplication->saveFields($user['User'], $data);
+					}
+				} else {
+					$message = "No aplication found for current user and specified application_id.";
+					if ($appStatus !== false) {
+						$message = "Application locked for editing, application status is: $appStatus";
+					}
+					$response['messages'] = $message;
+				}
+			} else {
+				$this->response->statusCode(400); //400 Bad Request
+				$response['messages'] = 'Missing or invalid query parameter.';
+			}
+		} else {
+			$this->response->statusCode(405); //405 Method Not Allowed
+		}
+		$this->response->type('application/json');
+		$this->response->body(json_encode($response));
+	}
+
 /**
  *
  * Handles API GET request for a list of Applications assigned to the API consumer performing the request.
