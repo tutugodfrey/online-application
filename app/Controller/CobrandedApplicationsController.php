@@ -385,14 +385,14 @@ class CobrandedApplicationsController extends AppController {
  *   )
  *   @OA\Response(
  *     response=405,
- *     description="HTTP method not allowed when request method is not GET"
+ *     description="HTTP method not allowed when request method is not PUT"
  *   )
  * )
  */
 	public function api_edit($appUuid) {
 		$this->autoRender = false;
 		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
-		if ($this->request->is('post')) {
+		if ($this->request->is('put')) {
 			if (!empty($appUuid) && Validation::uuid($appUuid)) {
 				$appStatus = $this->CobrandedApplication->field('status', ['user_id' => $this->Auth->user('id'), 'uuid' => $appUuid]);
 				//if false the application does not exist
