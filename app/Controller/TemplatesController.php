@@ -67,12 +67,13 @@ class TemplatesController extends NestedResourceController {
 
 
 /**
+ * api_index
  *
  * Handles API GET request for a list of Templates assigned to the API user performing the request.
- * Each user is given access to the set of templates the the need to use. 
- * Knowing which template to use is important in order to be able to create an application for a client.
+ *
+ * Each user is given access to specific set of templates, 
+ * knowing which template to use is important in order to be able to create an application for a client.
  * This endpoint will return full list of all templates assigned to the authenticated user.
- * Request requires no parameters.
  *
  * @OA\Get(
  *   path="/api/Templates/index",
@@ -114,8 +115,11 @@ class TemplatesController extends NestedResourceController {
 	}
 
 /**
+ * api_view
  *
- * Handles API GET request to view details about the fields used by specific Template. API consumers can use this detailed list of fields to create or update an application.
+ * Handles API GET request to view details about the fields used by specific Template.
+ * 
+ * API consumers can use this detailed list of fields to create or update an application.
  * The returned JSON data will consist of an array of arrays. The key at the top array level is called the merge_field_name and is the one required to submit application data. For more details see information on adding CobrandedApplications.
  * Request requires a query parameter containig a template id to search for. The id param value cannot be empty.
  *
@@ -135,7 +139,7 @@ class TemplatesController extends NestedResourceController {
  *     response=200,
  *     @OA\MediaType(
  *         mediaType="application/json",
- *		   example={"<merge_field_name>": {"type":"<data type or field type>", "required": <boolean>, "name": "<field name>","description": "<a description>"}, "CorpName": {"type": "text","required": true,"name": "Legal Business Name","description": ""}},
+ *		   example={"<merge_field_name>": {"type":"<data type or field type>", "required": "<boolean true/false>", "name": "<field name>","description": "<a description>"}, "CorpName": {"type": "text","required": true,"name": "Legal Business Name","description": ""}},
  *         @OA\Schema(
  *	   	   	 ref="#/components/schemas/TemplateFields",
  *         )

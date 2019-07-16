@@ -10,15 +10,19 @@ App::uses('HttpSocket', 'Network/Http');
  *
  * @property CobrandedApplications $CobrandedApplications
  */
-/*********Begin API Annotations for swagger-php for CobrandedApplicationsController::api_add() method ***/
+
 /**
- * 
+ * Begin API Annotations for swagger-php for CobrandedApplicationsController::api_add() method
+ *
  * Use this API endpoint to create applications for signing up potentially new clients.
+ *
  * The data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.
+ *
  * If the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key "m2m" to be present in the data being submitted
  * in order to disable interactive creation of applications.
- * With m2m set to true {"m2m":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the "DBA" and "EMail" (Company contact email address).
- * With m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.
+ *
+ * 		With m2m set to true {"m2m":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the "DBA" and "EMail" (Company contact email address).
+ * 		With m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.
  * 
  * IMPORTANT: The data submitted varies depending on Template used, therefore the example shown here shoud not be considered a compehensive or definitive data structure for all requests.
  * Information about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.
@@ -49,7 +53,7 @@ App::uses('HttpSocket', 'Network/Http');
  *					description="
  *	 					When set to true, API calls will be non-interactive and assumed be made by another system, therefore data validation will be turned off for most fields except for DBA and Email.
  *						When false or when absent from the JSON data, data validation will be enabled and the application will only be created when all data submitted passes validation.",
- *					example="<"m2m":true>"
+ *					example="<'m2m':true>"
  *              ),
  *              @OA\Property(
  *                  property="CorpName",
@@ -126,11 +130,10 @@ App::uses('HttpSocket', 'Network/Http');
  *     response=200,
  *     @OA\MediaType(
  *         mediaType="application/json",
- *		   example={"validationErrors": [], "application_id": "<UUID>", "application_url": null, "application_gui_url":"<web URL to edit application>", "response_url_type":"<pre-configured int val controls the returned application_url>", "partner_name":"<partner associated with template if any>"  "status": "<success/failed>", "messages": "<string or single dimentional array of status related messages>"},
+ *		   example={"validationErrors": {}," status": "success", "messages": "Application created!", "application_id":"d1b5ba0c-d614-4856-a49e-fdd6b86682a0", "application_url": null, "application_gui_url": "https://app.<domain_name>.com/cobranded_applications/edit/d1b5ba0c-d614-4856-a49e-fdd6b86682a0", "response_url_type": 1, "partner_name": "ABC Partners"}
  *     ),
  *     description="
- * 			On status success: 
- *				{'validationErrors': [],'status': 'success', 'messages': ['Application created!'], 'application_id':'d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'application_url': null, 'application_gui_url': '"https://app.<domain_name>.com/cobranded_applications/edit/d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'response_url_type': 1, 'partner_name': 'ABC Partners'}
+ * 			On status success:  {'validationErrors': '{array}', 'application_id': '<UUID>', 'application_url': null, 'application_gui_url':'<web URL to edit application>', 'response_url_type':'<pre-configured int val controls the returned application_url>', 'partner_name':'<partner associated with template if any>',  'status': '<success/failed>', 'messages': '<string or single dimentional array of status related messages>'},
  *			The value for the application_url may vary in the future and it will depend on how the response_url_type value was configured for the template. Currently for most applications the application_url value will be null.
  *			On failure status, a string or array of operation-specific errors will be returned as the value for the 'messages' array key.
  *			If any validation errors ocurr, they will be listed in the 'validationErrors' array.
