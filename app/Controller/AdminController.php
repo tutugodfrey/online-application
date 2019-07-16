@@ -28,6 +28,7 @@ class AdminController extends AppController {
 		}
 
 		// everyone gets to see these links
+		$links[count($links)] = array('API Documentation', '/Documentations/apidoc/');
 		$links[count($links)] = array('Applications', '/admin/cobranded_applications/');
 		$links[count($links)] = array('Coversheets', '/admin/coversheets/');
 

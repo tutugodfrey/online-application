@@ -221,4 +221,33 @@ class AppController extends Controller {
 		return true;
 	}
 
+/**
+ * swaggerSelfUpdate
+ * Creates OpenAPI definitions file in JSON and saves it in the swagger UI folder
+ * which will be used to autogenerate API documentation.
+ * The scanner searches all files for Doctrine annotations in the specified directory and generates a json file.
+ *
+ * @param boolean $refreshNow
+ * @return void
+ */
+	public function swaggerSelfUpdate() {
+		require(APP . "Vendor/autoload.php");
+		//Including paths/files known to have Doctrine annotations to avoid too many uncessesary scans
+		$includePaths = [
+			APP.'Model/Merchant.php',
+			APP.'Controller',
+		];
+
+		$openapi = \OpenApi\scan($includePaths);
+		$jsonData = $openapi->toJson();
+
+		$path = WWW_ROOT . 'AxiaApiDocs' . DS;
+		$fp = @fopen($path . 'openapi_axia.json', 'w');
+		if ($fp === false) {
+			throw new Exception("Internal Error: Unable to generate JSON definitin for swagger --cannot open file openapi_axia.json");
+		}
+		fwrite($fp, $jsonData);
+		fclose($fp);
+	}
+
 }
