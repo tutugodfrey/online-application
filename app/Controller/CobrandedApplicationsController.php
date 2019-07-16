@@ -526,7 +526,7 @@ class CobrandedApplicationsController extends AppController {
  *	 @OA\Parameter(
  *		   name="application_id",
  *		   description="A universally unique id (UUID) of an existing application, which the authenticated API consumer can access.
- *	 			Example 1: d1b5ba0c-d614-4856-a49e-fdd6b86682a0,
+ *	 			Example: d1b5ba0c-d614-4856-a49e-fdd6b86682a0",
  *         in="query",
  *         @OA\Schema(type="string")
  *   ),
@@ -540,13 +540,13 @@ class CobrandedApplicationsController extends AppController {
  *         )
  *     ),
  *     description="
- * 			status=success JSON array containing all application data, including application status. The array keys are the field names which differ depending on the Template that was used to create the application.",
+ * 			status=success JSON array containing all application data, including application status. The array keys are the field names which differ depending on the Template that was used to create the application.
  * 			status=failed when no application is found for the currently authenticated API consumer and the given application_id parameter",
  *   ),
  *   @OA\Response(
  *     response=400,
  *     description="Bad Request when required parameter is missing or is not a uuid string"
- *   )
+ *   ),
  *   @OA\Response(
  *     response=405,
  *     description="HTTP method not allowed when request method is not GET"

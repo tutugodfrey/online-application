@@ -9,7 +9,8 @@
 		"phpunit/phpunit": "3.7.32",
 		"slywalker/boost_cake": "*",
 		"josegonzalez/cakephp-upload": "1.1.1",
-		"ircmaxell/random-lib": "^1.2"
+		"ircmaxell/random-lib": "^1.2",
+		"zircote/swagger-php": "^3.0"
 	},
 	"extra": {
 		"installer-paths": {
