@@ -24,14 +24,42 @@ App::uses('HttpSocket', 'Network/Http');
  * 		With m2m set to true {"m2m":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the "DBA" and "EMail" (Company contact email address).
  * 		With m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.
  * 
- * IMPORTANT: The data submitted varies depending on Template used, therefore the example shown here shoud not be considered a compehensive or definitive data structure for all requests.
  * Information about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.
  * 
  * @OA\Post(
  *   path="/api/CobrandedApplications/add",
  *	 tags={"CobrandedApplications"},
  *   summary="Create a new client application.",
+ *   @OA\RequestBody(ref="#/components/requestBodies/CobrandedApplications"),
+ *	 @OA\Response(
+ *     response=200,
+ *     @OA\MediaType(
+ *         mediaType="application/json",
+ *		   example={"validationErrors": [], "application_id": "<UUID>", "application_url": null, "application_gui_url":"<web URL to edit application>", "response_url_type":"<pre-configured int val controls the returned application_url>", "partner_name":"<partner associated with template if any>"  "status": "<success/failed>", "messages": "<string or single dimentional array of status related messages>"},
+ *     ),
+ *     description="
+ * 			On status success: 
+ *				{'validationErrors': [],'status': 'success', 'messages': ['Application created!'], 'application_id':'d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'application_url': null, 'application_gui_url': '"https://app.<domain_name>.com/cobranded_applications/edit/d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'response_url_type': 1, 'partner_name': 'ABC Partners'}
+ *			The value for the application_url may vary in the future and it will depend on how the response_url_type value was configured for the template. Currently for most applications the application_url value will be null.
+ *			On failure status, a string or array of operation-specific errors will be returned as the value for the 'messages' array key.
+ *			If any validation errors ocurr, they will be listed in the 'validationErrors' array.
+ *			Furthermore, if no data is sent operation will return status:failed"
+ *   ),
+ *   @OA\Response(
+ *     response=405,
+ *     description="HTTP method not allowed when request method is not POST",
+ *	   @OA\MediaType(
+ *         mediaType="application/json",
+ *  	   example={"status": "failed", "messages": "HTTP method not allowed"},
+ *     ),
+ *   ),
+ * )
+ */
+ /**
+ *
  *   @OA\RequestBody(
+ *		request="CobrandedApplications",
+ *	    description="IMPORTANT: The JSON data submitted varies depending on which Template is used to create the application, for that reason this example shoud not be considered a definitive data structure for all requests.",
  *      @OA\MediaType(
  *          mediaType="application/json",
  *          @OA\Schema(
@@ -126,28 +154,6 @@ App::uses('HttpSocket', 'Network/Http');
  *          )
  *      )
  *   ),
- *	 @OA\Response(
- *     response=200,
- *     @OA\MediaType(
- *         mediaType="application/json",
- *		   example={"validationErrors": {}," status": "success", "messages": "Application created!", "application_id":"d1b5ba0c-d614-4856-a49e-fdd6b86682a0", "application_url": null, "application_gui_url": "https://app.<domain_name>.com/cobranded_applications/edit/d1b5ba0c-d614-4856-a49e-fdd6b86682a0", "response_url_type": 1, "partner_name": "ABC Partners"}
- *     ),
- *     description="
- * 			On status success:  {'validationErrors': '{array}', 'application_id': '<UUID>', 'application_url': null, 'application_gui_url':'<web URL to edit application>', 'response_url_type':'<pre-configured int val controls the returned application_url>', 'partner_name':'<partner associated with template if any>',  'status': '<success/failed>', 'messages': '<string or single dimentional array of status related messages>'},
- *			The value for the application_url may vary in the future and it will depend on how the response_url_type value was configured for the template. Currently for most applications the application_url value will be null.
- *			On failure status, a string or array of operation-specific errors will be returned as the value for the 'messages' array key.
- *			If any validation errors ocurr, they will be listed in the 'validationErrors' array.
- *			Furthermore, if no data is sent operation will return status:failed"
- *   ),
- *   @OA\Response(
- *     response=405,
- *     description="HTTP method not allowed when request method is not POST",
- *	   @OA\MediaType(
- *         mediaType="application/json",
- *  	   example={"status": "failed", "messages": "HTTP method not allowed"},
- *     ),
- *   ),
- * )
  */
 class CobrandedApplication extends AppModel {
 
@@ -614,7 +620,31 @@ class CobrandedApplication extends AppModel {
 		}
 		return $response;
 	}
-
+/**
+ * _removeDataInsertedOnExport
+ * Removes key=> value pairs of data related to Coversheet and data that is known to injected as a result of buiding the data array from calling $this->buildExportData();
+ * The end result is an array containing only CobrandedApplicationValues that are assumed to have been added to the array by $this->buildExportData()
+ * 
+ * @param array &$exportedData array originally built from calling $this->buildExportData()
+ * @return void 
+ */
+	protected function _removeDataInsertedOnExport(&$exportedData) {
+		unset(
+			$exportedData['CompanyBrandName'],
+			$exportedData['template_id'],
+			$exportedData['m2m'],
+			$exportedData['external_record_id'],
+			$exportedData['uuid'],
+			$exportedData['status'],
+			$exportedData['MID'],
+			$exportedData['oaID'],
+			$exportedData['api'],
+			$exportedData['aggregated']
+		);
+		foreach ($this->Coversheet->getColumnTypes() as $fieldName => $types) {
+			unset($exportedData[$fieldName]);
+		}
+	}
 /**
  * saveFields
  *
@@ -645,8 +675,11 @@ class CobrandedApplication extends AppModel {
 		);
 		$isM2mRequest = Hash::get($fieldsData, 'm2m');
 		$templateId = Hash::get($fieldsData, 'template_id');
+		$appUuid = Hash::get($fieldsData, 'uuid');
 		$externalForeignId = Hash::get($fieldsData, 'external_record_id');
-		unset($fieldsData['template_id'], $fieldsData['m2m'], $fieldsData['external_record_id']);
+		//remove data potentially present that is not related to the CobrandedApplicationValues
+		$this->_removeDataInsertedOnExport($fieldsData);
+
 		if ($isM2mRequest) {
 			if (!Hash::get($fieldsData, 'DBA', false)) {
 				$errMsgs[] = "DBA is required.";
@@ -661,9 +694,15 @@ class CobrandedApplication extends AppModel {
 				);
 			}
 		}
-		// create an application for $userId
-		$createAppResponse = $this->createOnlineappForUser($user, null, $templateId, $externalForeignId);
-		
+		//check if existing application uuid
+		if (!empty($appUuid)) {
+			$updatingExistingData = true;
+			$createAppResponse = array('success' => true, 'cobrandedApplication' => array('id' => $this->field('id', array('uuid' => $appUuid)), 'uuid' => $appUuid));
+		} else {
+			$updatingExistingData = false;
+			// create an application for $userId
+			$createAppResponse = $this->createOnlineappForUser($user, null, $templateId, $externalForeignId);
+		}
 		
 		$newApp = null;
 		if ($createAppResponse['success'] == true) {
@@ -699,8 +738,10 @@ class CobrandedApplication extends AppModel {
 					)
 				);
 
-				// is the TemplateField associated with the application value?
-				// I am not sure why this would be missing...
+				//If $key is not a TemplateField or not associated with the application value appValue will be empty therefore skip unrecognized keys/fields
+				if (empty($appValue)) {
+					continue;
+				}
 				$templateField = null;
 				if (key_exists('TemplateField', $appValue)) {
 					$templateField = $appValue['TemplateField'];
@@ -799,7 +840,7 @@ class CobrandedApplication extends AppModel {
 							$tmpResponse['validationErrors'] = $response['validationErrors'];
 						}
 						// handle required and empty first
-					} elseif ($templateField['required'] == true && empty($value) == true) {
+					} elseif ($templateField['required'] == true && ($value === "" || is_null($value))) {
 
 						// SSN should not be required if Ownership Type is Non Profit
 						if ($appValue['CobrandedApplicationValue']['name'] == 'OwnerSSN' || $appValue['CobrandedApplicationValue']['name'] == 'Owner2SSN') {
@@ -815,8 +856,8 @@ class CobrandedApplication extends AppModel {
 						// only validate if we are not empty
 						if (isset($value)) {
 							// if social security number is missing dashes, add them in
-							if ($appValue['CobrandedApplicationValue']['name'] == 'OwnerSSN' ||
-								$appValue['CobrandedApplicationValue']['name'] == 'Owner2SSN') {
+							if (Hash::get($appValue,'CobrandedApplicationValue.name') == 'OwnerSSN' ||
+								Hash::get($appValue,'CobrandedApplicationValue.name') == 'Owner2SSN') {
 
 									$tmpValue = $appValue['CobrandedApplicationValue']['value'];
 
@@ -826,15 +867,15 @@ class CobrandedApplication extends AppModel {
 									}
 							}
 
-							// is the value valid?
 							$validValue = $this->CobrandedApplicationValue->validApplicationValue($appValue['CobrandedApplicationValue'], $templateField['type'], $templateField);
-							if ($validValue) {
+							// Allow saving valid values or zero-length strings which are considered clearing the field data
+							if ($validValue || $value === "") {
 								// save it
 								$this->CobrandedApplicationValue->save($appValue);
 							} else {
 								// update our validationErrors array
 								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
-								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], $typeStr);
+								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], "Invalid input format for $typeStr");
 							}
 						}
 					}
@@ -842,7 +883,6 @@ class CobrandedApplication extends AppModel {
 			}
 
 			unset($this->TemplateField);
-
 			$response['success'] = (count($response['validationErrors']) == 0);
 		}
 
@@ -857,11 +897,22 @@ class CobrandedApplication extends AppModel {
 
 		if ($isM2mRequest == false) {
 			$tmpResponse = $this->validateCobrandedApplication($cobrandedApplication);
+			if (!empty(Hash::get($tmpResponse, 'validationErrorsArray'))) {
+				//remove any rep-only-related field validation errors
+				foreach (Hash::get($tmpResponse, 'validationErrorsArray') as $invalidField) {
+					if ($invalidField['rep_only']) {
+						unset($tmpResponse['validationErrors'][$invalidField['mergeFieldName']]);
+					}
+				}
+				$tmpResponse['success'] = empty($tmpResponse['validationErrors']);
+			}
 		}
 
 		if ($response['success'] == false || $tmpResponse['success'] == false) {
-			// delete the app
-			$this->delete($createAppResponse['cobrandedApplication']['id']);
+			// delete the app iff we are updating an existing one rather than creating a new one
+			if (!$updatingExistingData) {
+				$this->delete($createAppResponse['cobrandedApplication']['id']);
+			}
 			$response['success'] = false;
 			foreach ($tmpResponse['validationErrors'] as $key => $val) {
 				$response['validationErrors'] = Hash::insert($response['validationErrors'], $key, $val);
@@ -931,12 +982,14 @@ class CobrandedApplication extends AppModel {
 		}
 
 		if (count($response['validationErrors']) > 0 ) {
-			// delete the app
-			$this->delete($createAppResponse['cobrandedApplication']['id']);
 			$response['status'] = AppModel::API_FAILS;
+			// delete the app
+			if (!$updatingExistingData) {
+				$this->delete($createAppResponse['cobrandedApplication']['id']);
+			}
 		} else {
 			$response['status'] = AppModel::API_SUCCESS;
-			$response['messages'][] = 'Application created';
+			$response['messages'][] = (!$updatingExistingData)? 'Application created' : 'Application updated';
 		}
 		unset($response['success']);
 		return $response;
