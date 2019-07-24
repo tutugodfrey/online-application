@@ -9,6 +9,59 @@
         "version": ""
     },
     "paths": {
+        "/api/CobrandedApplications/edit/{application_id}": {
+            "post": {
+                "tags": [
+                    "CobrandedApplications"
+                ],
+                "summary": "Updates application data with JSON data. Any non-required fields that do not need to be updated should be omitted from the JSON data",
+                "description": "The data to be submitted varies depending on the Template used to create the applicaton.\nAPI consumers may perform an API call to /api/CobrandedApplications/view?application_id={uuid string for the application} and use an updated version of the returned JSON data to perform this update.",
+                "operationId": "CobrandedApplicationsController::api_edit",
+                "parameters": [
+                    {
+                        "name": "application_id",
+                        "in": "path",
+                        "description": "UUID of application that needs to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "/^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$/"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/CobrandedApplications"
+                },
+                "responses": {
+                    "200": {
+                        "description": "\n *    status=success when all data passed validation and was saved successfully.,\n *    status=failed when application status is 'completed' or 'signed' and can no longer be edited,\n *    status=failed when some or all data fails to save due to data validation errors. Fields listed in the 'validationErrors' array will not be updated but all others that do pass validation will indeed be updated,\n *    status=failed when no application is found for the currently authenticated API consumer and the given application_id parameter,\n *    status=failed when no data was sent",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CobrandedApplications"
+                                },
+                                "example": {
+                                    "status": "success",
+                                    "messages": null,
+                                    "data": {
+                                        "status": "saved",
+                                        "fieldName1": "value",
+                                        "fieldName2": "value",
+                                        "etc": "..."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request when required parameter is missing or is not a uuid string"
+                    },
+                    "405": {
+                        "description": "HTTP method not allowed when request method is not PUT"
+                    }
+                }
+            }
+        },
         "/api/CobrandedApplications/index?search={text to seach for in application}&status={one of: saved/pending/validate/completed/signed}": {
             "get": {
                 "tags": [
@@ -205,107 +258,24 @@
                     "CobrandedApplications"
                 ],
                 "summary": "Create a new client application.",
-                "description": "Use this API endpoint to create applications for signing up potentially new clients.\n\nThe data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.\n\nIf the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key \"m2m\" to be present in the data being submitted\nin order to disable interactive creation of applications.\n\nWith m2m set to true {\"m2m\":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the \"DBA\" and \"EMail\" (Company contact email address).\nWith m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.\n\nIMPORTANT: The data submitted varies depending on Template used, therefore the example shown here shoud not be considered a compehensive or definitive data structure for all requests.\nInformation about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.",
+                "description": "Use this API endpoint to create applications for signing up potentially new clients.\n\nThe data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.\n\nIf the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key \"m2m\" to be present in the data being submitted\nin order to disable interactive creation of applications.\n\nWith m2m set to true {\"m2m\":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the \"DBA\" and \"EMail\" (Company contact email address).\nWith m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.\n\nInformation about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.",
                 "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "template_id": {
-                                        "description": "Integer id of the template that should be used to create this application (Always required). See api/Templates/index for a list of templates",
-                                        "type": "integer",
-                                        "example": 1234
-                                    },
-                                    "external_record_id": {
-                                        "description": "If the systems submitting the data require this record to be updated back in that system, a record id must be provided to locate this record in that system.",
-                                        "type": "string",
-                                        "example": "<id format varies from system to system>"
-                                    },
-                                    "m2m": {
-                                        "description": "\n *       When set to true, API calls will be non-interactive and assumed be made by another system, therefore data validation will be turned off for most fields except for DBA and Email.\n *      When false or when absent from the JSON data, data validation will be enabled and the application will only be created when all data submitted passes validation.",
-                                        "type": "boolean",
-                                        "example": "<'m2m':true>"
-                                    },
-                                    "CorpName": {
-                                        "description": "Corporation/Company Name",
-                                        "type": "string",
-                                        "maxLength": 150,
-                                        "example": "Family Health Service"
-                                    },
-                                    "DBA": {
-                                        "description": "DBA Name (Required)",
-                                        "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Family Health"
-                                    },
-                                    "CorpAddress": {
-                                        "description": "Address",
-                                        "type": "string",
-                                        "maxLength": 100,
-                                        "example": "1234 Narrow Street"
-                                    },
-                                    "CorpCity": {
-                                        "description": "City",
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "example": "Red Bluff"
-                                    },
-                                    "CorpState": {
-                                        "description": "Two-letter State",
-                                        "type": "string",
-                                        "maxLength": 2,
-                                        "example": "CA"
-                                    },
-                                    "CorpZip": {
-                                        "description": "Zip code",
-                                        "type": "string",
-                                        "maxLength": 20,
-                                        "example": "96080"
-                                    },
-                                    "CorpPhone": {
-                                        "description": "Phone",
-                                        "type": "string",
-                                        "maxLength": 20,
-                                        "example": "(530)555-5789"
-                                    },
-                                    "EMail": {
-                                        "description": "Company contact email (Required)",
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "example": "janedoe@nomail.com"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "external_record_id": "abcdef123456",
-                                    "m2m": true,
-                                    "CorpName": "Family Health Service",
-                                    "DBA": "Family Health",
-                                    "CorpAddress": "1234 Narrow Street",
-                                    "CorpCity": "Red Bluff",
-                                    "CorpState": "CA",
-                                    "CorpZip": "96080",
-                                    "CorpPhone": "(530)555-5789",
-                                    "EMail": "janedoe@nomail.com"
-                                }
-                            }
-                        }
-                    }
+                    "$ref": "#/components/requestBodies/CobrandedApplications"
                 },
                 "responses": {
                     "200": {
-                        "description": "\n *    On status success:  {'validationErrors': '{array}', 'application_id': '<UUID>', 'application_url': null, 'application_gui_url':'<web URL to edit application>', 'response_url_type':'<pre-configured int val controls the returned application_url>', 'partner_name':'<partner associated with template if any>',  'status': '<success/failed>', 'messages': '<string or single dimentional array of status related messages>'},\n *   The value for the application_url may vary in the future and it will depend on how the response_url_type value was configured for the template. Currently for most applications the application_url value will be null.\n *   On failure status, a string or array of operation-specific errors will be returned as the value for the 'messages' array key.\n *   If any validation errors ocurr, they will be listed in the 'validationErrors' array.\n *   Furthermore, if no data is sent operation will return status:failed",
+                        "description": "\n *    On status success: \n *    {'validationErrors': [],'status': 'success', 'messages': ['Application created!'], 'application_id':'d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'application_url': null, 'application_gui_url': 'https://app.<domain_name>.com/cobranded_applications/edit/d1b5ba0c-d614-4856-a49e-fdd6b86682a0', 'response_url_type': 1, 'partner_name': 'ABC Partners'}\n *   The value for the application_url may vary in the future and it will depend on how the response_url_type value was configured for the template. Currently for most applications the application_url value will be null.\n *   On failure status, a string or array of operation-specific errors will be returned as the value for the 'messages' array key.\n *   If any validation errors ocurr, they will be listed in the 'validationErrors' array.\n *   Furthermore, if no data is sent operation will return status:failed",
                         "content": {
                             "application/json": {
                                 "example": {
                                     "validationErrors": [],
-                                    " status": "success",
-                                    "messages": "Application created!",
-                                    "application_id": "d1b5ba0c-d614-4856-a49e-fdd6b86682a0",
+                                    "application_id": "<UUID>",
                                     "application_url": null,
-                                    "application_gui_url": "https://app.<domain_name>.com/cobranded_applications/edit/d1b5ba0c-d614-4856-a49e-fdd6b86682a0",
-                                    "response_url_type": 1,
-                                    "partner_name": "ABC Partners"
+                                    "application_gui_url": "<web URL to edit application>",
+                                    "response_url_type": "<pre-configured int val controls the returned application_url>",
+                                    "partner_name": "<partner associated with template if any>",
+                                    "status": "<success/failed>",
+                                    "messages": "<string or single dimentional array of status related messages>"
                                 }
                             }
                         }
@@ -415,6 +385,95 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "requestBodies": {
+            "CobrandedApplications": {
+                "description": "IMPORTANT: The JSON data submitted varies depending on which Template is used to create the application, for that reason this example shoud not be considered a definitive data structure for all requests.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "template_id": {
+                                    "description": "Integer id of the template that should be used to create this application (Always required). See api/Templates/index for a list of templates",
+                                    "type": "integer",
+                                    "example": 1234
+                                },
+                                "external_record_id": {
+                                    "description": "If the systems submitting the data require this record to be updated back in that system, a record id must be provided to locate this record in that system.",
+                                    "type": "string",
+                                    "example": "<id format varies from system to system>"
+                                },
+                                "m2m": {
+                                    "description": "\n *       When set to true, API calls will be non-interactive and assumed be made by another system, therefore data validation will be turned off for most fields except for DBA and Email.\n *      When false or when absent from the JSON data, data validation will be enabled and the application will only be created when all data submitted passes validation.",
+                                    "type": "boolean",
+                                    "example": "<'m2m':true>"
+                                },
+                                "CorpName": {
+                                    "description": "Corporation/Company Name",
+                                    "type": "string",
+                                    "maxLength": 150,
+                                    "example": "Family Health Service"
+                                },
+                                "DBA": {
+                                    "description": "DBA Name (Required)",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "Family Health"
+                                },
+                                "CorpAddress": {
+                                    "description": "Address",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "1234 Narrow Street"
+                                },
+                                "CorpCity": {
+                                    "description": "City",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "Red Bluff"
+                                },
+                                "CorpState": {
+                                    "description": "Two-letter State",
+                                    "type": "string",
+                                    "maxLength": 2,
+                                    "example": "CA"
+                                },
+                                "CorpZip": {
+                                    "description": "Zip code",
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "example": "96080"
+                                },
+                                "CorpPhone": {
+                                    "description": "Phone",
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "example": "(530)555-5789"
+                                },
+                                "EMail": {
+                                    "description": "Company contact email (Required)",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "janedoe@nomail.com"
+                                }
+                            },
+                            "type": "object",
+                            "example": {
+                                "external_record_id": "abcdef123456",
+                                "m2m": true,
+                                "CorpName": "Family Health Service",
+                                "DBA": "Family Health",
+                                "CorpAddress": "1234 Narrow Street",
+                                "CorpCity": "Red Bluff",
+                                "CorpState": "CA",
+                                "CorpZip": "96080",
+                                "CorpPhone": "(530)555-5789",
+                                "EMail": "janedoe@nomail.com"
+                            }
+                        }
+                    }
+                }
             }
         }
     },
