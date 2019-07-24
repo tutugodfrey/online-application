@@ -348,7 +348,7 @@ class CobrandedApplicationsController extends AppController {
  * The data to be submitted varies depending on the Template used to create the applicaton.
  * API consumers may perform an API call to /api/CobrandedApplications/view?application_id={uuid string for the application} and use an updated version of the returned JSON data to perform this update. 
  * 
- * @OA\Post(
+ * @OA\Put(
  *   path="/api/CobrandedApplications/edit/{application_id}",
  *	 tags={"CobrandedApplications"},
  *   summary="Updates application data with JSON data. Any non-required fields that do not need to be updated should be omitted from the JSON data",
@@ -373,16 +373,16 @@ class CobrandedApplicationsController extends AppController {
  *         )
  *     ),
  *     description="
- * 			status=success when all data passed validation and was saved successfully.",
- * 			status=failed when application status is 'completed' or 'signed' and can no longer be edited",
+ * 			status=success when all data passed validation and was saved successfully.,
+ * 			status=failed when application status is 'completed' or 'signed' and can no longer be edited,
  * 			status=failed when some or all data fails to save due to data validation errors. Fields listed in the 'validationErrors' array will not be updated but all others that do pass validation will indeed be updated,
- * 			status=failed when no application is found for the currently authenticated API consumer and the given application_id parameter",
+ * 			status=failed when no application is found for the currently authenticated API consumer and the given application_id parameter,
  * 			status=failed when no data was sent",
  *   ),
  *   @OA\Response(
  *     response=400,
  *     description="Bad Request when required parameter is missing or is not a uuid string"
- *   )
+ *   ),
  *   @OA\Response(
  *     response=405,
  *     description="HTTP method not allowed when request method is not PUT"
