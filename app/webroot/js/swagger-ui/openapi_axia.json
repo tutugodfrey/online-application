@@ -10,7 +10,7 @@
     },
     "paths": {
         "/api/CobrandedApplications/edit/{application_id}": {
-            "post": {
+            "put": {
                 "tags": [
                     "CobrandedApplications"
                 ],
@@ -258,7 +258,7 @@
                     "CobrandedApplications"
                 ],
                 "summary": "Create a new client application.",
-                "description": "Use this API endpoint to create applications for signing up potentially new clients.\n\nThe data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.\n\nIf the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key \"m2m\" to be present in the data being submitted\nin order to disable interactive creation of applications.\n\nWith m2m set to true {\"m2m\":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the \"DBA\" and \"EMail\" (Company contact email address).\nWith m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.\n\nInformation about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.",
+                "description": "Use this API endpoint to create applications for signing up potentially new clients.\n\nThe data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.\n\nIf the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key \"m2m\" to be present in the data being submitted\nin order to disable interactive creation of applications.\n\nWith m2m set to true {\"m2m\":true} data validation will be turned off for most fields only a small subset of fields will be required to create the application: \"external_record_id\", \"DBA\", \"EMail\" (Company contact email address). \n\nWith m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.\n\nInformation about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.",
                 "requestBody": {
                     "$ref": "#/components/requestBodies/CobrandedApplications"
                 },
@@ -395,28 +395,33 @@
                         "schema": {
                             "properties": {
                                 "template_id": {
-                                    "description": "Integer id of the template that should be used to create this application (Always required). See api/Templates/index for a list of templates",
+                                    "description": "Integer id of the template that should be used to create this application (Always required). See api/Templates/index for a list of templates.\n *         This field is always required.",
                                     "type": "integer",
                                     "example": 1234
                                 },
+                                "ContractorID": {
+                                    "description": "The name of the sales rep on the client's account. The name must match an active user's account in the online application system.\n *         This field is always required.",
+                                    "type": "string",
+                                    "example": 1234
+                                },
                                 "external_record_id": {
-                                    "description": "If the systems submitting the data require this record to be updated back in that system, a record id must be provided to locate this record in that system.",
+                                    "description": "The unique id of the customer record or account from the external system. This will be used to submit periodic updates back to that specific record in the external system.\n *         Required when requests are done programmatically from machine to machine (m2m=true)",
                                     "type": "string",
                                     "example": "<id format varies from system to system>"
                                 },
                                 "m2m": {
-                                    "description": "\n *       When set to true, API calls will be non-interactive and assumed be made by another system, therefore data validation will be turned off for most fields except for DBA and Email.\n *      When false or when absent from the JSON data, data validation will be enabled and the application will only be created when all data submitted passes validation.",
+                                    "description": "\n *      When set to true, API calls will be treated as machine to machine (m2m) or programmatically by another system, therefore data validation will be turned off for most fields except for DBA and Email.\n *      When false or when absent from the JSON data, data validation will be enabled and the application will only be created when all data submitted passes validation.",
                                     "type": "boolean",
                                     "example": "<'m2m':true>"
                                 },
                                 "CorpName": {
-                                    "description": "Corporation/Company Name",
+                                    "description": "Corporation/Company Legal Name",
                                     "type": "string",
                                     "maxLength": 150,
                                     "example": "Family Health Service"
                                 },
                                 "DBA": {
-                                    "description": "DBA Name (Required)",
+                                    "description": "DBA Name.\n *         This field is always required.",
                                     "type": "string",
                                     "maxLength": 100,
                                     "example": "Family Health"
@@ -452,14 +457,36 @@
                                     "example": "(530)555-5789"
                                 },
                                 "EMail": {
-                                    "description": "Company contact email (Required)",
+                                    "description": "Company contact email.\n *         This field is always required.",
                                     "type": "string",
                                     "maxLength": 50,
                                     "example": "janedoe@nomail.com"
+                                },
+                                "expected_install_date": {
+                                    "description": "The approximate date expected to install in unix format Y-m-d",
+                                    "type": "date",
+                                    "example": "2021-01-25"
+                                },
+                                "org_name": {
+                                    "description": "The name of the client's parent organization.",
+                                    "type": "string",
+                                    "example": "Office Ally"
+                                },
+                                "region_name": {
+                                    "description": "The name of the region under the client's parent organization. This is in most cases hierarchical and not necessarily geographical.",
+                                    "type": "string",
+                                    "example": "Office Ally's region"
+                                },
+                                "setup_partner": {
+                                    "description": "Name of the partner if any",
+                                    "type": "string",
+                                    "example": "Office Ally"
                                 }
                             },
                             "type": "object",
                             "example": {
+                                "template_id": "12345",
+                                "ContractorID": "John Sales Man",
                                 "external_record_id": "abcdef123456",
                                 "m2m": true,
                                 "CorpName": "Family Health Service",
@@ -469,7 +496,11 @@
                                 "CorpState": "CA",
                                 "CorpZip": "96080",
                                 "CorpPhone": "(530)555-5789",
-                                "EMail": "janedoe@nomail.com"
+                                "EMail": "janedoe@nomail.com",
+                                "setup_partner": "Office Ally",
+                                "expected_install_date": "2021-01-25",
+                                "org_name": "Office Ally",
+                                "region_name": "Office Ally's region"
                             }
                         }
                     }

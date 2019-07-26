@@ -14,22 +14,23 @@ App::uses('HttpSocket', 'Network/Http');
 /**
  * Begin API Annotations for swagger-php for CobrandedApplicationsController::api_add() method
  *
- * Use this API endpoint to create applications for signing up potentially new clients.
+ * Use this API endpoint to create applications for signing up potentially new clients. 
  *
- * The data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.
+ * The data to be submitted varies depending on the Template being used to create the application and on who is making the request.
  *
  * If the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key "m2m" to be present in the data being submitted
  * in order to disable interactive creation of applications.
  *
- * 		With m2m set to true {"m2m":true} data validation will be turned off for most fields except for a small subset which will be required to create the application, namely the "DBA" and "EMail" (Company contact email address).
- * 		With m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.
+ * 		With m2m set to true {"m2m":true} data validation will be turned off for most fields only a small subset of fields will be required to create the application: "external_record_id", "DBA", "EMail" (Company contact email address). 
+ *
+ *		With m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.
  * 
- * Information about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.
+ * Information about what data and/or fields are submitted when creating new applications can be found in the documentation about api/Templates/view API endpoint.
  * 
  * @OA\Post(
  *   path="/api/CobrandedApplications/add",
  *	 tags={"CobrandedApplications"},
- *   summary="Create a new client application.",
+ *   summary="Create a new client application and a corresponding Coversheet as well if the app template is configured to require a coversheet.",
  *   @OA\RequestBody(ref="#/components/requestBodies/CobrandedApplications"),
  *	 @OA\Response(
  *     response=200,
@@ -59,27 +60,36 @@ App::uses('HttpSocket', 'Network/Http');
  *
  *   @OA\RequestBody(
  *		request="CobrandedApplications",
- *	    description="IMPORTANT: The JSON data submitted varies depending on which Template is used to create the application, for that reason this example shoud not be considered a definitive data structure for all requests.",
+ *	    description="IMPORTANT: The JSON data submitted varies depending on which Template is used to create the application, for that reason this example should not be considered a definitive data structure for all requests.",
  *      @OA\MediaType(
  *          mediaType="application/json",
  *          @OA\Schema(
  *              @OA\Property(
  *                  property="template_id",
  *                  type="integer",
- *					description="Integer id of the template that should be used to create this application (Always required). See api/Templates/index for a list of templates",
+ *					description="Integer id of the template that should be used to create this application (Always required). See api/Templates/index for a list of templates.
+ *									This field is always required.",
+ *					example=1234
+ *              ),
+ *				 @OA\Property(
+ *                  property="ContractorID",
+ *                  type="string",
+ *					description="The name of the sales rep on the client's account. The name must match an active user's account in the online application system.
+ *									This field is always required.",
  *					example=1234
  *              ),
  *              @OA\Property(
  *                  property="external_record_id",
  *                  type="string",
- *					description="If the systems submitting the data require this record to be updated back in that system, a record id must be provided to locate this record in that system.",
+ *					description="The unique id of the customer record or account from the external system. This will be used to submit periodic updates back to that specific record in the external system.
+ *									Required when requests are done programmatically from machine to machine (m2m=true)",
  *					example="<id format varies from system to system>"
  *              ),
  *              @OA\Property(
  *                  property="m2m",
  *                  type="boolean",
  *					description="
- *	 					When set to true, API calls will be non-interactive and assumed be made by another system, therefore data validation will be turned off for most fields except for DBA and Email.
+ *						When set to true, API calls will be treated as machine to machine (m2m) or programmatically by another system, therefore data validation will be turned off for most fields except for DBA and Email.
  *						When false or when absent from the JSON data, data validation will be enabled and the application will only be created when all data submitted passes validation.",
  *					example="<'m2m':true>"
  *              ),
@@ -87,14 +97,15 @@ App::uses('HttpSocket', 'Network/Http');
  *                  property="CorpName",
  *                  type="string",
  *					maxLength=150,
- *					description="Corporation/Company Name",
+ *					description="Corporation/Company Legal Name",
  *					example="Family Health Service"
  *              ),
  *              @OA\Property(
  *                  property="DBA",
  *                  type="string",
  *					maxLength=100,
- *					description="DBA Name (Required)",
+ *					description="DBA Name.
+ *									This field is always required.",
  *					example="Family Health"
  *              ),
  *              @OA\Property(
@@ -136,10 +147,37 @@ App::uses('HttpSocket', 'Network/Http');
  *                  property="EMail",
  *                  type="string",
  *					maxLength=50,
- *					description="Company contact email (Required)",
+ *					description="Company contact email.
+ *									This field is always required.",
  *					example="janedoe@nomail.com"
  *              ),
+ *              @OA\Property(
+ *                  property="expected_install_date",
+ *                  type="date",
+ *					description="The approximate date expected to install in Unix format (Y-m-d)",
+ *					example="2021-01-25"
+ *              ),
+ *              @OA\Property(
+ *                  property="org_name",
+ *                  type="string",
+ *					description="The name of the client's parent organization.",
+ *					example="Office Ally"
+ *              ),
+ *              @OA\Property(
+ *                  property="region_name",
+ *                  type="string",
+ *					description="The name of the region under the client's parent organization. This is in most cases hierarchical and not necessarily geographical.",
+ *					example="Office Ally's region"
+ *              ),
+ *              @OA\Property(
+ *                  property="setup_partner",
+ *                  type="string",
+ *					description="Name of the partner if any",
+ *					example="Office Ally"
+ *              ),
  *              example={
+ *					"template_id": "12345",
+ *					"ContractorID": "John Sales Man",
  *					"external_record_id": "abcdef123456",
  *					"m2m": true,
  *					"CorpName": "Family Health Service",
@@ -150,6 +188,10 @@ App::uses('HttpSocket', 'Network/Http');
  *					"CorpZip": "96080",
  *					"CorpPhone": "(530)555-5789",
  *					"EMail": "janedoe@nomail.com",
+ *					"setup_partner": "Office Ally",
+ *					"expected_install_date": "2021-01-25",
+ *					"org_name": "Office Ally",
+ *					"region_name": "Office Ally's region",
  *				}
  *          )
  *      )
@@ -645,6 +687,7 @@ class CobrandedApplication extends AppModel {
 			unset($exportedData[$fieldName]);
 		}
 	}
+
 /**
  * saveFields
  *
@@ -681,10 +724,10 @@ class CobrandedApplication extends AppModel {
 		$this->_removeDataInsertedOnExport($fieldsData);
 
 		if ($isM2mRequest) {
-			if (!Hash::get($fieldsData, 'DBA', false)) {
+			if (empty(Hash::get($fieldsData, 'DBA', null))) {
 				$errMsgs[] = "DBA is required.";
 			}
-			if (!Hash::get($fieldsData, 'EMail', false)) {
+			if (empty(Hash::get($fieldsData, 'EMail', null))) {
 				$errMsgs[] = "EMail is required.";
 			}
 			if (isset($errMsgs)) {
@@ -757,7 +800,10 @@ class CobrandedApplication extends AppModel {
 					);
 					$templateField = Hash::get($templateField, 'TemplateField');
 				}
-
+				//override the rep_only designation for ContractorID for API calls we want a rep to own this application
+				if ($isM2mRequest == true && $key === 'ContractorID') {
+					$templateField['rep_only'] = false;
+				}
 				// if the field is rep_only == true, skip it because this value cannot be set via the api
 				if ($templateField['rep_only'] == false) {
 
@@ -817,22 +863,18 @@ class CobrandedApplication extends AppModel {
 					//machine to machine API requests only require DBA and email data
 					if ($isM2mRequest == true) {
 
-						$requiredFieldsPresent = ($appValue['CobrandedApplicationValue']['name'] == 'DBA' || strpos($appValue['CobrandedApplicationValue']['name'], 'EMail') !== false);
-						if ($requiredFieldsPresent && !empty($value)) {
-							if ($this->CobrandedApplicationValue->validApplicationValue($appValue['CobrandedApplicationValue'], $templateField['type'], $templateField)) {
-								// save it
-								$this->CobrandedApplicationValue->save($appValue);
-							} else {
-								// update our validationErrors array
-								$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
-								$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], "Invalid format for $typeStr: $value");
-							}
-						} elseif($requiredFieldsPresent && empty($value)) {
-							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], 'required');
-						} elseif ($requiredFieldsPresent == false) {
-							$response['validationErrors']['DBA'] = 'required';
-							$response['validationErrors']['EMail'] = 'required';
+						$validValue = $this->CobrandedApplicationValue->validApplicationValue($appValue['CobrandedApplicationValue'], $templateField['type'], $templateField);
+						// Allow saving valid values or zero-length strings which are considered clearing the field data
+						if ($validValue || $value === "") {
+							// save it
+							$this->CobrandedApplicationValue->save($appValue);
+						} else {
+							// update our validationErrors array
+							$typeStr = $this->TemplateField->fieldTypes[$templateField['type']];
+							$response['validationErrors'] = Hash::insert($response['validationErrors'], $templateField['merge_field_name'], "Invalid format for $typeStr: $value");
 						}
+
+
 						if (count($response['validationErrors']) == 0) {
 							$tmpResponse['success'] = true;
 						} else {
