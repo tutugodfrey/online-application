@@ -327,12 +327,40 @@ class CobrandedApplicationsController extends AppController {
 				//response if JSON data or form data was not passed
 				$response['messages'] = 'No data was sent';
 			} else {
-				if (!empty(Hash::get($data, 'template_id'))) {
-					$user = $this->User->find('first', array('conditions' => array('User.id' => $this->Auth->User('id'))));
-					$response = $this->CobrandedApplication->saveFields($user['User'], $data);
-
+				$preCheckErrors = null;
+				if (Hash::get($data, 'm2m') == true && empty($data['external_record_id'])) {
+					$preCheckErrors[] = 'An external_record_id is required.';
+				} elseif (!empty($data['external_record_id']) && $this->CobrandedApplication->hasAny(array('external_foreign_id' => $data['external_record_id']))) {
+					$preCheckErrors[] = 'Could not create application because an application already exists for this client.';
 				} else {
-					$response['messages'] = 'A template_id is required to create an application.';
+					if (empty(Hash::get($data, 'template_id'))) {
+						$preCheckErrors[] = 'A template_id is required to create an application.';
+					} 
+					if (empty(Hash::get($data, 'ContractorID'))) {
+						$preCheckErrors[] = 'The ContractorID is required to create application';
+					}
+				}
+				if (empty($preCheckErrors)) {
+					$user = $this->User->find('first', array('conditions' => array(
+						'User.fullname' => Hash::get($data, 'ContractorID')
+						)));
+					if (empty($user)) {
+						$response['messages'] = "A user account for Rep named '" . Hash::get($data, 'ContractorID'). "' was not found!";
+					} else {
+						$response = $this->CobrandedApplication->saveFields($user['User'], $data);
+						if ($response['status'] = AppModel::API_SUCCESS) {
+							$app = $this->CobrandedApplication->find('first', array('fields' => array('id', 'user_id'), 'conditions' => array('uuid' => $response['application_id'])));
+							$cSheetMsg = 'Failed to create a coversheet!';
+							try {
+								if ($this->CobrandedApplication->Coversheet->createNew($app['CobrandedApplication']['id'], $app['CobrandedApplication']['user_id'], $data)) {
+									$cSheetMsg = 'Coversheet created successfully';
+								}
+							} catch (Exception $e) {/*no need to do anything*/}
+							$response['messages'][] = $cSheetMsg;
+						}
+					}
+				} else {
+					$response['messages'] = $preCheckErrors;
 				}
 			}
 		} else {
