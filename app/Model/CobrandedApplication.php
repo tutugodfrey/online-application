@@ -14,7 +14,7 @@ App::uses('HttpSocket', 'Network/Http');
 /**
  * Begin API Annotations for swagger-php for CobrandedApplicationsController::api_add() method
  *
- * Use this API endpoint to create applications for signing up potentially new clients.
+ * Use this API endpoint to create applications for signing up potentially new clients. 
  *
  * The data to be submitted varies depending on the Template being used to create the application and on who is making the request.
  *
@@ -30,7 +30,7 @@ App::uses('HttpSocket', 'Network/Http');
  * @OA\Post(
  *   path="/api/CobrandedApplications/add",
  *	 tags={"CobrandedApplications"},
- *   summary="Create a new client application.",
+ *   summary="Create a new client application and a corresponding Coversheet as well if the app template is configured to require a coversheet.",
  *   @OA\RequestBody(ref="#/components/requestBodies/CobrandedApplications"),
  *	 @OA\Response(
  *     response=200,

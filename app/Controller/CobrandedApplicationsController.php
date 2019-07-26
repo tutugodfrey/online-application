@@ -348,7 +348,8 @@ class CobrandedApplicationsController extends AppController {
 						$response['messages'] = "A user account for Rep named '" . Hash::get($data, 'ContractorID'). "' was not found!";
 					} else {
 						$response = $this->CobrandedApplication->saveFields($user['User'], $data);
-						if ($response['status'] = AppModel::API_SUCCESS) {
+						$requireCSheet = $this->CobrandedApplication->Template->hasAny(array('id' => $data['template_id'], 'requires_coversheet' => true));
+						if ($requireCSheet && $response['status'] = AppModel::API_SUCCESS) {
 							$app = $this->CobrandedApplication->find('first', array('fields' => array('id', 'user_id'), 'conditions' => array('uuid' => $response['application_id'])));
 							$cSheetMsg = 'Failed to create a coversheet!';
 							try {
