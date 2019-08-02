@@ -1,5 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
+App::uses('User', 'Model');
 /***   API documentation anotations for swagger-php ***/
 /**
  *	@OA\Info(
@@ -18,7 +19,7 @@ App::uses('AppController', 'Controller');
 class DocumentationsController extends AppController {
 
     public $permissions = array(
-		'apidoc' => array('*'),
+		'apidoc' => array(User::ADMIN, User::REP, User::MANAGER, User::API),
     );
 
 
