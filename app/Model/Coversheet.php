@@ -193,9 +193,9 @@ class Coversheet extends AppModel {
 	public function checkOrgRegionSubRegion($check) {
 		$field = key($check);
 		$fieldName = Inflector::humanize($field);
-		$org = $this->data['Coversheet']['org_name'];
-		$region = $this->data['Coversheet']['region_name'];
-		$subregion = $this->data['Coversheet']['subregion_name'];
+		$org = Hash::get($this->data, 'Coversheet.org_name');
+		$region = Hash::get($this->data, 'Coversheet.region_name');
+		$subregion = Hash::get($this->data, 'Coversheet.subregion_name');
 
 		if ($field === 'org_name' && empty($org) && (!empty($region) || !empty($subregion))) {
 			return __("A parent Organization is required if Region or Subregion are entered");
@@ -935,6 +935,26 @@ class Coversheet extends AppModel {
 				),
 			);
 		return $conditions;
+	}
+
+/**
+ * createNew
+ * Creates new coversheet for the given user and application id
+ *
+ * @param integer $appId a CobrandedApplication.id
+ * @param integer $uid a User.id
+ * @param array $data optional single dimention array of coversheet data
+ * @throws Exception when required parameters are missing
+ */
+	public function createNew($appId, $uid, $data = array()) {
+		if (empty($appId) || empty($uid)) {
+			throw new Exception('Cannot create new coversheet without required parameters');
+		}
+		$data['cobranded_application_id'] = $appId;
+		$data['user_id'] = $uid;
+		$data['status'] = 'saved';
+		$this->create();
+		return $this->save($data);
 	}
 
 }
