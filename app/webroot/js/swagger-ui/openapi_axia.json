@@ -257,8 +257,8 @@
                 "tags": [
                     "CobrandedApplications"
                 ],
-                "summary": "Create a new client application.",
-                "description": "Use this API endpoint to create applications for signing up potentially new clients.\n\nThe data to be submitted varies depending on the Template being used to create the applicaton and on who is making the request.\n\nIf the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key \"m2m\" to be present in the data being submitted\nin order to disable interactive creation of applications.\n\nWith m2m set to true {\"m2m\":true} data validation will be turned off for most fields only a small subset of fields will be required to create the application: \"external_record_id\", \"DBA\", \"EMail\" (Company contact email address). \n\nWith m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.\n\nInformation about what data and/or fields are submitted when createing new applications can be found in the documentation about api/Templates/view API endpoint.",
+                "summary": "Create a new client application and a corresponding Coversheet as well if the app template is configured to require a coversheet.",
+                "description": "Use this API endpoint to create applications for signing up potentially new clients. \n\nThe data to be submitted varies depending on the Template being used to create the application and on who is making the request.\n\nIf the API consumer is a not a human user, the requests are considered machine-to-machine requests. This type of requests require the flag/key \"m2m\" to be present in the data being submitted\nin order to disable interactive creation of applications.\n\nWith m2m set to true {\"m2m\":true} data validation will be turned off for most fields only a small subset of fields will be required to create the application: \"external_record_id\", \"DBA\", \"EMail\" (Company contact email address). \n\nWith m2m set to false (or when this flag is not present in the data) data validation will be enabled and the application will only be created when all data submitted passes validation.\n\nInformation about what data and/or fields are submitted when creating new applications can be found in the documentation about api/Templates/view API endpoint.",
                 "requestBody": {
                     "$ref": "#/components/requestBodies/CobrandedApplications"
                 },
@@ -389,7 +389,7 @@
         },
         "requestBodies": {
             "CobrandedApplications": {
-                "description": "IMPORTANT: The JSON data submitted varies depending on which Template is used to create the application, for that reason this example shoud not be considered a definitive data structure for all requests.",
+                "description": "IMPORTANT: The JSON data submitted varies depending on which Template is used to create the application, for that reason this example should not be considered a definitive data structure for all requests.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -463,7 +463,7 @@
                                     "example": "janedoe@nomail.com"
                                 },
                                 "expected_install_date": {
-                                    "description": "The approximate date expected to install in unix format Y-m-d",
+                                    "description": "The approximate date expected to install in Unix format (Y-m-d)",
                                     "type": "date",
                                     "example": "2021-01-25"
                                 },
