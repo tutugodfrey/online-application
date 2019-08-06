@@ -759,6 +759,7 @@ class User extends AppModel {
 				'fields' => array(
 					'Template.id',
 					'Template.cobrand_id',
+					'(("Cobrand"."partner_name")) as "Template__partner_name"',
 					'Template.name',
 					'Template.description',
 					'Template.requires_coversheet',
@@ -780,6 +781,14 @@ class User extends AppModel {
 						'type' => 'LEFT',
 						'conditions' => array(
 							'UsersTemplate.user_id = User.id'
+						)
+					),
+					array(
+						'table' => 'onlineapp_cobrands',
+						'alias' => 'Cobrand',
+						'type' => 'LEFT',
+						'conditions' => array(
+							'Template.cobrand_id = Cobrand.id'
 						)
 					)
 				)
