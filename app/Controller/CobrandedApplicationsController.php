@@ -458,14 +458,22 @@ class CobrandedApplicationsController extends AppController {
 
 /**
  *
- * Handles API GET request for a list of Applications assigned to the API consumer performing the request.
- * Request parameters are all optional.
- * A full list of all applications assigned to the authenticated API consumer will be returned when no parameters are passed in query
+ * Handles API GET request for a list of Applications assigned a specified sales representative.
+ * Request parameters are all optional except for the rep_name. No results will be returned if the name of the rep is ommited.
+ * A full list of all applications assigned to the specified sales rep_name will be returned when no parameters are passed in query
  *
  * @OA\Get(
- *   path="/api/CobrandedApplications/index?search={text to seach for in application}&status={one of: saved/pending/validate/completed/signed}",
+ *   path="/api/CobrandedApplications/index?rep_name={sales rep full name}&search={text to seach for in application}&status={one of: saved/pending/validate/completed/signed}",
  *	 tags={"CobrandedApplications"},
- *   summary="list applications assigned to current authehticated user",
+ *   summary="list applications assigned to specified sales representative's name",
+ *	 @OA\Parameter(
+ *		   name="rep_name",
+ *		   description="The full name of the sales repesentative (first name last name) who created or is assigned to the application. Value must match their name in their user profile in the online application system.
+ *	 			Example 1: Sam Salesman,
+ *	 			Example 2: John Doe",
+ *         in="query",
+ *         @OA\Schema(type="string")
+ *   ),
  *	 @OA\Parameter(
  *		   name="search",
  *		   description="Text to search for in the application, for example the company name, or DBA or even the string uuid of the application.
@@ -507,15 +515,22 @@ class CobrandedApplicationsController extends AppController {
 		$this->autoRender = false;
 		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
 		if ($this->request->is('get')) {
-			$this->request->query['user_id'] = $this->Auth->user('id');
-			$conditions = $this->CobrandedApplication->parseCriteria($this->request->query);
-			$appData = $this->CobrandedApplication->find('index', array(
-				'conditions' => $conditions,
-				'order' => array('CobrandedApplication.modified DESC')
-				)
-			);
-			$response['data'] = [];
-			$response['status'] = AppModel::API_SUCCESS;
+			$appData = null;
+			$user = $this->User->find('first', array('recursive' => -1, 'conditions' => array(
+				'User.fullname' => $this->request->query('rep_name'),
+			)));
+			if (!empty($user)) {
+				$this->request->query['user_id'] = $user['User']['id'];
+				$conditions = $this->CobrandedApplication->parseCriteria($this->request->query);
+				$appData = $this->CobrandedApplication->find('index', array(
+					'conditions' => $conditions,
+					'order' => array('CobrandedApplication.modified DESC')
+					)
+				);
+				$response['data'] = [];
+				$response['status'] = AppModel::API_SUCCESS;
+			}
+			
 			if (!empty($appData)) {
 				$response['messages'] = null;
 				foreach($appData as $application) {
@@ -532,7 +547,7 @@ class CobrandedApplicationsController extends AppController {
 					);
 				}
 			} else {
-				$response['messages'] = "No aplications found for current user and/or specified search parameters.";
+				$response['messages'] = "No aplications found for specified sales rep and/or search parameters.";
 			}
 		} else {
 			$this->response->statusCode(405); //405 Method Not Allowed
