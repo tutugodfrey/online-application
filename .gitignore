@@ -13,7 +13,8 @@
 /dist
 /tags
 /node_modules
-/app/webroot/js/swagger-ui/
+/app/webroot/js/swagger-ui/*
+/app/webroot/js/swagger-ui/openapi_axia.json
 /app/webroot/api
 /app/webroot/coverage
 /app/webroot/code-browser

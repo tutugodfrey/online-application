@@ -23,6 +23,11 @@ App::uses('NestedResourceController', 'Controller');
  *			type="integer"
  *     ),
  *     @OA\Property(
+ *			description="Partner name",
+ *			property="partner_name",
+ *			type="string"
+ *     ),
+ *     @OA\Property(
  *			description="Template name",
  *			property="name",
  *			type="string"
@@ -69,27 +74,36 @@ class TemplatesController extends NestedResourceController {
 /**
  * api_index
  *
- * Handles API GET request for a list of Templates assigned to the API user performing the request.
+ * Handles API GET request for a list of Templates assigned to specified sales representative.
  *
  * Each user is given access to specific set of templates, 
  * knowing which template to use is important in order to be able to create an application for a client.
- * This endpoint will return full list of all templates assigned to the authenticated user.
+ * This endpoint will return a full list of all templates a specified sales representative has access to.
  *
  * @OA\Get(
- *   path="/api/Templates/index",
+ *   path="/api/Templates/index?rep_name={sales rep full name}",
  *	 tags={"Templates"},
- *   summary="list autheticated user templates",
+ *   summary="list sales rep's user templates",
+ *	 @OA\Parameter(
+ *		   name="rep_name",
+ *		   description="The full name of the sales repesentative (first name last name), value must match their name in their user profile in the online application system.
+ *	 			Example 1: Sam Salesman,
+ *	 			Example 2: John Doe",
+ *         in="query",
+ *         @OA\Schema(type="string")
+ *   ),
  *	 @OA\Response(
  *     response=200,
  *     @OA\MediaType(
  *         mediaType="application/json",
- *		   example={"id": 50, "cobrand_id": 2, "name": "Payment Fusion Sales Agreement", "description": "Payment Fusion Sales Agreement", "requires_coversheet": false, "created": "2017-05-30 12:28:30", "is_default_user_template": "NO"},
+ *		   example={"id": 50, "cobrand_id": 2, "partner_name": "Payment Fusion", "name": "Payment Fusion Sales Agreement", "description": "Payment Fusion Sales Agreement", "requires_coversheet": false, "created": "2017-05-30 12:28:30", "is_default_user_template": "NO"},
  *         @OA\Schema(
  *	   	   	 ref="#/components/schemas/Templates",
  *         )
  *     ),
  *     description="
- * 			status=success detailed JSON array of user's templates (empty if no templates have been assigned to the authenticated user).",
+ * 			status=success detailed JSON array of user's templates (empty if no templates have been assigned to sales rep user).,
+ * 			status=failed if specified sales rep user is not found.",
  *   ),
  *   @OA\Response(
  *     response=405,
@@ -103,9 +117,16 @@ class TemplatesController extends NestedResourceController {
 		$this->autoRender = false;
 		$response = array('status' => AppModel::API_FAILS, 'messages' => 'HTTP method not allowed');
 		if ($this->request->is('get')) {
-			$response['status'] = API_SUCCESS;
-			$response['messages'] = null;
-			$response['data'] = $this->Template->Users->allTemplates($this->Auth->user('id'));
+			$user = $this->User->find('first', array('recursive' => -1, 'conditions' => array(
+				'User.fullname' => $this->request->query('rep_name'),
+			)));
+			if (!empty($user)) {
+				$response['status'] = AppModel::API_SUCCESS;
+				$response['messages'] = null;
+				$response['data'] = $this->Template->Users->allTemplates($user['User']['id']);
+			} else {
+				$response['messages'] = "A user account does not exist for specified sales rep name.";
+			}
 		} else {
 			$this->response->statusCode(405); //405 Method Not Allowed
 		}
