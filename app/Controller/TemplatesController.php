@@ -3,7 +3,7 @@ App::uses('User', 'Model');
 App::uses('NestedResourceController', 'Controller');
 /**
  * Templates Controller
- *
+ * 
  */
  /**
  * @OA\Tag(name="Templates", description="Operation and data about Templates")
