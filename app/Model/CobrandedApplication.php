@@ -1089,7 +1089,10 @@ class CobrandedApplication extends AppModel {
 		//Insert company brand name from cobrands
 		$keys = $this->__addKey($keys, 'CompanyBrandName', $enquote);
 		$values = $this->__addValue($values, $this->Template->Cobrand->field('brand_name', array('id' => $app['Template']['cobrand_id'])), $enquote);
-
+		if (!empty($app['CobrandedApplication']['external_foreign_id'])) {
+			$keys = $this->__addKey($keys, 'external_foreign_id', $enquote);
+			$values = $this->__addValue($values, $app['CobrandedApplication']['external_foreign_id'], $enquote);
+		}
 		foreach ($app['CobrandedApplicationValues'] as $appKey => $appValue) {
 			// could use strrpos != false to check for these names
 			if ($app['CobrandedApplicationValues'][$appKey]['name'] == 'AENotExisting' ||
