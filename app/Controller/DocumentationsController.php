@@ -12,7 +12,8 @@ App::uses('User', 'Model');
  *	 	description="Our REST API allows access to the resources detailed herein. Access to this API and these resources must be requested and approved by a system administrator.
  * 		Users are given access to Axia's online application system and also access to the API will be enabled for their account.
  *		Access token is auto-generated when the user account access to the API is enabled.
- *		Users will receive an email with important steps to complete enabling their API access.",
+ *		Users will receive an email with important steps to complete enabling their API access.
+ *		Authentication method: Basic base64encode api_usertoken:api_password",
  *	)
  *
  */
