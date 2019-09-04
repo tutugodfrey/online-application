@@ -1,7 +1,7 @@
 <div class='center-block' style="width: 300px;" id='loginContainer'>
 <?php
 	echo $this->Html->image(
-		'logo.png',
+		'AxiaMedHDnoLoop.gif',
 		array(
 			'alt' => __('Axia'),
 			'border' => '0',
@@ -60,7 +60,7 @@ if ($('.alert').length === 0){
 	);
 	$( "#loginFrmContainer" ).animate({
 		opacity: 1,
-		"margin-top": "60px",
+		"margin-top": "50px",
 		}, 800
 	);
 
