@@ -1,7 +1,7 @@
 <br/>
 <?php
 	echo $this->Html->image(
-		'logo.png',
+		'AxiaMedHDnoLoop.gif',
 		array(
 			'alt'=> __('Axia'),
 			'class' => 'center-block',
