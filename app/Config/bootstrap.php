@@ -83,6 +83,10 @@ CakePlugin::load('BoostCake');
 CakePlugin::load('Upload');
 Configure::load('app_config');
 
+
+//Load events listeners config file
+require_once APP . 'Config' . DS . 'events.php';
+
 /**
  * You can attach event listeners to the request lifecyle as Dispatcher Filter . By Default CakePHP bundles two filters:
  *
