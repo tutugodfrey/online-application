@@ -24,6 +24,7 @@ class EmailTimeline extends AppModel {
 	const NEWAPPS_EMAIL = 'newapps@axiapayments.com';
 	const HOOZA_EMAIL = 'hooza@axiapayments.com';
 	const DATA_ENTRY_EMAIL = 'dataentry@axiapayments.com';
+	const CANCELLATIONS_EMAIL = 'cancellations@axiamed.com';
 
 	public $validate = array(
 	'onlineapp_applications_id' => array(
