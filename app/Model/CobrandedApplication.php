@@ -1767,7 +1767,7 @@ class CobrandedApplication extends AppModel {
 		$template = 'rep_notify_signed';
 		
 		$description = "Application Description: ";
-		if (strripos(Hash::get($cobrandedApplication, 'Template.name'), 'Cancellation')) {
+		if (stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Cancellation')) {
 			$description = 'Description: ';
 			$template = 'rep_notify_cancellation_signed';
 			$to[] = EmailTimeline::CANCELLATIONS_EMAIL;
