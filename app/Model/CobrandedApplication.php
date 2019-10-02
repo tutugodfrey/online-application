@@ -1254,6 +1254,18 @@ class CobrandedApplication extends AppModel {
 			$settings = array('contain' => array('CobrandedApplicationValues'));
 			$newApp = $this->getById($this->id, $settings);
 
+			//check if template is for cancelations
+			$isCancellation = $this->Template->hasAny(['id' => $lookupId, "name ilike '%cancel%'" ]);
+			if ($isCancellation) {
+				$existingClientData = $this->getDbApiClientData(['application_id' => $appId]);
+				if ($existingClientData !== false) {
+					$midForCancellation = Hash::get($existingClientData, 'merchant_mid');
+				} else {
+					$isCancellation = false;
+				}
+			}
+
+
 			// copy each value over
 			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
 				if ($app['CobrandedApplicationValues'][$key]['name'] == 'Unknown Type for testing') {
@@ -1264,8 +1276,9 @@ class CobrandedApplication extends AppModel {
 						if ($found == true) {
 							continue;
 						}
-
-						if ($newApp['CobrandedApplicationValues'][$newKey]['name'] == $app['CobrandedApplicationValues'][$key]['name']) {
+						if ($isCancellation && stripos($newApp['CobrandedApplicationValues'][$newKey]['name'], 'MIDToCancel')) {
+							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $midForCancellation;
+						} elseif ($newApp['CobrandedApplicationValues'][$newKey]['name'] == $app['CobrandedApplicationValues'][$key]['name']) {
 							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $app['CobrandedApplicationValues'][$key]['value'];
 
 							if (isset($newApp['CobrandedApplicationValues'][$newKey])) {
@@ -1279,6 +1292,37 @@ class CobrandedApplication extends AppModel {
 			return true;
 		}
 		return false;
+	}
+
+/**
+ * getDbApiClientData
+ * Performs API GET call to the AxiaMed DB get_merchant endpoint to seach and retrieve data about a merchant.
+ * Supported conditions for search are at least one of the following :
+ * 		merchant_mid
+ * 		merchant_dba
+ * 		application_id
+ * 		external_record_id
+ *
+ * @param array $conditions one dimentional array of key =>val pared conditions to use a search parameters un URL query
+ * @return mixed boolean|array false when nothing is found or API call fails. Array of data when merchant is found.
+ */
+	public function getDbApiClientData($conditions) {
+		if (empty($conditions)) {
+			return false;
+		}
+		$axDbApiClient = $this->createAxiaDbApiAuthClient();
+
+		$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Merchants/get_merchant', array($conditions));
+		$responseData = json_decode($reponse->body, true);
+		if (!empty($responseData['data'])) {
+			return $responseData['data'];
+		} else {
+			if ($responseData['status'] === 'failed') {
+				$msgs = is_array($responseData['messages'])? implode("\n", $responseData['messages']): $responseData['messages'];
+				$this->log("AxiaMed API call failed:\n$msgs\nURL:" . $msgs);
+			}
+			return false;
+		}
 	}
 
 /**
@@ -1714,14 +1758,21 @@ class CobrandedApplication extends AppModel {
 			$dbaBusinessName = $valuesMap['DBA'];
 		}
 
-		$description = "Application Description: ";
-		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
+		
 		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 		$to = array($cobrandedApplication['User']['email']);
 
 		$subject = $dbaBusinessName . ' - Online Application Signed';
 		$format = 'text';
 		$template = 'rep_notify_signed';
+		
+		$description = "Application Description: ";
+		if (stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Cancellation') !== false) {
+			$description = 'Description: ';
+			$template = 'rep_notify_cancellation_signed';
+			$to[] = EmailTimeline::CANCELLATIONS_EMAIL;
+		}
+		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
 		$viewVars['rep'] = $cobrandedApplication['User']['email'];
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['description'] = $description;

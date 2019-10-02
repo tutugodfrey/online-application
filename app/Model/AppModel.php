@@ -253,7 +253,11 @@ class AppModel extends Model {
  */
 	public function createAxiaDbApiAuthClient() {
 		$http = new HttpSocket();
-		$http->configAuth('Basic', Configure::read('AxiaDbAPI.access_token'), Configure::read('AxiaDbAPI.password'));
+		$axMedApi = 'AxiaDbAPI';
+		if (Configure::read('debug') > 0) {
+			$axMedApi = 'AxiaDevDbAPI';
+		}
+		$http->configAuth('Basic', Configure::read("$axMedApi.access_token"), Configure::read("$axMedApi.password"));
 		return $http;
 	}
 }
