@@ -1258,13 +1258,13 @@ class CobrandedApplication extends AppModel {
 			$isCancellation = $this->Template->hasAny(['id' => $lookupId, "name ilike '%cancel%'" ]);
 			if ($isCancellation) {
 				$existingClientData = $this->getDbApiClientData(['application_id' => $appId]);
+
 				if ($existingClientData !== false) {
 					$midForCancellation = Hash::get($existingClientData, 'merchant_mid');
 				} else {
 					$isCancellation = false;
 				}
 			}
-
 
 			// copy each value over
 			foreach ($app['CobrandedApplicationValues'] as $key => $value) {
@@ -1274,21 +1274,26 @@ class CobrandedApplication extends AppModel {
 					$found = false;
 					foreach ($newApp['CobrandedApplicationValues'] as $newKey => $newVal) {
 						if ($found == true) {
-							continue;
+							break;
 						}
-						if ($isCancellation && stripos($newApp['CobrandedApplicationValues'][$newKey]['name'], 'MIDToCancel')) {
-							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $midForCancellation;
-						} elseif ($newApp['CobrandedApplicationValues'][$newKey]['name'] == $app['CobrandedApplicationValues'][$key]['name']) {
-							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $app['CobrandedApplicationValues'][$key]['value'];
+						$newAppVal = null;
+						if ($isCancellation && stripos($newApp['CobrandedApplicationValues'][$newKey]['name'], 'MIDToCancel') !== false) {
+							$newAppVal = $midForCancellation;
+							$isCancellation = false;
+						}
 
-							if (isset($newApp['CobrandedApplicationValues'][$newKey])) {
-								$this->CobrandedApplicationValues->save($newApp['CobrandedApplicationValues'][$newKey]);
-								$found = true;
-							}
+						if ($newApp['CobrandedApplicationValues'][$newKey]['name'] == $app['CobrandedApplicationValues'][$key]['name']) {
+							$newAppVal = $app['CobrandedApplicationValues'][$key]['value'];
+						}
+						if (isset($newAppVal)) {
+							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $newAppVal;
+							$this->CobrandedApplicationValues->save($newApp['CobrandedApplicationValues'][$newKey]);
+							$found = true;
 						}
 					}
 				}
 			}
+
 			return true;
 		}
 		return false;
