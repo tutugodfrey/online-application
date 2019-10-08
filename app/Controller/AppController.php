@@ -28,6 +28,17 @@ class AppController extends Controller {
 		'Session',
 	);
 
+/**
+ * beforeRender callback
+ *
+ * @return void
+ */
+	public function beforeRender() {
+		//Deny rendering site in anything other than the parent browser window
+	     $this->response->header('X-Frame-Options', 'DENY');
+	     parent::beforeFilter();
+	}
+
 	public function beforeFilter() {
 		// Force SSL
 		$excludeSSL = array("document_callback");
