@@ -52,15 +52,15 @@
 				echo $this->Html->link(' ', $btnSettings, $btnAttributes);
 		?></div></td>
 			<td>
-				<?php echo $cobrandedApplication['User']['firstname'] . ' ' . $cobrandedApplication['User']['lastname']; ?>
+				<?php echo h($cobrandedApplication['User']['firstname'] . ' ' . $cobrandedApplication['User']['lastname']); ?>
 			</td>
 			<td>
-				<?php echo $cobrandedApplication['Cobrand']['partner_name']; ?>
+				<?php echo h($cobrandedApplication['Cobrand']['partner_name']); ?>
 			</td>
 			<td>
-				<?php echo $cobrandedApplication['Template']['name']; ?>
+				<?php echo h($cobrandedApplication['Template']['name']); ?>
 			</td>
-			<td><?php echo $cobrandedApplication['Dba']['value']; ?>&nbsp;</td>
+			<td><?php echo h($cobrandedApplication['Dba']['value']); ?>&nbsp;</td>
 			<td>
 	<?php 
 		if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED
@@ -73,7 +73,7 @@
 		} elseif($appOutOfSync) {
 			echo "<span class='text-warning' data-toggle='tooltip' data-placement='left' title='' alt='' data-original-title=\"App and Template are out-of-sync due to changes made to Template. Click Sync button if necessary.\";><strong>out-of-sync</strong></span>";
 		} else {
-			echo $cobrandedApplication['CobrandedApplication']['status'];
+			echo h($cobrandedApplication['CobrandedApplication']['status']);
 		}
 	?>&nbsp;
 			</td>
