@@ -28,7 +28,7 @@
   						 '<li class="list-group-item list-group-item-warning text-center">No similarly named users found in the DB.<br/>You may attempt to export but it might not be successful.</li></ul>';
 				} else {
 					echo $this->Html->tag('p', '<strong>This is a list of Axia Database Rep names, if the Rep on this app does not exactly match any below, select the correct one:</strong>');
-					echo $this->Html->tag('span', "<strong>(The Rep on this app is: $repName) </strong>",
+					echo $this->Html->tag('span', "<strong>(The Rep on this app is: " . h($repName) . ") </strong>",
 						['class' => 'small center-block text-success']);
 					echo $this->Form->input(
 						'ContractorID',
@@ -41,7 +41,7 @@
 					);
 					if (!empty($csPartner)) {
 						echo $this->Html->tag('p', '<strong>This is a list of Axia Database Partner names, if the Partner on this app does not exactly match any below select the correct one:</strong>');
-						echo '<strong>' . $this->Html->tag('span', "The Partner on cover sheet is: " . ($csPartner)?:'(none)', ['class' => 'small center-block text-success']) . '</strong>';
+						echo '<strong>' . $this->Html->tag('span', "The Partner on cover sheet is: " . (h($csPartner))?:'(none)', ['class' => 'small center-block text-success']) . '</strong>';
 
 						echo $this->Form->input(
 							'setup_partner',
