@@ -37,9 +37,9 @@ echo $this->Element('resultLimitModifier');
 			<?php echo $this->Html->link($coversheet['Dba']['value'], array('controller' => 'cobranded_applications', 'action' => 'edit', $coversheet['CobrandedApplication']['uuid'], 'admin' => false)); ?>
 		</td>
 		<td>
-			<?php echo $coversheet['User']['firstname'] . ' ' . $coversheet['User']['lastname']; ?>
+			<?php echo h($coversheet['User']['firstname'] . ' ' . $coversheet['User']['lastname']); ?>
 		</td>
-		<td><?php echo $coversheet['Coversheet']['status']; ?>&nbsp;</td>
+		<td><?php echo h($coversheet['Coversheet']['status']); ?>&nbsp;</td>
         <td>
         	<?php 
         	if ($coversheet['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED ||
@@ -50,7 +50,7 @@ echo $this->Element('resultLimitModifier');
 					'appStatus' => $coversheet['CobrandedApplication']['status']
 				));
 			} else {
-				echo $coversheet['CobrandedApplication']['status'];
+				echo h($coversheet['CobrandedApplication']['status']);
 			}
 			?>
         </td>
