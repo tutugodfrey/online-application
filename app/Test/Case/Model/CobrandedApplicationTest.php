@@ -16,7 +16,6 @@ class CobrandedApplicationTest extends CakeTestCase {
  */
 	public $fixtures = array(
 		'app.onlineappApip',
-		'app.onlineappApiLog',
 		'app.onlineappEpayment',
 		'app.onlineappUser',
 		'app.onlineappGroup',
@@ -68,7 +67,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		// load data
 		$this->loadFixtures('OnlineappEpayment');
 		$this->loadFixtures('OnlineappApip');
-		$this->loadFixtures('OnlineappApiLog');
 		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappGroup');
 		$this->loadFixtures('OnlineappCobrand');
