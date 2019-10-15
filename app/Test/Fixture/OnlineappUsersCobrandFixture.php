@@ -1,8 +1,6 @@
 <?php
 class OnlineappUsersCobrandFixture extends CakeTestFixture {
 
-	// public $import = 'UsersCobrand';
-
 /**
  * Table name
  *
