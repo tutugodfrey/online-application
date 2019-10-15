@@ -19,7 +19,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		public $fixtures = array(
 			'app.onlineappUser',
 			'app.onlineappUsersTemplate',
-			'app.onlineappUsersCobrand',
+			// 'app.onlineappUsersCobrand',
 			'app.onlineappUsersManager',
 			'app.merchant',
 			'app.onlineappGroup',
@@ -64,7 +64,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 			// load data
 			$this->loadFixtures('OnlineappUser');
 			$this->loadFixtures('OnlineappUsersTemplate');
-			$this->loadFixtures('OnlineappUsersCobrand');
+			// $this->loadFixtures('OnlineappUsersCobrand');
 			$this->loadFixtures('OnlineappUsersManager');
 			$this->loadFixtures('Merchant');
 			$this->loadFixtures('OnlineappGroup');
