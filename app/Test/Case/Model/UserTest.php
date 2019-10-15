@@ -19,7 +19,7 @@ class UserTest extends CakeTestCase {
 		'app.onlineappApip',
 		'app.onlineapp_users_manager',
 		'app.onlineappUsersTemplate',
-		'app.onlineappUsersCobrand',
+		// 'app.onlineappUsersCobrand',
 		'app.onlineappUsersManager',
 		'app.merchant',
 		'app.onlineappGroup',
@@ -41,12 +41,12 @@ class UserTest extends CakeTestCase {
 		$this->Cobrand = ClassRegistry::init('Cobrand');
 		$this->Template = ClassRegistry::init('Template');
 		$this->UsersTemplate = ClassRegistry::init('UsersTemplate');
-		$this->UsersCobrand = ClassRegistry::init('UsersCobrand');
+		// $this->UsersCobrand = ClassRegistry::init('UsersCobrand');
 
 		// load data
 		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappUsersTemplate');
-		$this->loadFixtures('OnlineappUsersCobrand');
+		// $this->loadFixtures('OnlineappUsersCobrand');
 		$this->loadFixtures('OnlineappUsersManager');
 		$this->loadFixtures('Merchant');
 		$this->loadFixtures('OnlineappGroup');

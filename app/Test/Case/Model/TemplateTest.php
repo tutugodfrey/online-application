@@ -8,7 +8,7 @@ class TemplateTest extends CakeTestCase {
 
 	public $fixtures = array(
 		'app.onlineappUser',
-		'app.onlineappUsersCobrand',
+		// 'app.onlineappUsersCobrand',
 		'app.onlineappUsersTemplate',
 		'app.onlineappUsersManager',
 		'app.onlineappGroup',
@@ -40,7 +40,7 @@ class TemplateTest extends CakeTestCase {
 
 		// load data
 		$this->loadFixtures('OnlineappUser');
-		$this->loadFixtures('OnlineappUsersCobrand');
+		// $this->loadFixtures('OnlineappUsersCobrand');
 		$this->loadFixtures('OnlineappUsersTemplate');
 		$this->loadFixtures('OnlineappUsersManager');
 		$this->loadFixtures('OnlineappGroup');
