@@ -29,7 +29,7 @@ class CoversheetTest extends CakeTestCase {
 		'app.onlineappEmailTimeline',
 		'app.onlineappUsersManager',
 		'app.onlineappUsersTemplate',
-		// 'app.onlineappUsersCobrand',
+		'app.onlineappUsersCobrand',
 	);
 
 /**
@@ -71,7 +71,7 @@ class CoversheetTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappEmailTimeline');
 		$this->loadFixtures('OnlineappUsersManager');
 		$this->loadFixtures('OnlineappUsersTemplate');
-		// $this->loadFixtures('OnlineappUsersCobrand');
+		$this->loadFixtures('OnlineappUsersCobrand');
 	}
 
 /**
