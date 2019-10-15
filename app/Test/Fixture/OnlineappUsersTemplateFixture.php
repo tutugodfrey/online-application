@@ -1,7 +1,7 @@
 <?php
 class OnlineappUsersTemplateFixture extends CakeTestFixture {
 
-	/**
+/**
  * Table name
  *
  * @var string
