@@ -408,9 +408,9 @@
                                     <td>
                                         <?php 
                                             if ($this->Form->isFieldError('setup_install')){
-                                                echo 'Install to be done by: ' . $this->Form->error('setup_install');
+                                                echo 'Go-Live to be done by: ' . $this->Form->error('setup_install');
                                             } else 
-                                                echo 'Install to be done by:';
+                                                echo 'Go-Live to be done by:';
                                         ?>
                                     </td>
                                     <td colspan='2'>
@@ -431,6 +431,7 @@
                                     <td>
                                         <?php 
                                         $expInsDateSettings = array(
+                                                'label' => 'Expected to Go-Live',
                                                 'type' => 'date',
                                                 'dateFormat' => 'MDY',
                                                 'minYear' => date('Y'),
