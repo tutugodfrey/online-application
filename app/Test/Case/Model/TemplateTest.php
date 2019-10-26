@@ -80,6 +80,7 @@ class TemplateTest extends CakeTestCase {
 				'api' => 1,
 				'cobrand_id' => 2,
 				'template_id' => $this->__template['Template']['id'],
+				'pw_expiry_date' => '2019-10-01'
 			)
 		);
 		$this->__user = $this->User->save();

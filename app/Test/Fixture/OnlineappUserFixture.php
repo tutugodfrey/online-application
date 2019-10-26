@@ -27,6 +27,8 @@ class OnlineappUserFixture extends CakeTestFixture {
 		'api_password' => array('type' => 'string', 'null' => true, 'length' => 200),
 		'api_enabled' => array('type' => 'boolean', 'null' => true),
 		'template_id' => array('type' => 'integer', 'null' => true),
+		'pw_expiry_date' => array('type' => 'datetime', 'null' => false),
+		'pw_reset_hash' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 32),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'onlineapp_users_email_key' => array('unique' => true, 'column' => 'email'),
@@ -57,7 +59,9 @@ class OnlineappUserFixture extends CakeTestFixture {
 			'active' => 1,
 			'api_password' => 'Lorem ipsum dolor sit amet',
 			'api_enabled' => 1,
-			'template_id' => 1
+			'template_id' => 1,
+			'pw_expiry_date' => '2019-10-01',
+			'pw_reset_hash' => null
 		),
 		array(
 			'id' => 11,
@@ -75,7 +79,9 @@ class OnlineappUserFixture extends CakeTestFixture {
 			'active' => 1,
 			'api_password' => 'Lorem ipsum dolor sit amet',
 			'api_enabled' => 1,
-			'template_id' => 1
+			'template_id' => 1,
+			'pw_expiry_date' => '2019-10-01',
+			'pw_reset_hash' => null
 		),
 		array(
 			'id' => 12,
@@ -93,7 +99,9 @@ class OnlineappUserFixture extends CakeTestFixture {
 			'active' => 1,
 			'api_password' => 'Lorem ipsum dolor sit amet',
 			'api_enabled' => 1,
-			'template_id' => 1
+			'template_id' => 1,
+			'pw_expiry_date' => '2019-10-01',
+			'pw_reset_hash' => null
 		),
 	);
 

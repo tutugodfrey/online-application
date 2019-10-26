@@ -186,9 +186,7 @@ class UserTest extends CakeTestCase {
 /**
  * testGetAllManagers
  *
- * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
+ * @covers User::getAllManagers
  * @return void
  */
 	public function testGetAllManagers() {
@@ -200,9 +198,7 @@ class UserTest extends CakeTestCase {
 /**
  * testGetAssignedManagerIds
  *
- * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
+ * @covers User::getAssignedManagerIds
  * @return void
  */
 	public function testGetAssignedManagerIds() {
@@ -225,9 +221,7 @@ class UserTest extends CakeTestCase {
 /**
  * testGetAssignedUserIds
  *
- * @covers User::__construct
- * @covers User::filterArgs property
- * @covers User::virtualFields property
+ * @covers User::getAssignedUserIds
  * @return void
  */
 	public function testGetAssignedUserIds() {
@@ -407,23 +401,93 @@ class UserTest extends CakeTestCase {
 	}
 
 /**
- * testNewPwExpiration
+ * testGetDaysTillPwExpires
  *
- * @covers User::getTemplates
+ * @covers User::newPwExpiration
  * @return void
  */
- 	public function testNewPwExpiration() {
- 		$date = date('Y-m-d');
- 		//Using different method for creating expectation of new date as control for test
+	public function testGetDaysTillPwExpires() {
+		$pwExpDate = $this->User->field('pw_expiry_date', ['id' => 1]);
+		$now = date_create(date('Y-m-d'));
+		$pwExpDate = date_create($pwExpDate);
+		$diff = date_diff($now, $pwExpDate);
+		$expected = $diff->d;
+		
+		$actual = $this->User->getDaysTillPwExpires(1);
+		$this->assertSame(-($expected), $actual);
+	}
+
+/**
+ * testPwIsValid
+ *
+ * @covers User::pwIsValid
+ * @return void
+ */
+	public function testPwIsValid(){
+		for($x = 0; $x <= 100; $x++) {
+			$pwd = str_shuffle('123456789abcdefg');
+			$this->User->save(['id' => 1, 'pwd' => $pwd]);
+			$this->assertTrue($this->User->pwIsValid(1, $pwd));
+			$this->assertFalse($this->User->pwIsValid(1, $pwd . $pwd));
+		}
+	}
+
+/**
+ * testNewPwExpiration
+ *
+ * @covers User::newPwExpiration
+ * @return void
+ */
+	public function testNewPwExpiration() {
+		$date = date('Y-m-d');
+		//Using different method for creating expectation of new date as control for test
 		$expected = date('Y-m-d', strtotime($date. ' + ' . Configure::read('App.pw_validity_age') . ' days'));
- 		$actual = $this->User->newPwExpiration();
- 		$this->assertSame($expected, $actual);
- 	}
+		$actual = $this->User->newPwExpiration();
+		$this->assertSame($expected, $actual);
+	}
+
+/**
+ * testSetPwFieldsValidation
+ *
+ * @covers User::setPwFieldsValidation
+ * @return void
+ */
+	public function testSetPwFieldsValidation() {
+		$tstData = [
+			'id' => 999,
+			'pwd' => 12345678,
+		];
+
+		$actual = $this->User->setPwFieldsValidation();
+
+		$this->User->create();
+		$this->assertFalse($this->User->save($tstData));
+		
+		//Test missing repeat_password validation error
+		$actual = $this->User->validationErrors;
+		$this->assertContains('Passwords do not match!', $actual['pwd']);
+		$this->assertContains('Repeat Password is required!', $actual['repeat_password']);
+		
+		//Test repeat_password should have 8 characters or more
+		$tstData['repeat_password'] = '2345678';
+		$this->User->create();
+		$this->assertFalse($this->User->save($tstData));
+		$actual = $this->User->validationErrors;
+		$this->assertContains('Passwords should have 8 characters or more', $actual['repeat_password']);
+
+		//Test repeat_password does not match
+		$tstData['repeat_password'] = '23456789';
+		$this->User->create();
+		$this->assertFalse($this->User->save($tstData));
+		$actual = $this->User->validationErrors;
+		$this->assertContains('Passwords do not match!', $actual['pwd']);
+		$this->assertContains('Passwords do not match!', $actual['repeat_password']);
+	}
 
 /**
  * testGetEmailArgs
  *
- * @covers User::getTemplates
+ * @covers User::getEmailArgs
  * @return void
  */
 	public function testGetEmailArgs() {
@@ -445,6 +509,115 @@ class UserTest extends CakeTestCase {
 			);
 
 		$this->assertSame($expected, $this->User->getEmailArgs(11));
+		$this->assertFalse($this->User->getEmailArgs(9999));
+	}
+
+/**
+ * hasDefatestHltTemplate
+ *
+ * @covers User::hasDefaultTemplate
+ * @return void
+ */
+	public function testHasDefaultTemplate() {
+		$tstData = ['User' => ['Template' => ['template_id' => 123]]];
+		$this->User->set($tstData);
+
+		$actual = $this->User->hasDefaultTemplate($tstData['User']['Template']);
+		$this->assertTrue($actual);
+
+		$tstData = ['User' => ['Template' => ['template_id' => null]]];
+		$this->User->clear();
+		$this->User->set($tstData);
+		$actual = $this->User->hasDefaultTemplate($tstData['User']['Template']);
+		$this->assertFalse($actual);
+	}
+
+/**
+ * testGenerateRandPw
+ *
+ * @covers User::generateRandPw
+ * @return void
+ */
+	public function testGenerateRandPw() {
+		$actual = $this->User->generateRandPw();
+
+		$this->assertNotEmpty($actual);
+		$this->assertEquals(32, strlen($actual));
+	}
+
+/**
+ * hasDWithCobrandsNotEmpty
+ *
+ * @covers User::withCobrandsNotEmpty
+ * @return void
+ */
+	public function testWithCobrandsNotEmpty() {
+		$tstData = ['User' => [
+				'Template' => ['template_id' => 123],
+				'Cobrand' => ['id' => 321]
+			],
+		];
+		$this->User->set($tstData);
+
+		$actual = $this->User->withCobrandsNotEmpty([]);
+		$this->assertTrue($actual);
+
+		$tstData = ['User' => [
+				'Template' => [],
+				'Cobrand' => ['id' => null]
+			],
+		];
+		$this->User->clear();
+		$this->User->set($tstData);
+		$actual = $this->User->withCobrandsNotEmpty([]);
+		$this->assertFalse($actual);
+	}
+
+/**
+ * testGetEditViewData
+ *
+ * @covers User::getEditViewData
+ * @return void
+ */
+	public function testGetEditViewData() {
+		$actual = $this->User->getEditViewData(1);
+		$userExpected = [
+			'password' => '0e41ea572d9a80c784935f2fc898ac34649079a9',
+			'id' => 1,
+			'email' => 'testing@axiapayments.com',
+			'group_id' => 1,
+			'created' => '2014-01-24 11:02:22',
+			'modified' => '2014-01-24 11:02:22',
+			'token' => 'Lorem ipsum dolor sit amet',
+			'token_used' => '2014-01-24 11:02:22',
+			'token_uses' => 1,
+			'firstname' => 'Lorem ipsum dolor sit amet',
+			'lastname' => 'Lorem ipsum dolor sit amet',
+			'extension' => 1,
+			'active' => true,
+			'api_password' => 'Lorem ipsum dolor sit amet',
+			'api_enabled' => true,
+			'template_id' => 1,
+			'pw_expiry_date' => '2019-10-01 00:00:00',
+			'pw_reset_hash' => null,
+			'fullname' => 'Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet'
+
+		];
+		$managerExpected = [
+			[
+                'id' => 1,
+                'fullname' => 'Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet',
+                'UsersManager' => [
+                    'id' => '52c32849-9ebc-414c-95e6-7eb634627ad4',
+                    'user_id' => 1,
+                    'manager_id' => 1
+                ]
+           ]
+		];
+		$expectedTemplate = ['name' => 'Template 1 for PN1'];
+		$this->assertEquals($userExpected, $actual['User']);
+		$this->assertEquals($managerExpected, $actual['Manager']);
+		$this->assertEquals($expectedTemplate, $actual['Template']);
 	}
 
 /**
@@ -487,6 +660,5 @@ class UserTest extends CakeTestCase {
 		$this->assertContains(1, $tstActualVals);
 		$this->assertContains(2, $tstActualVals);
 		$this->assertContains(3, $tstActualVals);
-		// $this->assertSame($expected, $actual);
 	}
 }
