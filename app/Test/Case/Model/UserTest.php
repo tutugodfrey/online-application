@@ -403,7 +403,7 @@ class UserTest extends CakeTestCase {
 /**
  * testGetDaysTillPwExpires
  *
- * @covers User::newPwExpiration
+ * @covers User::getDaysTillPwExpires
  * @return void
  */
 	public function testGetDaysTillPwExpires() {
