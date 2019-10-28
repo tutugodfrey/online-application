@@ -240,6 +240,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testSendCoversheet method
  *
+ * @covers Conversheet::sendCoversheet()
  * @return void
  */
 	public function testSendCoversheet() {
@@ -258,6 +259,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testUnlinkCoversheet method
  *
+ * @covers Conversheet::unlinkCoversheet()
  * @return void
  */
 	public function testUnlinkCoversheet() {
@@ -276,6 +278,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testFindIndex method
  *
+ * @covers Conversheet::_findIndex()
  * @return void
  */
 	public function testFindIndex() {
@@ -307,6 +310,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testOrConditions
  *
+ * @covers Conversheet::orConditions()
  * @return void
  */
 	public function testOrConditions() {
@@ -326,5 +330,69 @@ class CoversheetTest extends CakeTestCase {
 		$response = $this->Coversheet->orConditions($data);
 
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
+	}
+
+/**
+ * testCheckOrgRegionSubRegion
+ *
+ * @covers Conversheet::checkOrgRegionSubRegion()
+ * @return void
+ */
+	public function testCheckOrgRegionSubRegion() {
+		$tstData = [
+			'Coversheet' => [
+				'org_name' => null,
+				'region_name' => 'tst region',
+				'subregion_name' => 'tst subregion',
+			]
+		];
+		$actual = $this->Coversheet->set($tstData);
+		$actual = $this->Coversheet->checkOrgRegionSubRegion(['org_name' => null]);
+		$this->assertSame("A parent Organization is required if Region or Subregion are entered", $actual);
+		
+
+		$tstData['Coversheet']['region_name'] = null;
+		$actual = $this->Coversheet->clear();
+		$actual = $this->Coversheet->set($tstData);
+		$actual = $this->Coversheet->checkOrgRegionSubRegion(['region_name' => null]);
+		$this->assertSame("Region is required if adding a Subregion", $actual);
+
+		$tstData['Coversheet']['org_name'] = 'tst org';
+		$tstData['Coversheet']['region_name'] = 'tst region';
+		$actual = $this->Coversheet->clear();
+		$actual = $this->Coversheet->set($tstData);
+		$actual = $this->Coversheet->checkOrgRegionSubRegion(['org_name' => null]);
+		$this->assertTrue($actual);
+		$actual = $this->Coversheet->checkOrgRegionSubRegion(['region_name' => null]);
+		$this->assertTrue($actual);
+	}
+
+/**
+ * testCreateNew
+ *
+ * @covers Conversheet::createNew()
+ * @return void
+ */
+	public function testCreateNew() {
+		$appId = 999;
+		$uid = 321;
+
+		$this->assertNotEmpty($this->Coversheet->createNew($appId, $uid));
+	}
+
+/**
+ * testDateIsNotInThePast
+ *
+ * @covers Conversheet::dateIsNotInThePast()
+ * @return void
+ */
+	public function testDateIsNotInThePast() {
+		for($x = 1; $x<10; $x ++) {
+			$check = ['some_date' => (date('Y') + $x) . date('-m-d')];
+			$this->assertTrue($this->Coversheet->dateIsNotInThePast($check));
+			$check = ['some_date' => (date('Y') - $x) . date('-m-d')];
+			$this->assertSame('Some Date cannot be in the past!', $this->Coversheet->dateIsNotInThePast($check));
+		}
+		$this->assertTrue($this->Coversheet->dateIsNotInThePast([]));
 	}
 }
