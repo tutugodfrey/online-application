@@ -240,7 +240,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testSendCoversheet method
  *
- * @covers Conversheet::sendCoversheet()
+ * @covers Coversheet::sendCoversheet()
  * @return void
  */
 	public function testSendCoversheet() {
@@ -259,7 +259,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testUnlinkCoversheet method
  *
- * @covers Conversheet::unlinkCoversheet()
+ * @covers Coversheet::unlinkCoversheet()
  * @return void
  */
 	public function testUnlinkCoversheet() {
@@ -278,7 +278,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testFindIndex method
  *
- * @covers Conversheet::_findIndex()
+ * @covers Coversheet::_findIndex()
  * @return void
  */
 	public function testFindIndex() {
@@ -310,7 +310,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testOrConditions
  *
- * @covers Conversheet::orConditions()
+ * @covers Coversheet::orConditions()
  * @return void
  */
 	public function testOrConditions() {
@@ -335,7 +335,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testCheckOrgRegionSubRegion
  *
- * @covers Conversheet::checkOrgRegionSubRegion()
+ * @covers Coversheet::checkOrgRegionSubRegion()
  * @return void
  */
 	public function testCheckOrgRegionSubRegion() {
@@ -370,7 +370,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testCreateNew
  *
- * @covers Conversheet::createNew()
+ * @covers Coversheet::createNew()
  * @return void
  */
 	public function testCreateNew() {
@@ -383,7 +383,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testDateIsNotInThePast
  *
- * @covers Conversheet::dateIsNotInThePast()
+ * @covers Coversheet::dateIsNotInThePast()
  * @return void
  */
 	public function testDateIsNotInThePast() {
