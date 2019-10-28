@@ -546,7 +546,7 @@ class UserTest extends CakeTestCase {
 	}
 
 /**
- * hasDWithCobrandsNotEmpty
+ * testWithCobrandsNotEmpty
  *
  * @covers User::withCobrandsNotEmpty
  * @return void
@@ -567,10 +567,15 @@ class UserTest extends CakeTestCase {
 				'Cobrand' => ['id' => null]
 			],
 		];
+
 		$this->User->clear();
 		$this->User->set($tstData);
 		$actual = $this->User->withCobrandsNotEmpty([]);
 		$this->assertFalse($actual);
+
+		$this->User->clear();
+		$actual = $this->User->withCobrandsNotEmpty([]);
+		$this->assertTrue($actual);
 	}
 
 /**
@@ -618,6 +623,52 @@ class UserTest extends CakeTestCase {
 		$this->assertEquals($userExpected, $actual['User']);
 		$this->assertEquals($managerExpected, $actual['Manager']);
 		$this->assertEquals($expectedTemplate, $actual['Template']);
+	}
+
+/**
+ * testGetAssignedManagersList
+ *
+ * @covers User::getAssignedManagersList
+ * @return void
+ */
+	public function testGetAssignedManagersList() {
+		$userIds = $this->User->find('list', ['fields'=> ['id', 'id']]);
+		$expected = [1 => 'Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet'];
+
+		$actual = $this->User->getAssignedManagersList(1);
+		$this->assertSame($expected, $actual);
+
+		$actual = $this->User->getAssignedManagersList(11);
+		$this->assertSame($expected, $actual);
+
+		$actual = $this->User->getAssignedManagersList(12);
+		$this->assertEmpty($actual);
+		
+	}
+
+/**
+ * testGetJsonCobrandsTemplates
+ *
+ * @covers User::getJsonCobrandsTemplates
+ * @return void
+ */
+	public function testGetJsonCobrandsTemplates() {
+		$actual = $this->User->getJsonCobrandsTemplates();
+		$expected = [
+			4 => [
+				 6 => 'Corral - Template 1 for Corral'
+			],
+			1 => [
+				1 => 'Partner Name 1 - Template 1 for PN1',
+				2 => 'Partner Name 1 - Template 2 for PN1'
+			],
+			2 => [
+				3 => 'Partner Name 2 - Template 1 for PN2',
+				4 => 'Partner Name 2 - Template used to test afterSave of app values',
+				5 => 'Partner Name 2 - Template used to test getFields'
+			],
+		];
+		$this->assertSame($expected, json_decode($actual, true));
 	}
 
 /**

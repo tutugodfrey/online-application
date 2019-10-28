@@ -706,6 +706,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->TemplateSection->Behaviors->detach($name);
 		$this->TemplateField->Behaviors->detach($name);
 	}
+
 /**
  * __saveTstDataForAppSyncProcedure()
  * Utility method to create test associated Template data with 1 page, section and n field(s)
@@ -790,6 +791,27 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->CobrandedApplication->setDataToSync(array('junk and stuff'));
 	}
 
+/**
+ * testSetExportedDate()
+ *
+ * @covers CobrandedApplication::setExportedDate()
+ * @return void
+ */
+	public function testSetExportedDate() {
+		$expected = $this->CobrandedApplication->find('first', ['recursive' => -1, 'conditions' => ['CobrandedApplication.id' => 1]]);
+		$this->assertEmpty($expected['CobrandedApplication']['api_exported_date']);
+		$this->assertEmpty($expected['CobrandedApplication']['csv_exported_date']);
+		
+		$this->CobrandedApplication->setExportedDate(1, true);
+		$expected = $this->CobrandedApplication->find('first', ['conditions' => ['CobrandedApplication.id' => 1]]);
+		$this->assertNotEmpty($expected['CobrandedApplication']['api_exported_date']);
+		$this->assertEmpty($expected['CobrandedApplication']['csv_exported_date']);
+
+		$this->CobrandedApplication->setExportedDate(1, false);
+		$expected = $this->CobrandedApplication->find('first', ['conditions' => ['CobrandedApplication.id' => 1]]);
+		$this->assertNotEmpty($expected['CobrandedApplication']['api_exported_date']);
+		$this->assertNotEmpty($expected['CobrandedApplication']['csv_exported_date']);
+	}
 
 /**
  * testSetDataToSyncNewData()

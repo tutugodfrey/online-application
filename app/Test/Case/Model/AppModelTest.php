@@ -85,6 +85,20 @@ class AppModelTest extends CakeTestCase {
 		$result = $this->AppModel->getRandHash();
 		$this->assertNotEmpty($result);
 	}
+
+/**
+ * testCreateAxiaDbApiAuthClient
+ *
+ * @covers AppModel::createAxiaDbApiAuthClient()
+ * @return void
+ */
+	public function testCreateAxiaDbApiAuthClient() {
+		$result = $this->AppModel->createAxiaDbApiAuthClient();
+		
+		$this->assertNotEmpty($result);
+		$this->assertTrue(is_object($result));
+	}
+
 /**
  * testValidateFieldsEqual
  *
