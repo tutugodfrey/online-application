@@ -668,7 +668,11 @@ class UserTest extends CakeTestCase {
 				5 => 'Partner Name 2 - Template used to test getFields'
 			],
 		];
-		$this->assertSame($expected, json_decode($actual, true));
+		$actual = json_decode($actual, true);
+		$this->assertSame($expected[4][6], $actual[4][6]);
+		$this->assertSame($expected[1][1], $actual[1][1]);
+		$this->assertSame($expected[1][2], $actual[1][2]);
+		$this->assertEquals($expected[2], $actual[2]);
 	}
 
 /**
