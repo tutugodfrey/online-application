@@ -411,10 +411,10 @@ class UserTest extends CakeTestCase {
 		$now = date_create(date('Y-m-d'));
 		$pwExpDate = date_create($pwExpDate);
 		$diff = date_diff($now, $pwExpDate);
-		$expected = $diff->d;
-		
+		$expected = $diff->format("%R%a");
+
 		$actual = $this->User->getDaysTillPwExpires(1);
-		$this->assertSame(-($expected), $actual);
+		$this->assertSame((int)$expected, $actual);
 	}
 
 /**
