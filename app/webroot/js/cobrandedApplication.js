@@ -200,22 +200,24 @@ var totalStartUpFees = function() {
 
 
 var totalMonthlyVolume = function() {
-	var newTotalVol = 0;
-	$("[label$=' Volume*']").each(function(index, item){
-		if ($(item).attr('id').indexOf('Total') < 0) {
-			amount = parseFloat($(item).val().replace(/,/g, ''));
-			amount = isNaN(amount)? 0 : amount;
-			newTotalVol += parseFloat(amount);
-		}	
-	});
+	if ($("[label^='Total Monthly Volume']").length) {
+		var newTotalVol = 0;
+		$("[label$=' Volume*']").each(function(index, item){
+			if ($(item).attr('id').indexOf('Total') < 0) {
+				amount = parseFloat($(item).val().replace(/,/g, ''));
+				amount = isNaN(amount)? 0 : amount;
+				newTotalVol += parseFloat(amount);
+			}	
+		});
 
-	newTotalVol = newTotalVol.toFixed(3);
-	previousTotal = parseFloat($("[label^='Total Monthly Volume']").val().replace(/,/g, '')).toFixed(3);
+		newTotalVol = newTotalVol.toFixed(3);
+		previousTotal = parseFloat($("[label^='Total Monthly Volume']").val().replace(/,/g, '')).toFixed(3);
 
-	//Trigger AJAX request to update total field IFF a change actually happened.
-	if (newTotalVol !== previousTotal) {
-		$("[label^='Total Monthly Volume']").val(newTotalVol);
-		$("[label^='Total Monthly Volume']").trigger('change');
+		//Trigger AJAX request to update total field IFF a change actually happened.
+		if (newTotalVol !== previousTotal) {
+			$("[label^='Total Monthly Volume']").val(newTotalVol);
+			$("[label^='Total Monthly Volume']").trigger('change');
+		}
 	}
 }
 
