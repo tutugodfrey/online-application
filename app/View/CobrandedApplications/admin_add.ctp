@@ -7,6 +7,13 @@
 			<div class="panel-heading"><u><strong><?php echo __('Admin Add Application')?></strong></u></div>
 			<div class="panel-body">
 				<?php 
+					if (empty($this->request->params['pass'])) : ?>
+						<div class="alert alert-info small">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+							If data from this needs to sync between SalesForce and the DB, please create from SF.
+						</div>
+				<?php endif; ?>
+				<?php
 					echo $this->Form->create('CobrandedApplication', array(
 							'inputDefaults' => array(
 								'div' => 'form-group col-md-12',
