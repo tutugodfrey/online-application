@@ -242,7 +242,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 					break;
 
 				case 10: // money     - $(#(1-3),)?(#(1-3)).## << needs work
-					$this->__testInvalidAndValidAppValues('money', $appValue, 'leters are not a valid money', '$123000.00');
+					$this->__testInvalidAndValidAppValues('money', $appValue, 'leters are not a valid money', '123000.00');
 					break;
 				case 12: // ssn       - ###-##-####
 					$this->__testInvalidAndValidAppValues('ssn', $appValue, 'leters are not a valid ssn', '123-45-6789');
