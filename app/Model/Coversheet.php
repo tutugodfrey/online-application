@@ -135,6 +135,11 @@ class Coversheet extends AppModel {
 				'required' => false,
 				'allowEmpty' => true
 			),
+			'isValidDate' => array(
+				'rule' => array('isValidDate'),
+				'required' => false,
+				'allowEmpty' => true
+			),
 		),
 	);
 
@@ -178,6 +183,28 @@ class Coversheet extends AppModel {
 			return "$fieldName cannot be in the past!";
 		}
 		return true;
+	}
+
+/**
+ * isValidDate
+ * Custom validation rule checks whether a date is valid
+ * 
+ * @param array $check an associated model's Region id
+ * @return array list of subregions that belong to the passed region
+ */
+	public function isValidDate($check) {
+		$field = key($check);
+		$fieldName = Inflector::humanize($field);
+		$dateVal = Hash::get($check, $field);
+		if (empty($dateVal)) {
+			return true;
+		}
+		$d = DateTime::createFromFormat('Y-m-d', $dateVal);
+
+		if ($d && $d->format('Y-m-d') == $dateVal) {
+			return true;
+		}
+		return "Invalid Date!";
 	}
 
 /**

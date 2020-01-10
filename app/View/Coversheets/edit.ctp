@@ -1462,5 +1462,24 @@ jQuery(function() {
     jQuery( "#CoversheetSetupPartner" ).autocomplete({
         source: assocPartners
     });
+
+    jQuery('[id^="CoversheetExpectedInstallDate"').on('change', function() {
+        jQuery('#expInsDateErr').remove();
+        selMonth = jQuery('#CoversheetExpectedInstallDateMonth').val()*1;
+        selDay = jQuery('#CoversheetExpectedInstallDateDay').val()*1;
+        selYr = jQuery('#CoversheetExpectedInstallDateYear').val()*1;
+        if (selMonth >0 && selDay >0 && selYr >0) {
+            maxDaysInMonth = new Date(selYr, selMonth, 0).getDate();
+            if (selDay > maxDaysInMonth) {
+                selMoName = jQuery('#CoversheetExpectedInstallDateMonth option:selected').text();
+                jQuery('#CoversheetExpectedInstallDateYear').parent().prepend('<div class="text-danger bg-danger" id="expInsDateErr"><strong>' + selMoName +' only has '+ maxDaysInMonth + '  days!</strong></div>');
+                jQuery('#CoversheetExpectedInstallDateYear').parent().addClass('error');
+            } else {
+                jQuery('#expInsDateErr').remove();
+                jQuery('#CoversheetExpectedInstallDateYear').parent().removeClass('error');
+            }
+        }
+    });
+
   });
 </script>
