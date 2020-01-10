@@ -119,6 +119,17 @@ class CobrandedApplicationValue extends AppModel {
 				return false;
 			}
 
+			// if field type is money, remove commas and dollar signs if they exist
+			if ($field['TemplateField']['type'] == 10) {
+				$data = $this->data[$this->alias]['value'];
+				$data = str_replace(',', '', $data);
+				$data = str_replace('$', '', $data);
+				if (gettype($data) === 'string' && is_numeric($data)) {
+					$data = floatval($data);
+				}
+				$this->data[$this->alias]['value'] = $data;
+			}
+
 			$retVal = $this->validApplicationValue($this->data[$this->alias], $field['TemplateField']['type'], $field['TemplateField']);
 
 			// check if field is set to encrypt
@@ -129,13 +140,6 @@ class CobrandedApplicationValue extends AppModel {
 					$this->data[$this->alias]['value'] = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
 						$data, 'cbc', Configure::read('Cryptable.iv')));
 				}
-			}
-
-			// if field type is money, remove commas if they exist
-			if ($field['TemplateField']['type'] == 10) {
-				$data = $this->data[$this->alias]['value'];
-				$data = str_replace(',', '', $data);
-				$this->data[$this->alias]['value'] = $data;
 			}
 
 		}
@@ -196,7 +200,11 @@ class CobrandedApplicationValue extends AppModel {
 				$retVal = Validation::phone($trimmedDataValue);
 				break;
 
-			case 10: // money     - $(#(1-3),)?(#(1-3)).## << needs work
+			case 10: // money     - $(#(1-3),)?(#(1-3)).### << needs work
+				//Validation fails if the value is a string representation of a floating point number
+				if (gettype($trimmedDataValue) === 'string' && is_numeric($trimmedDataValue)) {
+					$trimmedDataValue = floatval($data);
+				}
 				$retVal = Validation::money($trimmedDataValue);
 				break;
 
