@@ -167,7 +167,7 @@ class Coversheet extends AppModel {
  * Custom validation rule checks whether a date is in the past
  * 
  * @param array $check an associated model's Region id
- * @return array list of subregions that belong to the passed region
+ * @return mixed boolean | sring
  */
 	public function dateIsNotInThePast($check) {
 		$field = key($check);
@@ -190,7 +190,7 @@ class Coversheet extends AppModel {
  * Custom validation rule checks whether a date is valid
  * 
  * @param array $check an associated model's Region id
- * @return array list of subregions that belong to the passed region
+ * @return mixed boolean | sring
  */
 	public function isValidDate($check) {
 		$field = key($check);
