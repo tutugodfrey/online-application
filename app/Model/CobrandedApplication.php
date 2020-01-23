@@ -3195,12 +3195,14 @@ class CobrandedApplication extends AppModel {
 			return true;
 		}
 
-		//Get all applications that use this template with their serialized data_to_sync string
+		//Get all applications (up to 3 months back) that use this template with their serialized data_to_sync string 
 		$settings = array(
 			'fields' => array('CobrandedApplication.id', 'CobrandedApplication.data_to_sync', 'CobrandedApplication.modified'),
 			'conditions' => array(
+				"CobrandedApplication.modified > '" .  date("Y-m-d" , strtotime("-3 months")) .  "'",
 				'CobrandedApplication.status NOT IN' => array(self::STATUS_SIGNED, self::STATUS_COMPLETED)
-			)
+			),
+			'order' => 'CobrandedApplication.modified DESC'
 		);
 
 		$cbApps = $this->getByTemplateId($templateId, $settings);
