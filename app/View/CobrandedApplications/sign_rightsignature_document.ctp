@@ -1,13 +1,9 @@
 <html>
 <head>
-	<!--<?//php common_styles(); ?>-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<!--<?php if ($error)
-		//login_bar();
-	?>-->
         <?php if (!$alreadySigned) { ?>
 	<div class="container">
 	<div class="panel panel-primary">
@@ -19,11 +15,11 @@
 				<h3 class="text-primary">Instructions:</h3>
 				<ol>
 					<li> Please review and submit signatures for all sections marked as <span class="text-danger"><strong>**Pending</strong></span> below.</li>
-					<li>  <span class="text-danger"><strong>All the </strong></span><span class="text-success"><strong><u>green</u> Sign Document </strong></span><span class="text-danger"><strong> buttons next to all signer names must be clicked.</strong></span></li>
-					<li> Each green button will take your through a defierent section of the document that needs your signature, initials, and/or dates. </li>
-					<li> After clicking each green button, click/follow the <span class="label label-danger">Scroll <span class="glyphicon glyphicon-arrow-down"></span></span> tab on the left edge of the document; it will guide you to each required field. </li>
-					<li> Sign/Initial/Date all required fields, using your mouse for the signatures (click-and-drag).  When done click "<strong><span class="text-success"><span class="glyphicon glyphicon-ok"></span></span> SUBMIT SIGNATURE</strong>". </li>
-					<li> The page will then refresh automatically, <strong>repeat all steps above for all sections marked as <span class="text-danger">**Pending</span> below.</strong></li>
+					<li>  <span class="text-danger"><strong>All the </strong></span><span class="text-success"><strong><u>green</u> </strong></span><span class="text-danger"><strong> buttons next to each signer name must be clicked.</strong></span></li>
+					<li> On mobile devices the document will open in a new window, <strong>please return to this window when done and review any pending sections.</strong></li>
+					<li> Each green button will take you through the sections of the document that need your signature, initials, and/or dates. </li>
+					<li> Sign/Initial/Date all required fields, using your mouse for the signatures (click-and-drag) and click "<strong></span> Submit Signature</strong>" when done. </li>
+					<li> This page may refresh automatically after each section is completed, <strong>repeat all steps above for all sections marked as <span class="text-danger">**Pending</span> below.</strong></li>
 	                                                                
 				</ol>
 			</div>
@@ -39,127 +35,128 @@
 						echo '<script>$( "#checkAllDone" ).show( "clip", null,2000);</script>';
 					} else {
 						echo "<h3>Error</h3><div class=\"span-24\">";
-						echo "Error:" . Xml::fromArray(message);
+						echo "Error: " . $apiErrorMsg;
 						echo "</div>";
 					}
-				} else { 
-	                                if(Hash::dimensions($xml) == 5) {
-	                                    $rsarray = $xml['document']['signer-links']['signer-link'];
-	                                } else {
-	                                    $rsarray = $xml['document']['signer-links'];
-	                                }
-	                                
-					foreach ($rsarray as $signer) { 
+				} else {
 
-						if ($signer['role'] == 'signer_A'){
-	                                           $signera = $signer['name'];
-	                                           $tokena = $signer['signer-token'];
-	                                        }
-	                                        if($signer['role'] == 'signer_B') {
-	                                           $signerb = $signer['name'];
-	                                           $tokenb = $signer['signer-token'];
+					foreach ($docDetails['document']['recipients'] as $signer) {
+						if ($signer['sequence'] == '0'){
+                           $signera = ($signer['status'] == 'pending')? $signer['name'] : null;
+                           $signerA_Id = $signer['id'];
+                           $signerA_URL = $signer['sign_url'];
+                        }
+                        if($signer['sequence'] == '1') {
+                           $signerb = ($signer['status'] == 'pending')? $signer['name'] : null;
+                           $signerB_Id = $signer['id'];
+                           $signerB_URL = $signer['sign_url'];
 						}
-	                                        
-	                                        if ($signer['role'] == 'signer_C'){
-	                                           $signerc = $signer['name'];
-	                                           $tokenc = $signer['signer-token'];                                            
-	                                        }
-	                                        
-	                                        if($signer['role'] == 'signer_D') {
-	                                           $signerd = $signer['name'];
-	                                           $tokend = $signer['signer-token'];					
-	                                        } 
-	//                                        
-	//					// Makes signer link redirect to RightSignature's link which handles all the odd cases (zooming, scrolling, etc...) that can make mess up Widget
-	//				/*	if ($is_mobile_safari) {
-	//						echo "<span class=\"span-8\"><a href=\"$rightsignature->base_url/signatures/embedded?rt=" . $this->Signer->{'signer-token'} . "\">Sign Document</a></span>";
-	//					} else { // Makes signer link render in iframe in case we want to customize the look
-	//						echo "<span class=\"span-8\"><a href=\"#\" onclick=\"change_signer('$rightsignature->base_url/signatures/embedded?height=$widgetHeight&rt=" . $this->Signer->{'signer-token'} . "')\">Sign Document</a></span>";
-	//					}
-	//					echo "</div>";*/
+    	                    
+                        if ($signer['sequence'] == '2'){
+                           $signerc = ($signer['status'] == 'pending')? $signer['name'] : null;
+                           $signerC_Id = $signer['id'];
+                           $signerC_URL = $signer['sign_url'];                                            
+                        }
+                        
+                        if($signer['sequence'] == '3') {
+                           $signerd = ($signer['status'] == 'pending')? $signer['name'] : null;
+                           $signerD_Id = $signer['id'];
+                           $signerD_URL = $signer['sign_url'];					
+                        } 
 					}
 						echo '<br/><div id="pendCountMsg" class="text-center center-block small" style="display:none"></div>';
                         if (!empty($signera)) {
                             if ($varSigner){
                                 echo "<h3 class='text-primary'>Select Signer</h3><div class=\"span-24\">";
-                                echo "<span class=\"span-5\">Signer Name: " . $signera .  " - </span>";
+                                echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending App section signature from:</strong></span> Signer Name: " . $signera .  " - </span>";
             					if ($is_mobile_safari) {
-									echo "<span class=\"span-8\"><a href=\"$rightsignature->base_url/signatures/embedded?rt=" . $tokena . "\">Sign Installation Sheet</a></span>";
+									echo "<span class=\"span-8\"><a target='_blank' onclick=\"setCurSigner('$signerA_Id');\"  href=\"" . $signerA_URL . "\">Go to Sign Installation Sheet</a></span><strong>(Please return to this page when done with this section)</strong>";
 								} else { // Makes signer link render in iframe in case we want to customize the look
-									echo "<span class=\"span-8\"><a href=\"#\" onclick=\"change_signer('$rightsignature->base_url/signatures/embedded?height=$widgetHeight&rt=" . $tokena . "')\">Sign Installation Sheet</a></span>";
+									echo "<span class=\"span-8\"><a href=\"#\" onclick=\"change_signer('" . $signerA_URL . "'); setCurSigner('$signerA_Id');\">Sign Installation Sheet</a></span>";
 								}
 								echo "</div>";    
                             } else {
 	                            echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
 	                            echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending App section signature from:</strong></span> " . $signera .  ": </span>";
 	        					if ($is_mobile_safari) {
-									echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"$rightsignature->base_url/signatures/embedded?rt=" . $tokena . "\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+									echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerA_Id');\" target='_blank' href=\"" . $signerA_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
 								} else { // Makes signer link render in iframe in case we want to customize the look
-									echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('$rightsignature->base_url/signatures/embedded?height=$widgetHeight&rt=" . $tokena . "')\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+									echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerA_URL . "'); setCurSigner('$signerA_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
 								}
 								echo "</div>";
                             }
-	                                }
+                        }
 	                                if (!empty($signerb)) {
 	                                        echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
 	                                        echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending PG section signature from:</strong></span> " . $signerb .  ": </span>";
 										if ($is_mobile_safari) {
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"$rightsignature->base_url/signatures/embedded?rt=" . $tokenb . "\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerB_Id');\" target='_blank' href=\"" . $signerB_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
 										} else { // Makes signer link render in iframe in case we want to customize the look
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('$rightsignature->base_url/signatures/embedded?height=$widgetHeight&rt=" . $tokenb . "')\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerB_URL . "');setCurSigner('$signerB_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
 										}
 	                                        echo "</div>";
 	                                }
 	                                if (!empty($signerc)) {
 	                                        echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
-	                                        echo "<span class=\"span-5\"><span class='text-primary'><strong>**Pending App section signature from:</strong></span> " . $signerc .  ": </span>";
+	                                        echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending App section signature from:</strong></span> " . $signerc .  ": </span>";
 										if ($is_mobile_safari) {
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"$rightsignature->base_url/signatures/embedded?rt=" . $tokenc . "\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerC_Id');\"  target='_blank' href=\"" . $signerC_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
 										} else { // Makes signer link render in iframe in case we want to customize the look
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('$rightsignature->base_url/signatures/embedded?height=$widgetHeight&rt=" . $tokenc . "')\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerC_URL . "');setCurSigner('$signerC_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
 										}
 						echo "</div>";
 	                                }
 	                                if (!empty($signerd)) {
 	                                        echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
-	                                        echo "<span class=\"span-5\"><span class='text-primary'><strong>**Pending PG section signature from: </strong></span> " . $signerd .  ": </span>";
+	                                        echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending PG section signature from: </strong></span> " . $signerd .  ": </span>";
 										if ($is_mobile_safari) {
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"$rightsignature->base_url/signatures/embedded?rt=" . $tokend . "\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerD_Id');\" target='_blank' href=\"" . $signerD_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
 										} else { // Makes signer link render in iframe in case we want to customize the look
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('$rightsignature->base_url/signatures/embedded?height=$widgetHeight&rt=" . $tokend . "')\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerD_URL . "');setCurSigner('$signerD_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
 										}
 						echo "</div>";
 	                                }
-
-
 				}
 	                        
 				?>
 				<br/>
-				<div class="span-24">
-					<?php if (!empty($appPdfUrl) && !$alreadySigned): ?>
-					<div class="panel panel-success pull-right" id="documentToolKit" style="display:none">
-						<div class="panel-heading">
-							<strong>Tools<span class="glyphicon glyphicon-cog pull-right"></span></strong>
-						</div>
-						<ul class="list-group">
-							<li class="list-group-item">
-								<span class="glyphicon glyphicon-new-window">&nbsp;</span>
-								<a target="_blank" href=<?php echo "'$appPdfUrl'"; ?>>View larger <strong>Read-Only</strong> Document</a>
-							</li>
-							<li class="list-group-item">
-								<span class="glyphicon glyphicon-hand-up">&nbsp;</span>
-								<a href="javascript:void(0)" onClick="scrollToBottomOrTop(false)">Go To Top of Page</a>
-							</li>
-							<li class="list-group-item">
-								<span class="glyphicon glyphicon-hand-down">&nbsp;</span>
-								<a href="javascript:void(0)" onClick="scrollToBottomOrTop(true)">Go To Bottom of Page</a>
-							</li>
-						</ul>
-					</div>
-				<?php endif;?>
-					<iframe width="<?php echo $widgetWidth; ?>px" scrolling="no" height="<?php echo $widgetHeight; ?>px" frameborder="0" id="signing-widget"></iframe>
+				<?php if (!$alreadySigned): ?>
+				<div id="autoRefreshNotice" style="display:none">
+				    <div style="max-width: 400px" class="center-block text-center">
+				        <div class="panel panel-success">
+				        	<div id="sectionSuccess" style="display:block">
+					            <h3 class="text-success nowrap">Section completed, Thank you!</h3>
+					            <strong>You will now be taken to the next step, or<br>press continue to go to next step.</strong><br><br>
+				        	</div>
+				        	<div id="autoRefreshError" style="display:none">
+					            <h3 class="text-danger nowrap"><span class="glyphicon glyphicon-exclamation-sign"></span><br>Unexpected error occurred!</h3>
+					            <strong>Sorry! Please press continue to<br/>refresh page and go to next steps.</strong><br><br>
+				        	</div>
+				        	<a href="javascript:void(0);" onclick="location.reload();" class="btn btn-info">
+					                    Continue <span class="glyphicon glyphicon-refresh"></span></a>
+					        <br><br>
+				        </div>
+				    </div>
 				</div>
+				<div id='frameContaner' style="display:none">
+					<div class="row text-center" name="parentScrollBtns">
+						<a class="btn btn-sm btn-info" href="javascript:void(0)" onClick="scrollToBottomOrTop(true)">
+								<span class="glyphicon glyphicon-hand-down">&nbsp;</span>
+								Go To Bottom
+						</a>
+					</div>
+
+					<div class="row" style='font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent'>
+						<iframe frameborder="0" height="800" width="100%" scrolling="no" style="overflow:hidden" id="signing-widget"></iframe>
+					</div>
+					<div class="row text-center" name="parentScrollBtns">
+						<a class="btn btn-sm btn-info" href="javascript:void(0)" onClick="scrollToBottomOrTop(false)">
+								<span class="glyphicon glyphicon-hand-up">&nbsp;</span>
+								Back To Top
+						</a>
+					</div>
+				</div>
+				<?php endif;?>
 			</div>
 		</div>
 	</div>
@@ -182,16 +179,59 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function () {
+			scrollToBottomOrTop(false);
+			window.rsDocumentId = <?php echo "'{$docDetails['document']['id']}'"?>;
 			pendCount = $('[name="pendingSignature"]').length;
 			if (pendCount) {
 				$('#pendCountMsg').show();
 				$('#pendCountMsg').html('<div class="alert alert-info"><strong class="text-danger">Pending sections to review: ' + pendCount + '</strong></div>');
 			}
-
 		});
+		function startPolling() {
+		  if (window.stopPolling == false) {
+		  	setTimeout(function(){
+		  		isSignerDoneSigning();
+		    }, 2000);
+		  }
+		}
+		function setCurSigner(signerId) {
+			window.curSignerId = signerId;
+		    window.stopPolling = true;
+		    setTimeout(function(){
+		    	window.stopPolling = false;
+		  		startPolling();
+		    }, 6000);
+		}
+		function isSignerDoneSigning () {
+			$.ajax({
+				type: "POST",
+				url: '/CobrandedApplications/signerHasSigned/' + window.rsDocumentId +'/'+ window.curSignerId,
+				dataType: 'JSON',
+				success: function(data) {
+					if (data.signerHasSigned == false) {
+						startPolling();
+					} else {
+						window.stopPolling = true;
+						$('#frameContaner').hide();
+						$('#autoRefreshNotice').show();
+						location.reload();
+					}
+					
+				},
+				error: function(data) {
+					console.log(data.error);
+					window.stopPolling = true;
+					$('#frameContaner').hide();
+					$('#sectionSuccess').hide();
+					$('#autoRefreshNotice').show();
+					$('#autoRefreshError').show();
+				}
+			});
+		}
 		function change_signer(url) {
 			$("#signing-widget").attr('src', url);
-			$('#documentToolKit').fadeIn(2000);
+			$('#autoRefreshNotice').hide();
+			$('#frameContaner').fadeIn(2000);
 			window.addEventListener('beforeunload', function (e) {
 				pendCount = $('[name="pendingSignature"]').length;
 				loadBarHtml = '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%"></div> </div>';

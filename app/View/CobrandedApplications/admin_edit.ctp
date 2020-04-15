@@ -34,9 +34,6 @@
 						);
 				echo $this->Html->tag('div',
 					$this->Form->checkbox('send_coversheet') . "<strong> Send Coversheet</strong> <small><i>(if it hasn't been sent)</i></small>.", array('class' => 'text-center form-group col-md-12'));
-
-				echo $this->Form->input('rightsignature_document_guid');
-				echo $this->Form->input('rightsignature_install_document_guid');
 				echo $this->Html->link('Cancel', array('controller' => 'CobrandedApplications', 'action' => 'index'), array('class' => 'btn btn-sm btn-danger col-md-offset-4 col-sm-offset-4'));
 				echo $this->Form->end(array('label' => __('Submit'), 'div' => false, 'class' => 'btn btn-sm btn-success'));
 			?>

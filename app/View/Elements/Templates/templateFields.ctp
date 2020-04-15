@@ -63,8 +63,24 @@ echo $this->Form->input('description', array('class' => 'form-control', 'wrapInp
 echo $this->Form->input('rightsignature_template_guid',
 		array(
 			'type' => 'select',
-			'label' => 'Rightsignature Template Guid',
-				'options' => $templateList,
+			'label' => 'Rightsignature One Signer Templates',
+			'options' => $templateList,
+		)
+);
+echo $this->Form->input('secondary_rightsignature_template_id',
+		array(
+			'type' => 'select',
+			'label' => 'Rightsignature Two Signers Templates',
+			'options' => $twoSignerTemplateList,
+			'empty' => "Select a two signer template (if applicable)",
+			'after' => $this->Html->tag('span', $this->Html->tag('span',null, array('class' => 'glyphicon glyphicon-question-sign')) . $this->Html->tag('/span'),
+							array(
+								'class' => 'text-info',
+								'style' => 'font-size:130%',
+								'data-toggle' => 'tooltip',
+								'data-placement' => 'right',
+								'data-original-title' => 'Required when the applications that will use this template might have two signers/owners. Two signer templates are created in addition to One signer templates in RightSignature to allow two people to sign.'
+							))
 		)
 );
 
@@ -77,3 +93,9 @@ echo $this->Form->input('rightsignature_install_template_guid',
 );
 
 echo $this->Form->input('owner_equity_threshold', array('class' => 'form-control', 'wrapInput' => 'col col-md-4'));
+?>
+<script type='text/javascript'>
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();   
+});
+</script>

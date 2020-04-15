@@ -2,6 +2,7 @@
 App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
+App::uses('RightSignature', 'Model');
 App::uses('CakeTime', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
 
@@ -981,30 +982,35 @@ class CobrandedApplication extends AppModel {
 
 				case 2: // return RS signing url
 					$client = $this->createRightSignatureClient();
-					$templateGuid = $newApp['Template']['rightsignature_template_guid'];
-					$getTemplateResponse = $this->getRightSignatureTemplate($client, $templateGuid);
+					$rsTemplateUuid = $newApp['Template']['rightsignature_template_guid'];
+					$valuesMap = $this->CobrandedApplicationValues->getValuesByAppId($createAppResponse['cobrandedApplication']['id']);
+					if ($this->ownerCount($valuesMap) >= 2)  {
+						$rsTemplateUuid = $newApp['Template']['secondary_rightsignature_template_id'];
+					}
+
+					$getTemplateResponse = $this->getRightSignatureTemplate($client, $rsTemplateUuid);
 					$getTemplateResponse = json_decode($getTemplateResponse, true);
 
-					if ($getTemplateResponse && $getTemplateResponse['template']['type'] == 'Document' && $getTemplateResponse['template']['guid']) {
-						$applicationXml = $this->createRightSignatureApplicationXml(
-							$createAppResponse['cobrandedApplication']['id'], $user['email'], $getTemplateResponse['template']);
-							$createResponse = $this->createRightSignatureDocument($client, $applicationXml);
+					if ($getTemplateResponse && !empty($getTemplateResponse['reusable_template']['id'])) {
+						$applicationJSON = $this->createRightSignatureDocumentJSON(
+							$createAppResponse['cobrandedApplication']['id'], $user['email'], $getTemplateResponse['reusable_template']);
+							$createResponse = $this->createRightSignatureDocument($getTemplateResponse['reusable_template']['id'], $client, $applicationJSON);
 							$createResponse = json_decode($createResponse, true);
 
-						if ($createResponse['document']['status'] == 'sent' && $createResponse['document']['guid']) {
+						if ($createResponse['document']['state'] == 'pending' && $createResponse['document']['id']) {
 							// save the guid
 							$this->save(
 								array(
 									'CobrandedApplication' => array(
 										'id' => $createAppResponse['cobrandedApplication']['id'],
-										'rightsignature_document_guid' => $createResponse['document']['guid'],
+										'rightsignature_document_guid' => $createResponse['document']['id'],
 										'status' => 'completed'
 									)
 								),
 								array('validate' => false)
 							);
 
-							$response['application_url'] = Router::url('/cobranded_applications/sign_rightsignature_document', true) . '?guid=' . $createResponse['document']['guid'];
+							$response['application_url'] = Router::url('/cobranded_applications/sign_rightsignature_document', true) . '?guid=' . $createResponse['document']['id'];
 						} else {
 							$response['validationErrors'] = Hash::insert($response['validationErrors'], 'error: ', $createResponse);
 						}
@@ -1730,6 +1736,92 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * sendSignedAppToUw
+ *
+ * @param int $applicationId Cobranded Application Id
+ * @param string $optionalTemplate optional template to use
+ *
+ * @return $response array
+ */
+	public function sendSignedAppToUw($applicationId, $optionalTemplate = null, $pdfUrl = null) {
+
+		if (!$this->exists($applicationId)) {
+			return false;
+		}
+		//check if an email was sent already
+		if ($this->EmailTimeline->hasAny(['cobranded_application_id' => $applicationId, 'email_timeline_subject_id' => EmailTimeline::APP_SENT_TO_UW])) {
+			return true;
+		}
+
+		$settings = array('contain' => array(
+			'User',
+			'CobrandedApplicationValues',
+			'Template' => array(
+				'fields' => array('email_app_pdf', 'name'),
+				'Cobrand.partner_name'
+			),
+		));
+		$cobrandedApplication = $this->getById($applicationId, $settings);
+		//No email should be sent for Apps using these templates with these keywords in the name
+		if ((stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Payment Fusion') !== false) || 
+			(stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Text&Pay') !== false) ||
+			(stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Cancellation') !== false)) {
+			return true;
+		}
+
+		$dbaBusinessName = '';
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+
+		
+		$from = array(EmailTimeline::ENTITY1_NEWAPPS_EMAIL => 'Axia Online Application Signed');
+		if (stripos($cobrandedApplication['User']['email'], EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
+			$to = array(EmailTimeline::I3_UNDERWRITING_EMAIL);
+		} else {
+			$to = array(EmailTimeline::ENTITY2_APPS_EMAIL);
+		}
+
+
+		$subject = $dbaBusinessName . ' - Online Application Signed';
+		$format = 'html';
+		$template = 'notify_uw_signed_app';
+		
+		$description = "Application Description: ";
+		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
+		$viewVars['merchant'] = $dbaBusinessName;
+		$viewVars['description'] = $description;
+		$viewVars['appPdfUrl'] = (!empty($pdfUrl))? $pdfUrl : $this->getAppPdfUrl($applicationId, true);
+
+		if ($optionalTemplate != null) {
+			$template = $optionalTemplate;
+		}
+$to = ['omota@axiamed.com'];
+		$args = array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'format' => $format,
+			'template' => $template,
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $applicationId;
+			$args['email_timeline_subject_id'] = EmailTimeline::APP_SENT_TO_UW;
+			$args['recipient'] = implode(';', $to);
+			$response = $this->createEmailTimelineEntry($args);
+		}
+
+		return $response['success'];
+	}
+
+/**
  * repNotifySignedEmail
  *
  * @param int $applicationId Cobranded Application Id
@@ -1817,9 +1909,10 @@ class CobrandedApplication extends AppModel {
  * Makes a RightSignature API call to retrieve the PDF URL.
  *
  * @param int $id Cobranded Application Id
+ * @param boolean $overrideTemplate wheter to force retrival of the PDF URL regardless of whether the template allows PDF template to be emailed or not
  * @return string The URL where the PDF is located.
  */
-	public function getAppPdfUrl($id) {
+	public function getAppPdfUrl($id, $overrideTemplate = false) {
 		$appData = $this->find('first', array(
 			'recursive' => -1,
 			'fields' => array(
@@ -1831,17 +1924,14 @@ class CobrandedApplication extends AppModel {
 
 		$appPdfUrl = null;
 
-		if ($appData['Template']['email_app_pdf'] === true) {
+		if ($overrideTemplate || $appData['Template']['email_app_pdf'] === true) {
 			$guid = $appData['CobrandedApplication']['rightsignature_document_guid'];
 			$client = $this->createRightSignatureClient();
 			$docDetals = $client->getDocumentDetails($guid);
 			$docData = json_decode($docDetals, true);
 
 			if (!empty($docData)) {
-				$appPdfUrl = Hash::get($docData, 'document.signed_pdf_url');
-				if (!empty($appPdfUrl)) {
-					$appPdfUrl = urldecode($appPdfUrl);
-				}
+				$appPdfUrl = Hash::get($docData, 'document.merged_document_certificate_url');
 			}
 		}
 		return $appPdfUrl;
@@ -2061,9 +2151,8 @@ class CobrandedApplication extends AppModel {
  *
  * @return $response array
  */
-	public function getRightSignatureTemplate($client, $templateGuid) {
-		$response = $client->post('/api/templates/' . $templateGuid . '/prepackage.json',
-			"<?xml version='1.0' encoding='UTF-8'?><callback_location></callback_location>");
+	public function getRightSignatureTemplate($client, $templateId) {
+		$response = $client->api->get($client->base_url.RightSignature::API_V1_PATH. "/reusable_templates/$templateId");
 		return $response;
 	}
 
@@ -2071,27 +2160,14 @@ class CobrandedApplication extends AppModel {
  * createRightSignatureDocument
  *
  * @params
+ *     $templateId string id of the reusable template to use to create the new document
  *     $client object
- *     $applicationXml string
+ *     $appJsonStr string JSON string data to pupulate the document merge field values
  * @returns
  *     $response array
  */
-	public function createRightSignatureDocument($client, $applicationXml) {
-		$response = $client->post('/api/templates.json', $applicationXml);
-		return $response;
-	}
-
-/**
- * extendRightSignatureDocumentLife
- *
- * @params
- *     $client object
- *     $documentGuid string
- * @returns
- *     $response array
- */
-	public function extendRightSignatureDocumentLife($client, $documentGuid) {
-		$response = $client->post('/api/documents/' . $documentGuid . '/extend_expiration.xml');
+	public function createRightSignatureDocument($templateId, $client, $appJsonStr) {
+		$response = $client->api->post($client->base_url.RightSignature::API_V1_PATH. "/reusable_templates/$templateId/send_document", $appJsonStr);
 		return $response;
 	}
 
@@ -2106,18 +2182,20 @@ class CobrandedApplication extends AppModel {
 	public function getRightSignatureTemplates($client) {
 		$page = 1;
 		$totalPages = 99;
-
 		$templates = array();
 
 		while ($page <= $totalPages) {
-			$response = $client->signAndSendRequest("GET", "/api/templates.json?page=" . $page);
+			$response = $client->api->get($client->base_url.RightSignature::API_V1_PATH."/reusable_templates?page=". $page);
 			$response = json_decode($response, true);
-			$totalPages = $response['page']['total_pages'];
+			if (!empty(Hash::get($response, 'error'))) {
+				return $response;
+			}
+			$totalPages = $response['meta']['total_pages'];
 
-			foreach ($response['page']['templates'] as $arr) {
+			foreach ($response['reusable_templates'] as $arr) {
 				$filename = $arr['filename'];
-				$guid = $arr['guid'];
-				$templates[$guid] = $filename;
+				$id = $arr['id'];
+				$templates[$id] = $filename;
 			}
 			$page++;
 		}
@@ -2125,36 +2203,6 @@ class CobrandedApplication extends AppModel {
 		array_multisort($templates);
 		return $templates;
 	}
-
-/**
- * getRightSignatureTemplateDetails
- *
- * @params
- *     $client object
- *     $templateGuid string
- * @returns
- *     $response array
- */
-	public function getRightSignatureTemplateDetails($client, $templateGuid) {
-		$response = $client->signAndSendRequest("GET", '/api/templates/' . $templateGuid . '.json');
-		return $response;
-	}
-
-/**
- * getRightSignatureSignerLinks
- *
- * @params
- *     $client object
- *     $documentGuid string
- * @returns
- *     $response array
- */
-	public function getRightSignatureSignerLinks($client, $documentGuid) {
-		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
-		$response = $client->getSignerLinks($documentGuid, "https://" . $hostname . "/cobranded_applications/sign_rightsignature_document?guid=" . $documentGuid);
-		return $response;
-	}
-
 /**
  * createRightSignatureClient
  *
@@ -2164,14 +2212,79 @@ class CobrandedApplication extends AppModel {
  *     $client
  */
 	public function createRightSignatureClient() {
-		App::import('Vendor', 'oauth', array('file' => 'OAuth' . DS . 'rightsignature.php'));
+		return new RightSignature();
+	}
 
-		$rightsignature = new RightSignature('J7PQlPSlm3jaa2DbfCP989mIFrKRHUH1NqcjJugT', 'ZAYx4jEy6BVYPuad4kPQAw6lTrOxAeqWU8DGT6A1');
-		$rightsignature->request_token = new OAuthConsumer('v1cfHXdnHbD8in6ruqsb3MDVbuhdtZMaHTKVw1XI', 'tTyOsXYMAgoPQY5NXlsB9sKAYRZXsuLIcBzTiOpB', 1);
-		$rightsignature->access_token = new OAuthConsumer('FvpRze1k6JbP7HHm64IxQiWLHL9p0Jl4pw3x7PBP', 'cHrzepxhF7t9QMyO8CGUJlbSg4Lon23JEVYnD70Z', 1);
-		$rightsignature->oauth_verifier = 'jmV0StucajLmdz2gc7hw';
+/**
+ * arrayDiffOneSignerTwoSigners
+ * This method retreives all details about each template from RightSignature, analyzes the roles
+ * in each RightSignature template and differenciates the templates that are intended for one owner/signer
+ * to sign the corresponding applications from those intended for two owners/signers.
+ * Additionally it finds templates intended for install sheets and separates it from the rest.
+ * 
+ * @param array $templateList a one dimensional array of all RightSignature templates with the Id as key
+ *                            and some description as the value ['<id>' => 'Template Description']
+ * @return array a two timetinal array containing three sub-array enties at the top dimention, one entry
+ * contains a list of templates intended for one owner/signer to sign, another entry contains templates
+ * with two owners/signer, and a last one containing install sheet templates
+ * i.e: [
+ * 		'single_signers' => ['<id>' => 'Template Description', <...[]> ],
+ * 	 	'two_signers' => ['<id>' => 'Template Description', <...[]> ]
+ * 	 	'install_templates' => ['<id>' => 'Template Description', <...[]> ]
+ * 	];
+ * 	@throws Exception when an API error ocurrs
+ */
+	public function arrayDiffSingleSignerTwoSigner ($templateList, $client) {
+		if (empty($templateList) || empty($client)) {
+			return [];
+		}
+		$orderedList = [
+			'single_signers' => [],
+			'two_signers' => [],
+			'install_templates' => [],
+		];
+		foreach ($templateList as $rsUuid => $filename) {
+			if (empty($orderedList['install_templates']) && preg_match('/install/i', $filename)) {
+				//there is only one install sheet template
+				$orderedList['install_templates'][$rsUuid] = $filename;
+			} else {
+				//Get Template Details
+				$templateData = $this->getRightSignatureTemplate($client, $rsUuid);
+				$templateData = json_decode($templateData, true);
 
-		return $rightsignature;
+				//if error try one more time, access token could expire during run time
+				if (!empty(Hash::get($templateData, 'error'))) {
+					$client = $this->createRightSignatureClient();
+					$templateData = $this->getRightSignatureTemplate($client, $rsUuid);
+					$templateData = json_decode($templateData, true);
+				}
+				if (empty(Hash::get($templateData, 'error'))) {
+					//Check the number of roles there is never just 3 roles
+					$roleCount = count($templateData['reusable_template']['roles']);
+					//if roleCount > 2 then set as two signers template
+					if ($roleCount > 2) {
+						$orderedList['two_signers'][$rsUuid] = $filename;
+					} elseif ($roleCount == 2) {
+						//if roleCount = 2 roles then then two_signers template IFF any of the roles names contains the number 2 as in Owner/Officer 2 
+						$aggRoleName = $templateData['reusable_template']['roles'][0]['name'] . ' ' .$templateData['reusable_template']['roles'][1]['name'];
+
+						if (strpos($aggRoleName, '2') !== false) {
+							$orderedList['two_signers'][$rsUuid] = $filename;
+						} else {
+							$orderedList['single_signers'][$rsUuid] = $filename;
+						}
+					} elseif ($roleCount == 1) {
+						//if roleCount = 1 role then set single_signers
+						$orderedList['single_signers'][$rsUuid] = $filename;
+					}
+
+				} else {
+					throw new Exception('API Error: failed to get template details ' . Hash::get($templateData, 'error'));
+				}
+
+			}
+		}
+		return $orderedList;
 	}
 
 /**
@@ -2310,7 +2423,7 @@ class CobrandedApplication extends AppModel {
 					)
 				);
 
-				if (!empty($appValue)) {
+			if (!empty($appValue)) {
 					$name = $appValue['CobrandedApplicationValues']['name'];
 					$name = preg_replace('/^Terminal2-/', '', $name);
 					$appValue['CobrandedApplicationValues']['value'] = $name;
@@ -2414,6 +2527,222 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * createRightSignatureDocumentJSON
+ *
+ * @params
+ *     $applicationId int
+ *     $sender string
+ *     $rightSignatureTemplate array
+ *     $subject string
+ *     $terminalType string
+ * @returns
+ *     JSON string containing new app data
+ */
+	public function createRightSignatureDocumentJSON($applicationId, $sender, $rightSignatureTemplate, $subject = null, $terminalType = null) {
+		$cobrandedApplication = $this->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.id' => $applicationId
+				),
+				'contain' => array(
+					'User',
+					'Template',
+					'Merchant' => array('EquipmentProgramming'),
+					'CobrandedApplicationValues'
+				),
+				'recursive' => 2
+			)
+		);
+
+		$this->Cobrand = ClassRegistry::init('Cobrand');
+
+		$cobrand = $this->Cobrand->find(
+			'first',
+			array(
+				'conditions' => array(
+					'Cobrand.id' => $cobrandedApplication['Template']['cobrand_id']
+				)
+			)
+		);
+
+		$partnerName = $cobrand['Cobrand']['partner_name'];
+
+		$owner1Fullname = '';
+		$owner2Fullname = '';
+		$dbaBusinessName = '';
+
+		$owner1Email = '';
+		$owner2Email = '';
+
+		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
+
+		if (!empty($valuesMap['DBA'])) {
+			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['Owner1Name'])) {
+			$owner1Fullname = $valuesMap['Owner1Name'];
+		}
+		if (!empty($valuesMap['Owner2Name'])) {
+			$owner2Fullname = $valuesMap['Owner2Name'];
+		}
+		if (!empty($valuesMap['Owner1Email'])) {
+			$owner1Email = $valuesMap['Owner1Email'];
+		}
+		if (!empty($valuesMap['Owner2Email'])) {
+			$owner2Email = $valuesMap['Owner2Email'];
+		}
+
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+
+		
+		$docData = array();
+		if ($subject == null) {
+			$docData['name'] = htmlspecialchars($dbaBusinessName) . ' Axia Merchant Application';
+		} else {
+			$docData['name'] = htmlspecialchars($dbaBusinessName) . ' ' . $subject;
+		}
+		$docData['message'] = "Please sign this document. (Sent for signature by $sender)";
+		$docData['expires_in'] = 20;
+
+		$docRoles = array();
+		foreach ($rightSignatureTemplate['roles'] as $rsRole) {
+			//map officer owner 1 to $owner1Fullname
+			if (($subject == 'Axia Install Sheet - VAR') || (strpos($rsRole['name'], '1') !== false && !empty($owner1Fullname) && !empty($owner1Email))) {
+				$docRoles[] = array(
+					'name' => $rsRole['name'],
+					'signer_name' => htmlspecialchars($owner1Fullname),
+					'signer_email' => htmlspecialchars('noemail@rightsignature.com'),
+				);
+			}
+			//map officer owner 2 to $owner2Fullname
+			if (strpos($rsRole['name'], '2') !== false) {
+				$docRoles[] = array(
+					'name' => $rsRole['name'],
+					'signer_name' => (empty($owner2Fullname))? 'N/A' : htmlspecialchars($owner2Fullname),
+					'signer_email' => htmlspecialchars('noemail@rightsignature.com'),
+					'signer_omitted' => empty($owner2Fullname),
+				);
+			}
+		}
+		$docData['roles'] = $docRoles;
+		$mergefieldVals = array();
+		$installSheetFieldsAdded = false;
+		$addedSheetField1 = false;
+		$addedSheetField2 = false;
+		foreach ($rightSignatureTemplate['merge_field_components'] as $mergeField) {
+			$appValue = null;
+			if ($partnerName == 'Corral' && $mergeField['name'] == 'Terminal2-') {
+				$appValue = $this->CobrandedApplicationValues->find(
+					'first',
+					array(
+						'conditions' => array(
+							'cobranded_application_id' => $applicationId,
+							'CobrandedApplicationValues.name LIKE' => 'Terminal2-%',
+							'CobrandedApplicationValues.value' => 'true'
+						),
+					)
+				);
+
+			if (!empty($appValue)) {
+					$name = $appValue['CobrandedApplicationValues']['name'];
+					$name = preg_replace('/^Terminal2-/', '', $name);
+					$appValue['CobrandedApplicationValues']['value'] = $name;
+					$appValue['TemplateField']['type'] = 0;
+				}
+			} else {
+				$appValue = $this->CobrandedApplicationValues->find(
+					'first',
+					array(
+						'conditions' => array(
+							'cobranded_application_id' => $applicationId,
+							'CobrandedApplicationValues.name' => $mergeField['name']
+						),
+					)
+				);
+			}
+
+			// we don't want to send null or empty values
+			if (isset($appValue['CobrandedApplicationValues']['value'])) {
+				$fieldType = $appValue['TemplateField']['type'];
+
+				// type 3 is checkbox, 4 is radio
+				// we send different elements for multi option types
+				if ($fieldType == 3 || $fieldType == 4) {
+					if ($appValue['CobrandedApplicationValues']['value'] == 'true') {
+						$mergefieldVals[] = array(
+							'id' => $mergeField['id'],
+							'value' => 'X',
+						);
+					}
+				} else {
+					$mergefieldVals[] = array(
+						'id' => $mergeField['id'],
+						'value' => htmlspecialchars($appValue['CobrandedApplicationValues']['value']),
+					);
+				}
+			}
+
+			if ($mergeField['name'] == "SystemType") {
+				$mergefieldVals[] = array(
+					'id' => $mergeField['id'],
+					'value' => htmlspecialchars($terminalType),
+				);
+			}
+
+			if ($mergeField['name'] == "MID") {
+				$mergefieldVals[] = array(
+					'id' => $mergeField['id'],
+					'value' => htmlspecialchars($cobrandedApplication['Merchant']['merchant_mid']),
+				);
+			}
+
+			if ($mergeField['name'] == "Customer Service" || $mergeField['name'] == "Product Shipment" || $mergeField['name'] == "Handling of Returns") {
+				$mergefieldVals[] = array(
+					'id' => $mergeField['id'],
+					'value' => 'x',
+				);
+			}
+
+			if ($subject == 'Axia Install Sheet - VAR' && $installSheetFieldsAdded === false) {
+
+				if ($mergeField['name'] == 'Phone#') {
+					$tmpFieldVal = '877.875.6114';
+					if ($cobrandedApplication['User']['extension'] != "") {
+						$tmpFieldVal .= " x " . htmlspecialchars($cobrandedApplication['User']['extension']);
+					}
+					$mergefieldVals[] = array(
+						'id' => $mergeField['id'],
+						'value' => $tmpFieldVal,
+					);
+					$addedSheetField1 = true;
+				}
+				if ($mergeField['name'] == "RepFax#") {
+					$mergefieldVals[] = array(
+						'id' => $mergeField['id'],
+						'value' => htmlspecialchars('877.875.5135'),
+					);
+					$addedSheetField2 = true;
+				}
+				$installSheetFieldsAdded = ($addedSheetField1 && $addedSheetField2);
+			}
+
+		}// end foreach merge_field_components
+		//Add merge_field_values
+		$docData['merge_field_values'] = $mergefieldVals;
+		/****************************************************************************************/
+		//Some of the parameters below this comment may be ignored by rightsignature when creating 
+		//the documents depending on which endpoint is used to create the document.		
+		//Callback url only used if creating document using either of these endpoints 
+		//POST /reusable_templates/:id/send_document
+		//Otherwise ignored
+		$docData['callback_url'] = "https://" . $hostname . "/cobranded_applications/document_callback";
+		//this param will allow marking document as signed without the need of email indentity verification
+		$docData['in_person'] = true;
+		return json_encode($docData);
+	}
+
+/**
  * buildCobrandedApplicationValuesMap
  *
  * @params
@@ -2430,6 +2759,26 @@ class CobrandedApplication extends AppModel {
 			}
 		}
 		return $valuesMap;
+	}
+
+/**
+ * ownerCount
+ * Checks the Cobranded App Values data for non-empty Owner/Officer values.
+ * The returned count represents the number of owners that have been entered for the corresponding application.
+ * Fields Evalueated: Owner1Name || Owner1Email, Owner2Name || Owner2Email
+ * 
+ * @param array $cobrandedApplicationValues a single dimension array of key => value pairs where the keys are the merge field names.
+ * @return integer count of Owner 
+ */
+	public function ownerCount($cobrandedApplicationValues) {
+		$maxCount = 5;
+		$count = 0;
+		for($x = 1; $x <= $maxCount; $x++) {
+			if (!empty(Hash::get($cobrandedApplicationValues, 'Owner' . $x . 'Name')) || !empty(Hash::get($cobrandedApplicationValues, 'Owner' . $x . 'Email'))){
+				$count++;
+			}
+		}
+		return $count;
 	}
 
 /**

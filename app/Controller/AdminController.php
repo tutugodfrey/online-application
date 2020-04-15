@@ -15,6 +15,7 @@ class AdminController extends AppController {
 		$links = array();
 		if ($this->Session->read('Auth.User.Group.name') == 'admin') {
 			$links = array(
+				array('System Integrations Configurations', '/admin/ApiConfigurations/index'),
 				array('Settings', '/admin/settings/'),
 				array('Users', '/admin/users/'),
 				array('Groups', '/admin/groups/'),

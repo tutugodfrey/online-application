@@ -226,18 +226,17 @@ class TemplatesController extends NestedResourceController {
 			
 		$client = $this->CobrandedApplication->createRightSignatureClient();
 		$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
-
-		$templates = array();
-		$installTemplates = array();
-
-		foreach ($results as $guid => $filename) {
-			if (preg_match('/install/i', $filename)) {
-				$installTemplates[$guid] = $filename;
-			} else {
-				$templates[$guid] = $filename;
-			}
+		if (!empty(Hash::get($results, 'error'))) {
+			$this->_failure(__('Unexpected Error: ' . Hash::get($results, 'error') .". Please try again later."));
+			return $this->redirect($this->_getListUrl());
 		}
+		$orderedTemplates = $this->CobrandedApplication->arrayDiffSingleSignerTwoSigner($results, $client);
+		$templates = $orderedTemplates['single_signers'];
+		$twoSignerTemplateList = $orderedTemplates['two_signers'];
+		$installTemplates = $orderedTemplates['install_templates'];
+
 		$this->set('templateList', $templates);
+		$this->set('twoSignerTemplateList', $twoSignerTemplateList);
 		$this->set('installTemplateList', $installTemplates);
 
 		$this->__setCommonViewVariables();
@@ -253,18 +252,18 @@ class TemplatesController extends NestedResourceController {
 			$client = $this->CobrandedApplication->createRightSignatureClient();
 			$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
 
-			$templates = array();
-			$installTemplates = array();
-
-			foreach ($results as $guid => $filename) {
-				if (preg_match('/install/i', $filename)) {
-					$installTemplates[$guid] = $filename;
-				} else {
-					$templates[$guid] = $filename;
-				}
+			if (!empty(Hash::get($results, 'error'))) {
+				$this->_failure(__('Unexpected Error: ' . Hash::get($results, 'error') .". Please try again later."));
+				return $this->redirect($this->_getListUrl());
 			}
+			
+			$orderedTemplates = $this->CobrandedApplication->arrayDiffSingleSignerTwoSigner($results, $client);
+			$templates = $orderedTemplates['single_signers'];
+			$twoSignerTemplateList = $orderedTemplates['two_signers'];
+			$installTemplates = $orderedTemplates['install_templates'];
 
 			$this->set('templateList', $templates);
+			$this->set('twoSignerTemplateList', $twoSignerTemplateList);
 			$this->set('installTemplateList', $installTemplates);
 		} else {
 			$data = $this->request->data;

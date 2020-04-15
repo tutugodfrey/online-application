@@ -34,19 +34,19 @@ class TemplateBuilder extends AppModel {
 			);
 		$client = $CobrandedApplication->createRightSignatureClient();
 		$results = $CobrandedApplication->getRightSignatureTemplates($client);
-		$templateList = array();
-		$installTemplateList = array();
 
-		foreach ($results as $guid => $filename) {
-			if (preg_match('/install/i', $filename)) {
-				$installTemplateList[$guid] = $filename;
-			} else {
-				$templateList[$guid] = $filename;
-			}
+		if (!empty(Hash::get($results, 'error'))) {
+			throw new Exception('API ERROR: ' . Hash::get($results, 'error'));
 		}
+
+		$orderedTemplates = $CobrandedApplication->arrayDiffSingleSignerTwoSigner($results, $client);
+		$templateList = $orderedTemplates['single_signers'];
+		$twoSignerTemplateList = $orderedTemplates['two_signers'];
+		$installTemplateList = $orderedTemplates['install_templates'];
+
 		$logoPositionTypes = $TemplateModel->logoPositionTypes;
 		$cobrands = ClassRegistry::init('Cobrand')->getList();
-		return compact('cobrands', 'logoPositionTypes', 'template', 'templateList', 'installTemplateList');
+		return compact('cobrands', 'logoPositionTypes', 'template', 'templateList', 'twoSignerTemplateList', 'installTemplateList');
 	}
 
 /**
@@ -124,6 +124,7 @@ class TemplateBuilder extends AppModel {
 				'include_brand_logo' => $templateRequestData['include_brand_logo'],
 				'description' => $templateRequestData['description'],
 				'rightsignature_template_guid' => $templateRequestData['rightsignature_template_guid'],
+				'secondary_rightsignature_template_id' => $templateRequestData['secondary_rightsignature_template_id'],
 				'rightsignature_install_template_guid' => $templateRequestData['rightsignature_install_template_guid'],
 				'owner_equity_threshold' => $templateRequestData['owner_equity_threshold']
 			);
