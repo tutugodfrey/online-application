@@ -14,6 +14,7 @@ class TemplateBuilder extends AppModel {
  * 
  * @param int $templateId a Template.id
  * @return array of variables for the TemplateBuilder form
+ * @throws Exception on API error
  */
 	public function setBuilderViewData($templateId) {
 		$TemplateModel = ClassRegistry::init('Template');
@@ -32,21 +33,22 @@ class TemplateBuilder extends AppModel {
 					'conditions' => array('Template.id' => $templateId)
 				)
 			);
+
 		$client = $CobrandedApplication->createRightSignatureClient();
 		$results = $CobrandedApplication->getRightSignatureTemplates($client);
-
-		if (!empty(Hash::get($results, 'error'))) {
+		$orderedTemplates = [];
+		//Throw exception only on production
+		if (Configure::read('debug') == 0 && !empty(Hash::get($results, 'error'))) {
 			throw new Exception('API ERROR: ' . Hash::get($results, 'error'));
 		}
 
-		$orderedTemplates = $CobrandedApplication->arrayDiffSingleSignerTwoSigner($results, $client);
-		$templateList = $orderedTemplates['single_signers'];
-		$twoSignerTemplateList = $orderedTemplates['two_signers'];
-		$installTemplateList = $orderedTemplates['install_templates'];
+		$orderedTemplates = $CobrandedApplication->arrayDiffTemplateTypes($results);
+		$templateList = Hash::get($orderedTemplates, 'templates');
+		$installTemplateList = Hash::get($orderedTemplates, 'install_templates');
 
 		$logoPositionTypes = $TemplateModel->logoPositionTypes;
 		$cobrands = ClassRegistry::init('Cobrand')->getList();
-		return compact('cobrands', 'logoPositionTypes', 'template', 'templateList', 'twoSignerTemplateList', 'installTemplateList');
+		return compact('cobrands', 'logoPositionTypes', 'template', 'templateList', 'installTemplateList');
 	}
 
 /**
@@ -124,7 +126,6 @@ class TemplateBuilder extends AppModel {
 				'include_brand_logo' => $templateRequestData['include_brand_logo'],
 				'description' => $templateRequestData['description'],
 				'rightsignature_template_guid' => $templateRequestData['rightsignature_template_guid'],
-				'secondary_rightsignature_template_id' => $templateRequestData['secondary_rightsignature_template_id'],
 				'rightsignature_install_template_guid' => $templateRequestData['rightsignature_install_template_guid'],
 				'owner_equity_threshold' => $templateRequestData['owner_equity_threshold']
 			);

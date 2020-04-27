@@ -983,11 +983,6 @@ class CobrandedApplication extends AppModel {
 				case 2: // return RS signing url
 					$client = $this->createRightSignatureClient();
 					$rsTemplateUuid = $newApp['Template']['rightsignature_template_guid'];
-					$valuesMap = $this->CobrandedApplicationValues->getValuesByAppId($createAppResponse['cobrandedApplication']['id']);
-					if ($this->ownerCount($valuesMap) >= 2)  {
-						$rsTemplateUuid = $newApp['Template']['secondary_rightsignature_template_id'];
-					}
-
 					$getTemplateResponse = $this->getRightSignatureTemplate($client, $rsTemplateUuid);
 					$getTemplateResponse = json_decode($getTemplateResponse, true);
 
@@ -1798,7 +1793,7 @@ class CobrandedApplication extends AppModel {
 		if ($optionalTemplate != null) {
 			$template = $optionalTemplate;
 		}
-$to = ['omota@axiamed.com'];
+
 		$args = array(
 			'from' => $from,
 			'to' => $to,
@@ -2187,8 +2182,8 @@ $to = ['omota@axiamed.com'];
 		while ($page <= $totalPages) {
 			$response = $client->api->get($client->base_url.RightSignature::API_V1_PATH."/reusable_templates?page=". $page);
 			$response = json_decode($response, true);
-			if (!empty(Hash::get($response, 'error'))) {
-				return $response;
+			if (empty($response) || !empty(Hash::get($response, 'error'))) {
+				return empty($response)? [] : $response;
 			}
 			$totalPages = $response['meta']['total_pages'];
 
@@ -2203,6 +2198,7 @@ $to = ['omota@axiamed.com'];
 		array_multisort($templates);
 		return $templates;
 	}
+
 /**
  * createRightSignatureClient
  *
@@ -2234,13 +2230,12 @@ $to = ['omota@axiamed.com'];
  * 	];
  * 	@throws Exception when an API error ocurrs
  */
-	public function arrayDiffSingleSignerTwoSigner ($templateList, $client) {
-		if (empty($templateList) || empty($client)) {
+	public function arrayDiffTemplateTypes ($templateList) {
+		if (empty($templateList)) {
 			return [];
 		}
 		$orderedList = [
-			'single_signers' => [],
-			'two_signers' => [],
+			'templates' => [],
 			'install_templates' => [],
 		];
 		foreach ($templateList as $rsUuid => $filename) {
@@ -2248,40 +2243,7 @@ $to = ['omota@axiamed.com'];
 				//there is only one install sheet template
 				$orderedList['install_templates'][$rsUuid] = $filename;
 			} else {
-				//Get Template Details
-				$templateData = $this->getRightSignatureTemplate($client, $rsUuid);
-				$templateData = json_decode($templateData, true);
-
-				//if error try one more time, access token could expire during run time
-				if (!empty(Hash::get($templateData, 'error'))) {
-					$client = $this->createRightSignatureClient();
-					$templateData = $this->getRightSignatureTemplate($client, $rsUuid);
-					$templateData = json_decode($templateData, true);
-				}
-				if (empty(Hash::get($templateData, 'error'))) {
-					//Check the number of roles there is never just 3 roles
-					$roleCount = count($templateData['reusable_template']['roles']);
-					//if roleCount > 2 then set as two signers template
-					if ($roleCount > 2) {
-						$orderedList['two_signers'][$rsUuid] = $filename;
-					} elseif ($roleCount == 2) {
-						//if roleCount = 2 roles then then two_signers template IFF any of the roles names contains the number 2 as in Owner/Officer 2 
-						$aggRoleName = $templateData['reusable_template']['roles'][0]['name'] . ' ' .$templateData['reusable_template']['roles'][1]['name'];
-
-						if (strpos($aggRoleName, '2') !== false) {
-							$orderedList['two_signers'][$rsUuid] = $filename;
-						} else {
-							$orderedList['single_signers'][$rsUuid] = $filename;
-						}
-					} elseif ($roleCount == 1) {
-						//if roleCount = 1 role then set single_signers
-						$orderedList['single_signers'][$rsUuid] = $filename;
-					}
-
-				} else {
-					throw new Exception('API Error: failed to get template details ' . Hash::get($templateData, 'error'));
-				}
-
+				$orderedList['templates'][$rsUuid] = $filename;
 			}
 		}
 		return $orderedList;
@@ -2759,26 +2721,6 @@ $to = ['omota@axiamed.com'];
 			}
 		}
 		return $valuesMap;
-	}
-
-/**
- * ownerCount
- * Checks the Cobranded App Values data for non-empty Owner/Officer values.
- * The returned count represents the number of owners that have been entered for the corresponding application.
- * Fields Evalueated: Owner1Name || Owner1Email, Owner2Name || Owner2Email
- * 
- * @param array $cobrandedApplicationValues a single dimension array of key => value pairs where the keys are the merge field names.
- * @return integer count of Owner 
- */
-	public function ownerCount($cobrandedApplicationValues) {
-		$maxCount = 5;
-		$count = 0;
-		for($x = 1; $x <= $maxCount; $x++) {
-			if (!empty(Hash::get($cobrandedApplicationValues, 'Owner' . $x . 'Name')) || !empty(Hash::get($cobrandedApplicationValues, 'Owner' . $x . 'Email'))){
-				$count++;
-			}
-		}
-		return $count;
 	}
 
 /**

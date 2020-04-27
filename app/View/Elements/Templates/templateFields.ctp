@@ -63,39 +63,55 @@ echo $this->Form->input('description', array('class' => 'form-control', 'wrapInp
 echo $this->Form->input('rightsignature_template_guid',
 		array(
 			'type' => 'select',
-			'label' => 'Rightsignature One Signer Templates',
+			'label' => 'RightSignature Template',
 			'options' => $templateList,
-		)
-);
-echo $this->Form->input('secondary_rightsignature_template_id',
-		array(
-			'type' => 'select',
-			'label' => 'Rightsignature Two Signers Templates',
-			'options' => $twoSignerTemplateList,
-			'empty' => "Select a two signer template (if applicable)",
-			'after' => $this->Html->tag('span', $this->Html->tag('span',null, array('class' => 'glyphicon glyphicon-question-sign')) . $this->Html->tag('/span'),
-							array(
-								'class' => 'text-info',
-								'style' => 'font-size:130%',
-								'data-toggle' => 'tooltip',
-								'data-placement' => 'right',
-								'data-original-title' => 'Required when the applications that will use this template might have two signers/owners. Two signer templates are created in addition to One signer templates in RightSignature to allow two people to sign.'
-							))
+			'after' => $this->Form->button('<span class="glyphicon glyphicon-info-sign"></span> View Details',
+					array(
+						'type' => 'button',
+						'onClick' => "getTemplateDetails('app_templates')",
+						'class' => 'btn btn-info btn-sm',
+						'title' => __('View information about selected template')
+					)
+				) . '<strong class="text-danger" id ="selErrMsg1"></strong>'
 		)
 );
 
 echo $this->Form->input('rightsignature_install_template_guid',
 		array(
 			'type' => 'select',
-			'label' => 'Rightsignature Install Template Guid',
-				'options' => $installTemplateList,
+			'label' => 'Rightsignature Install Template',
+			'options' => $installTemplateList,
+			'after' => $this->Form->button('<span class="glyphicon glyphicon-info-sign"></span> View Details',
+					array(
+						'type' => 'button',
+						'onClick' => "getTemplateDetails('install_templates')",
+						'class' => 'btn btn-info btn-sm',
+						'title' => __('View information about selected template')
+					)
+				) . '<strong class="text-danger" id ="selErrMsg2"></strong>'
 		)
 );
 
 echo $this->Form->input('owner_equity_threshold', array('class' => 'form-control', 'wrapInput' => 'col col-md-4'));
 ?>
 <script type='text/javascript'>
-$(document).ready(function(){
-	$('[data-toggle="tooltip"]').tooltip();   
-});
+	function getTemplateDetails(templateType) {
+		$('#selErrMsg1, #selErrMsg2').html('');
+		rsTemplateId = '';
+		errElNum = '';
+		
+		if (templateType == 'app_templates') {
+			errElNum = '1';
+			rsTemplateId = $("[id$='RightsignatureTemplateGuid'] option:selected").val();
+		} else {
+			errElNum = '2';
+			rsTemplateId = $("[id$='RightsignatureInstallTemplateGuid'] option:selected").val()
+		}
+		if (rsTemplateId == undefined || rsTemplateId == '') {
+			$('#selErrMsg' + errElNum).html('<br/>Select a template from the list.');
+		} else {
+			renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/Templates/preview_rs_template/' + rsTemplateId);
+			$("#dynamicModal").modal();
+		}
+	}
 </script>

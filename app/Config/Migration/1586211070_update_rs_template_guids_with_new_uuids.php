@@ -24,11 +24,6 @@ class UpdateRSTemplateGUIDsWithNewUUIDs extends CakeMigration {
 						'type' => 'string',
 						'length' => 50
 					),
-					'secondary_rightsignature_template_id' => array(
-						'type' => 'string',
-						'length' => 50
-					),
-
 				)
 			)
 		),
@@ -36,7 +31,6 @@ class UpdateRSTemplateGUIDsWithNewUUIDs extends CakeMigration {
 			'drop_field' => array(
 				'onlineapp_templates' => array(
 					'old_template_guid',
-					'secondary_rightsignature_template_id'
 				)
 			)
 		),
@@ -80,7 +74,6 @@ class UpdateRSTemplateGUIDsWithNewUUIDs extends CakeMigration {
 				$templateMeta = [
 					'old_rs_guid' => null,
 					'new_rs_uuui' => $rsUuid,
-					'set_as_secondary_template' => null,
 				];
 
 				if (empty($installTemplateUuid) && preg_match('/install/i', $filename)) {
@@ -104,24 +97,6 @@ class UpdateRSTemplateGUIDsWithNewUUIDs extends CakeMigration {
 								break;
 							}
 						}
-						//Check the number of roles there is never just 3 roles
-						$roleCount = count($templateData['reusable_template']['roles']);
-						//if roleCount > 2 then set_as_secondary_template = true always.
-						if ($roleCount > 2) {
-							$templateMeta['set_as_secondary_template'] = true;
-						} elseif ($roleCount == 2) {
-							//if roleCount = 2 roles then then set_as_secondary_template = true IFF any of the roles names contains the number 2 as in Owner/Officer 2 
-							$templateMeta['set_as_secondary_template'] = false;
-							$aggRoleName = $templateData['reusable_template']['roles'][0]['name'] . ' ' .$templateData['reusable_template']['roles'][1]['name'];
-
-							if (strpos($aggRoleName, '2') !== false) {
-								$templateMeta['set_as_secondary_template'] = true;
-							}
-						} elseif ($roleCount == 1) {
-							//if roleCount = 1 role then set_as_secondary_template = false
-							$templateMeta['set_as_secondary_template'] = false;
-						}
-
 					} else {
 						throw new Exception('API Error: failed to get template details ' . Hash::get($templateData, 'error'));
 					}
@@ -129,16 +104,10 @@ class UpdateRSTemplateGUIDsWithNewUUIDs extends CakeMigration {
 				}
 
 				if (!empty($templateMeta['old_rs_guid'])) {
-					if ($templateMeta['set_as_secondary_template']) {
-					 	$fieldName = 'secondary_rightsignature_template_id';
-					} else  {
-						$fieldName = 'rightsignature_template_guid';
-					}
 					$Template->updateAll(
-						[$fieldName => "'". $templateMeta['new_rs_uuui'] ."'"],
+						['rightsignature_template_guid' => "'". $templateMeta['new_rs_uuui'] ."'"],
 						['rightsignature_template_guid' => $templateMeta['old_rs_guid']]
 					);
-					//Use the fieldName in the Update statement.
 				} else {
 					echo "RS Template with uuid= $rsUuid does not have 'old_guid' merge_field, could not update associated onlineapp_templates record.\n\n";
 				}
@@ -147,8 +116,8 @@ class UpdateRSTemplateGUIDsWithNewUUIDs extends CakeMigration {
 			// assign the new UUID to all templates install template guids where not null
 			if (!empty($installTemplateUuid)) {
 				$Template->updateAll(
-					['rightsignature_template_guid' => "'". $installTemplateUuid ."'"],
-					['rightsignature_template_guid' => $templateMeta['old_rs_guid']]
+					['rightsignature_install_template_guid' => "'". $installTemplateUuid ."'"],
+					['rightsignature_install_template_guid' => $templateMeta['old_rs_guid']]
 				);
 			}
 

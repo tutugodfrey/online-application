@@ -65,12 +65,11 @@
 	<?php 
 		if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED
 		|| $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-			//@Todo refactor post-RightSignatureMigration
+
+			$isSigned = ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED);
+			echo ($isSigned)? "<span class='text-success'><strong>":"";
 			echo h($cobrandedApplication['CobrandedApplication']['status']);
-			/*echo $this->Element('cobranded_applications/appStatusPopOver', array(
-					'appId' => $cobrandedApplication['CobrandedApplication']['id'],
-					'appStatus' => $cobrandedApplication['CobrandedApplication']['status']
-				));*/
+			echo ($isSigned)? "</span></strong>":"";
 		} elseif($appOutOfSync) {
 			echo "<span class='text-warning' data-toggle='tooltip' data-placement='left' title='' alt='' data-original-title=\"App and Template are out-of-sync due to changes made to Template. Click Sync button if necessary.\";><strong>out-of-sync</strong></span>";
 		} else {
@@ -129,6 +128,18 @@
 							'escape' => false,
 							'class' => 'btn btn-default btn-sm glyphicon',
 							'title' => __('Open ' . $cobrandedApplication['Template']['name'] . ' PDF')
+						)
+					);
+				}
+				if (strlen($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) > 30) {
+					echo $this->Form->button(' ',
+						array(
+							'type' => 'button',
+							'data-toggle' => 'modal',
+							'data-target' => '#dynamicModal',
+							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/CobrandedApplications/rs_document_audit/" . $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'] . "')",
+							'class' => 'btn btn-default btn-sm glyphicon glyphicon-tasks',
+							'title' => __('View Document Audit')
 						)
 					);
 				}

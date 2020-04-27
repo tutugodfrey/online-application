@@ -260,4 +260,25 @@ class AppModel extends Model {
 		$http->configAuth('Basic', Configure::read("$axMedApi.access_token"), Configure::read("$axMedApi.password"));
 		return $http;
 	}
+
+/**
+ * mcryptEncryptStr
+ * 
+ * @param string $str a string to excrypt using mcrypt_encrypt 
+ * @return the string encrypted and base64encpded
+ */
+	public function mcryptEncryptStr($str) {
+		return base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), $str, 'cbc', Configure::read('Cryptable.iv')));
+	}
+
+/**
+ * mcryptDencrypt
+ * 
+ * @param string $str a string excrypted using $this->mcryptEncryptStr() 
+ * @return the decrypted string
+ */
+	public function mcryptDencrypt($str) {
+		return trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), base64_decode($str), 'cbc', Configure::read('Cryptable.iv')));
+	}
+
 }

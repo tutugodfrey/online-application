@@ -77,7 +77,8 @@ class CobrandedApplicationsController extends AppController {
 		'admin_install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
 		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_var_success' => array(User::ADMIN, User::REP, User::MANAGER),
-		'submit_for_review' => array('*')
+		'rs_document_audit' => array(User::ADMIN, User::REP, User::MANAGER),
+		'submit_for_review' => array('*'),
 	);
 
 	public $helpers = array('TemplateField');
@@ -291,9 +292,6 @@ class CobrandedApplicationsController extends AppController {
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 			$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
 			$rsTemplateUuid = $template['Template']['rightsignature_template_guid'];
-			if ($this->CobrandedApplication->ownerCount($valuesMap) >= 2) {
-				$rsTemplateUuid = $template['Template']['secondary_rightsignature_template_id'];
-			}
 			$this->set(compact('users'));
 			$this->set('valuesMap', $valuesMap);
 			$this->set('brand_logo_url', $template['Template']['Cobrand']['brand_logo_url']);
@@ -1074,7 +1072,8 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	function admin_open_app_pdf($id) {
-		$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($id);
+		$canOverrideTemplate = ($this->Auth->user('group') == User::ADMIN);
+		$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($id, $canOverrideTemplate);
 		if (!empty($pdfUrl)) {
 			$this->redirect($pdfUrl);
 		} else {
@@ -1154,8 +1153,6 @@ class CobrandedApplicationsController extends AppController {
 
 				if ($achYes == true) {
 					$rsTemplateUuid = $this->CobrandedApplication->getRightsignatureTemplateGuid($cobrand['Cobrand']['partner_name'], 'ach');
-				} elseif ($this->CobrandedApplication->ownerCount($valuesMap) >= 2)  {
-					$rsTemplateUuid = $cobrandedApplication['Template']['secondary_rightsignature_template_id'];
 				}
 
 				$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $rsTemplateUuid);
@@ -1303,7 +1300,6 @@ class CobrandedApplicationsController extends AppController {
 		$docDetails = json_decode($docDetails, true);
 		$this->set('docDetails', $docDetails);
 		$appTemplateId = null;
-debug( $docDetails);
 		$appTemplateId = $this->CobrandedApplication->field('template_id', ['rightsignature_document_guid' => $guid]);
 		$varSigner = false;
 		if ($appTemplateId) {
@@ -1636,4 +1632,47 @@ debug( $docDetails);
 		}
 		$this->redirect($this->referer());
 	}
+
+/**
+ * rs_document_audit
+ * Ajax method gets rightsignature document access audit details
+ *
+ * @param string $rsDocumentId string RightSignature external document id
+ * @return void
+ */
+	public function rs_document_audit($rsDocumentId) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if ($this->request->is('ajax')) {
+			if ($this->Session->read('Auth.User.id')) {
+				if (!empty($rsDocumentId)) {
+					$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+					$client = $this->CobrandedApplication->createRightSignatureClient();
+					$docDetals = $client->getDocumentDetails($rsDocumentId);
+					$docDetals = json_decode($docDetals, true);
+					if (empty(Hash::get($docDetals, 'error'))) {
+						//all good
+						$docStatus = $docDetals['document']['state'];
+						$auditTrail = $docDetals['document']['audits'];
+						$this->set(compact('auditTrail', 'docStatus'));
+						$this->render('/Elements/cobranded_applications/rs_doc_audit', 'ajax');
+					} else {
+						//Unexpected internal error
+						$this->response->statusCode(500);
+						return;
+					}
+				} else {
+					//Bad Request
+					$this->response->statusCode(400);
+				}
+			} else {
+				//session expired
+				$this->response->statusCode(401);
+			}
+		} else {
+			//Bad Request
+			$this->response->statusCode(400);
+		}
+	}
+
 }

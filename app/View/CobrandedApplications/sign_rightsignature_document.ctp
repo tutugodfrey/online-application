@@ -5,10 +5,10 @@
 </head>
 <body>
         <?php if (!$alreadySigned) { ?>
-	<div class="container">
+	<div>
 	<div class="panel panel-primary">
-		<div class="panel-heading bottom">
-			<h3 class="bottom">Welcome! Please sign your document.</h3>
+		<div class="panel-heading">
+			<h3 class="text-center">Welcome! Please sign your document.</h3>
 		</div>
 		<div class="panel-body">
 			<div class="span-24 top">
@@ -28,11 +28,12 @@
 				<?php
 				if ($error) {
 					if ($alreadySigned) {
-						echo '<div class="text-center bg-info" style="margin-top:100px;padding-top:100px; padding-bottom:100px">';
-						echo "<h1><img src='/img/e-sign-icon.png' style='width:100px'><span class='glyphicon glyphicon-ok text-success' id='checkAllDone' style='display:none'></span></h1><h3 class='text-success'>Document is Signed!</h3>";
-						echo "<div>All signers have successfully signed, your representative has been notified.<br/>(If applicable, please refer to your representative's email for any final items and/or additional signature links)<br/>Thank you!</div>";
+						echo '<div class="text-center bg-info" style="margin-top:100px;padding-top:90px; padding-bottom:100px">';
+						echo "<h1><img src='/img/e-sign-icon.png' style='width:100px'><span class='glyphicon glyphicon-ok text-success' id='checkAllDone' style='display:none'></span></h1><h3 class='text-success'>Document is Signed!<br/>Thank you!</h3>";
+						echo "<div>All parties have successfully signed this document, your representative has been notified.<br/>(If applicable, please refer to your representative's email for any final items and/or additional signature links)</div>";
 						echo "</div>";
 						echo '<script>$( "#checkAllDone" ).show( "clip", null,2000);</script>';
+						echo '<script>$("body").css( "background-image", "linear-gradient(lightgrey, white, white, white, white, lightgrey)");</script>';
 					} else {
 						echo "<h3>Error</h3><div class=\"span-24\">";
 						echo "Error: " . $apiErrorMsg;
@@ -138,20 +139,28 @@
 				        </div>
 				    </div>
 				</div>
-				<div id='frameContaner' style="display:none">
+				<div id='frameContaner' style="display:none" class="row">
+					<span id='leftSideNav' class="navbar navbar-default navbar-fixed-side">
+						<a title="Go to top" class="btn btn-info" href="javascript:void(0)" onClick="scrollToBottomOrTop(false)">
+							<span class="glyphicon glyphicon-triangle-top"></span>
+						</a><br/>
+						<a title="Go to Bottom" class="btn btn-info" href="javascript:void(0)" onClick="scrollToBottomOrTop(true)">
+							<span class="glyphicon glyphicon-triangle-bottom"></span>
+						</a>
+					</span>
 					<div class="row text-center" name="parentScrollBtns">
 						<a class="btn btn-sm btn-info" href="javascript:void(0)" onClick="scrollToBottomOrTop(true)">
-								<span class="glyphicon glyphicon-hand-down">&nbsp;</span>
+								<span class="glyphicon glyphicon-triangle-bottom">&nbsp;</span>
 								Go To Bottom
 						</a>
 					</div>
 
-					<div class="row" style='font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent'>
+					<div id="iframe_wrapper">
 						<iframe frameborder="0" height="800" width="100%" scrolling="no" style="overflow:hidden" id="signing-widget"></iframe>
 					</div>
 					<div class="row text-center" name="parentScrollBtns">
 						<a class="btn btn-sm btn-info" href="javascript:void(0)" onClick="scrollToBottomOrTop(false)">
-								<span class="glyphicon glyphicon-hand-up">&nbsp;</span>
+								<span class="glyphicon glyphicon-triangle-top">&nbsp;</span>
 								Back To Top
 						</a>
 					</div>
@@ -174,9 +183,6 @@
 		</div>
 	</div>
 <?php endif;?>
-
-
-	
 	<script type="text/javascript">
 		$(document).ready(function () {
 			scrollToBottomOrTop(false);
@@ -247,11 +253,15 @@
 				delete e['returnValue'];
 			});
 			scrollToBottomOrTop(true);
+			$('#leftSideNav').parent().css('height');
+			$('#leftSideNav').css({
+			    'top': parseInt($('#iframe_wrapper').css('height'))/2
+			});
 		}
 		function scrollToBottomOrTop(bottom) {
 			scrollVal = 0;
 			if (bottom) {
-				scrollVal = $('html, body').get(0).scrollHeight;
+				scrollVal = $('html, body').get(0).scrollHeight + 50 - parseInt($('#iframe_wrapper').css('height'));
 			}
 
 			$("html, body").animate({ 

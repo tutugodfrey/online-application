@@ -87,7 +87,6 @@ class TemplateSection extends AppModel {
 						'Template.created',
 						'Template.modified',
 						'Template.rightsignature_template_guid',
-						'Template.secondary_rightsignature_template_id',
 						'Template.rightsignature_install_template_guid',
 						'Template.owner_equity_threshold',
 						'Template.requires_coversheet',
