@@ -44,7 +44,15 @@ class TemplateBuilderController extends AppController {
 				}
 			}
 			$this->set('response', $response);
-			$this->set($this->TemplateBuilder->setBuilderViewData($baseTemplate));
+			try{
+				$this->set($this->TemplateBuilder->setBuilderViewData($baseTemplate));
+			} catch (Exception $e) {
+				$redirectUrl = Router::url(array('controller' => 'template_builder', 'action' => 'build', 'admin' => true));
+				$this->set('redirectUrl', $redirectUrl);
+				$this->_failure('Unexpected Error: ' . $e->getMessage() .". Please try again later.");
+				$this->render('/Elements/Ajax/nonAjaxRedirect', 'ajax');
+				return;
+			}
 			$this->render('add_template', 'ajax');
 		}
 	}

@@ -7,6 +7,7 @@ class TemplateBuilderTest extends CakeTestCase {
 	public $autoFixtures = false;
 
 	public $fixtures = array(
+		'app.onlineappApiConfiguration',
 		'app.onlineappUser',
 		'app.onlineappUsersTemplate',
 		'app.onlineappCobrand',
@@ -40,6 +41,7 @@ class TemplateBuilderTest extends CakeTestCase {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 
 		// load data
+		$this->loadFixtures('OnlineappApiConfiguration');
 		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappUsersTemplate');
 		$this->loadFixtures('OnlineappCobrand');

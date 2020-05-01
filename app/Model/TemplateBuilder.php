@@ -14,6 +14,7 @@ class TemplateBuilder extends AppModel {
  * 
  * @param int $templateId a Template.id
  * @return array of variables for the TemplateBuilder form
+ * @throws Exception on API error
  */
 	public function setBuilderViewData($templateId) {
 		$TemplateModel = ClassRegistry::init('Template');
@@ -32,18 +33,19 @@ class TemplateBuilder extends AppModel {
 					'conditions' => array('Template.id' => $templateId)
 				)
 			);
+
 		$client = $CobrandedApplication->createRightSignatureClient();
 		$results = $CobrandedApplication->getRightSignatureTemplates($client);
-		$templateList = array();
-		$installTemplateList = array();
-
-		foreach ($results as $guid => $filename) {
-			if (preg_match('/install/i', $filename)) {
-				$installTemplateList[$guid] = $filename;
-			} else {
-				$templateList[$guid] = $filename;
-			}
+		$orderedTemplates = [];
+		//Throw exception only on production
+		if (Configure::read('debug') == 0 && !empty(Hash::get($results, 'error'))) {
+			throw new Exception('API ERROR: ' . Hash::get($results, 'error'));
 		}
+
+		$orderedTemplates = $CobrandedApplication->arrayDiffTemplateTypes($results);
+		$templateList = Hash::get($orderedTemplates, 'templates');
+		$installTemplateList = Hash::get($orderedTemplates, 'install_templates');
+
 		$logoPositionTypes = $TemplateModel->logoPositionTypes;
 		$cobrands = ClassRegistry::init('Cobrand')->getList();
 		return compact('cobrands', 'logoPositionTypes', 'template', 'templateList', 'installTemplateList');
