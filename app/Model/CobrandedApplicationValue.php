@@ -308,7 +308,7 @@ class CobrandedApplicationValue extends AppModel {
 								$e = new Exception;
 								$stackTrace = $e->getTraceAsString();
 
-								if (strpos($stackTrace, 'createRightSignatureApplicationXml') !== false ||
+								if (strpos($stackTrace, 'createRightSignatureApplicationJSON') !== false ||
 									strpos($stackTrace, 'getValuesByAppId') !== false ||
 									strpos($stackTrace, 'CobrandedApplication->buildExportData') !== false ||
 									strpos($stackTrace, 'CobrandedApplicationsController->create_rightsignature_document') !== false ||

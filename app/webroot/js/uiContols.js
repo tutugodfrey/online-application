@@ -162,3 +162,20 @@ function enableAutocomplete(inputObj, requestUri) {
         }
     });
 }
+
+/**
+ * toggleShowPwField
+ * Toggle mask unmask contents of password fields
+ * 
+ * @param string objId the id of the password input field
+ * @return void
+ */
+
+function toggleShowPwField(objId) {
+    var x = document.getElementById(objId);
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+}

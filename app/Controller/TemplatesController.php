@@ -70,6 +70,7 @@ class TemplatesController extends NestedResourceController {
 		'admin_edit' => array('admin', 'rep', 'manager'),
 		'admin_delete' => array('admin', 'rep', 'manager'),
 		'admin_preview' => array('admin', 'rep', 'manager'),
+		'admin_preview_rs_template' => array('admin'),
 	);
 
 
@@ -226,24 +227,21 @@ class TemplatesController extends NestedResourceController {
 			
 		$client = $this->CobrandedApplication->createRightSignatureClient();
 		$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
-
-		$templates = array();
-		$installTemplates = array();
-
-		foreach ($results as $guid => $filename) {
-			if (preg_match('/install/i', $filename)) {
-				$installTemplates[$guid] = $filename;
-			} else {
-				$templates[$guid] = $filename;
-			}
+		if (!empty(Hash::get($results, 'error'))) {
+			$this->_failure(__('Unexpected Error: ' . Hash::get($results, 'error') .". Please try again later."));
+			return $this->redirect($this->_getListUrl());
 		}
+		$orderedTemplates = $this->CobrandedApplication->arrayDiffTemplateTypes($results);
+		$templates = $orderedTemplates['templates'];
+		$installTemplates = $orderedTemplates['install_templates'];
+
 		$this->set('templateList', $templates);
 		$this->set('installTemplateList', $installTemplates);
-
 		$this->__setCommonViewVariables();
 	}
 
 	public function admin_edit($idToEdit) {
+
 		$this->Template->id = $idToEdit;
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Template->getById($idToEdit);
@@ -253,16 +251,14 @@ class TemplatesController extends NestedResourceController {
 			$client = $this->CobrandedApplication->createRightSignatureClient();
 			$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
 
-			$templates = array();
-			$installTemplates = array();
-
-			foreach ($results as $guid => $filename) {
-				if (preg_match('/install/i', $filename)) {
-					$installTemplates[$guid] = $filename;
-				} else {
-					$templates[$guid] = $filename;
-				}
+			if (!empty(Hash::get($results, 'error'))) {
+				$this->_failure(__('Unexpected Error: ' . Hash::get($results, 'error') .". Please try again later."));
+				return $this->redirect($this->_getListUrl());
 			}
+			
+			$orderedTemplates = $this->CobrandedApplication->arrayDiffTemplateTypes($results);
+			$templates = $orderedTemplates['templates'];
+			$installTemplates = $orderedTemplates['install_templates'];
 
 			$this->set('templateList', $templates);
 			$this->set('installTemplateList', $installTemplates);
@@ -348,6 +344,56 @@ class TemplatesController extends NestedResourceController {
 		);
 
 		$this->set(compact('elVars'));
+	}
+
+/**
+ * admin_preview_template
+ * Ajax method gets rightsignature template details for user to preview
+ *
+ * @param string $rsTemplateId string RightSignature external template id
+ * @return void
+ */
+	public function admin_preview_rs_template($rsTemplateId) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if ($this->request->is('ajax')) {
+			if ($this->Session->read('Auth.User.id')) {
+				if (!empty($rsTemplateId)) {
+					$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+					$client = $this->CobrandedApplication->createRightSignatureClient();
+					$rsTemplate = $this->CobrandedApplication->getRightSignatureTemplate($client, $rsTemplateId);
+					$rsTemplate = json_decode($rsTemplate, true);
+
+					if (empty(Hash::get($rsTemplate, 'error'))) {
+						//all good
+						$templateData['id'] = $rsTemplate['reusable_template']['id'];
+						$templateData['name'] = $rsTemplate['reusable_template']['name'];
+						$templateData['filename'] = $rsTemplate['reusable_template']['filename'];
+						$templateData['signer_sequencing'] = ($rsTemplate['reusable_template']['signer_sequencing'])? "Yes":"No";
+						$templateData['roles'] = $rsTemplate['reusable_template']['roles'];
+						$templateData['created_at'] = $rsTemplate['reusable_template']['created_at'];
+						$templateData['updated_at'] = $rsTemplate['reusable_template']['updated_at'];
+						$templateData['thumbnail_url'] = $rsTemplate['reusable_template']['thumbnail_url'];
+						$templateData['page_image_urls'] = $rsTemplate['reusable_template']['page_image_urls'];
+						$this->set(compact('templateData'));
+						$this->render('/Elements/Templates/preview_template', 'ajax');
+					} else {
+						//Unexpected internal error
+						$this->response->statusCode(500);
+						return;
+					}
+				} else {
+					//Bad Request
+					$this->response->statusCode(400);
+				}
+			} else {
+				//session expired
+				$this->response->statusCode(401);
+			}
+		} else {
+			//Bad Request
+			$this->response->statusCode(400);
+		}
 	}
 
 }

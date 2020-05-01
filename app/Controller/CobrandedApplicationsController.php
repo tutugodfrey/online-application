@@ -5,6 +5,7 @@ App::uses('Setting', 'Model');
 App::uses('Validation', 'Utility');
 App::uses('Coversheet', 'Model');
 App::uses('User', 'Model');
+App::uses('EmailTimeline', 'Model');
 
 /**
  * CobrandedApplications Controller
@@ -71,11 +72,13 @@ class CobrandedApplicationsController extends AppController {
 		'admin_app_extend' => array(User::ADMIN, User::REP, User::MANAGER),
 		'create_rightsignature_document' => array('*'),
 		'sign_rightsignature_document' => array('*'),
+		'signerHasSigned' => array('*'),
 		'document_callback' => array('*'),
 		'admin_install_sheet_var' => array(User::ADMIN, User::REP, User::MANAGER),
 		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_var_success' => array(User::ADMIN, User::REP, User::MANAGER),
-		'submit_for_review' => array('*')
+		'rs_document_audit' => array(User::ADMIN, User::REP, User::MANAGER),
+		'submit_for_review' => array('*'),
 	);
 
 	public $helpers = array('TemplateField');
@@ -83,6 +86,7 @@ class CobrandedApplicationsController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
+			'signerHasSigned',
 			'expired',
 			'index',
 			'document_callback',
@@ -287,6 +291,7 @@ class CobrandedApplicationsController extends AppController {
 			$users = $this->CobrandedApplication->User->find('list');
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 			$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
+			$rsTemplateUuid = $template['Template']['rightsignature_template_guid'];
 			$this->set(compact('users'));
 			$this->set('valuesMap', $valuesMap);
 			$this->set('brand_logo_url', $template['Template']['Cobrand']['brand_logo_url']);
@@ -294,7 +299,7 @@ class CobrandedApplicationsController extends AppController {
 			$this->set('include_brand_logo', $template['Template']['include_brand_logo']);
 			$this->set('cobrand_logo_position', $template['Template']['logo_position']);
 			$this->set('logoPositionTypes', $this->CobrandedApplication->Template->logoPositionTypes);
-			$this->set('rightsignature_template_guid', $template['Template']['rightsignature_template_guid']);
+			$this->set('rightsignature_template_guid', $rsTemplateUuid);
 			$this->set('rightsignature_install_template_guid', $template['Template']['rightsignature_install_template_guid']);
 			$this->set('templatePages', $template['Template']['TemplatePages']);
 			$this->set('bad_characters', array(' ', '&', '#', '$', '(', ')', '/', '%', '\.', '.', '\''));
@@ -1029,6 +1034,7 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
+ * ||||||||||||||||DEPECATED April 20th 2020||||||||||||||||||
  * Grab document status via the RightSignature API
  * https://rightsignature.com/apidocs/api_calls?api_method=documentDetails
  * @param integer $id
@@ -1049,7 +1055,7 @@ class CobrandedApplicationsController extends AppController {
 			$renewed = $client->extendDocument($guid);
 			$extension = json_decode($renewed, true);
 			if (isset($extension['document'])) {
-				$this->_success($extension['document']['status']);
+				$this->_success($extension['document']['state']);
 			} else {
 				$this->_failure($extension['error']['message']);
 			}
@@ -1066,15 +1072,17 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	function admin_open_app_pdf($id) {
-		$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($id);
+		$canOverrideTemplate = ($this->Auth->user('group') == User::ADMIN);
+		$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($id, $canOverrideTemplate);
 		if (!empty($pdfUrl)) {
 			$this->redirect($pdfUrl);
 		} else {
-			$this->_failure(__('Error: Application PDF could not be found!'), array('action' => index, 'admin' => true));
+			$this->_failure(__('Application PDF is not available or could not be found! Contact support for help retrieving this document PDF.'), array('action' => 'index', 'admin' => true));
 		}
 	}
 
 /**
+ * |||||DEPRECTATED April 20th 2020|||||||
  * Extend the life of a RightSignature document via Right Signature API
  * https://rightsignature.com/apidocs/api_calls?api_method=extendExpiration
  * @param varchar $guid
@@ -1141,24 +1149,24 @@ class CobrandedApplicationsController extends AppController {
 					}
 				}
 
-				$templateGuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
+				$rsTemplateUuid = $cobrandedApplication['Template']['rightsignature_template_guid'];
 
 				if ($achYes == true) {
-					$templateGuid = $this->CobrandedApplication->getRightsignatureTemplateGuid($cobrand['Cobrand']['partner_name'], 'ach');
+					$rsTemplateUuid = $this->CobrandedApplication->getRightsignatureTemplateGuid($cobrand['Cobrand']['partner_name'], 'ach');
 				}
 
-				$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
+				$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $rsTemplateUuid);
 				$response = json_decode($response, true);
 
-				if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
-					$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
-						$applicationId, $this->Session->read('Auth.User.email'), $response['template']);
-					$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+				if ($response && !empty($response['reusable_template']['id'])) {
+					$applicationJSON = $this->CobrandedApplication->createRightSignatureDocumentJSON(
+						$applicationId, $this->Session->read('Auth.User.email'), $response['reusable_template']);
+					$response = $this->CobrandedApplication->createRightSignatureDocument($response['reusable_template']['id'], $client, $applicationJSON);
 					$tmpResponse = json_decode($response, true);
 
 					if ($tmpResponse && key_exists('error', $tmpResponse)) {
 						$url = "/edit/" . $cobrandedApplication['CobrandedApplication']['uuid'];
-						$this->_failure(__('error! ' . $tmpResponse['error']['message']));
+						$this->_failure(__('Cannot render document for signing, the following error ocurred Error!: ' . $tmpResponse['error']. '. Please contact your representative.'));
 						$this->redirect(array('action' => $url));
 					}
 				} else {
@@ -1169,8 +1177,8 @@ class CobrandedApplicationsController extends AppController {
 
 				$response = json_decode($response, true);
 			} else {
-				$response['document']['status'] = 'sent';
-				$response['document']['guid'] = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+				$response['document']['state'] = 'pending';
+				$response['document']['id'] = $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 			}
 			$appValues = Hash::combine(
 				$cobrandedApplication,
@@ -1178,13 +1186,13 @@ class CobrandedApplicationsController extends AppController {
 				'CobrandedApplicationValues.{n}.value'
 			);
 			$merchDBA = (!empty($appValues['DBA']))? $appValues['DBA'] : Hash::get($appValues, 'CorpName');
-			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
+			if ($response['document']['state'] == 'pending' && $response['document']['id']) {
 				// save the guid
 				$this->CobrandedApplication->save(
 					array(
 						'CobrandedApplication' => array(
 							'id' => $applicationId,
-							'rightsignature_document_guid' => $response['document']['guid'],
+							'rightsignature_document_guid' => $response['document']['id'],
 							'status' => 'completed'
 						)
 					),
@@ -1193,7 +1201,7 @@ class CobrandedApplicationsController extends AppController {
 
 				// check whether they want to sign in person
 				if ($signNow) {
-					$this->redirect(array('action' => 'sign_rightsignature_document?guid=' . $response['document']['guid']));
+					$this->redirect(array('action' => 'sign_rightsignature_document?guid=' . $response['document']['id']));
 				} else {
 					// if not simply send the documents
 					$emailResponse = $this->CobrandedApplication->sendApplicationForSigningEmail($applicationId);
@@ -1216,12 +1224,61 @@ class CobrandedApplicationsController extends AppController {
 			$this->autoRender = false;
 		}
 	}
-
+/**
+ * signerHasSigned method
+ * Makes API request to rightsignature to get document details and checks if the signer provided in the 
+ * function parameter has signed the document.
+ *
+ * @param string $documentId RightSignature document UUID
+ * @param string $signerId a UUID that was assigned to a signer by rightsignature after creation of document
+ * @return void
+ */
+	public function signerHasSigned($documentId, $signerId) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if ($this->request->is('ajax')) {
+			if (!empty($documentId) && !empty($signerId)) {
+				$client = $this->CobrandedApplication->createRightSignatureClient();
+				$docDetails = $client->getDocumentDetails($documentId);
+				$docDetails = json_decode($docDetails, true);
+				$signerHasSigned = false;
+				if (empty(Hash::get($docDetails, 'error'))) {
+					// all good
+					foreach($docDetails['document']['recipients'] as $signer) {
+						if ($signer['id'] == $signerId && $signer['status'] == 'signed') {
+							$signerHasSigned = true;
+							break;
+						}
+					}
+				} else {
+					//Unexpected internal error
+					$this->response->statusCode(500);
+					echo json_encode(['error' => Hash::get($docDetails, 'error')]);
+					return;
+				}
+				echo json_encode(['signerHasSigned' => $signerHasSigned]);
+				return;
+			} else {
+				echo json_encode(['error' => 'Missing required parameters']);
+			}
+		} else {
+			//Bad Request
+			$this->response->statusCode(400);
+		}
+	}
 /**
  * sign_rightsignature_document
  *
  */
 	public function sign_rightsignature_document() {
+		$guid = Hash::get($this->request->query, 'guid');
+
+		if (empty($guid) || strlen($guid) != 36) {
+			$this->set('name', 'ERROR 404: Document Not Found Or Has Expired. Please contact your representative or AxiaMed support for assistance with this document.');
+			$this->set('url', Router::url(['controller' => 'CobrandedApplication', 'action' => 'sign_rightsignature_document', '?' => ['guid' => $guid]], true));
+			$this->render('/Errors/error404');
+			return;
+		}
 		$client = $this->CobrandedApplication->createRightSignatureClient();
 		$this->set('rightsignature', $client);
 
@@ -1236,66 +1293,22 @@ class CobrandedApplicationsController extends AppController {
 		$widgetHeight = 900;
 		$this->set('widgetHeight', $widgetHeight);
 
-		$guid = htmlspecialchars($_REQUEST["guid"]);
-
 		$this->set('guid', $guid);
 
-		if (empty($guid)) {
-			$this->_failure(__("Cannot find document with given GUID."));
-			$this->redirect(array('action' => 'index'));
-		}
-
-		// Gets signer link and reloads this page after each successful signature to refresh the signer-links list
-		$response = $this->CobrandedApplication->getRightSignatureSignerLinks($client, $guid);
-		$this->set('response', $response);
-
-		$xml = Xml::build($response);
-		$xml = Xml::toArray($xml);
-		$result = Set::normalize($xml);
-		$this->set('xml', $xml);
-
+		// Extract signer links from docuent
+		$docDetails = $client->getDocumentDetails($guid);
+		$docDetails = json_decode($docDetails, true);
+		$this->set('docDetails', $docDetails);
 		$appTemplateId = null;
-
-		$data = array();
-
-		if ($this->CobrandedApplication->findByRightsignatureDocumentGuid($guid)) {
-			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
-			$appTemplateId = $data['CobrandedApplication']['template_id'];
-			$this->layout = 'default';
-
-			if (key_exists('error', $xml) &&
-				$xml['error']['message'] == "Document is already signed." &&
-				$data['CobrandedApplication']['status'] != 'signed') {
-
-				if ($data['Coversheet']['status'] == 'validated') {
-					$this->sendCoversheet($data);
-				}
-			}
-		}
+		$appTemplateId = $this->CobrandedApplication->field('template_id', ['rightsignature_document_guid' => $guid]);
 		$varSigner = false;
-		if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
-			$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
-			$appTemplateId = $data['CobrandedApplication']['template_id'];
-			$this->set('data', $data);
+		if ($appTemplateId) {
+			$this->layout = 'default';
+		} else {
+			$appTemplateId = $this->CobrandedApplication->field('template_id', ['rightsignature_install_document_guid' => $guid]);
 			$varSigner = true;
-			$this->set('varSigner', $varSigner);
-			if ($xml['error']['message'] == "Document is already signed." && $data['CobrandedApplication']['rightsignature_install_status'] != 'signed') {
-				$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
-				$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
-				$existing = $this->CobrandedApplication->Merchant->TimelineEntry->find(
-					'count',
-					array(
-						'conditions' => array(
-							'TimelineEntry.merchant_id' => $data['Merchant']['merchant_id'],
-							'TimelineEntry.timeline_item' => 'SIS'
-						)
-					)
-				);
-				if ($existing == 0) {
-					$this->CobrandedApplication->Merchant->TimelineEntry->query("INSERT INTO timeline_entries VALUES ('{$data['Merchant']['merchant_id']}', 'SIS', NOW(), 'f')");
-				}
-			}
 		}
+
 		$this->set('varSigner', $varSigner);
 		$template = $this->CobrandedApplication->User->Template->find(
 			'first',
@@ -1311,57 +1324,16 @@ class CobrandedApplicationsController extends AppController {
 		$this->set('include_brand_logo', false);
 
 		$alreadySigned = false;
-		$this->set('alreadySigned', $alreadySigned);
 		$error = false;
-		$this->set('error', $error);
-		if (isset($xml['error']['message'])) {
+		if (!empty(Hash::get($docDetails, 'error'))) {
 			$error = true;
-			$this->set('error', $error);
-			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($guid);
-			$this->set('data', $data);
-
-			if ($data['Coversheet']['status'] == 'validated') {
-				$this->sendCoversheet($data);
-			}
-
-			if ($this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid)) {
-				$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($guid);
-				if ($data['CobrandedApplication']['rightsignature_install_status'] != 'signed') {
-					$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
-					$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
-				}
-				$this->set('data', $data);
-
-				$existing = $this->CobrandedApplication->Merchant->TimelineEntry->find(
-					'count',
-					array(
-						'conditions' => array(
-							'TimelineEntry.merchant_id' => $data['Merchant']['merchant_id'],
-							'TimelineEntry.timeline_item' => 'SIS'
-						)
-					)
-				);
-				if ($existing == 0) {
-					$this->CobrandedApplication->Merchant->TimelineEntry->query("INSERT INTO timeline_entries VALUES ('{$data['Merchant']['merchant_id']}', 'SIS', NOW(), 'f')");
-				}
-			}
-
+		} elseif (Hash::get($docDetails, 'document.state') == 'executed') {
+			$error = true;
 			$alreadySigned = true;
-			$this->set('alreadySigned', $alreadySigned);
 		}
-		$appPdfUrl = null;
-		if ($alreadySigned === false) {
-			$docDetals = $client->getDocumentDetails($guid);
-			$docData = json_decode($docDetals, true);
-
-			if (!empty($docData)) {
-				$appPdfUrl = Hash::get($docData, 'document.pdf_url');
-				if (!empty($appPdfUrl)) {
-					$appPdfUrl = urldecode($appPdfUrl);
-				}
-			}
-		}
-		$this->set('appPdfUrl', $appPdfUrl);
+		$this->set('error', $error);
+		$this->set('alreadySigned', $alreadySigned);
+		$this->set('apiErrorMsg', Hash::get($docDetails, 'error'));
 	}
 
 /**
@@ -1463,25 +1435,25 @@ class CobrandedApplicationsController extends AppController {
 		);
 
 		$client = $this->CobrandedApplication->createRightSignatureClient();
-		$templateGuid = $cobrandedApplication['Template']['rightsignature_install_template_guid'];
-		$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateGuid);
+		$templateUuid = $cobrandedApplication['Template']['rightsignature_install_template_guid'];
+		$response = $this->CobrandedApplication->getRightSignatureTemplate($client, $templateUuid);
 		$response = json_decode($response, true);
 
-		if ($response && $response['template']['type'] == 'Document' && $response['template']['guid']) {
+		if ($response && !empty($response['reusable_template']['id'])) {
 			$subject = "Axia Install Sheet - VAR";
-			$applicationXml = $this->CobrandedApplication->createRightSignatureApplicationXml(
-				$applicationId, $this->Session->read('Auth.User.email'), $response['template'], $subject,
+			$applicationJSON = $this->CobrandedApplication->createRightSignatureDocumentJSON(
+				$applicationId, $this->Session->read('Auth.User.email'), $response['reusable_template'], $subject,
 				$this->request->data['CobrandedApplication']['select_terminal_type']);
 
-			$response = $this->CobrandedApplication->createRightSignatureDocument($client, $applicationXml);
+			$response = $this->CobrandedApplication->createRightSignatureDocument($response['reusable_template']['id'], $client, $applicationJSON);
 			$response = json_decode($response, true);
 
-			if ($response['document']['status'] == 'sent' && $response['document']['guid']) {
+			if ($response['document']['state'] == 'pending' && $response['document']['id']) {
 				if ($this->CobrandedApplication->save(
 						array(
 							'CobrandedApplication' => array(
 								'id' => $applicationId,
-								'rightsignature_install_document_guid' => $response['document']['guid']
+								'rightsignature_install_document_guid' => $response['document']['id']
 							)
 						),
 						array('validate' => false)
@@ -1512,7 +1484,7 @@ class CobrandedApplicationsController extends AppController {
 				}
 			} else {
 				$url = "/edit/".$cobrandedApplication['CobrandedApplication']['uuid'];
-				$this->_failure(__('error! could not send the document'));
+				$this->_failure(__('error! could not send the document ' . Hash::get($response, 'error')));
 				$this->redirect(array('action' => $url));
 			}
 		}
@@ -1532,21 +1504,32 @@ class CobrandedApplicationsController extends AppController {
  * after a document has been successfully signed.
  * callback implements logic for what should happen to applications after
  * they have been signed.
+ *
+ * 
  */
 	public function document_callback() {
-		$this->data = array_change_key_case($this->data, CASE_LOWER);
 		CakeLog::write('debug', print_r($this->request->data, true));
 
-		if ($this->request->data['callback']['guid'] && $this->data['callback']['status'] == 'signed') {
+		if ($this->request->data['id'] && $this->data['event'] == 'executed') {
 
-			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($this->request->data['callback']['guid']);
+			$data = $this->CobrandedApplication->findByRightsignatureDocumentGuid($this->request->data['id']);
 
 			if (empty($data)) {
-				$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($this->request->data['callback']['guid']);
+				$data = $this->CobrandedApplication->findByRightsignatureInstallDocumentGuid($this->request->data['id']);
 				if (!empty($data)) {
 					$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
 					$this->CobrandedApplication->saveField('rightsignature_install_status', 'signed');
 					$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id'], 'rep_notify_signed_install_sheet');
+
+					$hasEntry = $this->CobrandedApplication->Merchant->TimelineEntry->hasAny(
+						array(
+								'TimelineEntry.merchant_id' => $data['Merchant']['merchant_id'],
+								'TimelineEntry.timeline_item' => 'SIS'
+							)
+					);
+					if (!$hasEntry) {
+						$this->CobrandedApplication->Merchant->TimelineEntry->query("INSERT INTO timeline_entries VALUES ('{$data['Merchant']['merchant_id']}', 'SIS', NOW(), 'f')");
+					}
 				}
 				exit;
 			}
@@ -1555,6 +1538,11 @@ class CobrandedApplicationsController extends AppController {
 				$this->CobrandedApplication->id = $data['CobrandedApplication']['id'];
 				$this->CobrandedApplication->saveField('status', 'signed');
 				$this->CobrandedApplication->repNotifySignedEmail($data['CobrandedApplication']['id']);
+				$this->CobrandedApplication->sendSignedAppToUw($data['CobrandedApplication']['id']);
+
+				if ($data['Coversheet']['status'] == 'validated') {
+					$this->sendCoversheet($data);
+				}
 			}
 		}
 
@@ -1644,4 +1632,47 @@ class CobrandedApplicationsController extends AppController {
 		}
 		$this->redirect($this->referer());
 	}
+
+/**
+ * rs_document_audit
+ * Ajax method gets rightsignature document access audit details
+ *
+ * @param string $rsDocumentId string RightSignature external document id
+ * @return void
+ */
+	public function rs_document_audit($rsDocumentId) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if ($this->request->is('ajax')) {
+			if ($this->Session->read('Auth.User.id')) {
+				if (!empty($rsDocumentId)) {
+					$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+					$client = $this->CobrandedApplication->createRightSignatureClient();
+					$docDetals = $client->getDocumentDetails($rsDocumentId);
+					$docDetals = json_decode($docDetals, true);
+					if (empty(Hash::get($docDetals, 'error'))) {
+						//all good
+						$docStatus = $docDetals['document']['state'];
+						$auditTrail = $docDetals['document']['audits'];
+						$this->set(compact('auditTrail', 'docStatus'));
+						$this->render('/Elements/cobranded_applications/rs_doc_audit', 'ajax');
+					} else {
+						//Unexpected internal error
+						$this->response->statusCode(500);
+						return;
+					}
+				} else {
+					//Bad Request
+					$this->response->statusCode(400);
+				}
+			} else {
+				//session expired
+				$this->response->statusCode(401);
+			}
+		} else {
+			//Bad Request
+			$this->response->statusCode(400);
+		}
+	}
+
 }
