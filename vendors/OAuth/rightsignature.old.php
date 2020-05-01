@@ -1,7 +1,7 @@
 <?php
 require_once("OAuth.php");
 
-class RightSignature {
+class RightSignature_OLD_DEPRECATED {
   public $base_url = "https://rightsignature.com";
   public $secure_base_url = "https://rightsignature.com";
   public $oauth_callback = "oob";

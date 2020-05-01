@@ -66,15 +66,15 @@
 		if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED
 		|| $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
 
-			echo $this->Element('cobranded_applications/appStatusPopOver', array(
-					'appId' => $cobrandedApplication['CobrandedApplication']['id'],
-					'appStatus' => $cobrandedApplication['CobrandedApplication']['status']
-				));
+			$isSigned = ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED);
+			echo ($isSigned)? "<span class='text-success'><strong>":"";
+			echo h($cobrandedApplication['CobrandedApplication']['status']);
+			echo ($isSigned)? "</span></strong>":"";
 		} elseif($appOutOfSync) {
 			echo "<span class='text-warning' data-toggle='tooltip' data-placement='left' title='' alt='' data-original-title=\"App and Template are out-of-sync due to changes made to Template. Click Sync button if necessary.\";><strong>out-of-sync</strong></span>";
 		} else {
 			echo h($cobrandedApplication['CobrandedApplication']['status']);
-		}
+		}	
 	?>&nbsp;
 			</td>
 			<td><?php echo $this->Time->format('m/d/y h:i A', $cobrandedApplication['CobrandedApplication']['modified']); ?>&nbsp;</td>
@@ -115,7 +115,8 @@
 					);
 				}
 
-				if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && $cobrandedApplication['Template']['email_app_pdf'] === true) {
+				if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && 
+					($cobrandedApplication['Template']['email_app_pdf'] === true || in_array($this->Session->read('Auth.User.group'), array('admin')))) {
 					echo $this->Html->link($this->Html->image('pdf-format.png', array('style' => 'margin:-1px -4px -4px -4px;vertical-align:top')),
 						array(
 							'action' => 'open_app_pdf',
@@ -127,6 +128,18 @@
 							'escape' => false,
 							'class' => 'btn btn-default btn-sm glyphicon',
 							'title' => __('Open ' . $cobrandedApplication['Template']['name'] . ' PDF')
+						)
+					);
+				}
+				if (strlen($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) > 30) {
+					echo $this->Form->button(' ',
+						array(
+							'type' => 'button',
+							'data-toggle' => 'modal',
+							'data-target' => '#dynamicModal',
+							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/CobrandedApplications/rs_document_audit/" . $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'] . "')",
+							'class' => 'btn btn-default btn-sm glyphicon glyphicon-tasks',
+							'title' => __('View Document Audit')
 						)
 					);
 				}

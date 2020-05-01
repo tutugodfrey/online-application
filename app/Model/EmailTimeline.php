@@ -13,6 +13,7 @@ class EmailTimeline extends AppModel {
 	const COVERSHEET_TO_UW = 8;
 	const MULTIPASS_COMPLETE = 9;
 	const NEW_API_APPLICATION = 10;
+	const APP_SENT_TO_UW = 11;
 	//Companies/entities email domain names
 	const ENTITY1_EMAIL_DOMAIN = 'axiamed';
 	const ENTITY2_EMAIL_DOMAIN = 'axiapayments';

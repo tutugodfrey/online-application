@@ -15,6 +15,7 @@ class CobrandedApplicationTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'app.onlineappApiConfiguration',
 		'app.onlineappApip',
 		'app.onlineappEpayment',
 		'app.onlineappUser',
@@ -65,6 +66,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->Merchant = ClassRegistry::init('Merchant');
 
 		// load data
+		$this->loadFixtures('OnlineappApiConfiguration');
 		$this->loadFixtures('OnlineappEpayment');
 		$this->loadFixtures('OnlineappApip');
 		$this->loadFixtures('OnlineappUser');
@@ -154,16 +156,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		unset($this->EmailTimelineSubject);
 
 		parent::tearDown();
-	}
-
-	public function testGetAppPdfUrl() {
-		$applicationId = 4;
-	 	$url = $this->CobrandedApplication->getAppPdfUrl($applicationId);
-	 	$this->assertNotEmpty($url);
-
-		$applicationId = 1;
-	 	$url = $this->CobrandedApplication->getAppPdfUrl($applicationId);
-	 	$this->assertEmpty($url);
 	}
 
 /**
