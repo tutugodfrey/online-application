@@ -91,3 +91,33 @@ function getAppStatus(appStatusId) {
 	//begin request
 	renderContentAJAX('', '', '', 'popOvrContentFor' + 'app_status_' + appStatusId, '/admin/CobrandedApplications/app_status/' + appStatusId);
 }
+
+/**
+ * getTemplateDetails
+ * Makes Ajax request to retrieve detailed information about a rightsignature template
+ * Expects the following specific DOM elements to exist on the page: 
+ *  - Dropdown menu containing RightSignature template IDs as the option value
+ *  - At least one empty element to dynamically populate with validation errors with id=selErrMsg1 and/or id=selErrMsg2.
+ * 
+ * @param  {string} templateType type of template supported enum params app_templates, install_templates
+ * @return {void}
+ */
+function getTemplateDetails(templateType) {
+	$('#selErrMsg1, #selErrMsg2').html('');
+	rsTemplateId = '';
+	errElNum = '';
+	
+	if (templateType == 'app_templates') {
+		errElNum = '1';
+		rsTemplateId = $("[id$='RightsignatureTemplateGuid'] option:selected").val();
+	} else {
+		errElNum = '2';
+		rsTemplateId = $("[id$='RightsignatureInstallTemplateGuid'] option:selected").val()
+	}
+	if (rsTemplateId == undefined || rsTemplateId == '') {
+		$('#selErrMsg' + errElNum).html('<br/>Select a template from the list.');
+	} else {
+		renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/Templates/preview_rs_template/' + rsTemplateId);
+		$("#dynamicModal").modal();
+	}
+}
