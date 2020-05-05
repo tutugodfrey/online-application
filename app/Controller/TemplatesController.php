@@ -71,6 +71,7 @@ class TemplatesController extends NestedResourceController {
 		'admin_delete' => array('admin', 'rep', 'manager'),
 		'admin_preview' => array('admin', 'rep', 'manager'),
 		'admin_preview_rs_template' => array('admin'),
+		'admin_rs_reference_inspector' => array('admin'),
 	);
 
 
@@ -395,5 +396,48 @@ class TemplatesController extends NestedResourceController {
 			$this->response->statusCode(400);
 		}
 	}
+/**
+ * admin_rs_reference_inspector
+ * Looks up templates that reference a rightsignature template id that no longer exists and has become orphaned.
+ *
+ *@return void  
+ */
+	public function admin_rs_reference_inspector() {
+		if ($this->request->is('post')) {
+			$oldRsId = $this->request->data('Template.old_template_guid');
+			$newUuid = $this->request->data('Template.rightsignature_template_guid');
+			if (!empty($oldRsId) && !empty($newUuid)) {
+				$this->Template->updateAll(
+					[
+						'rightsignature_template_guid' => "'". $newUuid ."'",
+						'old_template_guid' => "'". $oldRsId ."'",
+					],
+					['rightsignature_template_guid' => $oldRsId]
+				);
+				$this->_success('Templates updated!', null, 'alert alert-success');
+			}
+		}
 
+		$this->CobrandedApplication = ClassRegistry::init('CobrandedApplication');
+		
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		$rsTemplates = $this->CobrandedApplication->getRightSignatureTemplates($client);
+
+		if (!empty(Hash::get($rsTemplates, 'error'))) {
+			$this->_failure(__('Unexpected Error: ' . Hash::get($rsTemplates, 'error') .". Please try again later."), array('controller' => 'Cobrands','action' => 'index', 'admin' => true));
+		}
+		$orphanedTemplates = $this->Template->getOrphanedTemplates(array_keys($rsTemplates));
+		
+		 $elVars = array(
+			'navLinks' => array(
+				'Cobrands Index' => Router::url(array('controller' => 'Cobrands','action' => 'index', 'admin' => true)),
+			)
+		);
+		//Build array of outdated RS template ids
+		foreach ($orphanedTemplates as $templates) {
+			$outdatedIds[$templates['Template']['rightsignature_template_guid']] = $templates['Template']['rightsignature_template_guid'];
+		}
+
+		$this->set(compact('elVars', 'orphanedTemplates', 'rsTemplates', 'outdatedIds'));
+	}
 }

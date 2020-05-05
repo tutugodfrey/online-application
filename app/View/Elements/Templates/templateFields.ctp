@@ -94,24 +94,3 @@ echo $this->Form->input('rightsignature_install_template_guid',
 
 echo $this->Form->input('owner_equity_threshold', array('class' => 'form-control', 'wrapInput' => 'col col-md-4'));
 ?>
-<script type='text/javascript'>
-	function getTemplateDetails(templateType) {
-		$('#selErrMsg1, #selErrMsg2').html('');
-		rsTemplateId = '';
-		errElNum = '';
-		
-		if (templateType == 'app_templates') {
-			errElNum = '1';
-			rsTemplateId = $("[id$='RightsignatureTemplateGuid'] option:selected").val();
-		} else {
-			errElNum = '2';
-			rsTemplateId = $("[id$='RightsignatureInstallTemplateGuid'] option:selected").val()
-		}
-		if (rsTemplateId == undefined || rsTemplateId == '') {
-			$('#selErrMsg' + errElNum).html('<br/>Select a template from the list.');
-		} else {
-			renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/Templates/preview_rs_template/' + rsTemplateId);
-			$("#dynamicModal").modal();
-		}
-	}
-</script>
