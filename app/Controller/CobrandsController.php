@@ -112,6 +112,7 @@ class CobrandsController extends AppController {
 			'navLinks' => array(
 				'Cobrands Index' => Router::url(array('action' => 'index', 'admin' => true)),
 				'Add Cobrand' => Router::url(array('action' => 'add', 'admin' => true)),
+				'Fix RightSignature References' => Router::url(array('controller' => 'Templates','action' => 'rs_reference_inspector', 'admin' => true)),
 			)
 		);
 

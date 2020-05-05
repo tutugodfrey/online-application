@@ -263,4 +263,31 @@ class Template extends AppModel {
 	public function removable($id) {
 		return (!ClassRegistry::init('CobrandedApplication')->hasAny(array('template_id' => $id)));
 	}
+
+/**
+ * getOrphanedTemplates
+ * Returns and array of templates whose rightsignature_template_guid reference id is not present in the list of
+ * rightsignature templates.
+ * 
+ * @param array rsTemplateIdList a one dimension array containing all rightsignature template ids.
+ * @return array of orphaned templates or empty when no broken references are found.
+ */
+	public function getOrphanedTemplates($rsTemplateIdList) {
+		$orphans = [];
+		if (!empty($rsTemplateIdList)) {
+			$orphans = $this->find('all', [
+				'fields' => [
+					'Template.id', 'Template.name', 'Template.rightsignature_template_guid',
+					'Cobrand.partner_name'
+				],
+				'contain' => ['Cobrand'],
+				'conditions' => [
+					'Template.rightsignature_template_guid NOT IN' => $rsTemplateIdList,
+					'char_length(Template.rightsignature_template_guid) = 36',
+				]
+			]);
+
+		}
+		return $orphans;
+	}
 }
