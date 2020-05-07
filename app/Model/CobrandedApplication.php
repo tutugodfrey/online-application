@@ -5,6 +5,7 @@ App::uses('EmailTimeline', 'Model');
 App::uses('RightSignature', 'Model');
 App::uses('CakeTime', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
+App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 
 /**
  * CobrandedApplication Model
@@ -1738,7 +1739,7 @@ class CobrandedApplication extends AppModel {
  *
  * @return $response array
  */
-	public function sendSignedAppToUw($applicationId, $optionalTemplate = null, $pdfUrl = null) {
+	public function sendSignedAppToUw($applicationId, $optionalTemplate = null) {
 
 		if (!$this->exists($applicationId)) {
 			return false;
@@ -1765,10 +1766,14 @@ class CobrandedApplication extends AppModel {
 		}
 
 		$dbaBusinessName = '';
+		$repName = '';
 		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
 
 		if (!empty($valuesMap['DBA'])) {
 			$dbaBusinessName = $valuesMap['DBA'];
+		}
+		if (!empty($valuesMap['ContractorID'])) {
+			$repName = $valuesMap['ContractorID'];
 		}
 
 		
@@ -1779,6 +1784,14 @@ class CobrandedApplication extends AppModel {
 			$to = array(EmailTimeline::ENTITY2_APPS_EMAIL);
 		}
 
+		//Generate secret access key for secured doc download by receipient
+		$randPass = $this->User->generateRandPw();
+		$passwordHasher = new BlowfishPasswordHasher();
+		$secretHash = $passwordHasher->hash($randPass);
+		$secretToken = base64_encode($applicationId . ':' . $secretHash);
+		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+
+		$pdfUrl = "https://" . $hostname . '/CobrandedApplications/pdf_doc_token_dl?token=' . $secretToken;
 
 		$subject = $dbaBusinessName . ' - Online Application Signed';
 		$format = 'html';
@@ -1788,7 +1801,8 @@ class CobrandedApplication extends AppModel {
 		$description .= Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name') . ' (' . Hash::get($cobrandedApplication, 'Template.name') . ' template)';
 		$viewVars['merchant'] = $dbaBusinessName;
 		$viewVars['description'] = $description;
-		$viewVars['appPdfUrl'] = (!empty($pdfUrl))? $pdfUrl : $this->getAppPdfUrl($applicationId, true);
+		$viewVars['appPdfUrl'] = $pdfUrl;
+		$viewVars['repName'] = $repName;
 
 		if ($optionalTemplate != null) {
 			$template = $optionalTemplate;
@@ -1811,6 +1825,8 @@ class CobrandedApplication extends AppModel {
 			$args['email_timeline_subject_id'] = EmailTimeline::APP_SENT_TO_UW;
 			$args['recipient'] = implode(';', $to);
 			$response = $this->createEmailTimelineEntry($args);
+			$this->id = $applicationId;
+			$this->saveField('doc_secret_token', $secretHash);
 		}
 
 		return $response['success'];
