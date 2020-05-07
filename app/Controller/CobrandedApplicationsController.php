@@ -51,6 +51,7 @@ class CobrandedApplicationsController extends AppController {
 
 	public $permissions = array(
 		'index' => array('*'),
+		'pdf_doc_token_dl' => array('*'),
 		'add' => array(User::ADMIN, User::REP, User::MANAGER),
 		'api_add' => array(User::API),
 		'api_edit' => array(User::API),
@@ -86,6 +87,7 @@ class CobrandedApplicationsController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
+			'pdf_doc_token_dl',
 			'signerHasSigned',
 			'expired',
 			'index',
@@ -1080,6 +1082,35 @@ class CobrandedApplicationsController extends AppController {
 			$this->_failure(__('Application PDF is not available or could not be found! Contact support for help retrieving this document PDF.'), array('action' => 'index', 'admin' => true));
 		}
 	}
+
+/**
+ * Redirects external user to the application pdf
+ * Authenticates request with a one-time-use request token asociated with the app
+ *
+ * @param integer $id application id
+ * @return void
+ */
+	function pdf_doc_token_dl() {
+		if ($this->request->is('get')) {
+			$encToken = Hash::get($this->request->query, 'token');
+			$tokenParts = explode(':', base64_decode($encToken));
+			$appId = Hash::get($tokenParts, 0);
+			$secret = Hash::get($tokenParts, 1);
+			if ($this->CobrandedApplication->hasAny(['id' => $appId, 'doc_secret_token' => $secret])) {
+				$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($appId, true);
+				if (!empty($pdfUrl)) {
+					$this->CobrandedApplication->id = $appId;
+					$this->CobrandedApplication->saveField('doc_secret_token', null);
+					$this->redirect($pdfUrl);
+				}
+			}
+		}
+		$this->set('name', 'ERROR 404: Document Not Found Or Has Expired. For assistance contact AxiaMed support.');
+		$this->set('url', Router::url(['controller' => 'CobrandedApplication', 'action' => 'pdf_doc_token_dl'], true));
+		$this->render('/Errors/error404');
+	}
+
+
 
 /**
  * |||||DEPRECTATED April 20th 2020|||||||

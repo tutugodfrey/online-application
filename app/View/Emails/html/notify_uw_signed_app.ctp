@@ -7,10 +7,12 @@
 
 	All parties have signed a new sales agreement and is ready for your review.<br/>
 	Business Name (DBA): <strong><?php echo $merchant; ?><br/></strong>
+	<?php echo (!empty($repName))? "Rep Name: <strong>$repName</strong>":''; ?><br/>
 	<?php 
-	echo "$description<br/><br/>"; 
-	echo "To download the signed sales agreement PDF use the following link:<br/>" ;
-	echo "<a href='$appPdfUrl'><strong>Download Signed PDF</strong></a><br/><br/>";
+	echo "$description<br/><br/>";
+	echo "<strong><u>For security, this document can only be downloaded once and this link will expire after document is downloaded:</u></strong><br/>" ;
+	echo "<div style='margin: 0 auto; text-align: center;'><a href='$appPdfUrl'><img width='100' height='100' src='https://app.axiatech.com/img/pdf-axiamed-dl.png'><br/><strong>Download</strong></a></div><br/>";
+
 	?>
 
 	Thank you,<br/>
