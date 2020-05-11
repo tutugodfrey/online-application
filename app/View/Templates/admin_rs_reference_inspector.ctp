@@ -50,7 +50,7 @@
 				<table class="table table-condensed table-striped table-bordered">
 					<tr>
 						<th><?php echo "<img src='/img/test-fail-icon.png'/> Outdated References"; ?></th>
-						<th><?php echo 'Rightsignature Templates'; ?></th>
+						<th><?php echo 'Enter New Rightsignature Template Id'; ?></th>
 					</tr>
 					<tr>
 						<td>
@@ -67,17 +67,18 @@
 						<td><?php 
 							echo $this->Form->input('rightsignature_template_guid',
 								array(
-									'type' => 'select',
+									'type' => 'text',
+									'required' => 'required',
 									'label' => false,
 									'options' => $rsTemplates,
 									'after' => $this->Form->button('<span class="glyphicon glyphicon-info-sign"></span>',
 											array(
 												'type' => 'button',
-												'onClick' => "getTemplateDetails('app_templates')",
+												'onClick' => "getRsTemplateById();",
 												'class' => 'btn btn-info btn-xs',
 												'title' => __('View information about selected template')
 											)
-										) . '<strong class="text-danger" id ="selErrMsg1"></strong>'
+										) . '<div class="text-center"><strong class="text-danger" id ="selErrMsg1"></strong></div>'
 								)
 							);
 						?></td>
@@ -102,3 +103,17 @@
 	</div>
   </div>
 </div>
+<script>
+function getRsTemplateById() {
+	$('#selErrMsg1').html('');
+	rsTemplateId = $("#TemplateRightsignatureTemplateGuid").val();
+	rsTemplateId = rsTemplateId.trim();
+
+	if (rsTemplateId == undefined || rsTemplateId == '') {
+		$('#selErrMsg1').html('<br/>Enter a valid RigthSignature template Id.');
+	} else {
+		renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/Templates/preview_rs_template/' + rsTemplateId);
+		$("#dynamicModal").modal();
+	}
+}
+</script>
