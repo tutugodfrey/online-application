@@ -406,7 +406,7 @@ class TemplatesController extends NestedResourceController {
 		if ($this->request->is('post')) {
 			$oldRsId = $this->request->data('Template.old_template_guid');
 			$newUuid = trim($this->request->data('Template.rightsignature_template_guid'));
-			if (!empty($oldRsId) && !empty($newUuid)) {
+			if (!empty($oldRsId) && !empty($newUuid) && $this->Template->isValidUUID($newUuid)) {
 				$this->Template->updateAll(
 					[
 						'rightsignature_template_guid' => "'". $newUuid ."'",
@@ -415,6 +415,8 @@ class TemplatesController extends NestedResourceController {
 					['rightsignature_template_guid' => $oldRsId]
 				);
 				$this->_success('Templates updated!', null, 'alert alert-success');
+			} else {
+				$this->_failure('The id entered is not in proper UUID format, check entry and try again');
 			}
 		}
 

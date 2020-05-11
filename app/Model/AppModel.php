@@ -281,4 +281,17 @@ class AppModel extends Model {
 		return trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), base64_decode($str), 'cbc', Configure::read('Cryptable.iv')));
 	}
 
+/**
+ * isValidUUID method
+ *
+ * check is the given string parameter is a valid UUID
+ * Implementations should not implement validation, since UUIDs should be in a consistent format across all implementations.
+ *
+ * @param string $uuid The UUID.
+ * @return bool True if valid, false otherwise.
+ */
+	public static function isValidUUID($uuid) {
+		return (bool)preg_match("/^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$/", $uuid);
+	}
+
 }
