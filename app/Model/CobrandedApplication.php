@@ -1760,6 +1760,7 @@ class CobrandedApplication extends AppModel {
 		$cobrandedApplication = $this->getById($applicationId, $settings);
 		//No email should be sent for Apps using these templates with these keywords in the name
 		if ((stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Payment Fusion') !== false) || 
+			(stripos(Hash::get($cobrandedApplication, 'Cobrand.partner_name'), 'VeriCheck') !== false) ||
 			(stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Text&Pay') !== false) ||
 			(stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Cancellation') !== false)) {
 			return true;
