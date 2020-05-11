@@ -405,7 +405,7 @@ class TemplatesController extends NestedResourceController {
 	public function admin_rs_reference_inspector() {
 		if ($this->request->is('post')) {
 			$oldRsId = $this->request->data('Template.old_template_guid');
-			$newUuid = $this->request->data('Template.rightsignature_template_guid');
+			$newUuid = trim($this->request->data('Template.rightsignature_template_guid'));
 			if (!empty($oldRsId) && !empty($newUuid)) {
 				$this->Template->updateAll(
 					[
