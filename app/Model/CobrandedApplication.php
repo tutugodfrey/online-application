@@ -2600,7 +2600,7 @@ class CobrandedApplication extends AppModel {
 					'name' => $rsRole['name'],
 					'signer_name' => (empty($owner2Fullname))? 'N/A' : htmlspecialchars($owner2Fullname),
 					'signer_email' => htmlspecialchars('noemail@rightsignature.com'),
-					'signer_omitted' => empty($owner2Fullname),
+					'signer_omitted' => (empty($owner2Email) || empty($owner2Fullname)),
 				);
 			}
 		}
