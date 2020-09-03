@@ -1758,11 +1758,13 @@ class CobrandedApplication extends AppModel {
 			),
 		));
 		$cobrandedApplication = $this->getById($applicationId, $settings);
+		$templateName = strtolower(Hash::get($cobrandedApplication, 'Template.name'));
+		$cobrandName = strtolower(Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name'));
 		//No email should be sent for Apps using these templates with these keywords in the name
-		if ((stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Payment Fusion') !== false) || 
-			(stripos(Hash::get($cobrandedApplication, 'Cobrand.partner_name'), 'VeriCheck') !== false) ||
-			(stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Text&Pay') !== false) ||
-			(stripos(Hash::get($cobrandedApplication, 'Template.name'), 'Cancellation') !== false)) {
+		if ((stripos($templateName, 'payment fusion') !== false) || 
+			(stripos($cobrandName, 'vericheck') !== false) ||
+			(stripos($templateName, 'text&pay') !== false) ||
+			(stripos($templateName, 'cancellation') !== false)) {
 			return true;
 		}
 
