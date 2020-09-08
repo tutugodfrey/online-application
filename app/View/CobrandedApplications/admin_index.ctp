@@ -101,20 +101,67 @@
 					}
 			 ?></td>
 			<?php endif; ?>
-			<td><div class="btn-group"><?php
-				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-					echo $this->Form->button(' ',
-						array(
-							'type' => 'button',
-							'data-toggle' => 'modal',
-							'data-target' => '#dynamicModal',
-							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/export/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
-							'class' => 'btn btn-default btn-sm glyphicon glyphicon-export',
-							'title' => __('Export')
-						)
-					);
-				}
+			<td>
+				<div class="btn-group">
+					<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
+					<ul class="dropdown-menu dropdown-menu-right" style="width: max-content;">
+						<?php
+							if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-export pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Export Data',
+										'JavaScript:void(0);',
+										array(
+										'escape' => false,
+										'data-toggle' => 'modal',
+										'data-target' => '#dynamicModal',
+										'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/export/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+										'class' => 'small',
+										'style' => 'padding-left: 5px',
+										'title' => __('Export Data')
+										)
+									) .'</li>';
+							}
 
+
+
+							if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && 
+								($cobrandedApplication['Template']['email_app_pdf'] === true || in_array($this->Session->read('Auth.User.group'), array('admin')))) {
+								echo $this->Html->link($this->Html->image('pdf-format.png', array('style' => 'margin:-1px -4px -4px -4px;vertical-align:top')),
+									array(
+										'action' => 'open_app_pdf',
+										$cobrandedApplication['CobrandedApplication']['id'],
+										'admin' => true
+									),
+									array(
+										'target' => '_blank',
+										'escape' => false,
+										'class' => 'btn btn-default btn-sm glyphicon',
+										'title' => __('Open ' . $cobrandedApplication['Template']['name'] . ' PDF')
+									)
+								);
+							}
+						?>
+						
+					</ul>
+				</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				<div class="btn-group"><?php
+				
 				if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && 
 					($cobrandedApplication['Template']['email_app_pdf'] === true || in_array($this->Session->read('Auth.User.group'), array('admin')))) {
 					echo $this->Html->link($this->Html->image('pdf-format.png', array('style' => 'margin:-1px -4px -4px -4px;vertical-align:top')),
