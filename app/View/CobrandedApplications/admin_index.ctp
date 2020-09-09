@@ -101,167 +101,189 @@
 					}
 			 ?></td>
 			<?php endif; ?>
-			<td><div class="btn-group"><?php
-				if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-					echo $this->Form->button(' ',
+			<td>
+				<?php 
+					//Element for 'Email app for field completion GUI':
+					$valuesMap = array();
+					$valuesMap['Owner1Email'] = $cobrandedApplication['Owner1Email']['value'];
+					$valuesMap['Owner2Email'] = $cobrandedApplication['Owner2Email']['value'];
+					$valuesMap['EMail'] = $cobrandedApplication['EMail']['value'];
+					$valuesMap['LocEMail'] = $cobrandedApplication['LocEMail']['value'];
+					echo $this->element('cobranded_applications/email_select_modal',
 						array(
-							'type' => 'button',
-							'data-toggle' => 'modal',
-							'data-target' => '#dynamicModal',
-							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/export/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
-							'class' => 'btn btn-default btn-sm glyphicon glyphicon-export',
-							'title' => __('Export')
+							'cobranded_application_id' => $cobrandedApplication['CobrandedApplication']['id'],
+							'valuesMap' => $valuesMap
 						)
 					);
-				}
+				?>
+				<div class="btn-group">
+					<button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
+					<ul class="dropdown-menu dropdown-menu-right panel-primary" style="width: max-content;">
+						<?php
+							if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-export pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Export Data',
+										'#',
+										array(
+										'escape' => false,
+										'data-toggle' => 'modal',
+										'data-target' => '#dynamicModal',
+										'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/export/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+										'class' => 'small',
+										'style' => 'padding-left: 5px',
+										'title' => __('Export Data')
+										)
+									) .'</li>';
+							}
 
-				if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && 
-					($cobrandedApplication['Template']['email_app_pdf'] === true || in_array($this->Session->read('Auth.User.group'), array('admin')))) {
-					echo $this->Html->link($this->Html->image('pdf-format.png', array('style' => 'margin:-1px -4px -4px -4px;vertical-align:top')),
-						array(
-							'action' => 'open_app_pdf',
-							$cobrandedApplication['CobrandedApplication']['id'],
-							'admin' => true
-						),
-						array(
-							'target' => '_blank',
-							'escape' => false,
-							'class' => 'btn btn-default btn-sm glyphicon',
-							'title' => __('Open ' . $cobrandedApplication['Template']['name'] . ' PDF')
-						)
-					);
-				}
-				if (strlen($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) > 30) {
-					echo $this->Form->button(' ',
-						array(
-							'type' => 'button',
-							'data-toggle' => 'modal',
-							'data-target' => '#dynamicModal',
-							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/CobrandedApplications/rs_document_audit/" . $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'] . "')",
-							'class' => 'btn btn-default btn-sm glyphicon glyphicon-tasks',
-							'title' => __('View Document Audit')
-						)
-					);
-				}
-
-				if (!$appOutOfSync){
-					echo $this->Form->button(' ',
-						array(
-							'type' => 'button',
-							'data-toggle' => 'modal',
-							'data-target' => '#dynamicModal',
-							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/add/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
-							'class' => 'btn btn-default btn-sm glyphicon glyphicon-duplicate',
-							'title' => __('Create Copy')
-						)
-					);
-				}
-				echo $this->Form->button(' ',
-					array(
-						'type' => 'button',
-						'data-toggle' => 'modal',
-						'data-target' => '#dynamicModal',
-						'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/email_timeline/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
-						'class' => 'btn btn-default btn-sm glyphicon glyphicon-calendar',
-						'title' => __('Timeline for Emails')
-					)
-				);
-
-				$valuesMap = array();
-				$valuesMap['Owner1Email'] = $cobrandedApplication['Owner1Email']['value'];
-				$valuesMap['Owner2Email'] = $cobrandedApplication['Owner2Email']['value'];
-				$valuesMap['EMail'] = $cobrandedApplication['EMail']['value'];
-				$valuesMap['LocEMail'] = $cobrandedApplication['LocEMail']['value'];
-				echo $this->element('cobranded_applications/email_select_modal',
-					array(
-						'cobranded_application_id' => $cobrandedApplication['CobrandedApplication']['id'],
-						'valuesMap' => $valuesMap
-					)
-				);
-				if (!$appOutOfSync){
-					echo $this->Form->button(' ',
-						array(
-							'type' => 'button',
-							'data-toggle' => 'modal',
-							'data-target' => '#myModal_' . $cobrandedApplication['CobrandedApplication']['id'],
-							'class' => 'btn btn-info btn-sm glyphicon glyphicon-send',
-							'title' => __('Email App For Field Completion')
-						)
-					);
-				}
-
-				if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['id'])) {
-					echo $this->Html->link(' ',
-						array(
-							'action' => 'install_sheet_var',
-							$cobrandedApplication['CobrandedApplication']['id']
-						),
-						array(
-							'class' => 'btn btn-default btn-sm glyphicon glyphicon-file',
-							'title' => __('Install Sheet')
-						)
-					);
-				}
-				if ($cobrandedApplication['Template']['requires_coversheet']) {
-					if (isset($cobrandedApplication['Coversheet']['id'])) {
-							echo $this->Html->link(' ',
+							if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED && 
+								($cobrandedApplication['Template']['email_app_pdf'] === true || in_array($this->Session->read('Auth.User.group'), array('admin')))) {
+								echo '<li>' . $this->Html->link($this->Html->image('pdf-format.png', array('style' => 'vertical-align:top;height: 20px; padding: 1px 2px 1px 2px;', 'class' => 'pull-left btn-xs btn-default')) . '&nbsp;&nbsp;Download PDF',
+									array(
+										'action' => 'open_app_pdf',
+										$cobrandedApplication['CobrandedApplication']['id'],
+										'admin' => true
+									),
+									array(
+										'escape' => false,
+										'style' => 'padding-left: 5px',
+										'class' => 'small',
+										'title' => __('Download PDF')
+									)
+								).'</li>';
+							}
+							if (strlen($cobrandedApplication['CobrandedApplication']['rightsignature_document_guid']) > 30) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-tasks pull-left btn-xs btn-default"></span>&nbsp;&nbsp;View Document Audit',
+										'#',
+										array(
+										'escape' => false,
+										'data-toggle' => 'modal',
+										'data-target' => '#dynamicModal',
+										'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/CobrandedApplications/rs_document_audit/" . $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'] . "')",
+										'class' => 'small',
+										'style' => 'padding-left: 5px',
+										'title' => __('View Document Audit')
+										)
+									) .'</li>';
+							}
+							if (!$appOutOfSync) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-duplicate pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Create Copy',
+									'#',
+									array(
+									'escape' => false,
+									'data-toggle' => 'modal',
+									'data-target' => '#dynamicModal',
+									'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/add/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+									'class' => 'small',
+									'style' => 'padding-left: 5px',
+									'title' => __('Create Copy')
+									)
+								) .'</li>';
+							}
+							echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-calendar pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Timeline for Emails',
+								'#',
 								array(
-									'controller' => 'Coversheets',
-									'action' => 'edit',
-									$cobrandedApplication['Coversheet']['id'],
-									'admin' => false
-								),
-								array(
-									'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
-									'title' => __('Edit Cover Sheet')
+								'escape' => false,
+								'data-toggle' => 'modal',
+								'data-target' => '#dynamicModal',
+								'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/email_timeline/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+								'class' => 'small',
+								'style' => 'padding-left: 5px',
+								'title' => __('Timeline for Emails')
 								)
-							);
-						} else {
-							echo $this->Html->link(' ',
-								array(
-									'controller' => 'Coversheets',
-									'action' => 'add',
-									$cobrandedApplication['CobrandedApplication']['id'],
-									$cobrandedApplication['User']['id'],
-									'admin' => false
-								),
-								array(
-								'class' => 'btn btn-success btn-sm glyphicon glyphicon-book',
-									'title' => __('Create Cover Sheet')
-								)
-							);
-						}
-					}
-				if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
-					echo $this->Form->button(' ',
-						array(
-							'type' => 'button',
-							'data-toggle' => 'modal',
-							'data-target' => '#dynamicModal',
-							'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/edit/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
-							'class' => 'btn btn-danger btn-sm glyphicon glyphicon-cog',
-							'title' => __('Override')
-						)
-					);
+							) .'</li>';
+							
+							if (!$appOutOfSync) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-send pull-left btn-xs btn-info"></span>&nbsp;&nbsp;Email App For Field Completion',
+									'#',
+									array(
+									'escape' => false,
+									'data-toggle' => 'modal',
+									'data-target' => '#myModal_' . $cobrandedApplication['CobrandedApplication']['id'],
+									'class' => 'small',
+									'style' => 'padding-left: 5px',
+									'title' => __('Email App For Field Completion')
+									)
+								) .'</li>';
+							}
+							if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['id'])) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-file pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Install Sheet',
+									array(
+										'action' => 'install_sheet_var',
+										$cobrandedApplication['CobrandedApplication']['id']
+									),
+									array(
+									'escape' => false,
+									'class' => 'small',
+									'style' => 'padding-left: 5px',
+									'title' => __('Install Sheet')
+									)
+								) .'</li>';
+							}
+							if ($cobrandedApplication['Template']['requires_coversheet']) {
+								if (isset($cobrandedApplication['Coversheet']['id'])) {
+									$linkTitle = 'Edit Cover Sheet';
+									$actionUrl = array(
+										'controller' => 'Coversheets',
+										'action' => 'edit',
+										$cobrandedApplication['Coversheet']['id'],
+										'admin' => false
+									);
+								} else {
+									$linkTitle = 'Create Cover Sheet';
+									$actionUrl = array(
+										'controller' => 'Coversheets',
+										'action' => 'add',
+										$cobrandedApplication['CobrandedApplication']['id'],
+										$cobrandedApplication['User']['id'],
+										'admin' => false
+									);
+								}
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-book pull-left btn-xs btn-success"></span>&nbsp;&nbsp;' . $linkTitle,
+									$actionUrl,
+									array(
+										'escape' => false,
+										'class' => 'small',
+										'style' => 'padding-left: 5px',
+										'title' => __($linkTitle)
+									)
+								).'</li>';
+							}
+							if (in_array($this->Session->read('Auth.User.group'), array('admin'))) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-cog pull-left btn-xs btn-danger"></span>&nbsp;&nbsp;Override',
+									'#',
+									array(
+									'escape' => false,
+									'data-toggle' => 'modal',
+									'data-target' => '#dynamicModal',
+									'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/edit/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+									'class' => 'small',
+									'style' => 'padding-left: 5px',
+									'title' => __('Override')
+									)
+								) .'</li>';
 
-				}
-				if (!isset($cobrandedApplication['Coversheet']['id'])) {
-					echo $this->Form->postLink(' ',
-						array(
-							'action' => 'delete',
-							$cobrandedApplication['CobrandedApplication']['id']
-						),
-						array(
-							'class' => 'btn btn-warning btn-sm glyphicon glyphicon-trash',
-							'title' => __('Delete'),
-						),
-						__('Are you sure you want to delete # %s?',
-						$cobrandedApplication['CobrandedApplication']['id'])
-					);
+							}
+							if (!isset($cobrandedApplication['Coversheet']['id'])) {
+								echo '<li>' .  $this->Form->postLink('<span class="glyphicon glyphicon-trash pull-left btn-xs btn-danger"></span>&nbsp;&nbsp;Delete',
+									array(
+										'action' => 'delete',
+										$cobrandedApplication['CobrandedApplication']['id']
+									),
+									array(
+										'escape' => false,
+										'class' => 'small',
+										'style' => 'padding-left: 5px',
+										'title' => __('Delete'),
+									),
+									__('Are you sure you want to delete # %s?',
+									$cobrandedApplication['CobrandedApplication']['id'])
+								) . '</li>';
 
-				}
-	?>
-		</div>
+							}
+						?>
+						
+					</ul>
+				</div>
 		</td>
 		</tr>
 		<?php endforeach; ?>
