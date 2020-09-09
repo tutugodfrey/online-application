@@ -2659,7 +2659,7 @@ class CobrandedApplication extends AppModel {
 				} else {
 					$mergefieldVals[] = array(
 						'id' => $mergeField['id'],
-						'value' => htmlspecialchars($appValue['CobrandedApplicationValues']['value']),
+						'value' => $appValue['CobrandedApplicationValues']['value'],
 					);
 				}
 			}
