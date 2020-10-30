@@ -42,8 +42,7 @@ class AppController extends Controller {
 	public function beforeFilter() {
 		// Force SSL
 		$excludeSSL = array("document_callback");
-		if (!$this->RequestHandler->isSSL() &&
-			!in_array($this->request->action, $excludeSSL)) {
+		if (Configure::read('debug') == 0 || (!$this->RequestHandler->isSSL() && !in_array($this->request->action, $excludeSSL))) {
 
 			$this->redirect('https://' . env('HTTP_HOST') . $this->request->here);
 		}
