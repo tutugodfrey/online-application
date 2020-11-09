@@ -64,7 +64,6 @@ class CobrandedApplicationsController extends AppController {
 		'admin_add' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_edit' => array(User::ADMIN),
 		'admin_export' => array(User::ADMIN, User::REP, User::MANAGER),
-		'admin_copy' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_delete' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_email_timeline' => array(User::ADMIN, User::REP, User::MANAGER),
 		'complete_fields' => array(User::ADMIN, User::REP, User::MANAGER),
@@ -79,6 +78,7 @@ class CobrandedApplicationsController extends AppController {
 		'sent_var_install' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_var_success' => array(User::ADMIN, User::REP, User::MANAGER),
 		'rs_document_audit' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_validate_client_id' => array(User::ADMIN, User::REP, User::MANAGER),
 		'submit_for_review' => array('*'),
 	);
 
@@ -342,7 +342,14 @@ class CobrandedApplicationsController extends AppController {
 				} else {
 					if (empty(Hash::get($data, 'template_id'))) {
 						$preCheckErrors[] = 'A template_id is required to create an application.';
-					} 
+					} elseif ($this->CobrandedApplication->Template->hasAny(array('id' => $data['template_id'], 'require_client_data' => true))) {
+						if (empty(Hash::get($data, 'ClientId'))) {
+							$preCheckErrors[] = 'Client ID is required to create this application but none detected.';
+						}
+						if (empty(Hash::get($data, 'ClientName'))) {
+							$preCheckErrors[] = 'Client Name is required to create this application but none detected.';
+						}
+					}
 					if (empty(Hash::get($data, 'ContractorID'))) {
 						$preCheckErrors[] = 'The ContractorID is required to create application';
 					}
@@ -646,7 +653,7 @@ class CobrandedApplicationsController extends AppController {
 	public function admin_index() {
 		//reset all of the search parameters
 		if(isset($this->request->data['reset'])) {
-			foreach($this->request->data['CobrandedApplication'] as $i => $value){
+			foreach($this->request->data['CobrandedApplication'] as $i => $value) {
 				$this->request->data['CobrandedApplication'][$i]= '';
 			}
 		}
@@ -759,15 +766,25 @@ class CobrandedApplicationsController extends AppController {
 
 		} elseif ($this->request->is('post')) {
 			// if applicationId exists, we're copying the application
+			$clIdGlobal = $this->request->data('CobrandedApplication.client_id_global');
+			$clNameGlobal = $this->request->data('CobrandedApplication.client_name_global');
+			$appTemplate = $this->request->data['CobrandedApplication']['template_id'];
 			if ($applicationId) {
-				$this->redirect(array('action' => "/copy/" . $applicationId . "/" . $this->request->data['CobrandedApplication']['template_id']));
+				$appCopyId = $this->CobrandedApplication->copyApplication($applicationId, $this->Session->read('Auth.User.id'), $appTemplate);
+				if ($appCopyId !== false) {
+					if (!empty($clIdGlobal)) {
+						$this->CobrandedApplication->save(array('id' => $appCopyId, 'client_id_global' => $clIdGlobal, 'client_name_global' => $clNameGlobal), array('validate' => false));
+					}
+					$this->_success(__("Application $applicationId copied"), array('action' => 'index'));
+				} else {
+					$this->_failure(__("Failed to copy application $applicationId"), array('action' => 'index'));
+				}
 			}
 
 			// now try to save with the data from the user model
 			$tmpUser = $user;
-			$tmpUser['User']['template_id'] = $this->request->data['CobrandedApplication']['template_id'];
-
-			$response = $this->CobrandedApplication->createOnlineappForUser($tmpUser['User'], $this->request->data['CobrandedApplication']['uuid']);
+			$tmpUser['User']['template_id'] = $appTemplate;
+			$response = $this->CobrandedApplication->createOnlineappForUser($tmpUser['User'], $this->request->data['CobrandedApplication']['uuid'], null, null, $clIdGlobal, $clNameGlobal);
 
 			if ($response['success'] == true) {
 				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');
@@ -811,6 +828,41 @@ class CobrandedApplicationsController extends AppController {
 		}
 	}
 
+/**
+ * admin_is_client_data_required
+ * Ajax method to check if the give global client ID is valid.
+ * 
+ *
+ * @param string $clientId string template id
+ * @return void
+ */
+	public function admin_validate_client_id($clientId) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if ($this->request->is('ajax')) {
+			if ($this->Session->read('Auth.User.id')) {
+				if (!empty($clientId)) {
+					try {
+						$result = $this->CobrandedApplication->getSfClientNameByClientId($clientId);
+						return ($result === false)? json_encode(['valid' => false]) : json_encode($result);
+					} catch (Exception $e) {
+						$this->response->statusCode(500);
+						return;
+					}
+					
+				} else {
+					//Bad Request
+					$this->response->statusCode(400);
+				}
+			} else {
+				//session expired
+				$this->response->statusCode(401);
+			}
+		} else {
+			//Bad Request
+			$this->response->statusCode(400);
+		}
+	}
 /**
  * admin_edit method
  *
@@ -951,24 +1003,6 @@ class CobrandedApplicationsController extends AppController {
 
 			$csv = $this->render('/Elements/cobranded_applications/export', false);
 		}
-	}
-
-/**
- * admin_copy method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function admin_copy($id = null, $templateId = null) {
-		if (!$this->CobrandedApplication->exists($id)) {
-			throw new NotFoundException(__('Invalid application'));
-		}
-
-		if ($this->CobrandedApplication->copyApplication($id, $this->Session->read('Auth.User.id'), $templateId)) {
-			$this->_success(__("Application $id copied"), array('action' => 'index'));
-		}
-		$this->_failure(__("Failed to copy application $id"), array('action' => 'index'));
 	}
 
 /**
