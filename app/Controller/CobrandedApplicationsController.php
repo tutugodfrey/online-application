@@ -830,10 +830,9 @@ class CobrandedApplicationsController extends AppController {
 
 /**
  * admin_is_client_data_required
- * Ajax method to check if the give global client ID is valid.
- * 
+ * Ajax method to check if the given global client ID is valid.
  *
- * @param string $clientId string template id
+ * @param string $clientId string client id
  * @return void
  */
 	public function admin_validate_client_id($clientId) {
