@@ -126,7 +126,6 @@
 			$('#CobrandedApplicationAdminAddForm').on('submit', function(event) {
 				if ($('#clIdValidated').length === 0) {
 					jQuery("#clIdValidationMsgs").html('<strong class="text-danger">A valid Client ID is required to create an application with selected template!</strong>');
-					console.log('stopped submision');
 					event.preventDefault();
 					jQuery('#appCopySubmitBtn').removeAttr('disabled');
 				}

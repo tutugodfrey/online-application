@@ -688,6 +688,7 @@ class CobrandedApplication extends AppModel {
 			$exportedData['MID'],
 			$exportedData['oaID'],
 			$exportedData['api'],
+			$exportedData['ach_accepted'],
 			$exportedData['aggregated']
 		);
 		foreach ($this->Coversheet->getColumnTypes() as $fieldName => $types) {
@@ -1089,6 +1090,10 @@ class CobrandedApplication extends AppModel {
 
 		);
 		$app = $this->find('first', $options);
+		$cobrandData = $this->Template->Cobrand->find('first', array(
+			'fields' => array('brand_name', 'partner_name'),
+			'conditions' => array('id' => $app['Template']['cobrand_id'])
+		));
 		$enquote = !$asArray; //no quotes when $asArray = true
 		$keys = ($enquote)? '"MID"' : 'MID';
 		$values = ($enquote)? '""' : '';
@@ -1097,7 +1102,11 @@ class CobrandedApplication extends AppModel {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		//Insert company brand name from cobrands
 		$keys = $this->__addKey($keys, 'CompanyBrandName', $enquote);
-		$values = $this->__addValue($values, $this->Template->Cobrand->field('brand_name', array('id' => $app['Template']['cobrand_id'])), $enquote);
+		$values = $this->__addValue($values, $cobrandData['Cobrand']['brand_name'], $enquote);
+		if (stripos($cobrandData['Cobrand']['partner_name'], 'VeriCheck') !== false) {
+			$keys = $this->__addKey($keys, 'ach_accepted', $enquote);
+			$values = $this->__addValue($values, 'TRUE', $enquote);
+		}
 		if (!empty($app['CobrandedApplication']['external_foreign_id'])) {
 			$keys = $this->__addKey($keys, 'external_foreign_id', $enquote);
 			$values = $this->__addValue($values, $app['CobrandedApplication']['external_foreign_id'], $enquote);
