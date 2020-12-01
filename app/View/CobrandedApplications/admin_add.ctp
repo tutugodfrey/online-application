@@ -71,8 +71,8 @@
 					if (responseData.valid === false) {
 						jQuery("#clIdValidationMsgs").html(errMsg + "Invalid ID not found in SalesForce! Enter an existing AxiaMed client ID</span>");
 					} else {
-						msgHtml = '<br/><ul class="list-group"><li class="list-group-item list-group-item-success text-center"><img src="/img/test-pass-icon.png" class="pull-left" id="clIdValidated"> <strong>Client ID is Valid!</strong></li>';
-  						msgHtml += '<li class="list-group-item"><strong>Client Name: </strong>' + responseData.Client_Name__c + '</li></ul>';
+						msgHtml = '<br/><ul class="list-group"><li class="list-group-item list-group-item-success text-center"><img src="/img/test-pass-icon.png" class="pull-right" id="clIdValidated"> <strong>Client ID verified</strong></li>';
+  						msgHtml += '<li class="list-group-item"><strong>' + responseData.Client_Name__c + '</strong></li></ul>';
 
 						jQuery("#clIdValidationMsgs").html(msgHtml);
 						jQuery("#CobrandedApplicationClientIdGlobal").val(responseData.Client_ID__c);
