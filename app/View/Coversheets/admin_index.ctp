@@ -42,13 +42,8 @@ echo $this->Element('resultLimitModifier');
 		<td><?php echo h($coversheet['Coversheet']['status']); ?>&nbsp;</td>
         <td>
         	<?php 
-        	if ($coversheet['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED ||
-        		$coversheet['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
-
-				echo $this->Element('cobranded_applications/appStatusPopOver', array(
-					'appId' => $coversheet['CobrandedApplication']['id'],
-					'appStatus' => $coversheet['CobrandedApplication']['status']
-				));
+        	if ($coversheet['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
+				echo $this->Html->tag('span', '<strong>' . h($coversheet['CobrandedApplication']['status']). '</strong>', array('class' => 'text-success'));
 			} else {
 				echo h($coversheet['CobrandedApplication']['status']);
 			}

@@ -53,10 +53,12 @@ if (empty($requestData)) {
 	//default checked state for new data
 	$rCoverSheetAttr['checked'] = true;
 }
+
 $rCoverSheetAttr = array_merge($rCoverSheetAttr, array('class' => false, 'label' => array('class' => 'col-md-offset-7'), 'type' => 'checkbox'));
 echo $this->Form->input('requires_coversheet', $rCoverSheetAttr);
 
 echo $this->Form->input('email_app_pdf', array('class' => false, 'label' => array('text' => 'Email Signed PDF to Rep', 'class' => 'col-md-offset-7'), 'type' => 'checkbox'));
+echo $this->Form->input('require_client_data', array('class' => false, 'label' => array('text' => 'Require AxiaMed Client ID','class' => 'col-md-offset-7'), 'type' => 'checkbox'));
 
 echo $this->Form->input('description', array('class' => 'form-control', 'wrapInput' => 'col col-md-4'));
 

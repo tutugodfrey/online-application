@@ -32,7 +32,6 @@ function renderContentAJAX(controller, action, id, containerID, actionPath) {
 	  AJAXrequest = $.ajax({
 			type: "POST",
 			url: reqURL,
-		   // data: "data['MerchantNote'][note_type]=''",
 			dataType: 'html',
 			success: function(data) { 
 				

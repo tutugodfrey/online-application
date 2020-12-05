@@ -3,6 +3,7 @@ App::uses('AppModel', 'Model');
 App::uses('TemplateField', 'Model');
 App::uses('EmailTimeline', 'Model');
 App::uses('RightSignature', 'Model');
+App::uses('SalesForce', 'Model');
 App::uses('CakeTime', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
 App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
@@ -638,7 +639,7 @@ class CobrandedApplication extends AppModel {
  *         success [true|false] depending on if the onlineapp was created
  *         cobrandedApplicationId int
  */
-	public function createOnlineappForUser($user, $uuid = null, $templateId = null, $externalForeignId = null) {
+	public function createOnlineappForUser($user, $uuid = null, $templateId = null, $externalForeignId = null, $clientIdGlobal = null, $clientNameGlobal = null) {
 		$response = array('success' => false, 'cobrandedApplication' => array('id' => null, 'uuid' => null));
 		if (is_null($uuid)) {
 			$uuid = CakeText::uuid();
@@ -651,6 +652,8 @@ class CobrandedApplication extends AppModel {
 				'uuid' => $uuid,
 				'template_id' => $templateId,
 				'external_foreign_id' => empty($externalForeignId)? null : $externalForeignId, //no zero length strings
+				'client_id_global' => empty($clientIdGlobal)? null : $clientIdGlobal, //no zero length strings
+				'client_name_global' => empty($clientNameGlobal)? null : $this->trimExtra($clientNameGlobal), //no zero length strings
 				'status' => 'saved'
 			)
 		);
@@ -678,11 +681,14 @@ class CobrandedApplication extends AppModel {
 			$exportedData['template_id'],
 			$exportedData['m2m'],
 			$exportedData['external_record_id'],
+			$exportedData['ClientId'],
+			$exportedData['ClientName'],
 			$exportedData['uuid'],
 			$exportedData['status'],
 			$exportedData['MID'],
 			$exportedData['oaID'],
 			$exportedData['api'],
+			$exportedData['ach_accepted'],
 			$exportedData['aggregated']
 		);
 		foreach ($this->Coversheet->getColumnTypes() as $fieldName => $types) {
@@ -722,6 +728,8 @@ class CobrandedApplication extends AppModel {
 		$templateId = Hash::get($fieldsData, 'template_id');
 		$appUuid = Hash::get($fieldsData, 'uuid');
 		$externalForeignId = Hash::get($fieldsData, 'external_record_id');
+		$clientIdGlobal = Hash::get($fieldsData, 'ClientId');
+		$clientNameGlobal = Hash::get($fieldsData, 'ClientName');
 		//remove data potentially present that is not related to the CobrandedApplicationValues
 		$this->_removeDataInsertedOnExport($fieldsData);
 
@@ -746,7 +754,7 @@ class CobrandedApplication extends AppModel {
 		} else {
 			$updatingExistingData = false;
 			// create an application for $userId
-			$createAppResponse = $this->createOnlineappForUser($user, null, $templateId, $externalForeignId);
+			$createAppResponse = $this->createOnlineappForUser($user, null, $templateId, $externalForeignId, $clientIdGlobal, $clientNameGlobal);
 		}
 		
 		$newApp = null;
@@ -1082,6 +1090,10 @@ class CobrandedApplication extends AppModel {
 
 		);
 		$app = $this->find('first', $options);
+		$cobrandData = $this->Template->Cobrand->find('first', array(
+			'fields' => array('brand_name', 'partner_name'),
+			'conditions' => array('id' => $app['Template']['cobrand_id'])
+		));
 		$enquote = !$asArray; //no quotes when $asArray = true
 		$keys = ($enquote)? '"MID"' : 'MID';
 		$values = ($enquote)? '""' : '';
@@ -1090,10 +1102,22 @@ class CobrandedApplication extends AppModel {
 		$this->TemplateField = ClassRegistry::init('TemplateField');
 		//Insert company brand name from cobrands
 		$keys = $this->__addKey($keys, 'CompanyBrandName', $enquote);
-		$values = $this->__addValue($values, $this->Template->Cobrand->field('brand_name', array('id' => $app['Template']['cobrand_id'])), $enquote);
+		$values = $this->__addValue($values, $cobrandData['Cobrand']['brand_name'], $enquote);
+		if (stripos($cobrandData['Cobrand']['partner_name'], 'VeriCheck') !== false) {
+			$keys = $this->__addKey($keys, 'ach_accepted', $enquote);
+			$values = $this->__addValue($values, 'TRUE', $enquote);
+		}
 		if (!empty($app['CobrandedApplication']['external_foreign_id'])) {
 			$keys = $this->__addKey($keys, 'external_foreign_id', $enquote);
 			$values = $this->__addValue($values, $app['CobrandedApplication']['external_foreign_id'], $enquote);
+		}
+		if (!empty($app['CobrandedApplication']['client_id_global'])) {
+			$keys = $this->__addKey($keys, 'client_id_global', $enquote);
+			$values = $this->__addValue($values, $app['CobrandedApplication']['client_id_global'], $enquote);
+		}
+		if (!empty($app['CobrandedApplication']['client_name_global'])) {
+			$keys = $this->__addKey($keys, 'client_name_global', $enquote);
+			$values = $this->__addValue($values, $app['CobrandedApplication']['client_name_global'], $enquote);
 		}
 		foreach ($app['CobrandedApplicationValues'] as $appKey => $appValue) {
 			// could use strrpos != false to check for these names
@@ -1219,7 +1243,7 @@ class CobrandedApplication extends AppModel {
  * @param int $templateId Template ID
  *
  * @return
- *     true|false depending on if the application was copied or not
+ *     The new CobrandedApplication.id | false depending on whether the application was copied or not
  */
 	public function copyApplication($appId, $userId, $templateId = null) {
 		// create a new application for $userId
@@ -1295,8 +1319,7 @@ class CobrandedApplication extends AppModel {
 					}
 				}
 			}
-
-			return true;
+			return $newApp['CobrandedApplication']['id'];
 		}
 		return false;
 	}
@@ -3817,4 +3840,46 @@ class CobrandedApplication extends AppModel {
 		//Add to collection of synced fields
 		return $newCAV;
 	}
+
+/**
+ * getSfClientNameByClientId
+ * Makes GET request to find a SalesForce account using provided Client ID.
+ * Returns an array cotaining Client ID and client name.
+ * In salesforce the Client ID/Name comes from the overarching parent company not from it's children locations.
+ * Children accounts all have a reference to the parent Client ID/Name in SF
+ * 
+ * @param string $clientId an 8 digit client id numbers or string representation of numbers
+ * @return mixed array | boolean false when nothing is found or array containing matching result
+ * @throws Exception
+ */
+	public function getSfClientNameByClientId($clientId) {
+		if (!empty($clientId)) {
+			$SalesForce = new SalesForce();
+			if ($SalesForce->api != false) {
+				$sfObjAcctName = $SalesForce->fieldNames[SalesForce::GLOBAL_CLIENT_ID]['sobject'];
+				$params = "/?q=$clientId&";
+				$params .= "sobject=$sfObjAcctName&";
+				$params .= "$sfObjAcctName.where=" . SalesForce::GLOBAL_CLIENT_ID . "='$clientId'&";
+				$params .= "$sfObjAcctName.fields=" . SalesForce::GLOBAL_CLIENT_ID . "," . SalesForce::GLOBAL_CLIENT_NAME ."&";
+				$params .= "$sfObjAcctName.limit=1";
+				$url = $SalesForce->host . SalesForce::API_PATH . "/parameterizedSearch";
+				$url .= $params;
+				
+				$response = $SalesForce->api->get($url);
+				if ($response->isOk()) {
+					$responseBody = json_decode($response->body, true);
+					$result = Hash::get($responseBody, 'searchRecords.0', false);
+					return $result;
+				} else {
+					throw new Exception("Salesforce API ERROR:Response Body: " . $response->body);
+					return;
+				}
+			} else {
+				throw new Exception("Salesforce API connection configuration not found! Cannot connect to salesforce!");
+			}
+		} else {
+			return false;
+		}
+	}
+
 }
