@@ -70,6 +70,7 @@ class TemplatesController extends NestedResourceController {
 		'admin_edit' => array('admin', 'rep', 'manager'),
 		'admin_delete' => array('admin', 'rep', 'manager'),
 		'admin_preview' => array('admin', 'rep', 'manager'),
+		'admin_is_client_data_required' => array('admin', 'rep', 'manager'),
 		'admin_preview_rs_template' => array('admin'),
 		'admin_rs_reference_inspector' => array('admin'),
 	);
@@ -242,7 +243,6 @@ class TemplatesController extends NestedResourceController {
 	}
 
 	public function admin_edit($idToEdit) {
-
 		$this->Template->id = $idToEdit;
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Template->getById($idToEdit);
@@ -251,7 +251,6 @@ class TemplatesController extends NestedResourceController {
 			
 			$client = $this->CobrandedApplication->createRightSignatureClient();
 			$results = $this->CobrandedApplication->getRightSignatureTemplates($client);
-
 			if (!empty(Hash::get($results, 'error'))) {
 				$this->_failure(__('Unexpected Error: ' . Hash::get($results, 'error') .". Please try again later."));
 				return $this->redirect($this->_getListUrl());
@@ -396,6 +395,35 @@ class TemplatesController extends NestedResourceController {
 			$this->response->statusCode(400);
 		}
 	}
+
+/**
+ * admin_is_client_data_required
+ * Ajax method to check if the Template requires client data 
+ *
+ * @param string $id string template id
+ * @return void
+ */
+	public function admin_is_client_data_required($id) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if ($this->request->is('ajax')) {
+			if ($this->Session->read('Auth.User.id')) {
+				if (!empty($id)) {
+					return (int)$this->Template->hasAny(array('id' => $id, 'require_client_data' => true));
+				} else {
+					//Bad Request
+					$this->response->statusCode(400);
+				}
+			} else {
+				//session expired
+				$this->response->statusCode(401);
+			}
+		} else {
+			//Bad Request
+			$this->response->statusCode(400);
+		}
+	}
+
 /**
  * admin_rs_reference_inspector
  * Looks up templates that reference a rightsignature template id that no longer exists and has become orphaned.
