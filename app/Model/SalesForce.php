@@ -130,7 +130,7 @@ class SalesForce extends AppModel {
 
 /**
  * renewAccessTokenIfExpired
- * Checks is current access token is expired and renews it if necessary
+ * Renews access token 
  * The referenced configuration array param will be updated with the latest access token information and saved at the same time
  *
  * @param array &$configData reference to salesforce connection configuration stored in the ApiConfiguration midel table.
@@ -140,24 +140,20 @@ class SalesForce extends AppModel {
 		if (empty($configData)) {
 			return false;
 		}
-		//salesforce access token issued time is the number of miliseconds since a unix epoch
-		$issued = $configData['ApiConfiguration']['issued_at'];
-		$expired = $this->isExpiredToken($configData['ApiConfiguration']['issued_at'], $configData['ApiConfiguration']['access_token_lifetime_seconds']);
-		$accessTokenUrl = $configData['ApiConfiguration']['access_token_url'];
-		if ($expired) {
-			$request['body'] = $this->_getRefreshTokenBodyStr($configData);
-			$httpSocket = new HttpSocket();
-			$response = $httpSocket->post($accessTokenUrl, null, $request);
-			$responseBody = json_decode($response->body, true);
 
-			if ($response->isOk()) {
-				$configData['ApiConfiguration']['access_token'] = $responseBody['access_token'];
-				$configData['ApiConfiguration']['issued_at'] = $responseBody['issued_at'];
-				$configData['ApiConfiguration']['instance_url'] = $responseBody['instance_url'];
-				ClassRegistry::init('ApiConfiguration')->save($configData['ApiConfiguration']);
-			} else {
-				return false;
-			}
+		$accessTokenUrl = $configData['ApiConfiguration']['access_token_url'];
+		$request['body'] = $this->_getRefreshTokenBodyStr($configData);
+		$httpSocket = new HttpSocket();
+		$response = $httpSocket->post($accessTokenUrl, null, $request);
+		$responseBody = json_decode($response->body, true);
+
+		if ($response->isOk()) {
+			$configData['ApiConfiguration']['access_token'] = $responseBody['access_token'];
+			$configData['ApiConfiguration']['issued_at'] = $responseBody['issued_at'];
+			$configData['ApiConfiguration']['instance_url'] = $responseBody['instance_url'];
+			ClassRegistry::init('ApiConfiguration')->save($configData['ApiConfiguration']);
+		} else {
+			return false;
 		}
 		return true;
 	}
