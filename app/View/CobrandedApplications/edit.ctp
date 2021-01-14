@@ -1,4 +1,7 @@
-
+<div id="progress-bar-top" class="progress" style="width: 120%;position: fixed;max-height: 15px;top: 0px;left: -10px;z-index: 999999;display:none;">
+	<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+	</div>
+</div>
 <div class='container'>
 	<div class="row">
 		<section id="wizard">
@@ -132,7 +135,11 @@
 												$('input[value=\"Submit for Signature\"]').attr('disabled', 'disabled');
 											}
 										}
-										window.location = '".$submitForSigUrl."';
+										$('#progress-bar-top').show();
+										setTimeout(function(){
+											$('#progress-bar-top').hide();
+											window.location = '".$submitForSigUrl."';
+											}, 1000);
 									}
 								");
 							}
@@ -160,7 +167,11 @@
 
 										$('input[value=\"View and Sign Now\"]').attr('disabled', 'disabled');
 
-										window.location = '".$signNowUrl."';
+										$('#progress-bar-top').show();
+										setTimeout(function(){
+											$('#progress-bar-top').hide();
+											window.location = '".$signNowUrl."';
+											}, 1000);
 									}
 			 					");
 							}
