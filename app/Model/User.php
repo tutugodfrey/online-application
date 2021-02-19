@@ -598,7 +598,6 @@ class User extends AppModel {
 				$this->data[$this->alias]['pw_expiry_date'] = $this->newPwExpiration();
 			}
 			//sync user password with okta account whenever new password is saved
-			//Is possible the user has yet to be created in okta so ignore exception.
 			try {
 				if (!empty($this->data[$this->alias]['id'])) {
 					if (empty($uEmail = Hash::get($this->data, "{$this->alias}.email"))) {
@@ -607,7 +606,7 @@ class User extends AppModel {
 					$Okta = new Okta();
 					$Okta->chngPwd($uEmail, $this->data[$this->alias]['password']);
 				}
-			} catch (Exception $e) {}
+			} catch (Exception $e) {/*Is possible the user has yet to be created in okta so ignore exception.*/}
 		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
 			$passwordHasher = new BlowfishPasswordHasher();
@@ -659,7 +658,7 @@ class User extends AppModel {
 /**
  * oktaUserLogin
  * Makes API call to authenticate Okta user
- * Returns API response data when user is found, is authenticated and is alrady enrolled in multifactor authentication.
+ * Returns API response data when user is found, is authenticated and is already enrolled in multifactor authentication.
  * Otherwise returnse false.
  * 
  * @param string $userId this is NOT an okta user id but rather this system's integer user id

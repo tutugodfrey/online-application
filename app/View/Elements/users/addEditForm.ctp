@@ -26,7 +26,7 @@ echo $this->Form->create('User', array(
 	echo $this->Form->input('firstname');
 	echo $this->Form->input('lastname');
 	echo $this->Form->input('email');
-	if ($this->Form->hidden('User.has_okta_user_account')) {
+	if ($this->request->data('User.has_okta_user_account')) {
 		echo $this->Form->hidden('User.okta_user_current_email', ['value' => $this->request->data('User.email')]);
 	}
 	

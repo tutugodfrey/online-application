@@ -54,7 +54,7 @@ class Okta extends AppModel {
  * constants
  */
 	const OKTA_CONFIG_NAME = 'Okta';
-	const OKTA_CONFIG_NAME_DEV = 'Okta';
+	const OKTA_CONFIG_NAME_DEV = 'Okta'; //same - no sandbox available
 
 /**
  *  Okta constants
@@ -117,11 +117,11 @@ class Okta extends AppModel {
 /**
  * createUser
  * Creates a new user account in okta with the same password.
- * The password must remain encrypted and exactly the same as how it is stored in the database.
+ * The password must remain encrypted and must be exactly the same as how it is stored in this database.
  *
  * @param array $user must contain all of the following: firstname, lastname, email, password
  * @throws Exception
- * @return array containing user or empty array when nothing is found
+ * @return array containing okta user account data or empty array when nothing is found
  */
 	public function createUser($user) {
 		$this->__setAuthHeader();
@@ -149,7 +149,8 @@ class Okta extends AppModel {
 
 /**
  * updateLoginEmail
- * Updates the email used as login in the users okta account for okta primary authentication
+ * Updates the email used as login in the users okta account for okta primary authentication.
+ * The user email must always be the same in both systems and therefore must be synced when changed
  *
  * @param string $oldLoginEmail the original email,
  * @param string $newLoginEmail the new email to use for loggin in/primary authentication,
@@ -182,9 +183,9 @@ class Okta extends AppModel {
 /**
  * deactivateUser
  * Deactivates a user with an email string parameter
- * Acceptable search strings is email.
  *
  * @param string $userEmail the email used when user was created/activated,
+ * @throws Exception 
  * @return boolean true on success will throw exception on falure 
  */
 	public function deactivateUser($userEmail) {
@@ -212,7 +213,8 @@ class Okta extends AppModel {
 /**
  * findUser
  * Searches a user with a search string parameter
- * Acceptable search strings are firstName, lastName or email.
+ * Acceptable search string should the user's email since okta requires users emails to 
+ * be unique for each user.
  *
  * @param string $srchStr acceptable search strings are firstName, lastName or email
  * @throws Exception
@@ -343,7 +345,7 @@ class Okta extends AppModel {
  * This method can be used to verify both a push factor and submitted TOTP factor depending on the $factorId parameter
  * and the data.
  * For TOTP verification the fatctorId param must correspond to the TOTP factor and the data param must contain the "passCode" key and its value.
- * Omit the "passCode" for okta push factor verification calls but pass the to the push factor factorId.
+ * Omit the "passCode" for okta push factor verification calls but include the push factor factorId.
  * 
  * @param string $stateToken the state token returned after primary authentication
  * @param string  $factorId the factor id corresponding the okta push factor
@@ -388,11 +390,12 @@ class Okta extends AppModel {
 
 /**
  * pollPushFactorActivation
- * This function can be used to poll for activation of a specific user's MFA
+ * This function can be used to do polling request to check when a user has finished enrolling in push factor while a user
+ * is in the process of performing said action. 
  * It requires the polling URL returned by $this->enrollPushFactor(..) method since it is specific to that user's
  * enrollment API call
  *
- * @param string $oktaUserId the okta user id
+ * @param string $pollingURL the polling URL returned after calling $this->enrollPushFactor(..) method
  * @return array the response data which inclides the QR code
  * @throws Exception
  */

@@ -11,7 +11,7 @@ class UsersController extends AppController {
 		'get_user_templates' => '*',
 		'reset_api_info' => array(User::ADMIN, User::REP, User::MANAGER, User::API),
 		'verify_okta_mfa' => array('*'),
-		'reset_okta_mfa' => array('*'),
+		'reset_okta_mfa' => array(User::ADMIN, User::REP, User::MANAGER, User::API),
 		'admin_okta_mfa_enroll' => array(User::ADMIN, User::REP, User::MANAGER, User::API),
 	);
 
@@ -25,7 +25,7 @@ class UsersController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		$this->Auth->allow(array('login', 'logout', 'request_pw_reset', 'change_pw', 'verify_okta_mfa', 'reset_okta_mfa'));
+		$this->Auth->allow(array('login', 'logout', 'request_pw_reset', 'change_pw', 'verify_okta_mfa'));
 	}
 
 /**
@@ -546,17 +546,18 @@ class UsersController extends AppController {
 					$this->Session->write('Auth.User.api_enabled', (bool)$this->request->data('User.api_enabled'));
 				}
 
-				//Check if user email changed. okta_user_current_email is a hidden field with its value set programmatically
-				//to track email changes and update the correspondint okta user with this change
 				try {
 					$activeOktaUser = $this->request->data('User.has_okta_user_account');
 					$oktaUserEmail = $this->request->data('User.okta_user_current_email');
 					$oktaUpdateMsg = '';
+					//If user is deactivated localy, also deactivate from Okta
 					if ($activeOktaUser && $this->request->data('User.active') == false) {
 						$Okta->deactivateUser($oktaUserEmail);
 						$activeOktaUser = false;
 						$oktaUpdateMsg = "Also, this user's Okta account has been deactivated.";
 					}
+					//Check if user email changed. okta_user_current_email is a hidden field with its value set programmatically
+					//to track email changes and update the correspondint okta user with this change
 					if ($activeOktaUser && !empty($OktaUserEmail) && $this->request->data('User.email') !== $this->request->data('User.okta_user_current_email')) {
 						$Okta->updateLoginEmail($this->request->data('User.okta_user_current_email'), $this->request->data('User.email'));
 						$oktaUpdateMsg = 'Okta user account successfully updated';
