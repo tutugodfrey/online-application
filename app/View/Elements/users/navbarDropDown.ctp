@@ -16,6 +16,14 @@
 		$apiManageLink .= $this->element('users/apiCredentials', ['userId' => $this->Session->read('Auth.User.id')]);
 		$apiManageLink .= '</li>';
 	}
+
+	$oktaMfaEnrollLink = '<li>';
+	if ($this->Session->read('Auth.User.Okta.mfa_enrolled')) {
+		$oktaMfaEnrollLink .= $this->Html->link('Reset Okta MFA',Router::url(['controller' => 'Users', 'action' =>  'reset_okta_mfa', $this->Session->read('Auth.User.id'), 'admin' => false]));
+	} else {
+		$oktaMfaEnrollLink .= $this->Html->link('Activate Okta MFA', Router::url(['controller' => 'Users', 'action' =>  'okta_mfa_enroll', 0, 'admin' => true]));
+	}
+	$oktaMfaEnrollLink .= '</li>';
 	echo '<span class="btn btn-default dropdown">
 	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 			<span class="glyphicon glyphicon-user"></span><span class="caret"></span>
@@ -24,5 +32,6 @@
 	        <li>' . $logoutLink . '</li>
 			<li>' . $resetPwLink . '</li>
 			' . $apiManageLink . '
+			' . $oktaMfaEnrollLink . '
 	    </ul>
 	</span>';

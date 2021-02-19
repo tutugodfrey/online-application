@@ -31,7 +31,6 @@
 	foreach ($users as $user):
 			$usersCobrands = Hash::extract($user, 'Cobrand.{n}.id');
 			$usersTemplates = Hash::extract($user, 'Template.{n}.id');
-			//debug($usersCobrands);
 	?>
 		<?php echo $this->Form->input($i . '.User.id', array('type' => 'hidden', 'default'=> $user['User']['id'])); ?>
                 <td> <?php echo $this->Form->input($i . '.User.firstname', array('default'=> trim($user['User']['firstname']))); ?>&nbsp;</td>

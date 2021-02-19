@@ -1,5 +1,6 @@
 <?php
 App::uses('User', 'Model');
+App::uses('Okta', 'Model');
 class UsersController extends AppController {
 
 	public $permissions = array(
@@ -8,7 +9,10 @@ class UsersController extends AppController {
 		'request_pw_reset' => '*',
 		'change_pw' => '*',
 		'get_user_templates' => '*',
-		'reset_api_info' => array(User::ADMIN, User::REP, User::MANAGER, User::API)
+		'reset_api_info' => array(User::ADMIN, User::REP, User::MANAGER, User::API),
+		'verify_okta_mfa' => array('*'),
+		'reset_okta_mfa' => array('*'),
+		'admin_okta_mfa_enroll' => array(User::ADMIN, User::REP, User::MANAGER, User::API),
 	);
 
 	public $components = array('Search.Prg');
@@ -21,7 +25,7 @@ class UsersController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		$this->Auth->allow(array('login', 'logout', 'request_pw_reset', 'change_pw'));
+		$this->Auth->allow(array('login', 'logout', 'request_pw_reset', 'change_pw', 'verify_okta_mfa', 'reset_okta_mfa'));
 	}
 
 /**
@@ -92,32 +96,186 @@ class UsersController extends AppController {
  *
  * @return null
  */
-
 	public function login() {
 		if ($this->request->is('post')) {
-			if ($this->Auth->login()) {
-				$userId = $this->Auth->user('id');
-				$passwordValidDays = $this->User->getDaysTillPwExpires($userId);
+			$user = $this->Auth->identify($this->request, $this->response);
+			if (!empty($user)) {
+				$passwordValidDays = $this->User->getDaysTillPwExpires($user['id']);
 				if ($passwordValidDays < 0) {
-					$this->Session->destroy();
 					$this->Session->setFlash(__('Password expired! Please renew your password.'), 'default', ['class' => 'alert alert-warning strong']);
-					$this->redirect(array('action' => 'login'));
+					$redirectUrl = Router::url(array('controller' => 'Users', 'action' => 'login'));
+					$this->set('redirectUrl', $redirectUrl);
+					$this->render('/Elements/Ajax/nonAjaxRedirect', 'ajax');
+					return;
 				} elseif ($passwordValidDays <= 7) {
 					$msg = ($passwordValidDays === 0)? "You password expires today!" : "Your password will expire in $passwordValidDays day" . (($passwordValidDays > 1)? 's.' : '.');
 					$msg .= " Please renew your password from the login page.";
 					$this->Session->setFlash(__($msg), 'default', ['class' => 'alert-danger strong text-center']);
 				}
-				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
-				if ($this->Auth->user('group_id') === User::API_GROUP_ID){
-					$this->redirect(['controller' => 'admin', 'action' => 'index']);
-				} else {
-					$this->redirect($this->Auth->redirect());
+				try {
+					$result = $this->User->authenticateOktaUser($user['id']);
+				} catch (Exception $e) {
+					$this->Session->setFlash(__($e->getMessage()), 'default', ['class' => 'alert alert-warning strong']);
+					$redirectUrl = Router::url(array('controller' => 'Users', 'action' => 'login'));
+					$this->set('redirectUrl', $redirectUrl);
+					$this->render('/Elements/Ajax/nonAjaxRedirect', 'ajax');
+					return;
 				}
+				//user is not MFA enrolled but since at this point credentials are valid proceed to log user in
+				if ($result === false) {
+					$this->Auth->login($user);
+					$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
+					$this->Session->write('Auth.User.Okta.needs_mfa_enrollment', true);
+					if ($this->Auth->user('group_id') === User::API_GROUP_ID) {
+						$redirectUrl = Router::url(['controller' => 'admin', 'action' => 'index']);
+					} else {
+						$redirectUrl = $this->Auth->redirect();
+					}
+					$this->set('redirectUrl', $redirectUrl);
+					$this->render('/Elements/Ajax/nonAjaxRedirect', 'ajax');
+				} elseif($result['status'] === Okta::MFA_REQ) {
+					foreach ($result['_embedded']['factors'] as $factor) {
+
+						if ($factor['factorType'] === 'token:software:totp') {
+							$totpFactorId = $factor['id'];
+						}
+						if ($factor['factorType'] === 'push') {
+							$pushFactorId = $factor['id'];
+							$deviceName = $factor['profile']['name'];
+						}
+					}
+					$oktaMfaMeta = [
+						'User' => ['id' => $user['id']],
+						'stateToken' => $result['stateToken'],
+						'factors' => ['pushFactorId' => $pushFactorId, 'totpFactorId' => $totpFactorId, 'deviceName' => $deviceName]
+					];
+					$this->set('oktaMfaMeta', $oktaMfaMeta);
+					$this->render('/Elements/Ajax/oktaVerifyPushMfa', 'ajax');
+				}
+				
 			} else {
+				$redirectUrl = Router::url(array('controller' => 'Users', 'action' => 'login'));
+				$this->set('redirectUrl', $redirectUrl);
 				$this->_failure(__('Invalid e-mail/password.'));
+				$this->render('/Elements/Ajax/nonAjaxRedirect', 'ajax');
 			}
 		}
 	}
+/**
+ * admin_edit method
+ *
+ * @return void
+ */
+	public function admin_okta_mfa_enroll($pollActivation = false) {
+		if ($this->request->is('ajax')) {
+			$this->autoRender = false;
+			$Okta = new Okta();
+			try {
+				if ($pollActivation) {
+					$result = $Okta->pollPushFactorActivation($this->request->data('poll_activation_url'));
+					if (Hash::get($result, 'status') === 'ACTIVE') {
+						$this->Session->write('Auth.User.Okta.mfa_enrolled', true);
+					}
+					return json_encode($result);
+				}
+				$user = $Okta->findUser($this->Session->read('Auth.User.email'));
+				//If user not found we need create the user in Okta
+				if (empty($user)) {
+					$user['User'] = $this->Session->read('Auth.User');
+					$user['User']['password'] = $this->User->field('password', ['User.id' => $this->Session->read('Auth.User.id')]);
+					$user = $Okta->createUser($user);
+				} 
+				//Verify user is not already enrolled in MFA by checking if a resetFactors link is present in the data
+				//which implies the user is already enrolled
+				if (empty(Hash::get($user, '_links.resetFactors.href'))) {
+					$response = $Okta->enrollPushFactor($user['id']);
+					$data['qrcode'] = $response['_embedded']['activation']['_links']['qrcode']['href'];
+					$data['pollActivationUrl'] = $response['_links']['poll']['href'];
+					return json_encode($data);
+				} else {
+					return json_encode(['error' => 'Already enrolled in Okta multifactor authentication, no action needed at this time.']);
+				}
+			} catch (Exception $e){
+				return json_encode(['error' => $e->getMessage()]);
+			}
+		}
+	}
+
+/**
+ * reset_okta_mfa
+ *
+ * @param string $userId a User->id
+ * @return null
+ */
+	public function reset_okta_mfa($userId) {
+		$Okta = new Okta();
+		$msg = 'Okta MFA has been reset.';
+		//Diferent redirect if user is already logged in
+		if ($this->Session->check('Auth.User.id')) {
+			$redirectUrl = $this->referer();
+		} else {
+			$msg .= ' Enter your login info to sign in.';
+			$redirectUrl = array('controller' => 'Users', 'action' => 'login');
+		}
+		try {
+			if ($Okta->resetFactors($this->User->field('email', ['User.id' => $userId]))) {
+				$this->Session->delete('Auth.User.Okta');
+				$this->Session->setFlash(__($msg), 'default', ['class' => 'alert alert-info']);
+				$this->redirect($redirectUrl);
+			}
+		} catch (Exception $e) {
+			$this->_failure(__('Unexpected API error occurred, please try again in a minute.'), $redirectUrl);
+		}
+	}
+/**
+ * verifyOktaPushFactor
+ *
+ * @param string $userId a User->id
+ * @param string $stateToken Okta State token
+ * @param string $factorId Okta factor id corresponding to push factor
+ * @return JSON string
+ */
+	public function verify_okta_mfa($userId, $stateToken, $factorId) {
+		$this->autoRender = false;
+		$Okta = new Okta();
+		try {
+			$reqData = ["stateToken" => $stateToken];
+			if (!empty($this->request->data('User.okta_totp'))) {
+				$reqData['passCode'] = $this->request->data('User.okta_totp');
+			}
+
+			$response = $Okta->verifyOktaMfa($reqData, $factorId);
+			if (Hash::get($response,'status') == 'SUCCESS') {
+				$user = $this->User->find('first', [
+					'recursive' => 0,
+					'conditions' => ['User.id' => $userId]
+				]);
+				//Set data structure needed for Auth->login;
+				$user['User']['Group'] = $user['Group'];
+				$user['User']['Template'] = $user['Template'];
+				$user = $user['User'];
+				$this->Auth->login($user);
+				$this->Session->write('Auth.User.Okta.mfa_enrolled', true);
+				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
+				if ($this->Auth->user('group_id') === User::API_GROUP_ID) {
+					$redirectUrl = Router::url(['controller' => 'admin', 'action' => 'index']);
+				} else {
+					$redirectUrl = $this->Auth->redirect();
+				}
+				return json_encode(['okta_verify_status' => Hash::get($response,'status'), 'redirect_url' => $redirectUrl]);
+			} elseif(Hash::get($response, 'factorResult') == 'WAITING') {
+				return json_encode(['okta_verify_status' => 'WAITING']);
+			} elseif(!empty($response['errorCode'])) {
+				return json_encode(['okta_verify_status' => 'ERROR', 'error_msg' => Hash::get($response, 'errorCauses.0.errorSummary')]);
+			}
+		} catch(Exception $e) {
+			$redirectUrl = Router::url(array('controller' => 'Users', 'action' => 'login'));
+			$this->_failure(__($e->getMessage()));
+			return json_encode(['okta_verify_status' => 'ERROR', 'redirect_url' => $redirectUrl]);
+		}
+	}
+
+
 /**
  * request_pw_reset
  * Handles requests to reset the user's password.
@@ -376,16 +534,37 @@ class UsersController extends AppController {
 
 	public function admin_edit($id) {
 		$this->User->id = $id;
+		$Okta = new Okta();
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if (empty($this->request->data['User']['pwd']) && empty($this->request->data['User']['password_confirm'])) {
 				unset($this->request->data['User']['pwd']);
 				unset($this->request->data['User']['password_confirm']);
 			}
 			if ($this->User->saveAll($this->request->data)) {
+				$this->Session->write('Auth.User.email', $this->request->data['User']['email']);
 				if (array_key_exists('api_enabled', $this->request->data['User'])) {
 					$this->Session->write('Auth.User.api_enabled', (bool)$this->request->data('User.api_enabled'));
 				}
-				$this->_success(__("User Saved!"));
+
+				//Check if user email changed. okta_user_current_email is a hidden field with its value set programmatically
+				//to track email changes and update the correspondint okta user with this change
+				try {
+					$activeOktaUser = $this->request->data('User.has_okta_user_account');
+					$oktaUserEmail = $this->request->data('User.okta_user_current_email');
+					$oktaUpdateMsg = '';
+					if ($activeOktaUser && $this->request->data('User.active') == false) {
+						$Okta->deactivateUser($oktaUserEmail);
+						$activeOktaUser = false;
+						$oktaUpdateMsg = "Also, this user's Okta account has been deactivated.";
+					}
+					if ($activeOktaUser && !empty($OktaUserEmail) && $this->request->data('User.email') !== $this->request->data('User.okta_user_current_email')) {
+						$Okta->updateLoginEmail($this->request->data('User.okta_user_current_email'), $this->request->data('User.email'));
+						$oktaUpdateMsg = 'Okta user account successfully updated';
+					}
+					$this->_success(__("User Saved! " . $oktaUpdateMsg));
+				} catch (Exception $e) {
+					$this->_failure(__("Warning! User updated successfully, but updates failed to sync with Okta. Please report this to administrator as this user's Okta data is now out of sync. Okta error: " . $e->getMessage()));
+				}
 				$this->redirect('/admin/users');
 			} else {
 				$this->_failure(__("Could not save User! Check for any form validation errors and try again..."));
@@ -394,6 +573,13 @@ class UsersController extends AppController {
 			$this->request->data = $this->User->getEditViewData($id);
 		}
 
+		$oktaUser = $Okta->findUser($this->request->data('User.email'));
+		$this->request->data['User']['has_okta_user_account'] = !empty(Hash::get($oktaUser, 'id'));
+
+		$oktaMfaEnrolled = !empty(Hash::get($oktaUser, '_links.resetFactors.href'));
+		$this->Session->write('Auth.User.Okta.mfa_enrolled', $oktaMfaEnrolled);
+		
+		$this->set('oktaMfaEnrolled', $oktaMfaEnrolled);
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('allManagers', $this->User->getAllManagers(User::MANAGER_GROUP_ID));
 		$this->set('allRepresentatives', $this->User->getActiveUserList());

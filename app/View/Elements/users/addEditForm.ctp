@@ -17,13 +17,19 @@ echo $this->Form->create('User', array(
 	'novalidate' => true));
 	echo $this->Html->tag('div', null, array('class' => 'col-md-6'));
 	echo $this->Form->input('active', array('label'=> array('class' => 'col-md-10 control-label text-success'), 'type' => 'checkbox', 'class' => null));
+
 	if (!empty($this->request->data['User']['id'])) {
 		echo $this->Form->hidden('id');
 	}
+	echo $this->Form->hidden('User.has_okta_user_account');
 	echo $this->Form->input('group_id');
 	echo $this->Form->input('firstname');
 	echo $this->Form->input('lastname');
 	echo $this->Form->input('email');
+	if ($this->Form->hidden('User.has_okta_user_account')) {
+		echo $this->Form->hidden('User.okta_user_current_email', ['value' => $this->request->data('User.email')]);
+	}
+	
 	echo $this->Form->input('extension');
 	//only the owner of this user profile can change password
 	if ($this->Session->read('Auth.User.id') == $this->request->data('User.id')) {
@@ -34,6 +40,11 @@ echo $this->Form->create('User', array(
 			'id' => $this->request->data('User.id'),
 			'settings' => array('inline' => false, 'class' => 'btn btn-sm btn-primary col-md-offset-4'),
 		));
+		if ($oktaMfaEnrolled) {
+			echo $this->Form->postLink('<span class="glyphicon glyphicon-remove"></span> ' . __("Disable Okta MFA"),
+				['action' => 'reset_okta_mfa', $this->request->data('User.id'), 'admin' => false],
+				['class' => 'btn btn-sm btn-danger','inline' => false, 'escape' => false, 'confirm' => __("Disable this user's Okta Multifactor Authentication?\n(A notification will be sent to the user by Okta).")]);
+		}
 		echo '<br />';
 		echo '<br />';
 	}

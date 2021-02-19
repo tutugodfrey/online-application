@@ -239,5 +239,16 @@
 						?>
 				</div>
 		</div>
+	<?php if ($this->Session->consume('Auth.User.Okta.needs_mfa_enrollment')): ?>
+	<?php //if (true): 
+		echo $this->Element('users/oktaMfaEnrollPrompt');
+		?>
+	<script type='text/javascript'>
+		$(document).ready(function(){
+			//renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/Users/okta_mfa_enroll/');
+			$("#oktaEnrollModal").modal();
+		});
+	</script>
+	<?php endif; ?>  
 </body>
 </html>
