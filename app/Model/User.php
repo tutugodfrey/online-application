@@ -1,5 +1,6 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('Okta', 'Model');
 App::uses('AuthComponent', 'Controller/Component');
 App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 class User extends AppModel {
@@ -582,14 +583,31 @@ class User extends AppModel {
 		return true;
 	}
 
-
+/**
+ * beforeSave
+ * Callback triggered before save
+ * @param  array  $options options
+ * @return boolean
+ */
 	public function beforeSave($options = array()) {
 		parent::beforeSave($options);
 		if (!empty($this->data[$this->alias]['pwd'])) {
 			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['pwd']);
-			//update expidation date whenever new password is saved
+			//update expiration date whenever new password is saved
 			if (!isset($this->data[$this->alias]['pw_expiry_date'])) {
 				$this->data[$this->alias]['pw_expiry_date'] = $this->newPwExpiration();
+			}
+			//In production sync user password with okta account whenever new password is saved
+			if (Configure::read('debug') == 0) {
+				try {
+					if (!empty($this->data[$this->alias]['id'])) {
+						if (empty($uEmail = Hash::get($this->data, "{$this->alias}.email"))) {
+							$uEmail = $this->field('email', ['id' => $this->data[$this->alias]['id']]);
+						}
+						$Okta = new Okta();
+						$Okta->chngPwd($uEmail, $this->data[$this->alias]['password']);
+					}
+				} catch (Exception $e) {/*Is possible the user has yet to be created in okta so ignore exception.*/}
 			}
 		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
@@ -637,6 +655,33 @@ class User extends AppModel {
 		}
 
 		return $results;
+	}
+
+/**
+ * oktaUserLogin
+ * Makes API call to authenticate Okta user
+ * Returns API response data when user is found, is authenticated and is already enrolled in multifactor authentication.
+ * Otherwise returnse false.
+ * 
+ * @param string $userId this is NOT an okta user id but rather this system's integer user id
+ * @return mixed array|boolean
+ */
+	public function authenticateOktaUser($userId) {
+		$userCred = $this->find('first', [
+			'recursive' => -1,
+			'fields' => ['User.email', 'User.password'],
+			'conditions' => ['id' => $userId]
+		]);
+		if (!empty($userCred)) {
+			$Okta = new Okta();
+			try {
+				return $Okta->primaryAuth($userCred['User']['email'], $userCred['User']['password']);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
+		} else {
+			return false;
+		}
 	}
 
 /**
