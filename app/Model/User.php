@@ -597,16 +597,18 @@ class User extends AppModel {
 			if (!isset($this->data[$this->alias]['pw_expiry_date'])) {
 				$this->data[$this->alias]['pw_expiry_date'] = $this->newPwExpiration();
 			}
-			//sync user password with okta account whenever new password is saved
-			try {
-				if (!empty($this->data[$this->alias]['id'])) {
-					if (empty($uEmail = Hash::get($this->data, "{$this->alias}.email"))) {
-						$uEmail = $this->field('email', ['id' => $this->data[$this->alias]['id']]);
+			//In production sync user password with okta account whenever new password is saved
+			if (Configure::read('debug') == 0) {
+				try {
+					if (!empty($this->data[$this->alias]['id'])) {
+						if (empty($uEmail = Hash::get($this->data, "{$this->alias}.email"))) {
+							$uEmail = $this->field('email', ['id' => $this->data[$this->alias]['id']]);
+						}
+						$Okta = new Okta();
+						$Okta->chngPwd($uEmail, $this->data[$this->alias]['password']);
 					}
-					$Okta = new Okta();
-					$Okta->chngPwd($uEmail, $this->data[$this->alias]['password']);
-				}
-			} catch (Exception $e) {/*Is possible the user has yet to be created in okta so ignore exception.*/}
+				} catch (Exception $e) {/*Is possible the user has yet to be created in okta so ignore exception.*/}
+			}
 		}
 		if (!empty($this->data[$this->alias]['api_password'])) {
 			$passwordHasher = new BlowfishPasswordHasher();
