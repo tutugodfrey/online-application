@@ -6,6 +6,7 @@ App::uses('Validation', 'Utility');
 App::uses('Coversheet', 'Model');
 App::uses('User', 'Model');
 App::uses('EmailTimeline', 'Model');
+App::uses('Okta', 'Model');
 
 /**
  * CobrandedApplications Controller

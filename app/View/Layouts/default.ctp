@@ -231,13 +231,18 @@
 						<?php echo $this->fetch('content'); ?>
 				</div>
 				<div id="footer">
-						<?php /* echo $this->Html->link(
-										$this->Html->image('cake.power.gif', array('alt'=> __('CakePHP: the rapid development php framework'), 'border' => '0')),
-										'http://www.cakephp.org/',
-										array('target' => '_blank', 'escape' => false)
-								); */
-						?>
+						<?php /* footer content not neeed at this time*/?>
 				</div>
 		</div>
+	<?php if ($this->Session->consume('Auth.User.Okta.needs_mfa_enrollment')): ?>
+	<?php 
+			echo $this->Element('users/oktaMfaEnrollPrompt');
+	?>
+		<script type='text/javascript'>
+			$(document).ready(function(){
+				$("#oktaEnrollModal").modal();
+			});
+		</script>
+	<?php endif; ?>  
 </body>
 </html>

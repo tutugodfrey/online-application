@@ -225,7 +225,6 @@
 					
 				},
 				error: function(data) {
-					console.log(data.error);
 					window.stopPolling = true;
 					$('#frameContaner').hide();
 					$('#sectionSuccess').hide();
