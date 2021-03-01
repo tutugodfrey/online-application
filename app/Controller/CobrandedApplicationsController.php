@@ -145,11 +145,9 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
-		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
-		$this->set('cobrand_logo_position', '1');
-		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
-		$this->set('include_brand_logo', false);
+		$this->set('name', 'ERROR 404: Document Has Expired. For assistance please contact your sales representative.');
+		$this->set('url', Router::url(['controller' => 'CobrandedApplications', 'action' => 'edit', $uuid], true));
+		$this->render('/Errors/error404');
 	}
 
 /**
