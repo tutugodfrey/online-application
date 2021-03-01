@@ -210,6 +210,7 @@ class UsersController extends AppController {
 	public function reset_okta_mfa($userId) {
 		$Okta = new Okta();
 		$msg = 'Okta MFA has been reset.';
+		$resetSelf = (($this->Session->read('Auth.User.id') == $userId));
 		//Diferent redirect if user is already logged in
 		if ($this->Session->check('Auth.User.id')) {
 			$redirectUrl = $this->referer();
@@ -219,7 +220,9 @@ class UsersController extends AppController {
 		}
 		try {
 			if ($Okta->resetFactors($this->User->field('email', ['User.id' => $userId]))) {
-				$this->Session->delete('Auth.User.Okta');
+				if ($resetSelf) {
+					$this->Session->delete('Auth.User.Okta');
+				}
 				$this->Session->setFlash(__($msg), 'default', ['class' => 'alert alert-info']);
 				$this->redirect($redirectUrl);
 			}
@@ -541,11 +544,9 @@ class UsersController extends AppController {
 				unset($this->request->data['User']['password_confirm']);
 			}
 			if ($this->User->saveAll($this->request->data)) {
-				$this->Session->write('Auth.User.email', $this->request->data['User']['email']);
-				if (array_key_exists('api_enabled', $this->request->data['User'])) {
+				if (($this->Session->read('Auth.User.id') == $this->request->data('User.id')) && (array_key_exists('api_enabled', $this->request->data['User']))) {
 					$this->Session->write('Auth.User.api_enabled', (bool)$this->request->data('User.api_enabled'));
 				}
-
 				try {
 					$activeOktaUser = $this->request->data('User.has_okta_user_account');
 					$oktaUserEmail = $this->request->data('User.okta_user_current_email');
@@ -578,7 +579,6 @@ class UsersController extends AppController {
 		$this->request->data['User']['has_okta_user_account'] = !empty(Hash::get($oktaUser, 'id'));
 
 		$oktaMfaEnrolled = !empty(Hash::get($oktaUser, '_links.resetFactors.href'));
-		$this->Session->write('Auth.User.Okta.mfa_enrolled', $oktaMfaEnrolled);
 		
 		$this->set('oktaMfaEnrolled', $oktaMfaEnrolled);
 		$this->set('groups', $this->User->Group->find('list'));
