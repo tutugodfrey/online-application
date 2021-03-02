@@ -3396,9 +3396,8 @@ class CobrandedApplication extends AppModel {
 		);
 
 		//Use date without time
-		$modDate = CakeTime::format($application['CobrandedApplication']['modified'], '%Y-%m-%d');
-		if ((CakeTime::wasWithinLast('30 days', $modDate)) &&
-			$application['CobrandedApplication']['status'] !== 'signed') {
+		$modDate = CakeTime::format(Hash::get($application, 'CobrandedApplication.modified'), '%Y-%m-%d');
+		if (!empty(Hash::get($application, 'CobrandedApplication')) && (CakeTime::wasWithinLast('30 days', $modDate)) && $application['CobrandedApplication']['status'] !== 'signed') {
 
 			return false;
 		}

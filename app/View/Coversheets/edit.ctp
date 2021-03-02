@@ -200,7 +200,7 @@
                 });
             </script>
 
-            <?php if ($data['Coversheet']['status'] != 'saved') { ?>
+            <?php if (Hash::get($data, 'Coversheet.status') != 'saved') { ?>
             <script type="text/javascript">                                        
                jQuery(document).ready(function () {
                jQuery('#CoversheetEditForm :input').attr('disabled', true);
@@ -219,8 +219,8 @@
             	       <?php echo $this->Form->hidden('id'); ?>
                             <table class="table table-condensed">
                                 <tr>
-                                    <td colspan="3"><?php echo 'Rep Name: '. $data['User']['firstname'] . $data['User']['lastname']; ?></td>
-                                    <td colspan="3"><?php echo 'Merchant: ' . $data['CobrandedApplication']['DBA']; ?></td>
+                                    <td colspan="3"><?php echo 'Rep Name: '. Hash::get($data, 'User.firstname', '--') .' '. Hash::get($data, 'User.lastname', ''); ?></td>
+                                    <td colspan="3"><?php echo 'Merchant: ' . Hash::get($data, 'CobrandedApplication.DBA'); ?></td>
                                 </tr>
 
                                 <tr>
@@ -765,7 +765,7 @@
                                 </tr>
                             </table>
 
-                            <?php if ($data['Coversheet']['status'] == 'saved'){
+                            <?php if (Hash::get($data, 'Coversheet.status') == 'saved'){
                                 if ($cp != true): ?>
                                     <table class="table table-condensed">
                                         <tr>
@@ -789,7 +789,7 @@
                                         echo '<div id="'.$div_string.'" style=display:none;">';
                                 endif;
                             }
-                            if(($data['Coversheet']['status'] != 'saved' && $cp != false)  || $data['Coversheet']['status'] == 'saved') {
+                            if((Hash::get($data, 'Coversheet.status') != 'saved' && $cp != false)  || Hash::get($data, 'Coversheet.status') == 'saved') {
                             ?>  
 
                             <table class="table table-condensed">
@@ -910,8 +910,8 @@
                                     <td>
                                         <div class="label label-default">
                                             <?php
-                                                if ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
-                                                    $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                                if (Hash::get($data, 'CobrandedApplication.DoYouAcceptAE-Exist') == 'true' ||
+                                                    Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptAE-New') == 'true') {
                                                     echo 'Yes';
                                                 }
                                                 else {
@@ -922,18 +922,18 @@
                                     </td>
                                     <td>    
                                         <?php
-                                            if ($data['CobrandedApplication']['AmexNum'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                            if (empty($data['CobrandedApplication']['AmexNum']) && Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptAE-New') == 'true') {
                                                 echo 'Request New Amex';
                                             }
                                             else {
                                                 echo 'Amex#';
-                                                if ($data['CobrandedApplication']['AmexNum'] != '') {
+                                                if (!empty($data['CobrandedApplication']['AmexNum'])) {
                                                     echo '<div class="label label-default">';
                                                 }
                                                 else {
                                                     echo '<div>';
                                                 }
-                                                echo $data['CobrandedApplication']['AmexNum'].'</div>';
+                                                echo Hash::get($data, 'CobrandedApplication.AmexNum', '').'</div>';
                                             }
                                         ?>    
                                     </td>
@@ -945,11 +945,11 @@
                                     <td>Does the merchant accept Discover?</td>
                                     <td>
                                         <div class="label label-default">
-                                            <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Yes' : 'No'; ?> 
+                                            <?php echo Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptDisc-New') == 'true' ? 'Yes' : 'No'; ?> 
                                         </div>
                                     </td>
                                     <td>
-                                        <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : ''; ?>
+                                        <?php echo Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptDisc-New') == 'true' ? 'Axia Request New' : ''; ?>
                                     </td>
                                     <td>
                                     </td>
@@ -1013,10 +1013,10 @@
                              </table>
                              <?php 
                              }
-                             if ($data['Coversheet']['status'] == 'saved'){
+                             if (Hash::get($data, 'Coversheet.status') == 'saved'){
                                 if ($cp != true) { echo '</div>'; }
                              }
-                             if($data['Coversheet']['status'] == 'saved') {
+                             if(Hash::get($data, 'Coversheet.status') == 'saved') {
                                  if (isset($micros) && $micros != true) {
                                  ?>
                             <table class="table table-condensed">
@@ -1040,7 +1040,7 @@
                                  echo '<div id="'.$div_string.'" style=display:none;">';
                                  }
                              }
-                             if(($data['Coversheet']['status'] != 'saved' && $data['Coversheet']['micros'] != '')  || $data['Coversheet']['status'] == 'saved') {
+                             if((Hash::get($data, 'Coversheet.status') != 'saved' && !empty(Hash::get($data, 'Coversheet.micros')))  || Hash::get($data, 'Coversheet.status') == 'saved') {
                                  ?>
                              <table class="table table-condensed">
                                 <tr>
@@ -1092,11 +1092,11 @@
                              </table>
                             <?php 
                             }
-                            if($data['Coversheet']['status'] == 'saved') {
+                            if(Hash::get($data, 'Coversheet.status') == 'saved') {
                             if (isset($micros) && $micros != true) {echo '</div>';}
                             }?>
                             <?php 
-                            if($data['Coversheet']['status'] == 'saved') {
+                            if(Hash::get($data, 'Coversheet.status') == 'saved') {
                                 if (isset($gateway) && $gateway != true) {
                                     echo '<table class="table table-condensed">';
                                     echo '<tr>';
@@ -1116,7 +1116,7 @@
                                     echo '<div id="'.$div_string.'" style=display:none;">';
                                 }
                             }
-                            if(($data['Coversheet']['status'] != 'saved' && $data['Coversheet']['gateway_option'] != '') || $data['Coversheet']['status'] == 'saved') {
+                            if((Hash::get($data, 'Coversheet.status') != 'saved' && !empty(Hash::get($data, 'Coversheet.gateway_option'))) || Hash::get($data, 'Coversheet.status') == 'saved') {
                                  ?>                
                             <table class="table table-condensed">
                                 <tr>
@@ -1269,10 +1269,10 @@
                             </table>
                             <?php
                             }
-                            if($data['Coversheet']['status'] == 'saved') {
+                            if(Hash::get($data, 'Coversheet.status') == 'saved') {
                             if (isset($gateway) && $gateway != 1) {echo '</div>';}
                             }
-                            if($data['Coversheet']['status'] == 'saved' && $data['Coversheet']['moto_online_chd'] == '') {
+                            if(Hash::get($data, 'Coversheet.status') == 'saved' && empty(Hash::get($data, 'Coversheet.moto_online_chd'))) {
                               if (isset($moto) && $moto != true) {
                                 ?>
                             <table class="table table-condensed">
@@ -1297,7 +1297,7 @@
                                  echo '<div id="'.$div_string.'" style=display:none;">';
                                  }
                                  }
-                                 if(($data['Coversheet']['status'] != 'saved' && $data['Coversheet']['moto_online_chd'] != '') || $data['Coversheet']['status'] == 'saved') {
+                                 if((Hash::get($data, 'Coversheet.status') != 'saved' && !empty(Hash::get($data, 'Coversheet.moto_online_chd'))) || Hash::get($data, 'Coversheet.status') == 'saved') {
                                  ?>                
                             <table class="table table-condensed">
                                 <tr>
@@ -1308,8 +1308,8 @@
                                      <td>
                                          <div class="label label-default">
                                             <?php
-                                                if ($data['CobrandedApplication']['DoYouAcceptAE-Exist'] == 'true' ||
-                                                    $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                                if (Hash::get($data, 'CobrandedApplication.DoYouAcceptAE-Exist') == 'true' ||
+                                                    Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptAE-New') == 'true') {
                                                     echo 'Yes';
                                                 }
                                                 else {
@@ -1320,18 +1320,18 @@
                                      </td>
                                      <td>
                                         <?php
-                                            if ($data['CobrandedApplication']['AmexNum'] == '' && $data['CobrandedApplication']['DoYouWantToAcceptAE-New'] == 'true') {
+                                            if (empty($data['CobrandedApplication']['AmexNum']) && Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptAE-New') == 'true') {
                                                 echo 'Request New Amex';
                                             }
                                             else {
                                                 echo 'Amex#';
-                                                if ($data['CobrandedApplication']['AmexNum'] != '') {
+                                                if (!empty($data['CobrandedApplication']['AmexNum'])) {
                                                     echo '<div class="label label-default">';
                                                 }
                                                 else {
                                                     echo '<div>';
                                                 }
-                                                echo $data['CobrandedApplication']['AmexNum'].'</div>';
+                                                echo Hash::get($data, 'CobrandedApplication.AmexNum', '').'</div>';
                                             }
                                         ?>
                                      </td>
@@ -1340,11 +1340,11 @@
                                     <td>Does the merchant accept Discover?</td>
                                     <td>
                                         <div class="label label-default">
-                                            <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Yes' : 'No'; ?> 
+                                            <?php echo Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptDisc-New') == 'true' ? 'Yes' : 'No'; ?> 
                                         </div>
                                     </td>
                                     <td>
-                                        <?php echo $data['CobrandedApplication']['DoYouWantToAcceptDisc-New'] == 'true' ? 'Axia Request New' : ''; ?>
+                                        <?php echo Hash::get($data, 'CobrandedApplication.DoYouWantToAcceptDisc-New') == 'true' ? 'Axia Request New' : ''; ?>
                                     </td>
                                  </tr>
                                  <tr>
@@ -1411,7 +1411,7 @@
                             </table>
                             <?php
                                  }
-                            if($data['Coversheet']['status'] == 'saved' && $data['Coversheet']['moto_online_chd'] != '') {
+                            if(Hash::get($data, 'Coversheet.status') == 'saved' && !empty(Hash::get($data, 'Coversheet.moto_online_chd'))) {
                                 if (isset($moto) && $moto != true) {echo '</div>';}
                             }?>
                     </fieldset>
@@ -1439,7 +1439,7 @@
 
                 <?php 
                     $this->Html->css(array('coversheet'), 'stylesheet', array('media' => 'print'));
-                    if ($data['Coversheet']['status'] == 'saved') {
+                    if (Hash::get($data, 'Coversheet.status') == 'saved') {
                         echo $this->Form->submit('Save',array('name'=>'save'));
                         echo $this->Form->submit('Submit to UW',array('name'=>'uw'));
                         echo $this->Form->end();
