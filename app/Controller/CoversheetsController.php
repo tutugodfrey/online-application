@@ -30,6 +30,10 @@ class CoversheetsController extends AppController {
 	public function get_orgs_suggestions($orgName) {
 		//this method can handle ajax and non-ajax calls
 		$this->autoRender = false;
+		if (!isset($orgName)) {
+			echo json_encode([]);
+			return;
+		}
 		$orgName = trim($orgName);
 		if (strlen($orgName) <= 1) {
 			echo json_encode([]);
@@ -117,14 +121,14 @@ class CoversheetsController extends AppController {
 	public function edit($id = null) {
 		$data = $this->Coversheet->findById($id);
 
-        $valuesMap = $this->Coversheet->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($data['CobrandedApplication']['id']);
+        $valuesMap = $this->Coversheet->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId(Hash::get($data, 'CobrandedApplication.id'));
         foreach ($valuesMap as $key => $val) {
             $data['CobrandedApplication'][$key] = $val;
         }
         $dbUserAssocParters = [];
         if (Hash::get($data, 'Coversheet.status') === 'saved') {
 	        $axDbApiClient = $this->Coversheet->createAxiaDbApiAuthClient();
-			$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Users/get_reps', array('user_name' =>   $data['CobrandedApplication']['ContractorID']));
+			$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Users/get_reps', array('user_name' => Hash::get($data, 'CobrandedApplication.ContractorID')));
 			$responseData = json_decode($reponse->body, true);
 			if (!empty($responseData['data'])) {
 				$dbUserAssocParters = Hash::extract($responseData, 'data.{n}.assoc_partners.{s}');
@@ -288,7 +292,7 @@ class CoversheetsController extends AppController {
         if (empty($this->request->data)) {
             $this->request->data = $this->Coversheet->findById($id);
 
-            $valuesMap = $this->Coversheet->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($this->request->data['CobrandedApplication']['id']);
+            $valuesMap = $this->Coversheet->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($this->request->data('CobrandedApplication.id'));
             foreach ($valuesMap as $key => $val) {
                 $this->request->data['CobrandedApplication'][$key] = $val;
             }
