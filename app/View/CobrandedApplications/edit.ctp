@@ -144,7 +144,7 @@
 								");
 							}
 
-							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) || $valuesMap['AllowMerchantToSignApplication'] == 'true') {
+							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) || Hash::get($valuesMap, 'AllowMerchantToSignApplication') == 'true') {
 								echo "<input type='button' onclick='signDocNow();' value='View and Sign Now'>";
 
 								$signNowUrl = Router::url(array(
@@ -176,7 +176,7 @@
 			 					");
 							}
 
-							if (!in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) && $valuesMap['AllowMerchantToSignApplication'] != 'true') {
+							if (!in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) && Hash::get($valuesMap, 'AllowMerchantToSignApplication') != 'true') {
 								echo "<input type='button' onclick='submitForReview();' value='Submit for Review'>";
 
 								$submitForReviewUrl = Router::url(array(

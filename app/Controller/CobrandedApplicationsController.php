@@ -133,19 +133,7 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 	public function expired($uuid = null) {
-		$app = $this->CobrandedApplication->find(
-			'first',
-			array('conditions' => array('CobrandedApplication.uuid' => $uuid))
-		);
-
-		$template = $this->CobrandedApplication->User->Template->find(
-			'first',
-			array(
-				'conditions' => array('Template.id' => $app['CobrandedApplication']['template_id'])
-			)
-		);
-
-		$this->set('name', 'ERROR 404: Document Has Expired. For assistance please contact your sales representative.');
+		$this->set('name', 'ERROR 404: The document Has Expired. For assistance please contact your sales representative.');
 		$this->set('url', Router::url(['controller' => 'CobrandedApplications', 'action' => 'edit', $uuid], true));
 		$this->render('/Errors/error404');
 	}
@@ -179,8 +167,8 @@ class CobrandedApplicationsController extends AppController {
 			)
 		);
 
-		$this->set('brand_logo_url', $template['Cobrand']['brand_logo_url']);
-		$this->set('cobrand_logo_url', $template['Cobrand']['cobrand_logo_url']);
+		$this->set('brand_logo_url', Hash::get($template, 'Cobrand.brand_logo_url'));
+		$this->set('cobrand_logo_url', Hash::get($template, 'Cobrand.cobrand_logo_url'));
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
 		$this->set('include_brand_logo', false);
@@ -213,7 +201,7 @@ class CobrandedApplicationsController extends AppController {
 				throw new NotFoundException(__('Invalid application'));
 			}
 
-			if (strlen($this->request->data['id']) == 0) {
+			if (empty($this->request->data['id'])) {
 				throw new NotFoundException(__('Invalid application value id'));
 			}
 
@@ -268,10 +256,9 @@ class CobrandedApplicationsController extends AppController {
 				$class = ' alert-danger';
 				$message = 'Invalid email address submitted.';
 			}
+			$this->set(compact('message', 'class'));
+			$this->render('/Elements/Flash/customAlert1', 'ajax');
 		}
-
-		$this->set(compact('message', 'class'));
-		$this->render('/Elements/Flash/customAlert1', 'ajax');
 	}
 
 /**
@@ -363,7 +350,7 @@ class CobrandedApplicationsController extends AppController {
 						$response = $this->CobrandedApplication->saveFields($user['User'], $data);
 						$requireCSheet = $this->CobrandedApplication->Template->hasAny(array('id' => $data['template_id'], 'requires_coversheet' => true));
 						if ($requireCSheet && $response['status'] = AppModel::API_SUCCESS) {
-							$app = $this->CobrandedApplication->find('first', array('fields' => array('id', 'user_id'), 'conditions' => array('uuid' => $response['application_id'])));
+							$app = $this->CobrandedApplication->find('first', array('fields' => array('id', 'user_id'), 'conditions' => array('uuid' => Hash::get($response, 'application_id'))));
 							$cSheetMsg = 'Failed to create a coversheet!';
 							try {
 								if ($this->CobrandedApplication->Coversheet->createNew($app['CobrandedApplication']['id'], $app['CobrandedApplication']['user_id'], $data)) {
@@ -1345,7 +1332,7 @@ class CobrandedApplicationsController extends AppController {
 		$client = $this->CobrandedApplication->createRightSignatureClient();
 		$this->set('rightsignature', $client);
 
-		$is_mobile_safari = preg_match("/\bMobile\b.*\bSafari\b/", $_SERVER['HTTP_USER_AGENT']);
+		$is_mobile_safari = preg_match("/\bMobile\b.*\bSafari\b/", Hash::get($_SERVER, 'HTTP_USER_AGENT'));
 		$this->set('is_mobile_safari', $is_mobile_safari);
 
 		// Width of Widget, CANNOT BE CHANGED and it cannot be dynamic. 706 is optimal size

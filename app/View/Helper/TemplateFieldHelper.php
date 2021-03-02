@@ -103,7 +103,7 @@ class TemplateFieldHelper extends Helper {
 				$month = null;
 				$day = null;
 
-				if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $field['CobrandedApplicationValues'][0]['value'], $matches)) {
+				if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', Hash::get($field, 'CobrandedApplicationValues.0.value'), $matches)) {
 					$year = $matches[1];
 					$month = $matches[2];
 					$day = $matches[3];
@@ -332,7 +332,7 @@ class TemplateFieldHelper extends Helper {
 						$keyValuePairStr = preg_replace('/\{default\}/i', '', $keyValuePairStr);
 					}
 					$keyValuePair = explode('::', $keyValuePairStr);
-					$radioOptions[$keyValuePair[1]] = $keyValuePair[0];
+					$radioOptions[Hash::get($keyValuePair, '1')] = Hash::get($keyValuePair, '0');
 				}
 				$fieldOptions = Hash::insert($fieldOptions, 'empty', __('--'));
 				$fieldOptions = Hash::insert($fieldOptions, 'options', $radioOptions);
