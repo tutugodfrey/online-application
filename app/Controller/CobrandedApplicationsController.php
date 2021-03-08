@@ -770,7 +770,8 @@ class CobrandedApplicationsController extends AppController {
 			// now try to save with the data from the user model
 			$tmpUser = $user;
 			$tmpUser['User']['template_id'] = $appTemplate;
-			$response = $this->CobrandedApplication->createOnlineappForUser($tmpUser['User'], $this->request->data['CobrandedApplication']['uuid'], null, null, $clIdGlobal, $clNameGlobal);
+			$appNewData = ["uuid" => $this->request->data['CobrandedApplication']['uuid'], "clientIdGlobal" => $clIdGlobal, "clientNameGlobal" => $clNameGlobal];
+			$response = $this->CobrandedApplication->createOnlineappForUser($tmpUser['User'], $appNewData);
 
 			if ($response['success'] == true) {
 				$this->CobrandedApplicationValue = ClassRegistry::init('CobrandedApplicationValue');

@@ -25,6 +25,7 @@ class OnlineappCobrandedApplicationFixture extends CakeTestFixture {
 		'api_exported_date' => array('type' => 'datetime', 'null' => true),
 		'csv_exported_date' => array('type' => 'datetime', 'null' => true),
 		'external_foreign_id' => array('type' => 'string', 'length' => 50),
+		'sf_opportunity_id' => array('type' => 'string', 'length' => 50),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'unique_uuid' => array('unique' => true, 'column' => 'uuid')

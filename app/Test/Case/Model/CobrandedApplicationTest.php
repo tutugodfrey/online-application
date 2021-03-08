@@ -749,7 +749,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		);
 		//Create App w/new template
-		return $this->CobrandedApplication->createOnlineappForUser($user, $uuid);
+		return $this->CobrandedApplication->createOnlineappForUser($user, ['uuid' => $uuid]);
 	}
 
 /**
@@ -1072,7 +1072,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'data_to_sync' => null,
 				'api_exported_date' => null,
 				'csv_exported_date' => null,
-				'external_foreign_id' => null
+				'external_foreign_id' => null,
+				'sf_opportunity_id' => null,
 			),
 			'Template' => array(
 				'id' => (int)1,
@@ -1395,6 +1396,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'api_exported_date' => null,
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
+				'sf_opportunity_id' => null,
 			),
 			'TemplateField' => array(
 				'id' => 1,
@@ -1463,6 +1465,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'api_exported_date' => null,
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
+				'sf_opportunity_id' => null,
 			),
 			'TemplateField' => array(
 				'id' => 4,
@@ -2198,7 +2201,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$expectedResponse['cobrandedApplication']['id'] = $actualResponse['cobrandedApplication']['id'] + 1;
 		$uuid = CakeText::uuid();
 		$expectedResponse['cobrandedApplication']['uuid'] = $uuid;
-		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['User'], $uuid);
+		$actualResponse = $this->CobrandedApplication->createOnlineappForUser($this->__user['User'], ['uuid' => $uuid]);
 		$this->assertEquals($expectedResponse, $actualResponse, 'createOnlineappForUser response did not match the expected');
 	}
 
