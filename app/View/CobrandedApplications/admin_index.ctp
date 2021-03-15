@@ -175,7 +175,7 @@
 									'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/amend_completed_document/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
 									'class' => 'small',
 									'style' => 'padding-left: 5px',
-									'title' => __('Create Copy')
+									'title' => __('Edit & Make Corrections')
 									)
 								) .'</li>';
 							}
