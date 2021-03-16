@@ -858,7 +858,7 @@ class CobrandedApplicationsController extends AppController {
  * @throws NotFoundException
  * @return void
  */
-	public function admin_amend_completed_document($id) {
+	public function admin_amend_completed_document($id, $rsDocIsExpired = false) {
 		if (!$this->CobrandedApplication->exists($id)) {
 			$this->_failure(__("Application number $id does not exist!"), array('action' => 'index'));
 		}
@@ -874,15 +874,17 @@ class CobrandedApplicationsController extends AppController {
 		if ($this->request->is('ajax')) {
 			$docDetals = $client->getDocumentDetails($appData['CobrandedApplication']['rightsignature_document_guid']);
 			$rsDocData = json_decode($docDetals, true);
-			
+
 			$this->set(compact('appData', 'rsDocData'));
 			$this->render('admin_amend_completed_document');
 		} elseif ($this->request->is('post') || $this->request->is('put')) {
-			// Void existing RS document
-			$response = $client->api->post($client->base_url.RightSignature::API_V1_PATH. "/documents/" . $appData['CobrandedApplication']['rightsignature_document_guid']."/void");
-			$resData = json_decode($response, true);
+			// Void existing RS document if not expired
+			if ($rsDocIsExpired == false) {
+				$response = $client->api->post($client->base_url.RightSignature::API_V1_PATH. "/documents/" . $appData['CobrandedApplication']['rightsignature_document_guid']."/void");
+				$resData = json_decode($response, true);
+			}
 			
-			if ($response->isOk()) {
+			if ($rsDocIsExpired || $response->isOk()) {
 				// on success delete original RS doc reference in CobrandedApplication.rightsignature_document_guid
 				$this->CobrandedApplication->save(['id'=> $id, 'status' => CobrandedApplication::STATUS_SAVED, 'rightsignature_document_guid'=> null], ['validate' => false]);
 				//show success message
