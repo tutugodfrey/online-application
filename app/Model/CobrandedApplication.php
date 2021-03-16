@@ -84,9 +84,17 @@ App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
  *              @OA\Property(
  *                  property="external_record_id",
  *                  type="string",
+ *                  maxLength=50,
  *					description="The unique id of the customer record or account from the external system. This will be used to submit periodic updates back to that specific record in the external system.
  *									Required when requests are done programmatically from machine to machine (m2m=true)",
  *					example="<id format varies from system to system>"
+ *              ),
+ *              @OA\Property(
+ *                  property="Opportunity_id",
+ *                  type="string",
+ *                  maxLength=50,
+ *					description="This field relates specifically to a salesforce opportunity id",
+ *					example="0012345678IjfanAAB"
  *              ),
  *              @OA\Property(
  *                  property="m2m",
@@ -182,6 +190,7 @@ App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
  *					"template_id": "12345",
  *					"ContractorID": "John Sales Man",
  *					"external_record_id": "abcdef123456",
+ *					"Opportunity_id": "0012345678IjfanAAB",
  *					"m2m": true,
  *					"CorpName": "Family Health Service",
  *					"DBA": "Family Health",
@@ -631,29 +640,39 @@ class CobrandedApplication extends AppModel {
 /**
  * createOnlineappForUser
  *
- * @param int $user object
- * @param uuid $uuid [optional] application unique identifier
+ * @param array $user object
+ * @param array $newAppData data to create the new CobrandedApplication record. The following key=>value pairs are recognized:
+ * $newAppData = [
+ * 		'uuid' => '<an UUID to assign to the new app>'
+ * 		'templateId' => '<a Template.id to associate the app with>'
+ * 		'externalForeignId' => '<an externalForeignId to associate the app with>'
+ * 		'sfOpportunityId' => '<a salesforce opporunity id to associate the app with>'
+ * 		'clientIdGlobal' => '<a clientIdGlobal to associate the app with>'
+ * 		'clientNameGlobal' => '<the clientNameGlobal that corresponds to the clientIdGlobal to associate the app with>'
+ * ]
  *
  * @return
  *     $response array(
  *         success [true|false] depending on if the onlineapp was created
  *         cobrandedApplicationId int
  */
-	public function createOnlineappForUser($user, $uuid = null, $templateId = null, $externalForeignId = null, $clientIdGlobal = null, $clientNameGlobal = null) {
+	// public function createOnlineappForUser($user, $uuid = null, $templateId = null, $externalForeignId = null, $clientIdGlobal = null, $clientNameGlobal = null) {
+	public function createOnlineappForUser($user, $newAppData = ["uuid" => null, "templateId" => null, "externalForeignId" => null, 'sfOpportunityId' => null, "clientIdGlobal" => null, "clientNameGlobal" => null]) {
 		$response = array('success' => false, 'cobrandedApplication' => array('id' => null, 'uuid' => null));
-		if (is_null($uuid)) {
-			$uuid = CakeText::uuid();
+		if (empty($newAppData['uuid'])) {
+			$newAppData['uuid'] = CakeText::uuid();
 		}
 		//use user's template_id value by default (may or may not be the user's default template)
-		$templateId = (is_null($templateId))? $user['template_id'] : $templateId;
+		$newAppData['templateId'] = (empty($newAppData['templateId']))? $user['template_id'] : $newAppData['templateId'];
 		$this->create(
 			array(
 				'user_id' => $user['id'],
-				'uuid' => $uuid,
-				'template_id' => $templateId,
-				'external_foreign_id' => empty($externalForeignId)? null : $externalForeignId, //no zero length strings
-				'client_id_global' => empty($clientIdGlobal)? null : $clientIdGlobal, //no zero length strings
-				'client_name_global' => empty($clientNameGlobal)? null : $this->trimExtra($clientNameGlobal), //no zero length strings
+				'uuid' => $newAppData['uuid'],
+				'template_id' => $newAppData['templateId'],
+				'external_foreign_id' => empty($newAppData['externalForeignId'])? null : $newAppData['externalForeignId'], //no zero length strings
+				'sf_opportunity_id' => empty($newAppData['sfOpportunityId'])? null : $newAppData['sfOpportunityId'], //no zero length strings
+				'client_id_global' => empty($newAppData['clientIdGlobal'])? null : $newAppData['clientIdGlobal'], //no zero length strings
+				'client_name_global' => empty($newAppData['clientNameGlobal'])? null : $this->trimExtra($newAppData['clientNameGlobal']), //no zero length strings
 				'status' => 'saved'
 			)
 		);
@@ -662,7 +681,7 @@ class CobrandedApplication extends AppModel {
 			$response['success'] = true;
 			$response['cobrandedApplication'] = array(
 				'id' => $this->id,
-				'uuid' => $uuid,
+				'uuid' => $newAppData['uuid'],
 			);
 		}
 		return $response;
@@ -681,6 +700,7 @@ class CobrandedApplication extends AppModel {
 			$exportedData['template_id'],
 			$exportedData['m2m'],
 			$exportedData['external_record_id'],
+			$exportedData['Opportunity_id'],
 			$exportedData['ClientId'],
 			$exportedData['ClientName'],
 			$exportedData['uuid'],
@@ -728,6 +748,7 @@ class CobrandedApplication extends AppModel {
 		$templateId = Hash::get($fieldsData, 'template_id');
 		$appUuid = Hash::get($fieldsData, 'uuid');
 		$externalForeignId = Hash::get($fieldsData, 'external_record_id');
+		$sfOpportunityId = Hash::get($fieldsData, 'Opportunity_id');
 		$clientIdGlobal = Hash::get($fieldsData, 'ClientId');
 		$clientNameGlobal = Hash::get($fieldsData, 'ClientName');
 		//remove data potentially present that is not related to the CobrandedApplicationValues
@@ -754,7 +775,8 @@ class CobrandedApplication extends AppModel {
 		} else {
 			$updatingExistingData = false;
 			// create an application for $userId
-			$createAppResponse = $this->createOnlineappForUser($user, null, $templateId, $externalForeignId, $clientIdGlobal, $clientNameGlobal);
+			$appNewData = ["templateId" => $templateId, "externalForeignId" => $externalForeignId, 'sfOpportunityId' => $sfOpportunityId, "clientIdGlobal" => $clientIdGlobal, "clientNameGlobal" => $clientNameGlobal];
+			$createAppResponse = $this->createOnlineappForUser($user, $appNewData);
 		}
 		
 		$newApp = null;
@@ -1110,6 +1132,10 @@ class CobrandedApplication extends AppModel {
 		if (!empty($app['CobrandedApplication']['external_foreign_id'])) {
 			$keys = $this->__addKey($keys, 'external_foreign_id', $enquote);
 			$values = $this->__addValue($values, $app['CobrandedApplication']['external_foreign_id'], $enquote);
+		}
+		if (!empty($app['CobrandedApplication']['sf_opportunity_id'])) {
+			$keys = $this->__addKey($keys, 'sf_opportunity_id', $enquote);
+			$values = $this->__addValue($values, $app['CobrandedApplication']['sf_opportunity_id'], $enquote);
 		}
 		if (!empty($app['CobrandedApplication']['client_id_global'])) {
 			$keys = $this->__addKey($keys, 'client_id_global', $enquote);
