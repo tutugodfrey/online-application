@@ -81,6 +81,7 @@ class CobrandedApplicationsController extends AppController {
 		'rs_document_audit' => array(User::ADMIN, User::REP, User::MANAGER),
 		'admin_validate_client_id' => array(User::ADMIN, User::REP, User::MANAGER),
 		'submit_for_review' => array('*'),
+		'admin_amend_completed_document' => array(User::ADMIN, User::REP, User::MANAGER),
 	);
 
 	public $helpers = array('TemplateField');
@@ -849,6 +850,50 @@ class CobrandedApplicationsController extends AppController {
 			$this->response->statusCode(400);
 		}
 	}
+
+/**
+ * admin_amend_completed_document method
+ *
+ * @param int|string $id the CobrandedApplication.id integrer or string representation of integer id
+ * @throws NotFoundException
+ * @return void
+ */
+	public function admin_amend_completed_document($id) {
+		if (!$this->CobrandedApplication->exists($id)) {
+			$this->_failure(__("Application number $id does not exist!"), array('action' => 'index'));
+		}
+		$appData = $this->CobrandedApplication->find('first', [
+			'recursive' => -1,
+			'fields' => ['id','rightsignature_document_guid', 'status'],
+			'conditions' => ['id' => $id],
+		]);
+		if (empty($appData['CobrandedApplication']['rightsignature_document_guid'])) {
+			$this->_failure(__("This application does not have a document for signing and thus there is nothing to amend."), ['action' => 'index']);
+		}
+		$client = $this->CobrandedApplication->createRightSignatureClient();
+		if ($this->request->is('ajax')) {
+			$docDetals = $client->getDocumentDetails($appData['CobrandedApplication']['rightsignature_document_guid']);
+			$rsDocData = json_decode($docDetals, true);
+			
+			$this->set(compact('appData', 'rsDocData'));
+			$this->render('admin_amend_completed_document');
+		} elseif ($this->request->is('post') || $this->request->is('put')) {
+			// Void existing RS document
+			$response = $client->api->post($client->base_url.RightSignature::API_V1_PATH. "/documents/" . $appData['CobrandedApplication']['rightsignature_document_guid']."/void");
+			$resData = json_decode($response, true);
+			
+			if ($response->isOk()) {
+				// on success delete original RS doc reference in CobrandedApplication.rightsignature_document_guid
+				$this->CobrandedApplication->save(['id'=> $id, 'status' => CobrandedApplication::STATUS_SAVED, 'rightsignature_document_guid'=> null], ['validate' => false]);
+				//show success message
+				$this->_success(__('Application status has been reverted to "saved" and its document has been deleted. You may now edit the application and make any necessary updates.'), ['action' => 'index']);
+			} else {
+				$this->_failure('API error ocurred! ' . $resData['error'], ['action' => 'index']);
+			}
+			 
+		}
+	}
+
 /**
  * admin_edit method
  *

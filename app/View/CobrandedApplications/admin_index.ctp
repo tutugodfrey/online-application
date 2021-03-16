@@ -165,6 +165,20 @@
 										)
 									) .'</li>';
 							}
+							if ($cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-erase pull-left btn-xs btn-danger"></span>&nbsp;&nbsp;Edit & Make Corrections',
+									'#',
+									array(
+									'escape' => false,
+									'data-toggle' => 'modal',
+									'data-target' => '#dynamicModal',
+									'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/admin/CobrandedApplications/amend_completed_document/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+									'class' => 'small',
+									'style' => 'padding-left: 5px',
+									'title' => __('Edit & Make Corrections')
+									)
+								) .'</li>';
+							}
 							if (!$appOutOfSync) {
 								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-duplicate pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Create Copy',
 									'#',
