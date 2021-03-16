@@ -11,7 +11,7 @@
 				<?php
 
 				$commonText = 'Any existing signature links sent to clients will no longer work. After updating the application, follow the usual workflow for signing documents to generate the updated version of its document.';
-				$auditTrail = $docDetals['document']['audits'];
+				$auditTrail = $rsDocData['document']['audits'];
 				$alreadySignedList = '';
 				foreach ($auditTrail as $audit) {
 					if ($audit['keyword'] == 'signed') {
