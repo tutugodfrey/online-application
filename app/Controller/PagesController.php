@@ -45,7 +45,18 @@ class PagesController extends AppController {
  * @var array
  */
 	public $uses = array();
+/**
+ * BeforeFilter callback
+ *
+ * @return void
+ */
+	public function beforeFilter() {
+		parent::beforeFilter();
 
+		$this->Auth->allow(array(
+			'state',
+		));
+	}
 /**
  * Displays a view
  *
@@ -77,6 +88,26 @@ class PagesController extends AppController {
 	public function refreshSession(){
 		$this->autoRender = false;
 		$this->response->statusCode(200);// OK!
+	}
+
+/**
+ * state
+ * returns a JSON with the status of this application and dependencies
+ * 
+ * @return string JSON
+ */
+	public function state() {
+		$this->autoRender = false;
+		$this->layout = false;
+		$state = ['status' => 'UP'];
+	  	$Model = ClassRegistry::init('User');
+	  	try {
+	  		$Model->query('SELECT version();');
+	  		$state['dependencies']['db'] =  'UP';
+	  	} catch (Exception $e) {
+	  		$state['dependencies']['db'] =  'DOWN';
+	  	}
+		return json_encode($state,JSON_PRETTY_PRINT);
 	}
 
 }

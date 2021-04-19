@@ -30,6 +30,7 @@
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
+	Router::connect('/state', ['controller' => 'pages', 'action' => 'state']);
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 /**
  * Enable routing for the api to route to domain.com/api/controller/action.json
