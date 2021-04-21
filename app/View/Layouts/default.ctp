@@ -51,8 +51,8 @@
 				var remainingMins;
 
 								function sessionCount(){
-				//Substract 15 minutes to compensate for potential timeout de-synchronization with the server-side
-								remainingMins = Math.floor((" . Security::inactiveMins() * Configure::read('Session.timeout') . " - c) / 60) - 15;
+				//set timeout at 15 minutes
+								remainingMins = Math.floor((900 - c) / 60);
 								document.getElementById('sessCountDn').innerHTML= remainingMins + ' minutes';
 								/*If half the total session timeout is reached*/
 										if(remainingMins <= 5){
@@ -113,10 +113,10 @@
 	 <div id="msg_fader">&nbsp;</div>
 	<div id="session_box" class="col-md-12">
 		<div class="panel panel-danger">
-			<div class="panel-heading text-center"><strong>Session Expiring Soon!</strong></div>
-			<div class="panel-body">
-				 Session will expire in <span id="sessCountDn">&nbsp;</span>
-				 <br/>Unsaved work will be lost.
+			<div class="panel-heading text-center"><strong>Inactive session expiring!</strong></div>
+			<div class="panel-body text-center">
+				<h1 class="text-info"><span class="glyphicon glyphicon-time"></span></h1>
+				 <span class="text-info" id="sessCountDn">&nbsp;</span>
 				 <br/><span style="font-size: 10pt"><strong>Click or hit any key continue.</strong></span>
 			</div> 
 		</div>

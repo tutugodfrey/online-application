@@ -39,10 +39,10 @@ class EmailConfig {
 
 	public $default = array(
 	    'transport' => 'Smtp',
-	    'from' => '(omitted)',
-	    'host' => '(omitted)',
-	    'username' => '(omitted)',
-	    'password' => '(omitted)',
+	    'from' => 'newapps@axiapayments.com',
+	    'host' => 'EMAIL_HOST',
+        'username' => 'EMAIL_USERNAME',
+        'password' => 'EMAIL_PW',
 	    'port' => 587,
 	    'tls' => true
 	);

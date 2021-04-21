@@ -212,20 +212,20 @@
 /**
  * A random string used in security hashing methods.
  */
-        Configure::write('Security.salt', '(omitted)');
+        Configure::write('Security.salt', 'CORE_SALT');
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-        Configure::write('Security.cipherSeed', '(omitted)');
+        Configure::write('Security.cipherSeed', 'CORE_CIPHER_SEED');
 /**
  * The access token to connect to the Axia Database API
  */
-        Configure::write('AxiaDbAPI.access_token', '(omitted)');
+        Configure::write('AxiaDbAPI.access_token', 'CORE_DB_API_ACCESS_TOKEN');
 
 /**
  * The access token to connect to the Axia Database API
  */
-        Configure::write('AxiaDbAPI.password', '(omitted)');
+        Configure::write('AxiaDbAPI.password', 'CORE_DB_API_PW');
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).
  * Will append a query string parameter containing the time the file was modified. This is
