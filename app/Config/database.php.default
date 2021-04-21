@@ -58,20 +58,20 @@ class DATABASE_CONFIG {
 	public $default = array(
 		'datasource' => 'Database/Postgres',
 		'persistent' => false,
-		'host' => '(omitted)',
-		'login' => '(omitted)',
-		'password' => '(omitted)',
-		'database' => '(omitted)',
+		'host' => 'DATABASE_HOST',
+		'login' => 'DATABASE_LOGIN',
+		'password' => 'DATABASE_PW',
+		'database' => 'DATABASE_NAME',
 		'prefix' => '',
 		'encoding' => 'utf8',
 	);
 	 public $migration = array(
 		'datasource' => 'Database/Postgres',
 		'persistent' => false,
-		'host' => '(omitted)',
-		'login' => '(omitted)',
-		'password' => '(omitted)',
-		'database' => '(omitted)',
+		'host' => 'DATABASE_HOST',
+		'login' => 'DATABASE_LOGIN',
+		'password' => 'DATABASE_PW',
+		'database' => 'DATABASE_NAME',
 		'prefix' => 'onlineapp_',
 		'encoding' => 'utf8',
 	);
