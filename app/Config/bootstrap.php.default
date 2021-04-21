@@ -129,9 +129,9 @@ Configure::write('API', array(
 ));//--End new code added 02/23/12
 
 //--New Code Added Stanner
-Configure::write('Cryptable.cipher', '(omitted)');
-Configure::write('Cryptable.key', '(omitted)');
-Configure::write('Cryptable.iv', base64_decode('(omitted)'));
+Configure::write('Cryptable.cipher', 'BOOTSTRAP_CIPHER');
+Configure::write('Cryptable.key', 'BOOTSTRAP_KEY');
+Configure::write('Cryptable.iv', base64_decode('BOOTSTRAP_IV'));
 //-- End New code added 04/09/12
 
 //Number of days users password's are valid, after which they will expire.
