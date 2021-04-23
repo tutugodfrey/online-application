@@ -4,7 +4,7 @@
 		"cakedc/migrations": "dev-master",
 		"cakedc/search": "dev-master",
 		"cakedc/utils": "dev-master",
-		"cakephp/cakephp": "2.9.*",
+		"cakephp/cakephp": "2.10.24",
 		"cakephp/debug_kit": "2.2.*",
 		"phpunit/phpunit": "3.7.32",
 		"slywalker/boost_cake": "*",
