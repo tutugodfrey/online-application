@@ -286,7 +286,7 @@
 									'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/CobrandedApplications/app_info_summary/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
 									'class' => 'small',
 									'style' => 'padding-left: 5px',
-									'title' => __('Export Data')
+									'title' => __('See more info about this application')
 									)
 								) .'</li>';
 							if (!isset($cobrandedApplication['Coversheet']['id'])) {

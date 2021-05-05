@@ -853,10 +853,11 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
- * admin_is_client_data_required
- * Ajax method to check if the given global client ID is valid.
+ * admin_update_client_id
+ * Ajax method to update client ids.
  *
- * @param string $clientId string client id
+ * @param string $id string a CobrandedApplication.id
+ * @param string $clientId string an 8 digit client id
  * @return void
  */
 	public function admin_update_client_id($id, $clientId) {
@@ -982,7 +983,7 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
- * info_summary method
+ * app_info_summary method
  *
  * @throws NotFoundException
  * @param string $id CobrandedApplication.id

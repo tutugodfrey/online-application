@@ -31,7 +31,7 @@
 		</tr>
 		<tr>
 			<th>Corp Contact Name</th>
-			<td><?php echo $app['CorpContact']['value']?? $app['Owner1Name']['value']; ?></td>
+			<td><?php echo (!empty($app['CorpContact']['value']))? $app['CorpContact']['value'] : $app['Owner1Name']['value']; ?></td>
 		</tr>
 		<tr>
 			<th>Corp Phone #</th>
