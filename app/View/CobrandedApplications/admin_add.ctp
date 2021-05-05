@@ -61,7 +61,6 @@
 		errMsg = '<span class="small text-danger bg-danger" id="clIdValidationError">';
 		if (jQuery("#CobrandedApplicationClientIdToVerify").val().length === 8) {
 			jQuery("#clIdValidationMsgs").html('<br/><div class="progress small"><div class="small progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">Validating ID from SalesForce...</div> </div>');
-			//Invalid ID! Not found in SalesForce, check and try again. </span>
 			jQuery.ajax({
 				type: "POST",
 				url: "/admin/CobrandedApplications/validate_client_id/"+ jQuery("#CobrandedApplicationClientIdToVerify").val(),
