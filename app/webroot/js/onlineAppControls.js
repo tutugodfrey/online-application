@@ -19,7 +19,7 @@ function renderContentAJAX(controller, action, id, containerID, actionPath) {
    *               
    **/
    //Insert Loading sequence
-   $('#'+containerID).html('<img class="center-block" src="/img/refreshing.gif"/>');
+   $('#'+containerID).html('<img class="center-block" style="padding:30px 0px 30px 40px" src="/img/refreshing.gif"/>');
 	var reqURL;
 	if (actionPath) {
 			reqURL = actionPath;

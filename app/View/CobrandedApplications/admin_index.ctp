@@ -277,6 +277,18 @@
 								) .'</li>';
 
 							}
+							echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-info-sign pull-left btn-xs btn-info"></span>&nbsp;&nbsp;More Information',
+									'#',
+									array(
+									'escape' => false,
+									'data-toggle' => 'modal',
+									'data-target' => '#dynamicModal',
+									'onClick' => "renderContentAJAX('', '', '', 'dynamicModalBody', '/CobrandedApplications/app_info_summary/" . $cobrandedApplication['CobrandedApplication']['id'] . "')",
+									'class' => 'small',
+									'style' => 'padding-left: 5px',
+									'title' => __('See more info about this application')
+									)
+								) .'</li>';
 							if (!isset($cobrandedApplication['Coversheet']['id'])) {
 								echo '<li>' .  $this->Form->postLink('<span class="glyphicon glyphicon-trash pull-left btn-xs btn-danger"></span>&nbsp;&nbsp;Delete',
 									array(

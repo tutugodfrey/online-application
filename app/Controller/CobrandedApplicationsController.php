@@ -82,6 +82,7 @@ class CobrandedApplicationsController extends AppController {
 		'admin_validate_client_id' => array(User::ADMIN, User::REP, User::MANAGER),
 		'submit_for_review' => array('*'),
 		'admin_amend_completed_document' => array(User::ADMIN, User::REP, User::MANAGER),
+		'app_info_summary' => array(User::ADMIN, User::REP, User::MANAGER),
 	);
 
 	public $helpers = array('TemplateField');
@@ -852,6 +853,48 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
+ * admin_update_client_id
+ * Ajax method to update client ids.
+ *
+ * @param string $id string a CobrandedApplication.id
+ * @param string $clientId string an 8 digit client id
+ * @return void
+ */
+	public function admin_update_client_id($id, $clientId) {
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		if ($this->request->is('ajax')) {
+			if ($this->Session->read('Auth.User.id')) {
+				if (!empty($clientId)) {
+					try {
+						$result = $this->CobrandedApplication->getSfClientNameByClientId($clientId);
+						if ($result === false) {
+							return json_encode(['valid' => false]);
+						} else {
+							$update = array('id' => $id, 'client_id_global' => $result['Client_ID__c'], 'client_name_global' => $result['Client_Name__c']);
+							$this->CobrandedApplication->save($update, ['validate' => false]);
+							return json_encode($result);
+						}
+					} catch (Exception $e) {
+						$this->response->statusCode(500);
+						return;
+					}
+					
+				} else {
+					//Bad Request
+					$this->response->statusCode(400);
+				}
+			} else {
+				//session expired
+				$this->response->statusCode(401);
+			}
+		} else {
+			//Bad Request
+			$this->response->statusCode(400);
+		}
+	}
+
+/**
  * admin_amend_completed_document method
  *
  * @param int|string $id the CobrandedApplication.id integrer or string representation of integer id
@@ -937,6 +980,27 @@ class CobrandedApplicationsController extends AppController {
 				$this->_failure(__("Application number $id could not be saved. Please, try again."), array('action' => 'index'));
 			}
 		}
+	}
+
+/**
+ * app_info_summary method
+ *
+ * @throws NotFoundException
+ * @param string $id CobrandedApplication.id
+ * @return void
+ */
+	public function app_info_summary($id = null) {
+		$app = $this->CobrandedApplication->find('index', array(
+			'conditions' => array('CobrandedApplication.id' => $id)
+		));
+		$app = array_pop($app);
+		$clientIdValid = true;
+		if (!empty($app['CobrandedApplication']['client_id_global'])) {
+			$result = $this->CobrandedApplication->getSfClientNameByClientId($app['CobrandedApplication']['client_id_global']);
+			$clientIdValid = ($result !== false);
+		}
+		$this->set(compact('app','clientIdValid'));
+		$this->render('/Elements/cobranded_applications/info_summary', 'ajax');
 	}
 
 /**
