@@ -1074,6 +1074,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'client_id_global' => null,
+				'client_name_global' => null
 			),
 			'Template' => array(
 				'id' => (int)1,
@@ -1397,6 +1399,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'client_id_global' => null,
+				'client_name_global' => null
 			),
 			'TemplateField' => array(
 				'id' => 1,
@@ -1466,6 +1470,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'client_id_global' => null,
+				'client_name_global' => null
 			),
 			'TemplateField' => array(
 				'id' => 4,
@@ -2857,7 +2863,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'rightsignature_install_status' => null,
 						'data_to_sync' => null,
 						'api_exported_date' => null,
-						'csv_exported_date' => null
+						'csv_exported_date' => null,
+						'client_id_global' => null,
+						'client_name_global' => null
 					),
 					'Cobrand' => array(
 						'id' => 1,
@@ -2901,7 +2909,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 					),
 					'Merchant' => array(
 						'id' => null,
-					)
+					),
+					'Owner1Name' => array ('value' => 'Owner1NameTest'),
+					'CorpPhone' => array ('value' => null),
+					'PhoneNum' => array ('value' => null),
 			),
 		);
 
