@@ -41,40 +41,68 @@
 		?>
 
 		<?php
-				echo $scripts_for_layout;
-
-		if ($this->Session->read('Auth.User.id')!=''){
-						echo "<script type='text/javascript'>
-								var c=0;
-								var t;
-								var timer_is_on=0;
+		echo $scripts_for_layout;
+		if ($this->Session->read('Auth.User.id')!=''): ?>
+			<script type='text/javascript'>
+				var sessWorker;
+				var c=0;
+				var t;
+				var timer_is_on=0;
 				var remainingMins;
 
-								function sessionCount(){
-				//set timeout at 15 minutes
-								remainingMins = Math.floor((900 - c) / 60);
-								document.getElementById('sessCountDn').innerHTML= remainingMins + ' minutes';
-								/*If half the total session timeout is reached*/
-										if(remainingMins <= 5){
-												document.getElementById('sessCountDn').innerHTML= '<b>' + remainingMins + ((remainingMins > 1) ? ' minutes.</b>' : ' minute.</b>');
-												document.getElementById('msg_fader').style.display = 'block';
-												document.getElementById('session_box').style.display = 'block';
-											 }
-										 if(remainingMins <= 0){
-										 this.t=null; //stops the t timeout Global Variable
-										 window.location='/users/logout';
-										 return
-										}
-								c=c+1;
-				t=setTimeout(\"sessionCount()\",990);//count down every 990 ms instead of 1000ms to compensate for potential client processor lag
-								}
-
-								function doTimer(){
-					if (!timer_is_on){
-						 timer_is_on=1;
-						sessionCount();
+				function sessionWorkerStart(){
+					//Stop any already running session workers
+					sessionWorkerStop();
+					//Start web worker
+					sessWorker = new Worker("/js/sessionWorker.js");
+					sessWorker.onmessage = function(event) {
+						remainingMins = event.data;
+						checkExpiringSession()
 					}
-								}
+				}
+
+				function sessionWorkerStop(){
+					if (sessWorker !== undefined){
+						sessWorker.terminate();
+						sessWorker = undefined;
+					}
+				}
+
+				function sessionCount(){
+					//set timeout at 15 minutes
+					remainingMins = Math.floor((900 - c) / 60);
+					checkExpiringSession();
+					c=c+1;
+					t=setTimeout("sessionCount()",990);//count down every 990 ms instead of 1000ms to compensate for potential client processor lag
+				}
+				function checkExpiringSession(){
+					document.getElementById('sessCountDn').innerHTML= remainingMins + ' minutes';
+					/*If half the total session timeout is reached*/
+					if (remainingMins <= 5){
+						document.getElementById('sessCountDn').innerHTML= '<b>' + remainingMins + ((remainingMins > 1) ? ' minutes.</b>' : ' minute.</b>');
+						document.getElementById('msg_fader').style.display = 'block';
+						document.getElementById('session_box').style.display = 'block';
+					 }
+					 if (remainingMins <= 0){
+					 	sessionWorkerStop();
+						this.t=null; //stops the t timeout Global Variable
+						window.location='/users/logout';
+						return;
+					}
+				}
+
+				function sessionTimerInit(){
+					//Internet Explorer 9 and earlier versions do not support Web Workers.
+					//Check if browser supports workers
+					if (typeof(Worker) !== "undefined") {
+						sessionWorkerStart();
+					} else {
+						if (!timer_is_on){
+							 timer_is_on=1;
+							sessionCount();
+						}
+					}
+				}
 
 				function resetTimer(){
 					if(remainingMins < 10){
@@ -83,10 +111,12 @@
 								url: '/Pages/refreshSession',
 								dataType: 'html',
 								success: function(data) {
-									window.clearTimeout(t);
-									c = 0;
-									timer_is_on=0;
-									doTimer();
+									if (typeof(Worker) == "undefined"){
+										window.clearTimeout(t);
+										c = 0;
+										timer_is_on=0;
+									}
+									sessionTimerInit();
 									hideExpirationNotice();
 								}
 							});
@@ -99,13 +129,12 @@
 					fader.style.display = 'none';
 					session_box.style.display = 'none';
 				}
-								window.onload=function() {
-										jQuery('body').on('click', resetTimer).on('keypress', resetTimer);
-										doTimer();
-					}
-				</script>";
-				 }
-		?>
+				window.onload=function() {
+						jQuery('body').on('click', resetTimer).on('keypress', resetTimer);
+						sessionTimerInit();
+				}
+				</script>;
+		<?php endif; ?>
 </head>
 <body>
 	<div id='countTST'></div>
