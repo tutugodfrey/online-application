@@ -93,7 +93,6 @@ class PagesController extends AppController {
 /**
  * state
  * returns a JSON with the status of this application and dependencies
- * 
  * @return string JSON
  */
 	public function state() {
