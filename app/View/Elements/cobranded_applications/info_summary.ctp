@@ -45,7 +45,26 @@
 			<th>Email</th>
 			<td><?php echo $app['EMail']['value']; ?></td>
 		</tr>
-
+		<?php if ($app['CobrandedApplication']['status'] == CobrandedApplication::STATUS_COMPLETED || $app['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) :?>
+		<tr>
+			<th>Orignal Template PDF</th>
+			<td><?php 
+				echo $this->Html->link('<span class="glyphicon glyphicon-download-alt pull-left"></span>&nbsp;&nbsp;Download',
+						array(
+							'action' => 'open_app_pdf',
+							$app['CobrandedApplication']['id'],
+							1,
+							'admin' => true
+						),
+						array(
+							'escape' => false,
+							'class' => 'btn btn-xs btn-default',
+							'title' => __('Download PDF')
+						)
+					);
+			 ?></td>
+		</tr>
+		<?php endif;?>
 	</table>
 </div>
 <script type='text/javascript'>
