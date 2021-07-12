@@ -1973,9 +1973,10 @@ class CobrandedApplication extends AppModel {
  *
  * @param int $id Cobranded Application Id
  * @param boolean $overrideTemplate wheter to force retrival of the PDF URL regardless of whether the template allows PDF template to be emailed or not
+ * @param boolean $getOriginalPdf true to specify whether to retrieve the original blank pdf template used to create this application's completed document.
  * @return string The URL where the PDF is located.
  */
-	public function getAppPdfUrl($id, $overrideTemplate = false) {
+	public function getAppPdfUrl($id, $overrideTemplate = false, $getOriginalPdf = false) {
 		$appData = $this->find('first', array(
 			'recursive' => -1,
 			'fields' => array(
@@ -1994,7 +1995,7 @@ class CobrandedApplication extends AppModel {
 			$docData = json_decode($docDetals, true);
 
 			if (!empty($docData)) {
-				$appPdfUrl = Hash::get($docData, 'document.merged_document_certificate_url');
+				$appPdfUrl = ($getOriginalPdf == false)? Hash::get($docData, 'document.merged_document_certificate_url') : Hash::get($docData, 'document.original_file_url');
 			}
 		}
 		return $appPdfUrl;

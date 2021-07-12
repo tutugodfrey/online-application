@@ -1202,11 +1202,12 @@ class CobrandedApplicationsController extends AppController {
  * Redirects user to the application pdf
  *
  * @param integer $id application id
+ * @param boolean $getOriginalPdf true to specify whether to retrieve the original blank pdf template used to create this application's completed document.
  * @return void
  */
-	function admin_open_app_pdf($id) {
+	function admin_open_app_pdf($id, $getOriginalPdf = false) {
 		$canOverrideTemplate = ($this->Auth->user('group') == User::ADMIN);
-		$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($id, $canOverrideTemplate);
+		$pdfUrl = $this->CobrandedApplication->getAppPdfUrl($id, $canOverrideTemplate, $getOriginalPdf);
 		if (!empty($pdfUrl)) {
 			$this->redirect($pdfUrl);
 		} else {
