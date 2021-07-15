@@ -80,9 +80,9 @@
 	                            echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
 	                            echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending App section signature from:</strong></span> " . $signera .  ": </span>";
 	        					if ($is_mobile_safari) {
-									echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerA_Id');\" target='_blank' href=\"" . $signerA_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
+									echo "<br /><span class=\"span-8\"><a class='btn btn-xs btn-success' onclick=\"setCurSigner('$signerA_Id');\" target='_blank' href=\"" . $signerA_URL . "\">Open Document to Sign <img src='/img/signature-icon32px.png'></a></span><strong>(Please return to this page when done with this section)</strong>";
 								} else { // Makes signer link render in iframe in case we want to customize the look
-									echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerA_URL . "'); setCurSigner('$signerA_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+									echo "<span class=\"span-8\"><a class='btn btn-xs btn-success' href=\"#\" onclick=\"change_signer('" . $signerA_URL . "'); setCurSigner('$signerA_Id');\">Sign Document <img src='/img/signature-icon32px.png'></a></span>";
 								}
 								echo "</div>";
                             }
@@ -91,9 +91,9 @@
 	                                        echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
 	                                        echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending PG section signature from:</strong></span> " . $signerb .  ": </span>";
 										if ($is_mobile_safari) {
-											echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerB_Id');\" target='_blank' href=\"" . $signerB_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
+											echo "<br /><span class=\"span-8\"><a class='btn btn-xs btn-success' onclick=\"setCurSigner('$signerB_Id');\" target='_blank' href=\"" . $signerB_URL . "\">Open Document to Sign <img src='/img/signature-icon32px.png'></a></span><strong>(Please return to this page when done with this section)</strong>";
 										} else { // Makes signer link render in iframe in case we want to customize the look
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerB_URL . "');setCurSigner('$signerB_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<span class=\"span-8\"><a class='btn btn-xs btn-success' href=\"#\" onclick=\"change_signer('" . $signerB_URL . "');setCurSigner('$signerB_Id');\">Sign Document <img src='/img/signature-icon32px.png'></a></span>";
 										}
 	                                        echo "</div>";
 	                                }
@@ -101,9 +101,9 @@
 	                                        echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
 	                                        echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending App section signature from:</strong></span> " . $signerc .  ": </span>";
 										if ($is_mobile_safari) {
-											echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerC_Id');\"  target='_blank' href=\"" . $signerC_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
+											echo "<br /><span class=\"span-8\"><a class='btn btn-xs btn-success' onclick=\"setCurSigner('$signerC_Id');\"  target='_blank' href=\"" . $signerC_URL . "\">Open Document to Sign <img src='/img/signature-icon32px.png'></a></span><strong>(Please return to this page when done with this section)</strong>";
 										} else { // Makes signer link render in iframe in case we want to customize the look
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerC_URL . "');setCurSigner('$signerC_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<span class=\"span-8\"><a class='btn btn-xs btn-success' href=\"#\" onclick=\"change_signer('" . $signerC_URL . "');setCurSigner('$signerC_Id');\">Sign Document <img src='/img/signature-icon32px.png'></a></span>";
 										}
 						echo "</div>";
 	                                }
@@ -111,9 +111,9 @@
 	                                        echo "<h3 class='text-primary' name='pendingSignature'>Select Signer</h3><div class=\"span-24\">";
 	                                        echo "<span class=\"span-5\"><span class='text-danger'><strong>**Pending PG section signature from: </strong></span> " . $signerd .  ": </span>";
 										if ($is_mobile_safari) {
-											echo "<br /><span class=\"span-8\"><a class='btn btn-sm btn-success' onclick=\"setCurSigner('$signerD_Id');\" target='_blank' href=\"" . $signerD_URL . "\">Open Document to Sign _<span class='glyphicon glyphicon-pencil'></span></a></span><strong>(Please return to this page when done with this section)</strong>";
+											echo "<br /><span class=\"span-8\"><a class='btn btn-xs btn-success' onclick=\"setCurSigner('$signerD_Id');\" target='_blank' href=\"" . $signerD_URL . "\">Open Document to Sign <img src='/img/signature-icon32px.png'></a></span><strong>(Please return to this page when done with this section)</strong>";
 										} else { // Makes signer link render in iframe in case we want to customize the look
-											echo "<span class=\"span-8\"><a class='btn btn-sm btn-success' href=\"#\" onclick=\"change_signer('" . $signerD_URL . "');setCurSigner('$signerD_Id');\">Sign Document _<span class='glyphicon glyphicon-pencil'></span></a></span>";
+											echo "<span class=\"span-8\"><a class='btn btn-xs btn-success' href=\"#\" onclick=\"change_signer('" . $signerD_URL . "');setCurSigner('$signerD_Id');\">Sign Document <img src='/img/signature-icon32px.png'></a></span>";
 										}
 						echo "</div>";
 	                                }

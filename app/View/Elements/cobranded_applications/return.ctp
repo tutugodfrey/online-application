@@ -1,14 +1,12 @@
 <?php 
 	if (in_array($this->Session->read('Auth.User.group'), array(USER::ADMIN, USER::REP, USER::MANAGER))) {
-		echo $this->Html->link('Return to Applications Admin',
+		echo '<div class="text-center">' . $this->Html->link('<span class="glyphicon glyphicon-backward"></span> Return to Applications List',
 			array(
 				'controller' => 'cobranded_applications',
 				'action' => 'index',
 				'admin' => 'true'
 			),
-			array(
-				'style' => 'display: block; float: right;'
-			)
-		) . '<br/>';
+			array('escape' => false)
+		) . '</div>';
 	}
 // Last Line
