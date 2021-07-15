@@ -3,7 +3,7 @@ foreach ($templatePage['TemplateSections'] as $section) {
 	?>
 	
 	<div class="col-md-<?php echo $section['width']; ?>" id="<?php echo $section['name']; ?>">
-		<div class="panel panel-default">
+		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h4 class="panel-title">
 					<?php
