@@ -100,7 +100,7 @@
 					<div id="actionButtons" align="right">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo '<button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#myModal_22574">Email For Field Completion</button><br/>';
+								echo '<button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#myModal_'.$this->request->data['CobrandedApplication']['id'].'">Email For Field Completion</button><br/>';
 								echo '<button type="button" id="submitForSigningBtn" onclick="submit_for_signature();" class="btn btn-sm btn-default">Submit for Signature</button><br/>';
 
 								$submitForSigUrl = Router::url(array(
