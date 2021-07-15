@@ -47,7 +47,7 @@
 					<?php echo $this->Element('Templates/Pages/templatePage', array('numberOfPages' => $numberOfPages, 'templatePage' => $templatePage, 'requireRequiredFields' => $requireRequiredFields)) ?>
 
 					</div>
-					<div>Fields marked with * are required.<br><br></div>
+					<div class="text-right text-muted small"><strong>(Fields marked with * are required).</strong><br></div>
 
 					<?php
 
@@ -100,8 +100,8 @@
 					<div id="actionButtons" align="right">
 						<?php
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
-								echo "<input type='button' data-toggle='modal' data-target='#myModal_".$this->request->data['CobrandedApplication']['id']."' value='Email For Field Completion'><br/>";
-								echo "<input type='button' onclick='submit_for_signature();' value='Submit for Signature'><br/>";
+								echo '<button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#myModal_22574">Email For Field Completion</button><br/>';
+								echo '<button type="button" id="submitForSigningBtn" onclick="submit_for_signature();" class="btn btn-sm btn-default">Submit for Signature</button><br/>';
 
 								$submitForSigUrl = Router::url(array(
 									'controller' => 'cobranded_applications',
@@ -123,7 +123,7 @@
 												return null;
 											}
 											else {
-												$('input[value=\"Submit for Signature\"]').attr('disabled', 'disabled');
+												$('#submitForSigningBtn').prop('disabled', true);
 											}
 										}
 										else if (" . ($this->request->data['CobrandedApplication']['rightsignature_document_guid'] ? '1' : '0') . ") {
@@ -132,7 +132,7 @@
 												return null;
 											}
 											else {
-												$('input[value=\"Submit for Signature\"]').attr('disabled', 'disabled');
+												$('#submitForSigningBtn').prop('disabled', true);
 											}
 										}
 										$('#progress-bar-top').show();
@@ -145,7 +145,7 @@
 							}
 
 							if (in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) || Hash::get($valuesMap, 'AllowMerchantToSignApplication') == 'true') {
-								echo "<input type='button' onclick='signDocNow();' value='View and Sign Now'>";
+								echo '<button type="button" onclick="signDocNow();" class="btn btn-success" id="ViewSignNowBtn">View and Sign Now <img src="/img/signature-icon32px.png"></button>';
 
 								$signNowUrl = Router::url(array(
 									'controller' => 'cobranded_applications',
@@ -165,7 +165,7 @@
 											return null;
 										}
 
-										$('input[value=\"View and Sign Now\"]').attr('disabled', 'disabled');
+										$('#ViewSignNowBtn').prop('disabled', true);
 
 										$('#progress-bar-top').show();
 										setTimeout(function(){
@@ -177,7 +177,7 @@
 							}
 
 							if (!in_array($this->Session->read('Auth.User.group'), array('admin', 'rep', 'manager')) && Hash::get($valuesMap, 'AllowMerchantToSignApplication') != 'true') {
-								echo "<input type='button' onclick='submitForReview();' value='Submit for Review'>";
+								echo '<button type="button" id="submitForReviewBtn" onclick="submitForReview();" class="btn btn-default" >Submit for Review</button>';
 
 								$submitForReviewUrl = Router::url(array(
 									'controller' => 'cobranded_applications',
@@ -197,7 +197,7 @@
 											return null;
 										}
 
-										$('input[value=\"Submit for Review\"]').attr('disabled', 'disabled');
+										$('#submitForReviewBtn').prop('disabled', true);
 
 										window.location = '".$submitForReviewUrl."';
 									}
