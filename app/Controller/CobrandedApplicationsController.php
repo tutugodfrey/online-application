@@ -278,11 +278,11 @@ class CobrandedApplicationsController extends AppController {
 		} else {
 			$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
 			$this->request->data = $this->CobrandedApplication->find('first', $options);
-			$users = $this->CobrandedApplication->User->find('list');
+
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 			$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
 			$rsTemplateUuid = $template['Template']['rightsignature_template_guid'];
-			$this->set(compact('users'));
+
 			$this->set('valuesMap', $valuesMap);
 			$this->set('brand_logo_url', $template['Template']['Cobrand']['brand_logo_url']);
 			$this->set('cobrand_logo_url', $template['Template']['Cobrand']['cobrand_logo_url']);
