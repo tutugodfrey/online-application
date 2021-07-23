@@ -1,8 +1,0 @@
-CREATE INDEX onlineapp_cobranded_applications_user_id_idx ON onlineapp_cobranded_applications (user_id);
-CREATE INDEX onlineapp_cobranded_applications_template_id_idx ON onlineapp_cobranded_applications (template_id);
-CREATE INDEX onlineapp_cobranded_application_values_cobranded_application_id_idx ON onlineapp_cobranded_application_values (cobranded_application_id);
-CREATE INDEX onlineapp_cobranded_application_values_template_field_id_idx ON onlineapp_cobranded_application_values (template_field_id);
-CREATE INDEX onlineapp_cobranded_application_values_name_idx ON onlineapp_cobranded_application_values (name);
-CREATE INDEX onlineapp_cobranded_application_values_value_idx ON onlineapp_cobranded_application_values (value);
-CREATE INDEX onlineapp_users_firstname_idx ON onlineapp_users (firstname);
-CREATE INDEX onlineapp_users_lastname_idx ON onlineapp_users (lastname);
