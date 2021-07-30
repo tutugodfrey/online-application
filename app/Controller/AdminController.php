@@ -23,7 +23,6 @@ class AdminController extends AppController {
 				array('API IP restrictions', '/admin/apips/'),
 				array('API Logs', '/admin/apiLogs/'),
 				array('System Event Log', '/admin/SysEventLogs/index/'),
-				array('USAePay Merchants', '/admin/epayments/'),
 				array('Email Timeline Subjects', '/admin/emailTimelineSubjects/'),
 				array('Template Builder', '/admin/template_builder/build'),
 			);
