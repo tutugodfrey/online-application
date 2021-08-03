@@ -43,6 +43,7 @@ class UsersController extends AppController {
 			$this->_failure('This user already has valid API Credentials! To reset credentials this user must log in and perform a reset.');
 			$this->redirect($this->referer());
 		} else {
+			//safe to use sha1 to generate API username (token) the API password is generated using a secure algo in beforeSave callback
 			$token = sha1(CakeText::uuid());
 			$this->User->set(array('token' => $token, 'api_enabled' => true, 'api' => true));
 			if (!$this->User->save()) {
