@@ -86,7 +86,13 @@ class TemplateBuilderTest extends CakeTestCase {
 		$this->assertArrayHasKey('logoPositionTypes', $actual);
 		$this->assertArrayHasKey('template', $actual);
 
-		$this->assertEquals($expected, $actual);
+		$fields = $expected['template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields'];
+		foreach($fields as $field) {
+			$this->assertContains($field, $actual['template']['TemplatePages'][0]['TemplateSections'][0]['TemplateFields']);
+		}
+
+		$this->assertEquals($expected['template']['Template'], $actual['template']['Template']);
+		$this->assertEquals($expected['template']['Cobrand'], $actual['template']['Cobrand']);
 	}
 
 /**
