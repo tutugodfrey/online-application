@@ -108,7 +108,7 @@ class CobrandedApplicationValue extends AppModel {
 			if ($field['TemplateField']['merge_field_name'] == 'WebAddress') {
 				if (!empty($this->data[$this->alias]['value'])) {
 					if (!preg_match('/^http:\/\//i', $this->data[$this->alias]['value'])) {
-						$this->data[$this->alias]['value'] = 'https://'.$this->data[$this->alias]['value'];
+						$this->data[$this->alias]['value'] = 'http://'.$this->data[$this->alias]['value'];
 					}
 				}
 			}
