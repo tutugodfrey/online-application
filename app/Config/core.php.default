@@ -226,6 +226,26 @@
  * The access token to connect to the Axia Database API
  */
         Configure::write('AxiaDbAPI.password', 'CORE_DB_API_PW');
+
+/**
+ * The OpenSSL cypher used to encrypt/decrypt data.
+ */
+       Configure::write('Security.OpenSSL.cipher', 'CORE_SSL_CIPHER');
+
+/**
+ * The OpenSSL 32 bytes/256 bits key created using call openssl_random_pseudo_bytes(32) and base64 encoded
+ * Required for encrypting/decrypting data
+ */
+       Configure::write('Security.OpenSSL.key','CORE_SSL_KEY');
+
+/**
+ * The OpenSSL initialization vector created by making the following call
+ * openssl_random_pseudo_bytes(openssl_cipher_iv_length(Configure::read('Security.OpenSSL.cipher')));
+ * then base64 encoded
+ * Required for encrypting/decrypting data
+ */
+       Configure::write('Security.OpenSSL.iv','CORE_SSL_IV');
+
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).
  * Will append a query string parameter containing the time the file was modified. This is

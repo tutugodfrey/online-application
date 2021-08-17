@@ -123,4 +123,38 @@ class AppModelTest extends CakeTestCase {
 		$this->assertFalse($this->AppModel->validateFieldsEqual($check, $fieldName1, $fieldName2));
 	}
 
+/**
+ * testEncrypt
+ *
+ * @covers AppModel::validateFieldsEqual()
+ * @return void
+ */
+	public function testIsEncrypted() {
+		$this->assertFalse($this->AppModel->isEncrypted("I'm not enctypted!"));
+		$this->assertTrue($this->AppModel->isEncrypted("Ywz6YRLkfNGC3SNpyiFcfURv6g/RLV+ma83kNBocF0EZ5zY1mwgEtspxGmwKUbOD3tNwFvHjqDiaLjakyxNwsg==")) ;
+	}
+/**
+ * testEncrypt
+ *
+ * @covers AppModel::encrypt()
+ * @return void
+ */
+	public function testEncrypt() {
+		$actual = $this->AppModel->encrypt("I'm not enctypted!", Configure::read('Security.OpenSSL.key'));
+		$expected = 'Ywz6YRLkfNGC3SNpyiFcfVB0o2E36x2y5Gg9ln7n/6LG7OtfOjIyrxNvjfTSnbUz/+rX8CWTRescMcYwsYYhud2x2WU/T4Mqh3AM9LaQKXk=';
+		$this->assertSame($expected, $actual);
+	}
+
+/**
+ * testEncrypt
+ *
+ * @covers AppModel::decrypt()
+ * @return void
+ */
+	public function testDecrypt() {
+		$actual = $this->AppModel->decrypt('Ywz6YRLkfNGC3SNpyiFcfVB0o2E36x2y5Gg9ln7n/6LG7OtfOjIyrxNvjfTSnbUz/+rX8CWTRescMcYwsYYhud2x2WU/T4Mqh3AM9LaQKXk=', Configure::read('Security.OpenSSL.key'));
+		$expected = "I'm not enctypted!";
+		$this->assertSame($expected, $actual);
+	}
+
 }

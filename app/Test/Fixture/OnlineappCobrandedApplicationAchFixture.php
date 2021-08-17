@@ -37,9 +37,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
-			'routing_number' => 'JzdI2o55bvWBBsrcmXfnQKgVwvR0yn38',
-			'account_number' => '0LVIAySZ3AF7h1j/Tur69rQnXg7Hys81',
+			'auth_type' => 'Ywz6YRLkfNGC3SNpyiFcfZTjCMwBSRSN15RXwQq2lpfsADOPHtp9zoq0k458oBukgLjX+bpUke0ImIZBBF+OUjTFThHeEX3MY8IGlBrDJn4=',
+			'routing_number' => 'Ywz6YRLkfNGC3SNpyiFcfc2bhwRPRdb5np5w5NqBFRRrhx4IEG+XVY0Uv1JbMnp157ULnS+tYky8ZEswmcdyBg==',
+			'account_number' => 'Ywz6YRLkfNGC3SNpyiFcfdjUgGo4sE8S2OUlk/CTdgtKJtDkmZuCYeWHh43OJqGnKPDlJkyPsGQ5oXhdtlaC8Q==',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -47,9 +47,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
-			'routing_number' => 'JzdI2o55bvWBBsrcmXfnQKgVwvR0yn38',
-			'account_number' => '0LVIAySZ3AF7h1j/Tur69rQnXg7Hys81',
+			'auth_type' => 'Ywz6YRLkfNGC3SNpyiFcfZTjCMwBSRSN15RXwQq2lpfsADOPHtp9zoq0k458oBukgLjX+bpUke0ImIZBBF+OUjTFThHeEX3MY8IGlBrDJn4=',
+			'routing_number' => 'Ywz6YRLkfNGC3SNpyiFcfc2bhwRPRdb5np5w5NqBFRRrhx4IEG+XVY0Uv1JbMnp157ULnS+tYky8ZEswmcdyBg==',
+			'account_number' => 'Ywz6YRLkfNGC3SNpyiFcfdjUgGo4sE8S2OUlk/CTdgtKJtDkmZuCYeWHh43OJqGnKPDlJkyPsGQ5oXhdtlaC8Q==',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -57,9 +57,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
-			'routing_number' => 'JzdI2o55bvWBBsrcmXfnQKgVwvR0yn38',
-			'account_number' => '0LVIAySZ3AF7h1j/Tur69rQnXg7Hys81',
+			'auth_type' => 'Ywz6YRLkfNGC3SNpyiFcfZTjCMwBSRSN15RXwQq2lpfsADOPHtp9zoq0k458oBukgLjX+bpUke0ImIZBBF+OUjTFThHeEX3MY8IGlBrDJn4=',
+			'routing_number' => 'Ywz6YRLkfNGC3SNpyiFcfc2bhwRPRdb5np5w5NqBFRRrhx4IEG+XVY0Uv1JbMnp157ULnS+tYky8ZEswmcdyBg==',
+			'account_number' => 'Ywz6YRLkfNGC3SNpyiFcfdjUgGo4sE8S2OUlk/CTdgtKJtDkmZuCYeWHh43OJqGnKPDlJkyPsGQ5oXhdtlaC8Q==',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -67,9 +67,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
-			'routing_number' => 'JzdI2o55bvWBBsrcmXfnQKgVwvR0yn38',
-			'account_number' => '0LVIAySZ3AF7h1j/Tur69rQnXg7Hys81',
+			'auth_type' => 'Ywz6YRLkfNGC3SNpyiFcfZTjCMwBSRSN15RXwQq2lpfsADOPHtp9zoq0k458oBukgLjX+bpUke0ImIZBBF+OUjTFThHeEX3MY8IGlBrDJn4=',
+			'routing_number' => 'Ywz6YRLkfNGC3SNpyiFcfc2bhwRPRdb5np5w5NqBFRRrhx4IEG+XVY0Uv1JbMnp157ULnS+tYky8ZEswmcdyBg==',
+			'account_number' => 'Ywz6YRLkfNGC3SNpyiFcfdjUgGo4sE8S2OUlk/CTdgtKJtDkmZuCYeWHh43OJqGnKPDlJkyPsGQ5oXhdtlaC8Q==',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
@@ -77,9 +77,9 @@ class OnlineappCobrandedApplicationAchFixture extends CakeTestFixture {
 		array(
 			'cobranded_application_id' => 1,
 			'description' => 'Lorem ipsum dolor sit amet',
-			'auth_type' => 'KsVFQEr15jo1l1XD8ne9Rqj1SOCqi/8ANdARu9AXr5WKLircuRXB5YDcLW019RKF',
-			'routing_number' => 'JzdI2o55bvWBBsrcmXfnQKgVwvR0yn38',
-			'account_number' => '0LVIAySZ3AF7h1j/Tur69rQnXg7Hys81',
+			'auth_type' => 'Ywz6YRLkfNGC3SNpyiFcfZTjCMwBSRSN15RXwQq2lpfsADOPHtp9zoq0k458oBukgLjX+bpUke0ImIZBBF+OUjTFThHeEX3MY8IGlBrDJn4=',
+			'routing_number' => 'Ywz6YRLkfNGC3SNpyiFcfc2bhwRPRdb5np5w5NqBFRRrhx4IEG+XVY0Uv1JbMnp157ULnS+tYky8ZEswmcdyBg==',
+			'account_number' => 'Ywz6YRLkfNGC3SNpyiFcfdjUgGo4sE8S2OUlk/CTdgtKJtDkmZuCYeWHh43OJqGnKPDlJkyPsGQ5oXhdtlaC8Q==',
 			'bank_name' => 'Lorem ipsum dolor sit amet',
 			'created' => '2014-01-23 17:28:15',
 			'modified' => '2014-01-23 17:28:15'
