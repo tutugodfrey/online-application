@@ -29,13 +29,13 @@ class ApiConfiguration extends AppModel {
  */
 	public function beforeSave($options = array()) {
 		if (!empty($this->data[$this->alias]['client_secret'])) {
-			$this->data[$this->alias]['client_secret'] = $this->mcryptEncryptStr($this->data[$this->alias]['client_secret']);
+			$this->data[$this->alias]['client_secret'] = $this->encrypt($this->data[$this->alias]['client_secret'], Configure::read('Security.OpenSSL.key'));
 		}
 		if(!empty($this->data[$this->alias]['access_token'])) {
-			$this->data[$this->alias]['access_token'] = $this->mcryptEncryptStr($this->data[$this->alias]['access_token']);
+			$this->data[$this->alias]['access_token'] = $this->encrypt($this->data[$this->alias]['access_token'], Configure::read('Security.OpenSSL.key'));
 		}
 		if(!empty($this->data[$this->alias]['refresh_token'])) {
-			$this->data[$this->alias]['refresh_token'] = $this->mcryptEncryptStr($this->data[$this->alias]['refresh_token']);
+			$this->data[$this->alias]['refresh_token'] = $this->encrypt($this->data[$this->alias]['refresh_token'], Configure::read('Security.OpenSSL.key'));
 		}
 		return true;
 	}
@@ -52,24 +52,24 @@ class ApiConfiguration extends AppModel {
 			if ($primary) {
 				foreach ($results as $idx => $data) {
 					if (!empty($data[$this->alias]['client_secret'])){
-						$results[$idx][$this->alias]['client_secret'] = $this->mcryptDencrypt($data[$this->alias]['client_secret']);
+						$results[$idx][$this->alias]['client_secret'] = $this->decrypt($data[$this->alias]['client_secret'], Configure::read('Security.OpenSSL.key'));
 					}
 					if (!empty($data[$this->alias]['access_token'])){
-						$results[$idx][$this->alias]['access_token'] = $this->mcryptDencrypt($data[$this->alias]['access_token']);
+						$results[$idx][$this->alias]['access_token'] = $this->decrypt($data[$this->alias]['access_token'], Configure::read('Security.OpenSSL.key'));
 					}
 					if (!empty($data[$this->alias]['refresh_token'])){
-						$results[$idx][$this->alias]['refresh_token'] = $this->mcryptDencrypt($data[$this->alias]['refresh_token']);
+						$results[$idx][$this->alias]['refresh_token'] = $this->decrypt($data[$this->alias]['refresh_token'], Configure::read('Security.OpenSSL.key'));
 					}
 				}
 			} else {
 				if (!empty($results['client_secret'])){
-					$results['client_secret'] = $this->mcryptDencrypt($results['client_secret']);
+					$results['client_secret'] = $this->decrypt($results['client_secret'], Configure::read('Security.OpenSSL.key'));
 				}
 				if (!empty($results['access_token'])){
-					$results['access_token'] = $this->mcryptDencrypt($results['access_token']);
+					$results['access_token'] = $this->decrypt($results['access_token'], Configure::read('Security.OpenSSL.key'));
 				}
 				if (!empty($results['refresh_token'])){
-					$results['refresh_token'] = $this->mcryptDencrypt($results['refresh_token']);
+					$results['refresh_token'] = $this->decrypt($results['refresh_token'], Configure::read('Security.OpenSSL.key'));
 				}
 			}
 		}
