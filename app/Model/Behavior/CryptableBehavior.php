@@ -15,7 +15,7 @@ class CryptableBehavior extends ModelBehavior {
 	function beforeFind(Model $model, $queryData) {
 		foreach ($this->settings[$model->alias]['fields'] AS $field) {
 			if (isset($queryData['conditions'][$model->alias.'.'.$field])) {
-				$queryData['conditions'][$model->alias.'.'.$field] = $this->encrypt($queryData['conditions'][$model->alias.'.'.$field]);
+				$queryData['conditions'][$model->alias.'.'.$field] =  $model->encrypt($queryData['conditions'][$model->alias.'.'.$field], Configure::read('Security.OpenSSL.key'));
 			}
 		}
 		return $queryData;
@@ -26,12 +26,12 @@ class CryptableBehavior extends ModelBehavior {
 			if ($primary) {
 				foreach ($results AS $key => $value) {
 					if (isset($value[$model->alias][$field])) {
-						$results[$key][$model->alias][$field] = $this->decrypt($value[$model->alias][$field]);
+						$results[$key][$model->alias][$field] = $model->decrypt($value[$model->alias][$field], Configure::read('Security.OpenSSL.key'));
 					}
 				}
 			} else {
 				if (isset($results[$field])) {
-					$results[$field] = $this->decrypt($results[$field]);
+					$results[$field] = $model->decrypt($results[$field], Configure::read('Security.OpenSSL.key'));
 				}
 			}
 		}
@@ -43,31 +43,10 @@ class CryptableBehavior extends ModelBehavior {
 		foreach ($this->settings[$model->alias]['fields'] AS $field) {
 			if (isset($model->data[$model->alias][$field])) {
 				$model->data[$model->alias]['cleartext_'.$field] = $model->data[$model->alias][$field];
-				$model->data[$model->alias][$field] = $this->encrypt($model->data[$model->alias][$field]);
+				$model->data[$model->alias][$field] = $model->encrypt($model->data[$model->alias][$field], Configure::read('Security.OpenSSL.key'));
 			}
 		}
 		return true;
-	}
-
-	public function encrypt($data) {
-		if ($data !== '') {
-			return base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), $data, 'cbc', Configure::read('Cryptable.iv')));
-		} else {
-			return '';
-		}
-	}
-
-	public function decrypt($data, $data2 = null) {
-		if (is_object($data)) {
-			unset($data);
-			$data = $data2;
-		}
-
-		if ($data != '') {
-			return trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
-		} else {
-			return '';
-		}
 	}
 }
 ?>

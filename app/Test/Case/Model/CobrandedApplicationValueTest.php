@@ -331,8 +331,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$this->CobrandedApplicationValue->save($applicationValue);
 
 		// encrypt our test value for comparison
-		$encryptedTestValue = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
-			$testValue, 'cbc', Configure::read('Cryptable.iv')));
+		$encryptedTestValue = $this->CobrandedApplicationValue->encrypt($testValue, Configure::read('Security.OpenSSL.key'));
 
 		$result = $this->db->query("SELECT * from onlineapp_cobranded_application_values where cobranded_application_id = 1 and name = 'Encrypt1'");
 		$encryptedDbValue = $result[0][0]['value'];
@@ -355,7 +354,7 @@ class CobrandedApplicationValueTest extends CakeTestCase {
 		$applicationValue['CobrandedApplicationValue']['value'] = $testValue;
 		$result = $this->CobrandedApplicationValue->save($applicationValue);
 
-		$this->assertEquals('XD+C8LSmk/u58hI1tyN88qlZtIRVvBa+', $result['CobrandedApplicationValue']['value'],
+		$this->assertEquals('Ywz6YRLkfNGC3SNpyiFcfYE8KwekC69+O6rt0/4mbu2O5yy+m/iBhPrpm2jOPmeNqH6S89pUr5eAGnTvsdHuxGWIGJ9M6/RmjhpRihiX/KY=', $result['CobrandedApplicationValue']['value'],
 			'verify value is encrypted as expected in database');
 	}
 
