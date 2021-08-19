@@ -136,9 +136,8 @@ class CobrandedApplicationValue extends AppModel {
 			// if it is, encrypt and store data
 			if ($retVal && $field['TemplateField']['encrypt']) {
 				$data = $this->data[$this->alias]['value'];
-				if ($data !== '') {
-					$this->data[$this->alias]['value'] = base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
-						$data, 'cbc', Configure::read('Cryptable.iv')));
+				if (!empty($data)) {
+					$this->data[$this->alias]['value'] = $this->encrypt($data, Configure::read('Security.OpenSSL.key'));
 				}
 			}
 
@@ -299,8 +298,7 @@ class CobrandedApplicationValue extends AppModel {
 						// only decrypt fields set to encrypt
 						if ($templateField['TemplateField']['encrypt']) {
 							$data = $resultValue['CobrandedApplicationValue']['value'];
-							$data = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
-										base64_decode($data), 'cbc', Configure::read('Cryptable.iv')));
+							$data = (!empty($data))? $this->decrypt($data, Configure::read('Security.OpenSSL.key')) : $data;
 
 							if (!in_array($session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
 								$maskValue = true;

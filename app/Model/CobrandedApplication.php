@@ -1231,8 +1231,7 @@ class CobrandedApplication extends AppModel {
 			foreach ($app['CobrandedApplicationAches'] as $index => $array) {
 				foreach ($array as $key => $val) {
 					if ($key == 'auth_type' || $key == 'routing_number' || $key == 'account_number') {
-						$val = trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'),
-									base64_decode($val), 'cbc', Configure::read('Cryptable.iv')));
+						$val = (!empty($val))? $this->decrypt($val, Configure::read('Security.OpenSSL.key')) : $val;
 					}
 					$keys = $this->__addKey($keys, 'AddlACH-' . $key . '-' . $index, $enquote);
 					$values = $this->__addValue($values, $val, $enquote);
