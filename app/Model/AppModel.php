@@ -262,8 +262,25 @@ class AppModel extends Model {
 	}
 
 /**
+ * isEncrypred method
+ * Attempts to decrypt on success true will be returned
+ * If decryption attempt fails false will be returned
+ *
+ * @param string $val value suspected to be encrypted
+ * @return bool On success true will be returned false descryption fails.
+ */
+	public function isEncrypted($val) {
+		//must use === in case non boolean zero is returned
+		if (@$this->decrypt($val, Configure::read('Security.OpenSSL.key')) === false) {
+			return false;
+		}
+		return true;
+	}
+
+/**
  * mcryptEncryptStr
- * 
+ * ************************* This function is deprecated and should not be used except for migrating mcrypt encrypted data to OpenSSL encryption
+ * ************************* This will be removed in the near future 08/24/2021
  * @param string $str a string to excrypt using mcrypt_encrypt 
  * @return the string encrypted and base64encpded
  */
@@ -272,13 +289,63 @@ class AppModel extends Model {
 	}
 
 /**
- * mcryptDencrypt
+ * encrypt
+ * OpenSSL Encryption method used for highly sensitive customer data
  * 
+ * @param string $data data that will be encrypt
+ * @param string of bytes $key  key
+ * @return string $edata
+ */
+	public function encrypt($data, $key) {
+		$key = base64_decode($key);
+		$plaintext = $data;
+		$cipher = Configure::read('Security.OpenSSL.cipher');
+		$iv = base64_decode(Configure::read('Security.OpenSSL.iv'));
+		$ciphertext_raw = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+		$hmac = hash_hmac('sha256', $ciphertext_raw, $key, true);
+		$ciphertext = base64_encode($iv.$hmac.$ciphertext_raw);
+
+		return $ciphertext;
+	}
+
+/**
+ * mcryptDencrypt
+ * ************************* This function is deprecated and should not be used except for migrating mcrypt encrypted data to OpenSSL encryption
+ * ************************* This will be removed in the near future 08/24/2021
  * @param string $str a string excrypted using $this->mcryptEncryptStr() 
  * @return the decrypted string
  */
 	public function mcryptDencrypt($str) {
 		return trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), base64_decode($str), 'cbc', Configure::read('Cryptable.iv')));
+	}
+
+/**
+ * decrypt
+ * Method to decrypt data encrypted with OpenSSL encryption method self->encrypt(..)
+ *
+ * @param string $ecryptedData data that will be decrypted
+ * @param string of bytes $key  key
+ * @return mixed decrypted data | boolean false when decryption fails
+ */
+	public function decrypt($ecryptedData, $key) {
+		$key = base64_decode($key);
+		$c = base64_decode($ecryptedData);
+		$cipher = Configure::read('Security.OpenSSL.cipher');
+		$ivlen = openssl_cipher_iv_length($cipher);
+		$iv = substr($c, 0, $ivlen);
+		$hmac = substr($c, $ivlen, $sha2len=32);
+		$ciphertext_raw = substr($c, $ivlen+$sha2len);
+		$decryptedData = openssl_decrypt($ciphertext_raw, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+
+		if ($decryptedData === false) {
+			return false;
+		}
+		$calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+		//PHP 5.6+ timing attack safe comparison
+		if (hash_equals($hmac, $calcmac)) {
+		    return $decryptedData;
+		}
+		return false;
 	}
 
 /**
