@@ -105,19 +105,6 @@ class User extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
-		'Epayment' => array(
-			'className' => 'Epayment',
-			'foreignKey' => 'user_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		),
 		'ApiLog' => array(
 			'className' => 'ApiLog',
 			'foreignKey' => 'user_id',
