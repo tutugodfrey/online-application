@@ -239,6 +239,7 @@ class TemplatePageTest extends CakeTestCase {
 
 		// move the third field to the front of the list
 		$thirdPage['TemplatePage']['order'] = 0;
+		$this->TemplatePage->set($thirdPage);
 		$this->TemplatePage->save($thirdPage);
 
 		// check the order values
