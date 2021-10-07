@@ -3,7 +3,7 @@
 App::uses('CakeEventListener', 'Event');
 App::uses('EventType', 'Model');
 
-class SysEventListener extends Object implements CakeEventListener {
+class SysEventListener extends CakeObject implements CakeEventListener {
 
 /**
  * implementedEvents

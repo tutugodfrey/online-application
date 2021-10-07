@@ -18,6 +18,9 @@ class CoversheetsController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter(); 
+		if ($this->request->is('ajax')) {
+			$this->Security->unlockedActions= array($this->action);
+		}
 	}
 
 /**
