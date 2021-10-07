@@ -87,30 +87,32 @@ class TemplatePage extends AppModel {
 	public function afterSave($created, $options = array()) {
 		// make sure 'Validate Application' page is the last page
 		// we have to have $this->data to perform our task
-		$template = $this->getTemplate($this->data['TemplatePage']['template_id'], true);
-		$pages = Hash::get($template, 'TemplatePages');
-		$validateAppPageIndex = 0;
-		$pagesCount = count($pages);
-		if ($pagesCount > 1) {
-			for ($index = 0; $index < $pagesCount; $index++) {
-				if ($pages[$index]['name'] == 'Validate Application') {
-					$validateAppPageIndex = $index;
-				}
-			}
-
-			$validateAppPage = array_splice($pages, $validateAppPageIndex, 1);
-			array_splice($pages, count($pages), 0, $validateAppPage);
-
-			// rebase the pages
+		if (!empty($this->data['TemplatePage']['template_id'])) {
+			$template = $this->getTemplate($this->data['TemplatePage']['template_id'], true);
+			$pages = Hash::get($template, 'TemplatePages');
+			$validateAppPageIndex = 0;
 			$pagesCount = count($pages);
-			for ($i = 0; $i < $pagesCount; $i++) {
-				$pages[$i]['order'] = $i;
-			}
+			if ($pagesCount > 1) {
+				for ($index = 0; $index < $pagesCount; $index++) {
+					if ($pages[$index]['name'] == 'Validate Application') {
+						$validateAppPageIndex = $index;
+					}
+				}
 
-			foreach ($pages as $page) {
-				$this->save($page, array('callbacks' => false));
-			}
+				$validateAppPage = array_splice($pages, $validateAppPageIndex, 1);
+				array_splice($pages, count($pages), 0, $validateAppPage);
 
+				// rebase the pages
+				$pagesCount = count($pages);
+				for ($i = 0; $i < $pagesCount; $i++) {
+					$pages[$i]['order'] = $i;
+				}
+
+				foreach ($pages as $page) {
+					$this->save($page, array('callbacks' => false));
+				}
+
+			}
 		}
 	}
 }

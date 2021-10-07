@@ -103,8 +103,8 @@ class CobrandedApplicationsController extends AppController {
 
 		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'document_callback');
 
-		if ($this->requestIsApiJson()) {
-			$this->Security->unlockedActions= array('api_add', 'api_edit');
+		if ($this->requestIsApiJson() || $this->request->is('ajax')) {
+			$this->Security->unlockedActions= array('api_add', 'api_edit', $this->action);
 		} else {
 			// are we authenticated?
 			if (is_null($this->Auth->user('id'))) {
@@ -213,7 +213,7 @@ class CobrandedApplicationsController extends AppController {
 			if ($response['success'] == true) {
 				// all good
 				$response = json_encode($response);
-				$this->set(compact('response', 'succeeded'));
+				$this->set(compact('response'));
 				$this->set('_serialize', 'response');
 				$this->render('quickAdd');
 			} else {
