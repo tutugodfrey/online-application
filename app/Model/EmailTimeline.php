@@ -20,7 +20,7 @@ class EmailTimeline extends AppModel {
 	//Senders and Recipients
 	const ENTITY1_NEWAPPS_EMAIL = 'newapps@axiamed.com';
 	const UNDERWRITING_EMAIL = 'underwriting@axiapayments.com';
-	const ENTITY2_APPS_EMAIL = 'rm@axiapayments.com';
+	const ENTITY2_APPS_EMAIL = 'rm@axia.i3merchant.com';
 	const I3_UNDERWRITING_EMAIL = 'axiaapps@i3verticals.com';
 	const NEWAPPS_EMAIL = 'newapps@axiapayments.com';
 	const HOOZA_EMAIL = 'hooza@axiapayments.com';
