@@ -799,7 +799,7 @@ class Coversheet extends AppModel {
 			if (stripos($userEmail, EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
 				$to = array(EmailTimeline::I3_UNDERWRITING_EMAIL);
 			} else {
-				$to = EmailTimeline::ENTITY2_APPS_EMAIL;
+				$to = array(EmailTimeline::ENTITY2_APPS_EMAIL);
 			}
 
 			if (!empty($args['to'])) {
