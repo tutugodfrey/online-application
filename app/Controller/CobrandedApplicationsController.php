@@ -7,6 +7,7 @@ App::uses('Coversheet', 'Model');
 App::uses('User', 'Model');
 App::uses('EmailTimeline', 'Model');
 App::uses('Okta', 'Model');
+App::uses('ApplicationGroup', 'Model');
 
 /**
  * CobrandedApplications Controller
@@ -83,6 +84,9 @@ class CobrandedApplicationsController extends AppController {
 		'submit_for_review' => array('*'),
 		'admin_amend_completed_document' => array(User::ADMIN, User::REP, User::MANAGER),
 		'app_info_summary' => array(User::ADMIN, User::REP, User::MANAGER),
+		'admin_renew_modified_date' => array(User::ADMIN, User::REP, User::MANAGER),
+		'extend_dashboard_expiration' => array('*'),
+		'send_pdf_to_client' => array('*'),
 	);
 
 	public $helpers = array('TemplateField');
@@ -99,6 +103,8 @@ class CobrandedApplicationsController extends AppController {
 			'retrieve',
 			'create_rightsignature_document',
 			'sign_rightsignature_document',
+			'extend_dashboard_expiration',
+			'send_pdf_to_client',
 			'submit_for_review');
 
 		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'document_callback');
@@ -135,11 +141,28 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 	public function expired($uuid = null) {
-		$this->set('name', 'ERROR 404: The document Has Expired. For assistance please contact your sales representative.');
+		$this->set('name', 'ERROR 404: The document has expired due to a long period of inactivity. For assistance please contact your sales representative.');
 		$this->set('url', Router::url(['controller' => 'CobrandedApplications', 'action' => 'edit', $uuid], true));
 		$this->render('/Errors/error404');
 	}
 
+/**
+ * extend_dashboard_expiration method
+ *
+ * @param $applicationGroupId string a ApplicationGroup.id
+ * @return void
+ */
+	public function extend_dashboard_expiration($applicationGroupId) {
+		if ($this->request->is('post') && !empty($applicationGroupId)) {
+			$renewedGroupData = $this->CobrandedApplication->ApplicationGroup->renewAccessToken($applicationGroupId, !empty($this->Session->read('Auth.User.id')));
+			if ($renewedGroupData !== false) {
+				$newUrl = Router::url(array('action' => 'index', 'admin' => false, $renewedGroupData['ApplicationGroup']['access_token']), true);
+				$this->_success('Page expiration extended by ' . ApplicationGroup::EXP_DAYS_ADD . " days.\nTo access this page in the future, this new URL must be used: $newUrl", array('action' => 'index', 'admin' => false, $renewedGroupData['ApplicationGroup']['access_token']), 'alert-success lead');
+			}
+		} else {
+			$this->renderError404('ERROR 404: Page does not exist.', Router::url(['controller' => 'CobrandedApplications', 'action' => 'extend_dashboard_expiration'], true));
+		}
+	}
 /**
  * index method
  *
@@ -147,45 +170,46 @@ class CobrandedApplicationsController extends AppController {
  * @param $timestamp int
  * @return void
  */
-	public function index($email, $timestamp) {
-		if (!$email || !$timestamp) {
-			$this->redirect('/');
+	public function index($accessToken = null) {
+		if (empty($accessToken) || $this->CobrandedApplication->ApplicationGroup->hasAny(array('access_token' => $accessToken)) == false) {
+			$this->renderError404('ERROR 404: Page does not exist.', Router::url(['controller' => 'CobrandedApplications', 'action' => 'index', $accessToken], true));
+			return;
 		}
-
-		// index URL is only good for 2 days (172800 seconds)
-		$currentTimestamp = time();
-		if ($timestamp < ($currentTimestamp - 172800)) {
-			$this->redirect('/');
+		$applications = [];
+		$appGroupData = $this->CobrandedApplication->ApplicationGroup->findByAccessToken($accessToken, empty($this->Session->read('Auth.User.id')));
+		//check if expired
+		if (!empty($appGroupData)) {
+			$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id']);
 		}
+		$template = [];
+		if (!empty($applications)) {
+			foreach ($applications as $key => $val) {
+				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($val['CobrandedApplicationValues']);
+				$applications[$key]['ValuesMap'] = $valuesMap;
+			}
+			$app = Hash::get($applications, '0');
 
-		$applications = $this->CobrandedApplication->findAppsByEmail($email);
-
-		$app = $applications[0];
-
-		$template = $this->CobrandedApplication->User->Template->find(
-			'first',
-			array(
-				'conditions' => array('Template.id' => $app['CobrandedApplication']['template_id'])
-			)
-		);
-
+			$template = $this->CobrandedApplication->User->Template->find(
+				'first',
+				array(
+					'conditions' => array('Template.id' => $app['CobrandedApplication']['template_id'])
+				)
+			);
+		} else {
+			$this->renderError404(
+				'ERROR 404: The page has expired. For assistance please contact your sales representative.',
+				Router::url(['controller' => 'CobrandedApplications', 'action' => 'index', $accessToken], true)
+			);
+			return;
+		}
+		
+		$this->set('appGroupData', $appGroupData);
+		$this->set('applications', $applications);
 		$this->set('brand_logo_url', Hash::get($template, 'Cobrand.brand_logo_url'));
 		$this->set('cobrand_logo_url', Hash::get($template, 'Cobrand.cobrand_logo_url'));
 		$this->set('cobrand_logo_position', '1');
 		$this->set('logoPositionTypes', array('left', 'center', 'right', 'hide'));
 		$this->set('include_brand_logo', false);
-
-		if ($applications) {
-			foreach ($applications as $key => $val) {
-				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($val['CobrandedApplicationValues']);
-				$applications[$key]['ValuesMap'] = $valuesMap;
-			}
-			$this->set('email', $email);
-			$this->set('applications', $applications);
-		} else {
-			header("HTTP/1.0 404 Not Found");
-			exit;
-		}
 	}
 
 /**
@@ -232,11 +256,10 @@ class CobrandedApplicationsController extends AppController {
  *
  */
 	public function retrieve() {
-		if ($this->request->is('post') || $this->request->is('ajax')) {
-			if ($this->request->data['CobrandedApplication']['emailText']) {
-				$email = $this->request->data['CobrandedApplication']['emailText'];
-			} elseif ($this->request->data['CobrandedApplication']['emailList']) {
-				$email = $this->request->data['CobrandedApplication']['emailList'];
+		if ($this->request->is('ajax')) {
+			$email = $this->request->data('CobrandedApplication.emailText');
+			if (empty($email)) {
+				$email = $this->request->data('CobrandedApplication.emailList');
 			}
 
 			if (isset($this->request->data['CobrandedApplication']['id'])) {
@@ -254,12 +277,20 @@ class CobrandedApplicationsController extends AppController {
 					$class = ' alert-danger';
 					$message = $response['msg'];
 				}
+				//Do not hint unauthenticated users of non existing emails (more secure)
+				if (empty($this->Session->read('Auth.User.id'))) {
+					$class = ' alert-success';
+					$message = 'If this email is registered in your applications, a message will be sent with additional instructions. Thank you!';
+				}
 			} else {
 				$class = ' alert-danger';
-				$message = 'Invalid email address submitted.';
+				$message = 'Email address format invalid, please try again.';
 			}
 			$this->set(compact('message', 'class'));
 			$this->render('/Elements/Flash/customAlert1', 'ajax');
+		} else {
+			$this->renderError404('ERROR 404: Page does not exist.', Router::url(['controller' => 'CobrandedApplications', 'action' => 'retrieve'], true));
+			return;
 		}
 	}
 
@@ -270,15 +301,25 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function edit($uuid = null) {
+		if(!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
+			$this->renderError404('ERROR 404: Page does not exist.', Router::url(['controller' => 'CobrandedApplications', 'action' => 'edit', $uuid], true));
+			return;
+		}
 		if ($this->CobrandedApplication->isExpired($uuid) && !$this->Auth->loggedIn()) {
 			$this->redirect(array('action' => '/expired/' . $uuid));
-		} elseif (!$this->CobrandedApplication->hasAny(array('CobrandedApplication.uuid' => $uuid))) {
-			// redirect to a retrieve page
-			$this->redirect(array('action' => 'retrieve'));
 		} else {
+			//check if app is out of sync with template
+			$appId = $this->CobrandedApplication->field('id', array('uuid' => $uuid, "data_to_sync != ''", 'status NOT IN' => array(CobrandedApplication::STATUS_SIGNED, CobrandedApplication::STATUS_COMPLETED)));
+			if (!empty($appId)) {
+				$this->CobrandedApplication->syncApp($appId);
+			}
+
 			$options = array('conditions' => array('CobrandedApplication.uuid' => $uuid));
 			$this->request->data = $this->CobrandedApplication->find('first', $options);
 
+			if (empty($this->request->data['CobrandedApplication']['application_group_id']) && $this->Auth->loggedIn()) {
+				$this->CobrandedApplication->addAppToGroup($this->request->data['CobrandedApplication']['id']);
+			}
 			$template = $this->CobrandedApplication->getTemplateAndAssociatedValues($this->request->data['CobrandedApplication']['id'], $this->Auth->user('id'));
 			$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($this->request->data['CobrandedApplicationValues']);
 			$rsTemplateUuid = $template['Template']['rightsignature_template_guid'];
@@ -903,7 +944,8 @@ class CobrandedApplicationsController extends AppController {
  */
 	public function admin_amend_completed_document($id, $rsDocIsExpired = false) {
 		if (!$this->CobrandedApplication->exists($id)) {
-			$this->_failure(__("Application number $id does not exist!"), array('action' => 'index'));
+			$this->_failure(__("Application number $id does not exist!"));
+			$this->redirect($this->referer());
 		}
 		$appData = $this->CobrandedApplication->find('first', [
 			'recursive' => -1,
@@ -911,7 +953,8 @@ class CobrandedApplicationsController extends AppController {
 			'conditions' => ['id' => $id],
 		]);
 		if (empty($appData['CobrandedApplication']['rightsignature_document_guid'])) {
-			$this->_failure(__("This application does not have a document for signing and thus there is nothing to amend."), ['action' => 'index']);
+			$this->_failure(__("This application does not have a document for signing and thus there is nothing to amend."));
+			$this->redirect($this->referer());
 		}
 		$client = $this->CobrandedApplication->createRightSignatureClient();
 		if ($this->request->is('ajax')) {
@@ -931,9 +974,11 @@ class CobrandedApplicationsController extends AppController {
 				// on success delete original RS doc reference in CobrandedApplication.rightsignature_document_guid
 				$this->CobrandedApplication->save(['id'=> $id, 'status' => CobrandedApplication::STATUS_SAVED, 'rightsignature_document_guid'=> null], ['validate' => false]);
 				//show success message
-				$this->_success(__('Application status has been reverted to "saved" and its document has been deleted. You may now edit the application and make any necessary updates.'), ['action' => 'index']);
+				$this->_success(__('Application status has been reverted to "saved" and its document has been deleted. You may now edit the application and make any necessary updates.'));
+				$this->redirect($this->referer());
 			} else {
-				$this->_failure('API error ocurred! ' . $resData['error'], ['action' => 'index']);
+				$this->_failure('API error ocurred! ' . $resData['error']);
+				$this->redirect($this->referer());
 			}
 			 
 		}
@@ -1116,9 +1161,11 @@ class CobrandedApplicationsController extends AppController {
 		}
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->CobrandedApplication->delete()) {
-			$this->_success(__("Application $id deleted"), array('action' => 'index'));
+			$this->_success(__("Application $id deleted"));
+			$this->redirect($this->referer());
 		}
-		$this->_failure(__("Application $id was not deleted"), array('action' => 'index'));
+		$this->_failure(__("Application $id was not deleted"));
+		$this->redirect($this->referer());
 	}
 
 /**
@@ -1167,35 +1214,76 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
- * ||||||||||||||||DEPECATED April 20th 2020||||||||||||||||||
- * Grab document status via the RightSignature API
- * https://rightsignature.com/apidocs/api_calls?api_method=documentDetails
+ * send_pdf_to_client method
+ * Handles requests to email executed PDF documents to a known clients email address.
+ *
+ * @param $id int a CobrandedApplication.id
+ * @return void
+ */
+	public function send_pdf_to_client($id) {
+		$emails = array();
+		if ($this->request->is('ajax')) {
+			$this->autoRender = false;
+			$values = $this->CobrandedApplication->getDataForCommonAppValueSearch($id);
+			foreach($values as $value) {
+				if (strpos($value, '@') !==false) {
+					$emails[$value] = $value;
+				}
+			}
+
+			if (empty($emails) ) {
+				$this->_failure('Sorry a copy of this document cannot be requested from our site at this time, contact your sales representative and we will gladly provide you a copy.');
+			}
+			$this->set(compact('emails', 'id'));
+			$this->render('/Elements/Ajax/send_client_pdf_email', 'ajax');
+		} elseif($this->request->is('post')) {
+			$clientEmail = $this->request->data('CobrandedApplication.client_email');
+			$appId = $this->request->data('CobrandedApplication.id');
+			//Verify input to make sure eamil form field value was not tampered with.
+			try {
+				$this->CobrandedApplication->emailSignedDocToClient($appId, $clientEmail);
+				$this->_success("Please check your email $clientEmail, you should receive a message shortly with download instructions.");
+			} catch (Exception $e) {
+				$this->_failure($e->getMessage());
+			}
+
+			$this->redirect($this->referer());
+		}
+	}
+
+/**
+ * admin_renew_mod_date
+ * Updates last modified date to be within the timeframe after which apps are considered to be "Access expired".
+ * See Configure::read('App.access_validity_age');
+ * 
  * @param integer $id
  * @param varchar $renew
  * RightSignature Document Guid Allows for extending life of application
  */
-	function admin_app_status($id, $renew = null) {
-		$guid = $this->CobrandedApplication->field('rightsignature_document_guid', array('id' => $id));
-		$client = $this->CobrandedApplication->createRightSignatureClient();
-		$results = $client->getDocumentDetails($guid);
-		$data = json_decode($results, true);
-		$pg = 'Personal Guarantee';
-		$app = 'Application';
-		$recipients = array_reverse($data['document']['recipients']);
-		$state = $data['document']['state'];
-
-		if ($renew != '') {
-			$renewed = $client->extendDocument($guid);
-			$extension = json_decode($renewed, true);
-			if (isset($extension['document'])) {
-				$this->_success($extension['document']['state']);
+	function admin_renew_modified_date($uuid) {
+		if ($this->CobrandedApplication->isExpired($uuid)) {
+			$daysValid = intval(Configure::read('App.access_validity_age'));
+			//For security we dont want to add the full access_validity_age, instead we will subtract two thirds from it
+			//and by doing so we are effectiely adding one third of those days as the new expiration.
+			$dayRangeToSubtract = intval((intval($daysValid) / 3) - $daysValid);
+			//Check for zero value and default to T-1 day
+			$dayRangeToSubtract = ($dayRangeToSubtract == 0)? "-1 day" : $dayRangeToSubtract . " day";
+			$newModDate = (new \DateTime())->modify($dayRangeToSubtract)->format("Y-m-d H:i:s");
+			$app = $this->CobrandedApplication->find('first', array(
+				'recursive' => -1,
+				'fields' => array('id', 'modified'),
+				'conditions' => array('uuid' => $uuid)
+			));
+			$app['CobrandedApplication']['modified'] = $newModDate;
+			if ($this->CobrandedApplication->save($app, ['validate' => false])) {
+				$this->_success('Application renewed, client may now access it for an additional ' . intval((intval($daysValid) / 3)) . ' days');
 			} else {
-				$this->_failure($extension['error']['message']);
+				$this->_failure('Could not renew application at this time please try again.');
 			}
-			$this->redirect($this->referer());
+		} else {
+			$this->_failure('Application has not yet expired.');
 		}
-
-		$this->set(compact('id', 'data', 'recipients', 'pg', 'app', 'guid'));
+		$this->redirect($this->referer());
 	}
 
 /**
@@ -1240,21 +1328,6 @@ class CobrandedApplicationsController extends AppController {
 		$this->set('name', 'ERROR 404: Document Not Found Or Has Expired. For assistance contact AxiaMed support.');
 		$this->set('url', Router::url(['controller' => 'CobrandedApplication', 'action' => 'pdf_doc_token_dl'], true));
 		$this->render('/Errors/error404');
-	}
-
-
-
-/**
- * |||||DEPRECTATED April 20th 2020|||||||
- * Extend the life of a RightSignature document via Right Signature API
- * https://rightsignature.com/apidocs/api_calls?api_method=extendExpiration
- * @param varchar $guid
- * Right Signature Unique Identifier
- */
-	function admin_app_extend($guid) {
-		$client = $this->CobrandedApplication->createRightSignatureClient();
-		$results = $HttpSocket->post('https://rightsignature.com/api/documents/' . $guid . '/extend_expiration.xml');
-		$this->render('admin_app_status');
 	}
 
 /**

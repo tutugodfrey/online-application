@@ -361,4 +361,25 @@ class AppModel extends Model {
 		return (bool)preg_match("/^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$/", $uuid);
 	}
 
+/**
+ * genRandomSecureToken
+ * Generates a string of pseudo-random bytes hexadecimally encoded making sure a cryptographically strong algorithm is used to produce the pseudo-random bytes.
+ * The length parameter is intended for the length in bytes and since the resulting pseudo-random bytes will be returned hexadecimally encoded
+ * the resulting token will be twice the specified lenfth
+ * 
+ * @param int $length the length in bytes defaults to 32 which will result in a 64 character hex string.
+ * @return the hexadecimally encoded pseudo-random bytes which will be double the specified length.
+ */
+	public function genRandomSecureToken(int $length = null) {
+		if (!$length) {
+			$length = 32;
+		}
+		$cstrong = null;
+		$token = bin2hex(openssl_random_pseudo_bytes($length,$cstrong ));
+		if ($cstrong === false) {
+			$token = bin2hex(random_bytes($length));
+		}
+		return $token;
+	}
+
 }

@@ -124,6 +124,7 @@ class AppModelTest extends CakeTestCase {
 	}
 
 /**
+<<<<<<< Updated upstream
  * testEncrypt
  *
  * @covers AppModel::validateFieldsEqual()
@@ -157,4 +158,13 @@ class AppModelTest extends CakeTestCase {
 		$this->assertSame($expected, $actual);
 	}
 
+/* testGenRandomSecureToken
+ *
+ * @covers AppModel::genRandomSecureToken()
+ * @return void
+ */
+	public function testGenRandomSecureToken() {
+		$this->assertEquals(64,strlen($this->AppModel->genRandomSecureToken()));
+		$this->assertEquals(128,strlen($this->AppModel->genRandomSecureToken(64)));
+	}
 }

@@ -296,6 +296,10 @@ class CobrandedApplication extends AppModel {
 		'Template' => array(
 			'className' => 'Template',
 			'foreignKey' => 'template_id'
+		),
+		'ApplicationGroup' => array(
+			'className' => 'ApplicationGroup',
+			'foreignKey' => 'application_group_id'
 		)
 	);
 
@@ -364,6 +368,31 @@ class CobrandedApplication extends AppModel {
 
 	// tests will set this via dependency injection, using a mocked object
 	public $CakeEmail = null;
+
+/**
+ * beforeDelete callback
+ * 
+ * @param  boolean $cascade The value of $cascade will be true if records that depend on this record will also be deleted
+ * @return boolean
+ */
+	public function beforeDelete($cascade = true) {
+		$recordToDetele = $this->find('first', array(
+			'recursive' => -1,
+			'fields' => array('application_group_id'),
+			'conditions' => array('id' => $this->id)
+		));
+
+		//since belongsTo assciation does not have a dependent propertly we have to handle this cascade delete here for ApplicationGroup
+		if (!empty($recordToDetele['CobrandedApplication']['application_group_id'])) {
+			//if there are no other records referencing the same application_group_id delete the ApplicationGroup record
+			$cascadeDeleteAppGroup = $this->hasAny(array('application_group_id' => $recordToDetele['CobrandedApplication']['application_group_id'], "id != '{$this->id}'")) === false;
+			if ($cascadeDeleteAppGroup) {
+				$this->ApplicationGroup->delete($recordToDetele['CobrandedApplication']['application_group_id'], false);
+			}
+		}
+		return true;
+	}
+
 /**
  * afterSave
  *
@@ -507,6 +536,116 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
+ * addAppToGroup
+ * Adds application specified with id parameter to an ApplicationGroup.
+ * Searches for other related applications by looking for same data such as client email address, SSNs and/or TaxIds
+ * Applications that have these same data are considered to be related or belonging to the same client and therefore
+ * part of the same group.
+ * If no other related apps are found no group will be created and the current app will remain ungrouped.
+ * 
+ * @param integer|string $id an application id integer/string representation of integer
+ * @return void
+ */
+	public function addAppToGroup($id) {
+		if ($this->hasAny(array("id" => $id, "application_group_id is not null"))) {
+			return;
+		}
+		$relatedApps = $this->findSameClientAppsUsingValuesInCommon($id);
+		
+		if (empty($relatedApps)) {
+			return;
+		}
+		$groupId = null;
+		$ungroupedApps = array($id);
+		//iterate and find if the $relatedApps are already in a group and any other related apps
+		//that are not yet in a group
+		foreach ($relatedApps as $relatedApp) {
+			if (!empty($relatedApp['CobrandedApplication']['application_group_id'])) {
+				$groupId = $relatedApp['CobrandedApplication']['application_group_id'];
+			} else {
+				$ungroupedApps[] = $relatedApp['CobrandedApplication']['id'];
+			}
+		}
+		//if none of the apps are grouped create a new group
+		if (empty($groupId)) {
+			$appGroup = $this->ApplicationGroup->createNewGroup();
+			$groupId = $appGroup['ApplicationGroup']['id'];
+		}
+		//add apps to group
+		$this->updateAll(
+			array('application_group_id' => $groupId),
+			array('id' => $ungroupedApps)
+		);
+	}
+
+/**
+ * getDataForCommonAppValueSearch 
+ * Returns distinct list of email addresses, SSNs and/or TaxIds data in the specified application
+ * if any are present.
+ * Returned array will never include empty entries unless no data exists at all in which case null is returned.
+ * 
+ * @param integer|string $id an application id integer/string representation of integer
+ * @return array|null The returned array is a signe-dimentional indexed array containing any values found 
+ */
+	public function getDataForCommonAppValueSearch($id) {
+		$result = $this->CobrandedApplicationValues->find('all', array(
+			'callbacks' => false, 'recursive' => -1, 'fields' => array("DISTINCT value"),
+			'conditions' => array(
+				//find any email or SSN data which other apps under the same client usually have
+				//the same data in common
+				"((value ~ '(.+@.+)' and name ilike '%email%') OR (value != '' and name ilike '%ssn%') OR (value != '' and name ilike '%taxid%'))",
+				'cobranded_application_id' => $id
+			),
+		));
+
+		if (!empty($result)) {
+			$result = Hash::extract($result, '{n}.CobrandedApplicationValues.value');
+		} else {
+			return null;
+		}
+		return $result;
+	}
+
+/**
+ * findSameClientAppsUsingValuesInCommon
+ * Uses data that apps may have in common such as email addresses, SSNs and/or TaxIds and returns all applications that contain them.
+ * Applications that have these same data are considered to be related or belonging to the same client and therefore
+ * part of the same group.
+ * 
+ * @param integer|string $id the id of application whose data will be used as the values-in-common to search for in other applications that might have those values in common
+ * @return array containing aplications records that were found to contain the common values.
+ */
+	public function findSameClientAppsUsingValuesInCommon($id) {
+		$commonValues = $this->getDataForCommonAppValueSearch($id);
+		if (!empty($commonValues)) {
+			return $this->find('all', array(
+					'recursive' => -1,
+					'fields' => array('DISTINCT CobrandedApplication.id', 'CobrandedApplication.application_group_id'),
+					'conditions' => array(
+						//exlude the original app we only want apps related to this one 
+						"CobrandedApplication.id != $id", 
+					),
+					'joins' => array(
+						array(
+							'table' => 'onlineapp_cobranded_application_values',
+							'alias' => 'CobrandedApplicationValue',
+							'type' => 'INNER',
+							'conditions' => array(
+								'"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
+								'CobrandedApplicationValue.value' => $commonValues
+							)
+						)
+					),
+					'order' => 'CobrandedApplication.application_group_id DESC NULLS LAST'
+				)
+			);
+		} else {
+			return [];
+		}
+
+	}
+
+/**
  * getTemplateAndAssociatedValues
  *
  * @param uuid $applicationId Application Unique Identifier
@@ -616,6 +755,10 @@ class CobrandedApplication extends AppModel {
 							}
 						}
 					}
+				}
+				//Check if this application can be added to an application group based. Email and ssn fields 12 and 14 must contain data.
+				if (($appValue['TemplateField']['type'] == 12 || $appValue['TemplateField']['type'] == 14) && empty($appValue['CobrandedApplication']['application_group_id'])) {
+					$this->addAppToGroup($appValue['CobrandedApplication']['id']);
 				}
 			} else {
 				// something went wrong
@@ -1390,61 +1533,99 @@ class CobrandedApplication extends AppModel {
  *     $response array
  */
 	public function findAppsByEmail($email, $id = null) {
-		$conditions[] = array('CobrandedApplicationValue.value' => $email);
+		$settings['conditions'][] = array('CobrandedApplicationValue.value' => $email);
 
 		// should probably check the state too
 		if (!empty($id)) {
-			$conditions[]['CobrandedApplicationValue.cobranded_application_id'] = $id;
-			$conditions[]['CobrandedApplicationValue.name'] = 'Owner1Email';
+			$settings['conditions'][]['CobrandedApplicationValue.cobranded_application_id'] = $id;
+			$settings['conditions'][]['CobrandedApplicationValue.name'] = 'Owner1Email';
 		}
+		return $this->getSummarizedAppData($settings);
+	}
 
-		$apps = $this->find(
-			'all',
-			array(
-				'fields' => array(
-					'CobrandedApplication.id',
-					'CobrandedApplication.user_id',
-					'CobrandedApplication.template_id',
-					'CobrandedApplication.uuid',
-					'CobrandedApplication.created',
-					'CobrandedApplication.modified',
-					'CobrandedApplication.rightsignature_document_guid',
-					'CobrandedApplication.status',
-					'CobrandedApplication.rightsignature_install_document_guid',
-					'CobrandedApplication.rightsignature_install_status',
-					'User.id',
-					'Template.id',
-					'Merchant.id',
-					'Coversheet.id'
+/**
+ * findGroupedApps
+ *
+ * @param string applicationGroupId an associated ApplicationGroup.id
+ *
+ * @return array containing the ApplicationGroup and the data of the applications that are members of that group
+ *    i.e.: 
+ *    array(
+ *    	'ApplicationGroup' => array(<..data..>),
+ *      'GrouppedApps' => array( array(AppDataX), array(AppDataY), ...)
+ *    )
+ */
+	public function findGroupedApps($applicationGroupId) {
+		if (empty($applicationGroupId)) {
+			return [];
+		}
+		$settings['conditions'] = array('CobrandedApplication.application_group_id' => $applicationGroupId);
+		$data = $this->getSummarizedAppData($settings);
+		return $data;
+	}
+
+
+	public function getSummarizedAppData($customSettings) {
+		if (empty($customSettings['conditions'])) {
+			return [];
+		}
+		$settings = array(
+			'fields' => array(
+				'CobrandedApplication.id',
+				'CobrandedApplication.user_id',
+				'CobrandedApplication.template_id',
+				'CobrandedApplication.uuid',
+				'CobrandedApplication.created',
+				'CobrandedApplication.modified',
+				'CobrandedApplication.rightsignature_document_guid',
+				'CobrandedApplication.status',
+				'CobrandedApplication.rightsignature_install_document_guid',
+				'CobrandedApplication.rightsignature_install_status',
+				'CobrandedApplication.application_group_id',
+				'User.id',
+				'Template.id',
+				'Cobrand.partner_name',
+				'Merchant.id',
+				'Coversheet.id'
+			),
+			'joins' => array(
+				array(
+					'alias' => 'CobrandedApplicationValue',
+					'table' => 'onlineapp_cobranded_application_values',
+					'type' => 'LEFT',
+					'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
 				),
-				'joins' => array(
-					array(
-						'alias' => 'CobrandedApplicationValue',
-						'table' => 'onlineapp_cobranded_application_values',
-						'type' => 'LEFT',
-						'conditions' => '"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
-					)
-				),
-				'conditions' => $conditions,
-				'group' => array(
-					'CobrandedApplication.id',
-					'CobrandedApplication.user_id',
-					'CobrandedApplication.template_id',
-					'CobrandedApplication.uuid',
-					'CobrandedApplication.created',
-					'CobrandedApplication.modified',
-					'CobrandedApplication.rightsignature_document_guid',
-					'CobrandedApplication.status',
-					'CobrandedApplication.rightsignature_install_document_guid',
-					'CobrandedApplication.rightsignature_install_status',
-					'User.id',
-					'Template.id',
-					'Merchant.id',
-					'Coversheet.id'
-				),
-				'order' => 'CobrandedApplication.created desc'
-			)
+				array(
+					'alias' => 'Cobrand',
+					'table' => 'onlineapp_cobrands',
+					'type' => 'LEFT',
+					'conditions' => '"Cobrand"."id" = "Template"."cobrand_id"',
+				)
+			),
+			'conditions' => $customSettings['conditions'],
+			'group' => array(
+				'CobrandedApplication.id',
+				'CobrandedApplication.user_id',
+				'CobrandedApplication.template_id',
+				'CobrandedApplication.uuid',
+				'CobrandedApplication.created',
+				'CobrandedApplication.modified',
+				'CobrandedApplication.rightsignature_document_guid',
+				'CobrandedApplication.status',
+				'CobrandedApplication.rightsignature_install_document_guid',
+				'CobrandedApplication.rightsignature_install_status',
+				'CobrandedApplication.application_group_id',
+				'User.id',
+				'Template.id',
+				'Cobrand.partner_name',
+				'Merchant.id',
+				'Coversheet.id'
+			),
+			'order' => 'CobrandedApplication.created desc'
 		);
+		$settings['fields'] = array_merge($settings['fields'], Hash::get($customSettings,'fields', []));
+		$settings['joins'] = array_merge($settings['joins'], Hash::get($customSettings,'joins', []));
+		$apps = $this->find('all',$settings);
 
 		return $apps;
 	}
@@ -1482,6 +1663,7 @@ class CobrandedApplication extends AppModel {
 				$appValue = $this->getApplicationValue($cav['CobrandedApplicationValue']['id']);
 				$appValue['CobrandedApplicationValue']['value'] = $email;
 				if ($this->CobrandedApplicationValue->save($appValue)) {
+					$this->addAppToGroup($id);
 					return $this->sendFieldCompletionEmail($email);
 				}
 			} else {
@@ -1491,7 +1673,23 @@ class CobrandedApplication extends AppModel {
 		} else {
 			// send the email
 			$timestamp = time();
-			$link = Router::url('/cobranded_applications/index/', true) . urlencode($email) . "/{$timestamp}";
+			$appGroupAccessToken = null;
+			if (!empty($apps[0]['CobrandedApplication']['application_group_id'])) {
+				$appGroupData = $this->ApplicationGroup->find('first', array(
+					'recursive' => -1,
+					'conditions' => array('id' => $apps[0]['CobrandedApplication']['application_group_id'])
+				));
+				//only renew application when a user is logged in
+				if (CakeSession::read('Auth.User.id') && $this->ApplicationGroup->isTokenExpired($appGroupData['ApplicationGroup']['access_token'])) {
+					$appGroupData = $this->ApplicationGroup->renewAccessToken($appGroupData['ApplicationGroup']['id'], true);
+				}
+				$appGroupAccessToken = $appGroupData['ApplicationGroup']['access_token'];
+			}
+			if (!empty($appGroupAccessToken)) {
+				$link = Router::url('/cobranded_applications/index/', true) . $appGroupAccessToken;
+			} else {
+				$link = Router::url('/cobranded_applications/edit/', true) . $apps[0]['CobrandedApplication']['uuid'];
+			}
 
 			$args = array(
 				'from' => array('newapps@axiapayments.com' => 'Axia Online Applications'),
@@ -1964,6 +2162,80 @@ class CobrandedApplication extends AppModel {
 		}
 
 		return $response;
+	}
+
+/**
+ * sendSignedAppToUw
+ *
+ * @param int $id a CobrandedApplication.id
+ * @param string $clientEmail Must be an known email value previously stored in CobrandedApplicationValues for the corresponding app
+ * @throws Exception
+ * @return $response array
+ */
+	public function emailSignedDocToClient($id, $clientEmail) {
+		if (empty($clientEmail) || $this->CobrandedApplicationValues->hasAny(array('cobranded_application_id' => $id, 'value' => $clientEmail)) == false) {
+			throw new Exception("Cannot send email to unregistered email address $clientEmail.");
+		}
+		try {
+			$pdfUrl = $this->getAppPdfUrl($id, true, false);
+		} catch(Exception $e) {
+			//log the error details
+			CakeLog::write('error', $e->__toString());
+			throw new Exception('Unexpected connection error, please try again.');
+		}
+
+		$settings = array(
+			'recursive' => -1,
+			'contain'=> array(
+				'User',
+				'Template' => array(
+					'fields' => array('name'),
+					'Cobrand.partner_name'
+				)
+			)
+		);
+		$cobrandedApplication = $this->getById($id, $settings);
+		$cobrandName = strtolower(Hash::get($cobrandedApplication, 'Template.Cobrand.partner_name'));
+
+		$DbaAppValue = $this->CobrandedApplicationValues->find('first', array(
+			'recursive' => -1,
+			'conditions' =>array('cobranded_application_id' => $id, 'name' => 'DBA')
+		));
+		
+		$dbaBusinessName = Hash::get($DbaAppValue, 'CobrandedApplicationValues.value', '');
+		
+		if (stripos($cobrandedApplication['User']['email'], EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
+			$from = array('noreply@axiamed.com' => 'No Reply AxiaMed Automated Message');
+			$elementPath = 'email/html/axiamed_client_pdf_dl';
+		} else {
+			$from = array('noreply@axiamed.com' => 'No Reply Axia Automated Message');
+			$elementPath = 'email/html/axiapayments_client_pdf_dl';
+		}
+
+		$viewVars['merchantDBA'] = $dbaBusinessName;
+		$viewVars['appPdfUrl'] = $pdfUrl;
+		$viewVars['emailBodyElementPath'] = $elementPath;
+
+		$args = array(
+			'from' => $from,
+			'to' => $clientEmail,
+			'subject' => "Request for Copy of Executed Document ($cobrandName).",
+			'format' => 'html',
+			'template' => 'client_communication',
+			'viewVars' => $viewVars
+		);
+
+		$response = $this->sendEmail($args);
+		unset($args);
+
+		if ($response['success'] == true) {
+			$args['cobranded_application_id'] = $id;
+			$args['email_timeline_subject_id'] = EmailTimeline::APP_SENT_TO_CLIENT;
+			$args['recipient'] = $clientEmail;
+			$response = $this->createEmailTimelineEntry($args);
+		}
+
+		return $response['success'];
 	}
 
 /**
@@ -3275,6 +3547,8 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.data_to_sync',
 				'CobrandedApplication.client_id_global',
 				'CobrandedApplication.client_name_global',
+				'CobrandedApplication.application_group_id',
+				'ApplicationGroup.access_token',
 				'Cobrand.id',
 				'Cobrand.partner_name',
 				'Template.id',
@@ -3300,6 +3574,13 @@ class CobrandedApplication extends AppModel {
 			);
 			$query['recursive'] = -1;
 			$query['joins'] = array(
+				array('table' => 'onlineapp_application_groups',
+					'alias' => 'ApplicationGroup',
+					'type' => 'LEFT',
+					'conditions' => array(
+						"CobrandedApplication.application_group_id = ApplicationGroup.id",
+					),
+				),
 				array('table' => 'onlineapp_cobranded_application_values',
 					'alias' => 'Dba',
 					'type' => 'LEFT',
@@ -3449,7 +3730,7 @@ class CobrandedApplication extends AppModel {
 
 		//Use date without time
 		$modDate = CakeTime::format(Hash::get($application, 'CobrandedApplication.modified'), '%Y-%m-%d');
-		if (!empty(Hash::get($application, 'CobrandedApplication')) && (CakeTime::wasWithinLast('30 days', $modDate)) && $application['CobrandedApplication']['status'] !== 'signed') {
+		if (!empty(Hash::get($application, 'CobrandedApplication')) && (CakeTime::wasWithinLast(Configure::read('App.access_validity_age'), $modDate)) && $application['CobrandedApplication']['status'] !== 'signed') {
 
 			return false;
 		}

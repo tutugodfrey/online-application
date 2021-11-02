@@ -133,7 +133,7 @@
 						jQuery('body').on('click', resetTimer).on('keypress', resetTimer);
 						sessionTimerInit();
 				}
-				</script>;
+				</script>
 		<?php endif; ?>
 </head>
 <body>

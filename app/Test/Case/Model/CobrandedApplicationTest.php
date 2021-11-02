@@ -1072,6 +1072,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'application_group_id' => null,
 				'client_id_global' => null,
 				'client_name_global' => null
 			),
@@ -1397,6 +1398,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'application_group_id' => null,
 				'client_id_global' => null,
 				'client_name_global' => null
 			),
@@ -1468,6 +1470,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'application_group_id' => null,
 				'client_id_global' => null,
 				'client_name_global' => null
 			),
@@ -3365,5 +3368,15 @@ class CobrandedApplicationTest extends CakeTestCase {
 				$this->CobrandedApplicationValue->save($value);
 			}
 		}
+	}
+
+	public function TestGetDataForCommonAppValueSearch() {
+		$this->fail('Test is empty');
+	}
+	public function TestFindSameClientAppsUsingValuesInCommon() {
+		$this->fail('Test is empty');
+	}
+	public function TestAddAppToGroup() {
+		$this->fail('Test is empty');
 	}
 }

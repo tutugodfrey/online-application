@@ -28,6 +28,7 @@ class OnlineappCobrandedApplicationFixture extends CakeTestFixture {
 		'client_id_global' => array('type' => 'string', 'length' => 8),
 		'client_name_global' => array('type' => 'string', 'length' => 100),
 		'sf_opportunity_id' => array('type' => 'string', 'length' => 50),
+		'application_group_id' => array('type' => 'integer'),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'unique_uuid' => array('unique' => true, 'column' => 'uuid')

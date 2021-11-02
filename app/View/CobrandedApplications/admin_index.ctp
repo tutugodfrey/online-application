@@ -120,6 +120,18 @@
 					<button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
 					<ul class="dropdown-menu dropdown-menu-right panel-primary" style="width: max-content;">
 						<?php
+						if (!empty($cobrandedApplication['CobrandedApplication']['application_group_id'])) {
+							echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-list-alt pull-left btn-xs btn-primary"></span>&nbsp;&nbsp; View all related applications',
+								array('admin' => false, 'controller' => 'CobrandedApplications', 'action' => 'index', $cobrandedApplication['ApplicationGroup']['access_token']),
+								array(
+								'escape' => false,
+								'target' => '_blank',
+								'class' => 'small',
+								'style' => 'padding-left: 5px',
+								'title' => __('View all applications related to this one')
+								)
+							) .'</li>';
+						}
 							if (in_array($this->Session->read('Auth.User.group'), array('admin')) && $cobrandedApplication['CobrandedApplication']['status'] == CobrandedApplication::STATUS_SIGNED) {
 								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-export pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Export Data',
 										'#',
