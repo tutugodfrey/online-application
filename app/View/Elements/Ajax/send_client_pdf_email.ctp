@@ -36,8 +36,9 @@
 							)
 						);
 					} else {
-						$clientEmail = array_pop($emails);
-						echo $this->Form->hidden('client_email', array('value' => $clientEmail));
+						$clientEmailEncrypted = key($emails);
+						$clientEmail = $emails[$clientEmailEncrypted];
+						echo $this->Form->hidden('client_email', array('value' => $clientEmailEncrypted));
 						echo '<ul class="list-group">' .
 	  						 '<li class="list-group-item list-group-item-info text-center">Email will be sent to: <strong>'. $clientEmail .'</strong> </li></ul>';
 					}

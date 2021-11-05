@@ -1679,10 +1679,8 @@ class CobrandedApplication extends AppModel {
 					'recursive' => -1,
 					'conditions' => array('id' => $apps[0]['CobrandedApplication']['application_group_id'])
 				));
-				//only renew application when a user is logged in
-				if (CakeSession::read('Auth.User.id') && $this->ApplicationGroup->isTokenExpired($appGroupData['ApplicationGroup']['access_token'])) {
-					$appGroupData = $this->ApplicationGroup->renewAccessToken($appGroupData['ApplicationGroup']['id'], true);
-				}
+				//Generate new access token every time
+				$appGroupData = $this->ApplicationGroup->renewAccessToken($appGroupData['ApplicationGroup']['id'], true);
 				$appGroupAccessToken = $appGroupData['ApplicationGroup']['access_token'];
 			}
 			if (!empty($appGroupAccessToken)) {
@@ -1691,13 +1689,21 @@ class CobrandedApplication extends AppModel {
 				$link = Router::url('/cobranded_applications/edit/', true) . $apps[0]['CobrandedApplication']['uuid'];
 			}
 
+            if (stripos($link, 'axiatech') !== false || stripos($link, EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
+                $from = array('noreply@axiamed.com' => 'No Reply AxiaMed Automated Message');
+                $elementPath = 'email/html/axiamed_apps_access_request';
+            } else {
+                 $from = array('noreply@axiamed.com' => 'No Reply Axia Automated Message');
+                 $elementPath = 'email/html/axiapayments_apps_access_request';
+            }
+
 			$args = array(
 				'from' => array('newapps@axiapayments.com' => 'Axia Online Applications'),
 				'to' => $email,
 				'subject' => 'Your Axia Applications',
-				'format' => 'text',
-				'template' => 'retrieve_applications',
-				'viewVars' => array('email' => $email, 'link' => $link)
+				'format' => 'html',
+				'template' => 'client_communication',
+				'viewVars' => array('emailBodyElementPath' => $elementPath, 'appAccesslink' => $link)
 			);
 
 			$response = $this->sendEmail($args);
@@ -1849,13 +1855,20 @@ class CobrandedApplication extends AppModel {
 				$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
 				$to = $ownerEmail;
 				$subject = $dbaBusinessName . ' - Merchant Application';
-				$format = 'both';
-				$template = 'email_app';
+				$format = 'html';
+				$template = 'client_communication';
 				$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
+
+                if (true) {
+                    $elementPath = 'email/html/axiamed_email_app';
+                } else {
+                    $elementPath = 'email/html/axiapayments_email_app';
+                }
 				$viewVars = array();
-				$viewVars['url'] = "https://" . $hostname . "/cobranded_applications/sign_rightsignature_document?guid=" . $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
+				$viewVars['appAccesslink'] = "https://" . $hostname . "/cobranded_applications/sign_rightsignature_document?guid=" . $cobrandedApplication['CobrandedApplication']['rightsignature_document_guid'];
 				$viewVars['ownerName'] = $ownerFullname;
-				$viewVars['merchant'] = $dbaBusinessName;
+				$viewVars['merchantDBA'] = $dbaBusinessName;
+                $viewVars['emailBodyElementPath'] = $elementPath;
 
 				$this->Cobrand = ClassRegistry::init('Cobrand');
 				$cobrand = $this->Cobrand->find(
@@ -1867,7 +1880,7 @@ class CobrandedApplication extends AppModel {
 					)
 				);
 
-				$viewVars['brandLogo'] = $cobrand['Cobrand']['brand_logo_url'];
+				$viewVars['logoImageFileName'] = $cobrand['Cobrand']['brand_logo_url'];
 
 				$args = array(
 					'from' => $from,
@@ -1890,89 +1903,6 @@ class CobrandedApplication extends AppModel {
 				}
 			}
 		}
-
-		return $response;
-	}
-
-/**
- * sendForCompletion
- *
- * @param int $applicationId Cobranded Application Id
- *     $applicationId int
- * @return $response array
- */
-	public function sendForCompletion($applicationId) {
-		if (!$this->exists($applicationId)) {
-			$response = array(
-				'success' => false,
-				'msg' => 'Invalid application.',
-			);
-			return $response;
-		}
-
-		$settings = array('contain' => array(
-				'CobrandedApplicationValues',
-			));
-		$cobrandedApplication = $this->getById($applicationId, $settings);
-
-		$hash = $cobrandedApplication['CobrandedApplication']['uuid'];
-
-		$dbaBusinessName = '';
-		$ownerName = '';
-		$ownerEmail = '';
-		$valuesMap = $this->buildCobrandedApplicationValuesMap($cobrandedApplication['CobrandedApplicationValues']);
-
-		if (!empty($valuesMap['DBA'])) {
-			$dbaBusinessName = $valuesMap['DBA'];
-		}
-		if (!empty($valuesMap['CorpContact'])) {
-			$ownerName = $valuesMap['CorpContact'];
-		}
-		if (!empty($valuesMap['Owner1Email'])) {
-			$ownerEmail = $valuesMap['Owner1Email'];
-		}
-		$userEmail = $this->User->field('email', ['id' => $cobrandedApplication['CobrandedApplication']['user_id']]);
-		$from = array(EmailTimeline::NEWAPPS_EMAIL => 'Axia Online Applications');
-		if (stripos($userEmail, EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
-			$from = array(EmailTimeline::ENTITY1_NEWAPPS_EMAIL => 'AxiaMed Online Applications');
-		}
-		$to = $ownerEmail;
-		$subject = 'Your Axia Applications';
-		$format = 'text';
-		$template = 'retrieve_applications';
-		$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
-		$viewVars = array();
-		$viewVars['email'] = $ownerEmail;
-		$viewVars['dba'] = $dbaBusinessName;
-		$viewVars['fullname'] = $ownerName;
-		$viewVars['hash'] = $hash;
-		$viewVars['link'] = "https://" . $hostname . "/cobranded_applications/edit/" . $hash;
-		$viewVars['ownerName'] = $ownerName;
-
-		$args = array(
-			'from' => $from,
-			'to' => $to,
-			'subject' => $subject,
-			'format' => $format,
-			'template' => $template,
-			'viewVars' => $viewVars
-		);
-
-		$response = $this->sendEmail($args);
-
-		unset($args);
-
-		if ($response['success'] == true) {
-			$args['cobranded_application_id'] = $applicationId;
-			$args['email_timeline_subject_id'] = EmailTimeline::COMPLETE_FIELDS;
-			$args['recipient'] = $ownerEmail;
-			$response = $this->createEmailTimelineEntry($args);
-			unset($args);
-		}
-
-		$response['dba'] = $dbaBusinessName;
-		$response['email'] = $ownerEmail;
-		$response['fullname'] = $ownerName;
 
 		return $response;
 	}
@@ -2165,7 +2095,7 @@ class CobrandedApplication extends AppModel {
 	}
 
 /**
- * sendSignedAppToUw
+ * emailSignedDocToClient
  *
  * @param int $id a CobrandedApplication.id
  * @param string $clientEmail Must be an known email value previously stored in CobrandedApplicationValues for the corresponding app

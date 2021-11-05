@@ -37,7 +37,7 @@
                     You may at any time return to this page using its URL (which expires in 2 days), and review documents that need your attention. If you have any questions about your applications, please feel free to contact your rep.</p>
                     <?php
                         if ((int)$datetime1->format('U') > (int)$datetime2->format('U')) {
-                            echo  '<strong class="text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> Client access token has expired, only logged in users may currently access this page.</strong><br/>';
+                            echo  '<strong class="text-danger bg-warning"><span class="glyphicon glyphicon-exclamation-sign"></span> Client access token has expired, only logged in users may currently access this page.</strong><br/>';
                         } else {
                             echo "<strong>For security, access to this page will expire in <span class='text-danger'>$remainderConcat</span>.";
                         }
@@ -160,7 +160,7 @@
                                     'uuid' => $val['CobrandedApplication']['uuid'],
                                     'cobrandName' => $val['Cobrand']['partner_name'],
                                     'name' => $name,
-                                    'thumbImg' => "/img/doc_generic.png",
+                                    'thumbImg' => "/img/doc_generic_check.png",
                                     'isExpired' => false,
                                     'workflowComplete' => true,
                                     'statusLabel' =>  $statusLabel,

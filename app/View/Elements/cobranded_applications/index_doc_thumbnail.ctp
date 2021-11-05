@@ -1,9 +1,6 @@
 
 <div class="col-md-4 col-lg-3 col-sm-6 col-xs-12">
 	<div class="thumbnail">
-		<?php 
-			echo ($workflowComplete)? '<img src="/img/green_check.png" style="position: absolute;width: 60px;right: 42%;top: 17%;opacity: 0.8;">':'';
-		?>
 	    <img src=<?php echo "'$thumbImg'"?> style="width: 100px;">
 	    <div class="caption">
 	        <div class="text-center small" style="white-space: nowrap;">

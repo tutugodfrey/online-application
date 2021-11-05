@@ -382,4 +382,31 @@ class AppModel extends Model {
 		return $token;
 	}
 
+/**
+ * maskUsernamePartOfEmail
+ * Expects an email string, truncates and masks the username part of the email with asterisks, for example:
+ * username@email.com becomes u******e@email.com
+ * mo@email.com becomes *o@email.com
+ * s@email.com becomes *@email.com
+ * 
+ * @param string $email an email address
+ * @return string the masked email addres
+ */
+	public function maskUsernamePartOfEmail(string $email) {
+		if (!empty($email)) {
+			$emailUserName = preg_replace('/^([\w\-\.]+)(@[\w\-]+\.)+([\w\-]{2,4})$/', '\1', $email);
+			$sLength = strlen($emailUserName);
+			if ($sLength == 2) {
+				$emailUserName = '*' . $emailUserName[1];
+			} elseif($sLength == 1) {
+				$emailUserName = '*';
+			} else {
+				$emailUserName =  $emailUserName[0] . str_repeat('*', $sLength -2) . $emailUserName[$sLength -1];
+			}
+			
+			$emailRemainder = preg_replace('/^([\w\-\.]+)(@[\w\-]+\.)+([\w\-]{2,4})$/', '\2\3', $email);
+			return $emailUserName . $emailRemainder;
+		}
+	}
+
 }

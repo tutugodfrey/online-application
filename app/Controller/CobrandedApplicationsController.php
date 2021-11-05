@@ -123,7 +123,7 @@ class CobrandedApplicationsController extends AppController {
 					// could look it up even
 				} else {
 					// invalid uuid - allow retrievel of their application via their email
-					$this->Auth->allow('retrieve', 'retrieve_thankyou');
+					$this->Auth->allow('retrieve');
 				}
 			}
 		}
@@ -271,7 +271,7 @@ class CobrandedApplicationsController extends AppController {
 			if (Validation::email($email)) {
 				$response = $this->CobrandedApplication->sendFieldCompletionEmail($email, $id);
 				if ($response['success'] == true) {
-					$message = "{$response['dba']} application sent to {$response['fullname']} at {$response['email']}";
+					$message = "Instructions to access this application sent to {$response['email']}.";
 					$class = ' alert-success';
 				} else {
 					$class = ' alert-danger';
@@ -1196,24 +1196,6 @@ class CobrandedApplicationsController extends AppController {
 	}
 
 /**
- * complete_fields method
- *
- * @param $id int
- * @return void
- */
-	public function complete_fields($id) {
-		$response = $this->CobrandedApplication->sendForCompletion($id);
-		if ($response['success'] == true) {
-			$this->set('dba', $response['dba']);
-			$this->set('email', $response['email']);
-			$this->set('fullname', $response['fullname']);
-			$this->render('retrieve_thankyou');
-		} else {
-			$this->set('error', $response['msg']);
-		}
-	}
-
-/**
  * send_pdf_to_client method
  * Handles requests to email executed PDF documents to a known clients email address.
  *
@@ -1227,7 +1209,7 @@ class CobrandedApplicationsController extends AppController {
 			$values = $this->CobrandedApplication->getDataForCommonAppValueSearch($id);
 			foreach($values as $value) {
 				if (strpos($value, '@') !==false) {
-					$emails[$value] = $value;
+					$emails[$this->CobrandedApplication->encrypt($value, Configure::read('Security.OpenSSL.key'))] = $this->CobrandedApplication->maskUsernamePartOfEmail($value);
 				}
 			}
 
@@ -1237,12 +1219,12 @@ class CobrandedApplicationsController extends AppController {
 			$this->set(compact('emails', 'id'));
 			$this->render('/Elements/Ajax/send_client_pdf_email', 'ajax');
 		} elseif($this->request->is('post')) {
-			$clientEmail = $this->request->data('CobrandedApplication.client_email');
+			$clientEmail = $this->CobrandedApplication->decrypt($this->request->data('CobrandedApplication.client_email'), Configure::read('Security.OpenSSL.key'));
 			$appId = $this->request->data('CobrandedApplication.id');
 			//Verify input to make sure eamil form field value was not tampered with.
 			try {
 				$this->CobrandedApplication->emailSignedDocToClient($appId, $clientEmail);
-				$this->_success("Please check your email $clientEmail, you should receive a message shortly with download instructions.");
+				$this->_success("An email has been sent to the selected address containing download instructions.");
 			} catch (Exception $e) {
 				$this->_failure($e->getMessage());
 			}
