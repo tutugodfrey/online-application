@@ -761,6 +761,7 @@ class CobrandedApplication extends AppModel {
 					$this->addAppToGroup($appValue['CobrandedApplication']['id']);
 				}
 			} else {
+                
 				// something went wrong
 				$response = Hash::insert(
 					$response,
@@ -1859,7 +1860,7 @@ class CobrandedApplication extends AppModel {
 				$template = 'client_communication';
 				$hostname = (isset($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : exec("hostname");
 
-                if (true) {
+                if (stripos($hostname, 'axiatech') !== false || stripos($hostname, EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
                     $elementPath = 'email/html/axiamed_email_app';
                 } else {
                     $elementPath = 'email/html/axiapayments_email_app';

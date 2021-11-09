@@ -28,26 +28,19 @@
 				$btnSettings = array(
 					'controller' => 'cobrandedApplications',
 					'admin' => false,
+					'action' => 'edit',
+					$cobrandedApplication['CobrandedApplication']['uuid']
 				);
 				
-				if ($appOutOfSync === false) {
-					$btnSettings['action'] = 'edit';
-					$btnSettings[] = $cobrandedApplication['CobrandedApplication']['uuid'];
-					$btnAttributes = array(
-							'class' => 'btn btn-primary btn-sm glyphicon glyphicon-edit',
-							'title' => __('Edit ' . $cobrandedApplication['CobrandedApplication']['id'])
-						);
-
-				} else {
-					$btnSettings['action'] = 'syncApplication';
-					$btnSettings[] = $cobrandedApplication['CobrandedApplication']['id'];
-					$btnSettings[] = $cobrandedApplication['CobrandedApplication']['template_id'];
-					$btnAttributes = array(
-							'class' => 'btn btn-danger btn-sm glyphicon glyphicon-refresh',
-							'title' => __('Sync Application ' . $cobrandedApplication['CobrandedApplication']['id'] . ' with Template.')
-						);
-
-				}
+				$btnAttributes = array(
+					'class' => 'btn btn-primary btn-sm glyphicon glyphicon-edit',
+					'title' => __('Edit ' . $cobrandedApplication['CobrandedApplication']['id']),
+				);
+				if ($appOutOfSync) {
+					$btnAttributes['data-toggle'] = 'tooltip';
+					$btnAttributes['data-placement'] = 'right';
+					$btnAttributes['title'] = 'App and Template are out-of-sync due to changes made to Template. Open to sync automatically.';
+				} 
 
 				echo $this->Html->link(' ', $btnSettings, $btnAttributes);
 		?></div></td>
@@ -71,7 +64,7 @@
 			echo h($cobrandedApplication['CobrandedApplication']['status']);
 			echo ($isSigned)? "</span></strong>":"";
 		} elseif($appOutOfSync) {
-			echo "<span class='text-warning' data-toggle='tooltip' data-placement='left' title='' alt='' data-original-title=\"App and Template are out-of-sync due to changes made to Template. Click Sync button if necessary.\";><strong>out-of-sync</strong></span>";
+			echo "<span class='text-warning' data-toggle='tooltip' data-placement='left' title='' alt='' data-original-title=\"App and Template are out-of-sync due to changes made to Template. Open to sync automatically.\";><strong>out-of-sync</strong></span>";
 		} else {
 			echo h($cobrandedApplication['CobrandedApplication']['status']);
 		}	
@@ -191,6 +184,19 @@
 									)
 								) .'</li>';
 							}
+							if (!CakeTime::wasWithinLast(Configure::read('App.access_validity_age'), $cobrandedApplication['CobrandedApplication']['modified']) &&
+								$cobrandedApplication['CobrandedApplication']['status'] != CobrandedApplication::STATUS_COMPLETED &&
+								$cobrandedApplication['CobrandedApplication']['status'] != CobrandedApplication::STATUS_SIGNED) {
+								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-refresh pull-left btn-xs btn-success"></span>&nbsp;&nbsp;Renew App For Client Access',
+											array('controller' => 'cobranded_applications', 'action' => 'renew_modified_date', 'admin' => true, $cobrandedApplication['CobrandedApplication']['uuid']),
+											array(
+											'escape' => false,
+											'class' => 'small',
+											'style' => 'padding-left: 5px',
+											'title' => __('Renew App For Client Access')
+											)
+										) .'</li>';
+							}
 							if (!$appOutOfSync) {
 								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-duplicate pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Create Copy',
 									'#',
@@ -218,19 +224,18 @@
 								)
 							) .'</li>';
 							
-							if (!$appOutOfSync) {
-								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-send pull-left btn-xs btn-info"></span>&nbsp;&nbsp;Email App For Field Completion',
-									'#',
-									array(
-									'escape' => false,
-									'data-toggle' => 'modal',
-									'data-target' => '#myModal_' . $cobrandedApplication['CobrandedApplication']['id'],
-									'class' => 'small',
-									'style' => 'padding-left: 5px',
-									'title' => __('Email App For Field Completion')
-									)
-								) .'</li>';
-							}
+							echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-send pull-left btn-xs btn-info"></span>&nbsp;&nbsp;Email App For Field Completion',
+								'#',
+								array(
+								'escape' => false,
+								'data-toggle' => 'modal',
+								'data-target' => '#myModal_' . $cobrandedApplication['CobrandedApplication']['id'],
+								'class' => 'small',
+								'style' => 'padding-left: 5px',
+								'title' => __('Email App For Field Completion')
+								)
+							) .'</li>';
+
 							if ($cobrandedApplication['CobrandedApplication']['status'] === 'signed' && isset($cobrandedApplication['Merchant']['id'])) {
 								echo '<li>' . $this->Html->link('<span class="glyphicon glyphicon-file pull-left btn-xs btn-default"></span>&nbsp;&nbsp;Install Sheet',
 									array(

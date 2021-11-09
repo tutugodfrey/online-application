@@ -114,7 +114,7 @@
 												'style' => 'padding-left: 5px',
 												'title' => __('Delete'),
 											),
-											__('Are you sure you want to delete # %s?',
+											__('Are you sure you want to permanently delete application # %s?',
 											$cobrandedApplication['id'])
 										) . '</li>';
 
