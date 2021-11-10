@@ -48,6 +48,8 @@ class ApplicationGroup extends AppModel {
 			$data['token_renew_count'] = ($resetRenewalCount)? 0 : $oldData['ApplicationGroup']['token_renew_count'] + 1;
 			unset($oldData['ApplicationGroup']['modified']);
 			$data = array_merge($oldData['ApplicationGroup'], $data);
+		} else {
+			$this->create();
 		}
 		return $this->save($data);
 	}
