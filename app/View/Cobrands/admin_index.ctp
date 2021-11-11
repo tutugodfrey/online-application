@@ -35,7 +35,7 @@
 								array('id' => $popCoBrImgId,
 									'data-toggle' => 'popover','data-trigger' => 'focus',
 									'onClick' => "$('#popOvrContentForpopCoBrImg" . 
-										$cobrand['Cobrand']['id'] . "').html('<img width=\"200\" src=" . $cobrand_logo_url . " onError=\"this.onerror=null; this.src=\'/img/no-image.png\';\">')")
+										$cobrand['Cobrand']['id'] . "').html('<img width=\"200\" src=\'" . $cobrand_logo_url . "\' onError=\"this.onerror=null; this.src=\'/img/no-image.png\';\">')")
 							);
 							echo "<script>setElementPopOver('" . $popCoBrImgId . "')</script>";
 						}
@@ -53,7 +53,7 @@
 								array('id' => $poprandImgId,
 									'data-toggle' => 'popover','data-trigger' => 'focus',
 									'onClick' => "$('#popOvrContentForpopBrandImg" . 
-										$cobrand['Cobrand']['id'] . "').html('<img width=\"200\" src=" . $brand_logo_url . " onError=\"this.onerror=null; this.src=\'/img/no-image.png\';\">')")
+										$cobrand['Cobrand']['id'] . "').html('<img width=\"200\" src=\'" . $brand_logo_url . "\' onError=\"this.onerror=null; this.src=\'/img/no-image.png\';\">')")
 							);
 							echo "<script>setElementPopOver('" . $poprandImgId . "')</script>";
 						}

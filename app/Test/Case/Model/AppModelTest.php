@@ -124,9 +124,9 @@ class AppModelTest extends CakeTestCase {
 	}
 
 /**
- * testEncrypt
+ * testIsEncrypted
  *
- * @covers AppModel::validateFieldsEqual()
+ * @covers AppModel::testIsEncrypted()
  * @return void
  */
 	public function testIsEncrypted() {
@@ -157,4 +157,39 @@ class AppModelTest extends CakeTestCase {
 		$this->assertSame($expected, $actual);
 	}
 
+/* testGenRandomSecureToken
+ *
+ * @covers AppModel::genRandomSecureToken()
+ * @return void
+ */
+	public function testGenRandomSecureToken() {
+		$this->assertEquals(64,strlen($this->AppModel->genRandomSecureToken()));
+		$this->assertEquals(128,strlen($this->AppModel->genRandomSecureToken(64)));
+	}
+
+/* testMaskUsernamePartOfEmail
+ *
+ * @covers AppModel::maskUsernamePartOfEmail()
+ * @return void
+ */
+	public function testMaskUsernamePartOfEmail() {
+		$chars1 = implode('', range('a', 'z') + range(0, 10)) . '-_.';
+		$chars2 = implode('', range('a', 'z') + range(0, 10)) . '-';
+		for ($x = 1; $x <= 100; $x++) {
+			$username = substr(str_shuffle($chars1), 0, $x);
+			$sLength = strlen($username);
+			$emailRemainder = '@' . substr(str_shuffle($chars2), 0, 10) .'.com';
+			$email = $username.$emailRemainder;
+			
+			if ($x == 2) {
+				$expected = '*' . $username[1] . $emailRemainder;
+			} elseif ($x == 1) {
+				$expected = '*' . $emailRemainder;
+			} else {
+				$expected = $username[0] . str_repeat('*', $sLength -2) . $username[$sLength -1] . $emailRemainder;
+			}
+			$actual = $this->AppModel->maskUsernamePartOfEmail($email);
+			$this->assertSame($expected, $actual, "Original string $email");
+		}
+	}
 }

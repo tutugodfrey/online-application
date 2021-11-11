@@ -136,3 +136,7 @@ Configure::write('Cryptable.iv', base64_decode('eEYFL7oDTX9mUIhZ/AL5vX6oZc7136ky
 
 //Number of days users password's are valid, after which they will expire.
 Configure::write('App.pw_validity_age', 180);
+
+//Number of days since the last modified date an application can be accessed by the client
+//determined by CakeTime::wasWithinLast($timeInterval, $dateString, $timezone = NULL) method
+Configure::write('App.access_validity_age', '30 days');
