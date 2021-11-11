@@ -259,4 +259,19 @@ class AppController extends Controller {
 		fclose($fp);
 	}
 
+	/**
+	 * renderError404
+	 * Renders custom 404 error page
+	 *
+	 * @param boolean $refreshNow
+	 * @return void
+	 */
+	public function renderError404($errorMsg = '', $attemptedURL = '') {
+		$errorMsg = (empty($errorMsg))? "ERROR 404: Page does not exist.": $errorMsg;
+		$$attemptedURL = (empty($$attemptedURL))? "/Errors/error404": $attemptedURL;
+		$this->set('name', $errorMsg);
+		$this->set('url', $attemptedURL);
+		$this->response->statusCode(404);
+		$this->render('/Errors/error404');
+	}
 }

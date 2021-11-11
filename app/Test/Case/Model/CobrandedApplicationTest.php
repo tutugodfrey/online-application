@@ -19,6 +19,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		'app.onlineappApip',
 		'app.onlineappUser',
 		'app.onlineappGroup',
+		'app.onlineappApplicationGroup',
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
@@ -66,6 +67,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		// load data
 		$this->loadFixtures('OnlineappApiConfiguration');
+		$this->loadFixtures('OnlineappApplicationGroup');
 		$this->loadFixtures('OnlineappApip');
 		$this->loadFixtures('OnlineappUser');
 		$this->loadFixtures('OnlineappGroup');
@@ -1072,6 +1074,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'application_group_id' => null,
 				'client_id_global' => null,
 				'client_name_global' => null
 			),
@@ -1397,6 +1400,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'application_group_id' => null,
 				'client_id_global' => null,
 				'client_name_global' => null
 			),
@@ -1468,6 +1472,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'csv_exported_date' => null,
 				'external_foreign_id' => null,
 				'sf_opportunity_id' => null,
+				'application_group_id' => null,
 				'client_id_global' => null,
 				'client_name_global' => null
 			),
@@ -2539,46 +2544,6 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
 	}
 
-	public function testSendForCompletion() {
-		$CakeEmail = new CakeEmail('default');
-		$CakeEmail->transport('Debug');
-		$this->CobrandedApplication->CakeEmail = $CakeEmail;
-
-		$app = $this->CobrandedApplication->find(
-			'first',
-			array(
-				'conditions' => array(
-					'CobrandedApplication.user_id' => '1'
-				),
-			)
-		);
-
-		$response = $this->CobrandedApplication->sendForCompletion($app['CobrandedApplication']['id']);
-
-		$expectedResponse = array(
-			'success' => true,
-			'msg' => '',
-			'dba' => 'Doing Business As',
-			'email' => 'testing@axiapayments.com',
-			'fullname' => 'Corporate Contact'
-		);
-
-		// assertions
-		$this->assertTrue($response['success'], 'sendForCompletion with good email address should not fail');
-		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
-
-		$response = $this->CobrandedApplication->sendForCompletion('0');
-
-		$expectedResponse = array(
-			'success' => false,
-			'msg' => 'Invalid application.'
-		);
-
-		// assertions
-		$this->assertFalse($response['success'], 'sendForCompletion with invalid application should fail');
-		$this->assertEquals($expectedResponse, $response, 'Expected response did not match response');
-	}
-
 	public function testRepNotifySignedEmail() {
 		$CakeEmail = new CakeEmail('default');
 		$CakeEmail->transport('Debug');
@@ -2863,7 +2828,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 						'api_exported_date' => null,
 						'csv_exported_date' => null,
 						'client_id_global' => null,
-						'client_name_global' => null
+						'client_name_global' => null,
+						'application_group_id' => null
 					),
 					'Cobrand' => array(
 						'id' => 1,
@@ -2911,6 +2877,9 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'Owner1Name' => array ('value' => 'Owner1NameTest'),
 					'CorpPhone' => array ('value' => null),
 					'PhoneNum' => array ('value' => null),
+					'ApplicationGroup' => array(
+						'access_token' => null
+					)
 			),
 		);
 
@@ -3366,4 +3335,221 @@ class CobrandedApplicationTest extends CakeTestCase {
 			}
 		}
 	}
+
+	/**
+ 	* testAddAppToGroup method
+ 	*
+ 	* @return void
+ 	*/
+	public function testAddAppToGroup() {
+		//Test that application does not get assigned to any ApplicationGroup
+		//since there is no other apps that have any data in common
+		$this->CobrandedApplication->addAppToGroup(1);
+		$this->assertFalse($this->CobrandedApplication->hasAny(array("id" => 1, "application_group_id is not null")));
+
+		//Save an email value for existing app with id=2 which matches that of app with id = 1 (defined in fixture)
+		$value = array(
+			'cobranded_application_id' => 2,
+			'template_field_id' => 19,
+			'name' => 'Owner1Email',
+			'value' => 'testing@axiapayments.com',
+		);
+		$this->CobrandedApplicationValue->save($value);
+
+		//Test that this call will puth both applications under the same ApplicationGroup
+		$this->CobrandedApplication->addAppToGroup(1);
+		$AppData = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => 1)));
+		//The assigned application_group_id should be present in apps with ids 1 and 6 so total of 2 apps in the group
+		$actual = $this->CobrandedApplication->find('all', array(
+			'recursive' => -1, 
+			'conditions' => array('application_group_id' => $AppData['CobrandedApplication']['application_group_id']),
+			'order' => array('id ASC')
+		));
+		$this->assertEquals(2, count($actual));
+		$this->assertEquals(1, $actual[0]['CobrandedApplication']['id']);
+		$this->assertEquals(2, $actual[1]['CobrandedApplication']['id']);
+		$this->assertEquals($actual[0]['CobrandedApplication']['application_group_id'], $actual[1]['CobrandedApplication']['application_group_id']);
+	}
+
+	/**
+ 	* testGetDataForCommonAppValueSearch method
+ 	*
+ 	* @return void
+ 	*/
+	public function testGetDataForCommonAppValueSearch() {
+		$expected = array('testing@axiapayments.com');
+
+		//Test that application id = 1 returns only owner email app value since this is the only value defined in the fixture
+		$actual = $this->CobrandedApplication->getDataForCommonAppValueSearch(1);
+		$this->assertContains('testing@axiapayments.com', $actual);
+
+		//Save an additional email value for the same app id=1 and verify that the returned data is distinct
+		$value = array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 19,
+			'name' => 'ExtraEmailField',
+			'value' => 'testing@axiapayments.com',
+		);
+		$this->CobrandedApplicationValue->save($value);
+
+		//verify that the returned data is distinct, no duplicates
+		$actual = $this->CobrandedApplication->getDataForCommonAppValueSearch(1);
+		$this->assertCount(1, $actual);
+		$this->assertSame($expected, $actual);
+
+		//Save an additional different email value for the same app id=1 and verify it is added to the returned data
+		$value = array(
+			'cobranded_application_id' => 1,
+			'template_field_id' => 19,
+			'name' => 'CFOEmail',
+			'value' => 'cfo@company.com',
+		);
+		$this->CobrandedApplicationValue->save($value);
+
+		//verify that the returned data contains the additional email address, is distinct, no duplicates
+		$actual = $this->CobrandedApplication->getDataForCommonAppValueSearch(1);
+		$this->assertCount(2, $actual);
+		$this->assertContains('cfo@company.com', $actual);
+		$this->assertContains('testing@axiapayments.com', $actual);
+
+		//Save the additional field value that are used for thes search for the same app id=1 and verify they are added to the returned data
+		$value = array(
+			array(
+				'cobranded_application_id' => 1,
+				'template_field_id' => 0,
+				'name' => 'SSN',
+				'value' => '123456789',
+			),
+			array(
+				'cobranded_application_id' => 1,
+				'template_field_id' => 0,
+				'name' => 'TaxID',
+				'value' => '987654321',
+			),
+		);
+		$this->CobrandedApplicationValue->saveMany($value);
+
+		//verify that the returned data contains the additional email address, is distinct, no duplicates
+		$actual = $this->CobrandedApplication->getDataForCommonAppValueSearch(1);
+		$this->assertCount(4, $actual);
+		$this->assertContains('cfo@company.com', $actual);
+		$this->assertContains('testing@axiapayments.com', $actual);
+		$this->assertContains('123456789', $actual);
+		$this->assertContains('987654321', $actual);
+		
+	}
+
+	/**
+ 	* testFindSameClientAppsUsingValuesInCommon method
+ 	*
+ 	* @return void
+ 	*/
+	public function testFindSameClientAppsUsingValuesInCommon() {
+		$id =1;
+		//Test that nothing is returned since Application with id = 1 has not other siblings with common values
+		$this->assertEmpty($this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id));
+
+		//Save an email value for existing app with id=2 which matches that of app with id = 1 (defined in fixture)
+		$value = array(
+			'cobranded_application_id' => 2,
+			'template_field_id' => 19,
+			'name' => 'Owner1Email',
+			'value' => 'testing@axiapayments.com',
+		);
+		$this->CobrandedApplicationValue->save($value);
+
+		//Test that only app id = 2 is returned since it is th only app with values in common with app with id=1
+		$actual = $this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id);
+		$this->assertCount(1, $actual);
+		$this->assertSame(2, $actual[0]['CobrandedApplication']['id']);
+
+		//Save the additional field values that are used for thes search for the same app id=1 and 2 and verify they once again only app id = 2 is returned since
+		$value = array(
+			array(
+				'cobranded_application_id' => 1,
+				'template_field_id' => 0,
+				'name' => 'SSN',
+				'value' => '123456789',
+			),
+			array(
+				'cobranded_application_id' => 2,
+				'template_field_id' => 0,
+				'name' => 'SSN',
+				'value' => '123456789',
+			),
+		);
+		$this->CobrandedApplicationValue->saveMany($value);
+		//Test that only app id = 2 is returned dispite the existaince of more common values
+		$actual = $this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id);
+		$this->assertCount(1, $actual);
+		$this->assertSame(2, $actual[0]['CobrandedApplication']['id']);
+
+		//Save an email value for existing app with id=3 which matches that of app with id = 1 and 2
+		$value = array(
+			'cobranded_application_id' => 3,
+			'template_field_id' => 19,
+			'name' => 'Owner1Email',
+			'value' => 'testing@axiapayments.com',
+		);
+		$this->CobrandedApplicationValue->save($value);
+		//Test that only app id = 2 and 3 are returned since they have values in common with app with id=1
+		$actual = $this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id);
+		$this->assertCount(2, $actual);
+
+		$actualIds = Hash::extract($actual, '{n}.CobrandedApplication.id');
+		//check app ids are as expected
+		$this->assertContains(2, $actualIds);
+		$this->assertContains(3, $actualIds);
+	}
+
+	/**
+ 	* testFindGroupedApps method
+ 	*
+ 	* @return void
+ 	*/
+	public function testFindGroupedApps() {
+		//Save common data in field values across 3 apps that are used to create app sibling groups
+		$value = array(
+			array(
+				'cobranded_application_id' => 1,
+				'template_field_id' => 5,
+				'name' => 'SSN',
+				'value' => '123456789',
+			),
+			array(
+				'cobranded_application_id' => 2,
+				'template_field_id' => 5,
+				'name' => 'SSN',
+				'value' => '123456789',
+			),
+			array(
+				'cobranded_application_id' => 3,
+				'template_field_id' => 5,
+				'name' => 'SomeEmail',
+				'value' => 'testing@axiapayments.com',
+			)
+		);
+		$this->CobrandedApplicationValue->saveMany($value);
+		//create a group of those 3 apps
+		$this->CobrandedApplication->addAppToGroup(1);
+		//Get the data of the 3 apps
+		$expected = $this->CobrandedApplication->find('all', 
+			array(
+				'recursive' => -1,
+				'conditions' => array('id' => array(1,2,3)),
+			));
+		$expectedGroupId = $expected[0]['CobrandedApplication']['application_group_id'];
+
+		$actual = $this->CobrandedApplication->findGroupedApps($expectedGroupId);
+		$this->assertCount(3, $actual);
+		$this->assertSame($expectedGroupId, $actual[0]['CobrandedApplication']['application_group_id']);
+		$this->assertSame($expectedGroupId, $actual[1]['CobrandedApplication']['application_group_id']);
+		$this->assertSame($expectedGroupId, $actual[2]['CobrandedApplication']['application_group_id']);
+		foreach ($actual as $data) {		
+			$expectedAppIdFound = ($data['CobrandedApplication']['id'] == 1 || $data['CobrandedApplication']['id'] == 2 || $data['CobrandedApplication']['id'] == 3);
+			$this->assertTrue($expectedAppIdFound);
+		}
+
+	}
+
 }

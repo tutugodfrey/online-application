@@ -361,4 +361,52 @@ class AppModel extends Model {
 		return (bool)preg_match("/^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$/", $uuid);
 	}
 
+/**
+ * genRandomSecureToken
+ * Generates a string of pseudo-random bytes hexadecimally encoded making sure a cryptographically strong algorithm is used to produce the pseudo-random bytes.
+ * The length parameter is intended for the length in bytes and since the resulting pseudo-random bytes will be returned hexadecimally encoded
+ * the resulting token will be twice the specified lenfth
+ * 
+ * @param int $length the length in bytes defaults to 32 which will result in a 64 character hex string.
+ * @return the hexadecimally encoded pseudo-random bytes which will be double the specified length.
+ */
+	public function genRandomSecureToken(int $length = null) {
+		if (!$length) {
+			$length = 32;
+		}
+		$cstrong = null;
+		$token = bin2hex(openssl_random_pseudo_bytes($length,$cstrong ));
+		if ($cstrong === false) {
+			$token = bin2hex(random_bytes($length));
+		}
+		return $token;
+	}
+
+/**
+ * maskUsernamePartOfEmail
+ * Expects an email string, truncates and masks the username part of the email with asterisks, for example:
+ * username@email.com becomes u******e@email.com
+ * mo@email.com becomes *o@email.com
+ * s@email.com becomes *@email.com
+ * 
+ * @param string $email an email address
+ * @return string the masked email addres
+ */
+	public function maskUsernamePartOfEmail(string $email) {
+		if (!empty($email)) {
+			$emailUserName = preg_replace('/^([\w\-\.]+)(@[\w\-]+\.)+([\w\-]{2,4})$/', '\1', $email);
+			$sLength = strlen($emailUserName);
+			if ($sLength == 2) {
+				$emailUserName = '*' . $emailUserName[1];
+			} elseif($sLength == 1) {
+				$emailUserName = '*';
+			} else {
+				$emailUserName =  $emailUserName[0] . str_repeat('*', $sLength -2) . $emailUserName[$sLength -1];
+			}
+			
+			$emailRemainder = preg_replace('/^([\w\-\.]+)(@[\w\-]+\.)+([\w\-]{2,4})$/', '\2\3', $email);
+			return $emailUserName . $emailRemainder;
+		}
+	}
+
 }
