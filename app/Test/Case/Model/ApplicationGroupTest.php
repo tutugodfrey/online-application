@@ -102,7 +102,7 @@ class ApplicationGroupTest extends CakeTestCase {
 			// update/create
 			$result = $this->ApplicationGroup->renewAccessToken(Hash::get($result, 'ApplicationGroup.id'), false);
 
-			$this->assertSame(Hash::get($result, 'ApplicationGroup.token_renew_count', 0), $x);
+			$this->assertEqual(Hash::get($result, 'ApplicationGroup.token_renew_count', 0), $x);
 			$this->assertNotEqual($originalToken, Hash::get($result, 'ApplicationGroup.access_token'));
 			$this->assertSame(64, strlen($result['ApplicationGroup']['access_token']));
 		}
