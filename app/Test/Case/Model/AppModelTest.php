@@ -126,7 +126,7 @@ class AppModelTest extends CakeTestCase {
 /**
  * testIsEncrypted
  *
- * @covers AppModel::testIsEncrypted()
+ * @covers AppModel::isEncrypted()
  * @return void
  */
 	public function testIsEncrypted() {
@@ -157,7 +157,8 @@ class AppModelTest extends CakeTestCase {
 		$this->assertSame($expected, $actual);
 	}
 
-/* testGenRandomSecureToken
+/**
+ * testGenRandomSecureToken
  *
  * @covers AppModel::genRandomSecureToken()
  * @return void
@@ -167,7 +168,8 @@ class AppModelTest extends CakeTestCase {
 		$this->assertEquals(128,strlen($this->AppModel->genRandomSecureToken(64)));
 	}
 
-/* testMaskUsernamePartOfEmail
+/** 
+ * testMaskUsernamePartOfEmail
  *
  * @covers AppModel::maskUsernamePartOfEmail()
  * @return void
