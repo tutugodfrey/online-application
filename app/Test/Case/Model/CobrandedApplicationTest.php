@@ -3339,6 +3339,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	/**
  	* testAddAppToGroup method
  	*
+ 	* @covers CobrandedApplication::addAppToGroup();
  	* @return void
  	*/
 	public function testAddAppToGroup() {
@@ -3374,6 +3375,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	/**
  	* testGetDataForCommonAppValueSearch method
  	*
+ 	* @covers CobrandedApplication::getDataForCommonAppValueSearch();
  	* @return void
  	*/
 	public function testGetDataForCommonAppValueSearch() {
@@ -3442,6 +3444,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	/**
  	* testFindSameClientAppsUsingValuesInCommon method
  	*
+ 	* @covers CobrandedApplication::findSameClientAppsUsingValuesInCommon();
  	* @return void
  	*/
 	public function testFindSameClientAppsUsingValuesInCommon() {
@@ -3505,6 +3508,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	/**
  	* testFindGroupedApps method
  	*
+ 	* @covers CobrandedApplication::findGroupedApps();
  	* @return void
  	*/
 	public function testFindGroupedApps() {
