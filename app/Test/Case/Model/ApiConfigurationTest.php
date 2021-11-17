@@ -43,7 +43,7 @@ class ApiConfigurationTest extends CakeTestCase {
 /**
  * testBeforeSave
  *
- * @covers AppModel::beforeSave()
+ * @covers ApiConfiguration::beforeSave()
  * @return void
  */
 	public function testBeforeSave() {
@@ -66,7 +66,7 @@ class ApiConfigurationTest extends CakeTestCase {
 /**
  * testAfterFind
  *
- * @covers AppModel::afterFind()
+ * @covers ApiConfiguration::afterFind()
  * @return void
  */
 	public function testAfterFind() {
