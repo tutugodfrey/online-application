@@ -1990,8 +1990,7 @@ class CobrandedApplication extends AppModel {
 
 		$args = array(
 			'from' => $from,
-			// 'to' => $to,
-            'to' => 'omota@axiamed.com',
+			'to' => $to,
 			'subject' => $subject,
 			'format' => $format,
 			'template' => $template,
