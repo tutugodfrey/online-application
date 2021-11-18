@@ -227,6 +227,7 @@ class CoversheetTest extends CakeTestCase {
 /**
  * testPdfGen method
  *
+ * @covers Coversheet::pdfGen()
  * @return void
  */
 	public function testPdfGen() {
@@ -249,7 +250,7 @@ class CoversheetTest extends CakeTestCase {
 		fwrite($fh, "");
 		fclose($fh);
 
-		$response = $this->Coversheet->sendCoversheet(1, array('to' => 'test@axiapayments.com'));
+		$response = $this->Coversheet->sendCoversheet(1, array('to' => 'test@axiamed.com'));
 		$this->assertTrue($response);
 
 		$response = $this->Coversheet->sendCoversheet();
@@ -394,5 +395,258 @@ class CoversheetTest extends CakeTestCase {
 			$this->assertSame('Some Date cannot be in the past!', $this->Coversheet->dateIsNotInThePast($check));
 		}
 		$this->assertTrue($this->Coversheet->dateIsNotInThePast([]));
+	}
+
+
+/**
+ * testReseller
+ *
+ * @covers Coversheet::reseller()
+ * @return void
+ */
+	public function testReseller() {
+		$data = [
+			'Coversheet' => [
+				'setup_reseller' => 'Some ref',
+				'setup_reseller_type' => '',
+				'setup_reseller_pct' => ''
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->reseller());
+
+		$data = [
+			'Coversheet' => [
+				'setup_reseller' => 'Some res',
+				'setup_reseller_type' => 'Some type',
+				'setup_reseller_pct' => '100'
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->reseller());
+	}
+
+/**
+ * testReferrer
+ *
+ * @covers Coversheet::referrer()
+ * @return void
+ */
+	public function testReferrer() {
+		$data = [
+			'Coversheet' => [
+				'setup_referrer' => 'Some ref',
+				'setup_referrer_type' => '',
+				'setup_referrer_pct' => ''
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->referrer());
+
+		$data = [
+			'Coversheet' => [
+				'setup_referrer' => 'Some ref',
+				'setup_referrer_type' => 'Some type',
+				'setup_referrer_pct' => '100'
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->referrer());
+	}
+
+/**
+ * testDebit
+ *
+ * @covers Coversheet::debit()
+ * @return void
+ */
+	public function testDebit() {
+		$data = [
+			'Coversheet' => [
+				'debit' => 'yes',
+				'cp_encrypted_sn' => '',
+				'cp_pinpad_ra_attached' => '0',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->debit());
+
+		$data = [
+			'Coversheet' => [
+				'debit' => 'yes',
+				'cp_encrypted_sn' => 'dummy val',
+				'cp_pinpad_ra_attached' => '1',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->debit());
+	}
+
+/**
+ * testCheck_guarantee
+ *
+ * @covers Coversheet::check_guarantee()
+ * @return void
+ */
+	public function testCheck_guarantee() {
+		$data = [
+			'Coversheet' => [
+				'cp_check_guarantee' => 'yes',
+				'cp_check_guarantee_info' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->check_guarantee());
+		
+		$data['Coversheet']['cp_check_guarantee_info'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->check_guarantee());
+	}
+
+/**
+ * testPos
+ *
+ * @covers Coversheet::pos()
+ * @return void
+ */
+	public function testPos() {
+		$data = [
+			'Coversheet' => [
+				'cp_pos' => 'yes',
+				'cp_pos_contact' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->pos());
+		
+		$data['Coversheet']['cp_pos_contact'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->pos());
+	}
+
+/**
+ * testMicros
+ *
+ * @covers Coversheet::micros()
+ * @return void
+ */
+	public function testMicros() {
+		$data = [
+			'Coversheet' => [
+				'micros' => 'yes',
+				'micros_billing' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->micros());
+		
+		$data['Coversheet']['micros_billing'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->micros());
+	}
+
+/**
+ * testMoto
+ *
+ * @covers Coversheet::moto()
+ * @return void
+ */
+	public function testMoto() {
+		$data = [
+			'Coversheet' => [
+				'moto' => 'internet',
+				'moto_online_chd' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->moto());
+		
+		$data['Coversheet']['moto_online_chd'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->moto());
+	}
+
+/**
+ * testGateway_package
+ *
+ * @covers Coversheet::gateway_package()
+ * @return void
+ */
+	public function testGateway_package() {
+		$data = [
+			'Coversheet' => [
+				'gateway_option' => 'Gateway',
+				'gateway_package' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->gateway_package());
+		
+		$data['Coversheet']['gateway_package'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->gateway_package());
+	}
+
+/**
+ * testGateway_gold_subpackage
+ *
+ * @covers Coversheet::gateway_gold_subpackage()
+ * @return void
+ */
+	public function testGateway_gold_subpackage() {
+		$data = [
+			'Coversheet' => [
+				'gateway_package' => 'gold',
+				'gateway_gold_subpackage' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->gateway_gold_subpackage());
+		
+		$data['Coversheet']['gateway_gold_subpackage'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->gateway_gold_subpackage());
+	}
+
+/**
+ * testGateway_epay
+ *
+ * @covers Coversheet::gateway_epay()
+ * @return void
+ */
+	public function testGateway_epay() {
+		$data = [
+			'Coversheet' => [
+				'gateway_option' => 'Gateway',
+				'gateway_epay' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->gateway_epay());
+		
+		$data['Coversheet']['gateway_epay'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->gateway_epay());
+	}
+
+/**
+ * testGateway_billing
+ *
+ * @covers Coversheet::gateway_billing()
+ * @return void
+ */
+	public function testGateway_billing() {
+		$data = [
+			'Coversheet' => [
+				'gateway_option' => 'Gateway',
+				'gateway_billing' => '',
+			]
+		];
+		$this->Coversheet->set($data);
+		$this->assertFalse($this->Coversheet->gateway_billing());
+		
+		$data['Coversheet']['gateway_billing'] = 'non empty';
+		$this->Coversheet->set($data);
+		$this->assertTrue($this->Coversheet->gateway_billing());
 	}
 }
