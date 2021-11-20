@@ -649,4 +649,24 @@ class CoversheetTest extends CakeTestCase {
 		$this->Coversheet->set($data);
 		$this->assertTrue($this->Coversheet->gateway_billing());
 	}
+
+/**
+ * testIsValidDate
+ *
+ * @covers Coversheet::isValidDate()
+ * @return void
+ */
+	public function testIsValidDate() {
+		$data = ['date' => null];
+		//Test empty value is allowed
+		$this->assertTrue($this->Coversheet->isValidDate($data));
+
+		//Test invalid date
+		$data['date'] = 'this is not a date';
+		$this->assertSame('Invalid Date!', $this->Coversheet->isValidDate($data));
+
+		//Test valid date
+		$data['date'] = '2029-01-01';
+		$this->assertTrue($this->Coversheet->isValidDate($data));
+	}
 }

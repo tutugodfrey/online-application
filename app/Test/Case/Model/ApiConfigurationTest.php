@@ -70,7 +70,14 @@ class ApiConfigurationTest extends CakeTestCase {
  * @return void
  */
 	public function testAfterFind() {
-		$actual = $this->ApiConfiguration->find('first');
+		$data = [
+			'ApiConfiguration' => [
+				'client_secret' => 'client 123654',
+                'access_token' => 'access 321654',
+                'refresh_token' => 'refresher 123654'
+			]
+		];
+		$actual = $this->ApiConfiguration->afterFind($data, false);
 		
 		$this->assertFalse($this->ApiConfiguration->isEncrypted($actual['ApiConfiguration']['client_secret']));
 		$this->assertFalse($this->ApiConfiguration->isEncrypted($actual['ApiConfiguration']['access_token']));

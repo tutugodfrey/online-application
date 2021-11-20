@@ -716,4 +716,43 @@ class UserTest extends CakeTestCase {
 		$this->assertContains(2, $tstActualVals);
 		$this->assertContains(3, $tstActualVals);
 	}
+
+/**
+ * testTemplatesMatchCobrand()
+ *
+ * @covers User::templatesMatchCobrand()
+ * @return void
+ */
+	public function testTemplatesMatchCobrand() {
+		//Test invalid parameters return true
+		$this->assertTrue($this->User->templatesMatchCobrand([]));
+
+		//Test no cobrand to compare to returns false
+		$data['User'] = [
+			'Template' => [99,125,66],
+			'Cobrand' => []
+		]; //bogus template ids
+		$this->User->set($data);
+		$this->assertFalse($this->User->templatesMatchCobrand($data));
+
+		//Test fake cobrands to compare to returns true
+		$data['User'] = [
+			'Template' => [99,125,66],
+			'Cobrand' => [18,19]
+		]; //bogus template ids
+		$this->User->set($data);
+		$this->assertTrue($this->User->templatesMatchCobrand($data));
+	}
+
+/**
+ * testGetCombinedCobrandTemplateList()
+ *
+ * @covers User::getCombinedCobrandTemplateList()
+ * @return void
+ */
+	public function testGetCombinedCobrandTemplateList() {
+		$expected = array(6 => 'Corral - Template 1 for Corral');
+		$actual = $this->User->getCombinedCobrandTemplateList([6]);
+		$this->assertSame($expected, $actual);
+	}
 }
