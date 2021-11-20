@@ -45,7 +45,7 @@ class RightSignatureTest extends CakeTestCase {
 /**
  * testGetApiConfig
  *
- * @covers ApiConfiguration::getApiConfig()
+ * @covers RightSignature::getApiConfig()
  * @return void
  */
 	public function testGetApiConfig() {
@@ -57,7 +57,7 @@ class RightSignatureTest extends CakeTestCase {
 /**
  * testRenewAccessTokenIfExpired
  *
- * @covers ApiConfiguration::renewAccessTokenIfExpired()
+ * @covers RightSignature::renewAccessTokenIfExpired()
  * @return void
  */
 	public function testRenewAccessTokenIfExpired() {
@@ -73,7 +73,7 @@ class RightSignatureTest extends CakeTestCase {
 /**
  * test_GetRefreshTokenParamsStr
  *
- * @covers ApiConfiguration::_getRefreshTokenParamsStr()
+ * @covers RightSignature::_getRefreshTokenParamsStr()
  * @return void
  */
 	public function test_GetRefreshTokenParamsStr() {
@@ -90,7 +90,7 @@ class RightSignatureTest extends CakeTestCase {
 /**
  * testIsExpiredToken
  *
- * @covers ApiConfiguration::isExpiredToken()
+ * @covers RightSignature::isExpiredToken()
  * @return void
  */
 	public function testIsExpiredToken() {
