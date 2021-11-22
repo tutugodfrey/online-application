@@ -1076,7 +1076,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'sf_opportunity_id' => null,
 				'application_group_id' => null,
 				'client_id_global' => null,
-				'client_name_global' => null
+				'client_name_global' => null,
+				'doc_secret_token' => null,
 			),
 			'Template' => array(
 				'id' => (int)1,
@@ -1364,6 +1365,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals($expected, $actual, 'getTemplateAndAssociatedValues test failed when using logged in user');
 	}
 
+   /**
+ 	* testSaveApplicationValue method
+ 	*
+ 	* @covers CobrandedApplication::saveApplicationValue();
+ 	* @return void
+ 	*/
 	public function testSaveApplicationValue() {
 		// TODO: handle application value not found
 
@@ -1402,7 +1409,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'sf_opportunity_id' => null,
 				'application_group_id' => null,
 				'client_id_global' => null,
-				'client_name_global' => null
+				'client_name_global' => null,
+				'doc_secret_token' => null,
 			),
 			'TemplateField' => array(
 				'id' => 1,
@@ -1474,7 +1482,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'sf_opportunity_id' => null,
 				'application_group_id' => null,
 				'client_id_global' => null,
-				'client_name_global' => null
+				'client_name_global' => null,
+				'doc_secret_token' => null,
 			),
 			'TemplateField' => array(
 				'id' => 4,
@@ -1522,6 +1531,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertEquals(false, $actual['CobrandedApplicationValue']['value'], 'Expected updated [value] property.');
 	}
 
+   /**
+ 	* testBuildExportData method
+ 	*
+ 	* @covers CobrandedApplication::buildExportData();
+ 	* @return void
+ 	*/
 	public function testBuildExportData() {
 		// create a new application from template with id 4
 		// or find the template with a name = 'Template used to test afterSave of app values'
@@ -1962,6 +1977,12 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertNotEmpty($actualValues, 'Expected values to not be empty');
 	}
 
+	/**
+ 	* testSaveFields method
+ 	*
+ 	* @covers CobrandedApplication::saveFields();
+ 	* @return void
+ 	*/
 	public function testSaveFields() {
 		// knowns:
 		//     - user
@@ -2948,6 +2969,49 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertInstanceOf('RightSignature', $response, 'Expected response to be instance of RightSignature Object');
 	}
 
+	/**
+	 * testSendSignedAppToUw
+	 *
+	 * @covers CobrandedApplication::sendSignedAppToUw()
+	 * @return void
+	 */
+	public function testSendSignedAppToUw() {
+		$CakeEmail = new CakeEmail('default');
+		$CakeEmail->transport('Debug');
+		$this->CobrandedApplication->CakeEmail = $CakeEmail;
+
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'conditions' => array(
+					'CobrandedApplication.user_id' => '1'
+				),
+			)
+		);
+		$response = $this->CobrandedApplication->sendSignedAppToUw($app['CobrandedApplication']['id']);
+
+		$expectedResponse = array(
+			'success' => true,
+			'msg' => '',
+		);
+
+		// assertions
+		$this->assertTrue($response, 'testSendSignedAppToUw with valid application should not fail');
+
+		$app = $this->CobrandedApplication->find(
+			'first',
+			array(
+				'recursive' => -1,
+				'conditions' => array(
+					'CobrandedApplication.user_id' => $app['CobrandedApplication']['id']
+				),
+			)
+		);
+		$this->assertNotEmpty($app['CobrandedApplication']['doc_secret_token']);
+	}
+
+
+
 	public function testSubmitForReviewEmail() {
 		$CakeEmail = new CakeEmail('default');
 		$CakeEmail->transport('Debug');
@@ -3339,6 +3403,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	/**
  	* testAddAppToGroup method
  	*
+ 	* @covers CobrandedApplication::addAppToGroup();
  	* @return void
  	*/
 	public function testAddAppToGroup() {
@@ -3374,6 +3439,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	/**
  	* testGetDataForCommonAppValueSearch method
  	*
+ 	* @covers CobrandedApplication::getDataForCommonAppValueSearch();
  	* @return void
  	*/
 	public function testGetDataForCommonAppValueSearch() {
@@ -3442,6 +3508,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 	/**
  	* testFindSameClientAppsUsingValuesInCommon method
  	*
+ 	* @covers CobrandedApplication::findSameClientAppsUsingValuesInCommon();
  	* @return void
  	*/
 	public function testFindSameClientAppsUsingValuesInCommon() {
@@ -3503,8 +3570,36 @@ class CobrandedApplicationTest extends CakeTestCase {
 	}
 
 	/**
+ 	* testBeforeDelete method
+ 	*
+ 	* @covers CobrandedApplication::beforeDelete();
+ 	* @return void
+ 	*/
+	public function testBeforeDeleteUnreferenceApplicationGroupIsDeleted() {
+		//Save an email value for existing app with id=2 which matches that of app with id = 1 (defined in fixture)
+		$value = array(
+			'cobranded_application_id' => 2,
+			'template_field_id' => 19,
+			'name' => 'Owner1Email',
+			'value' => 'testing@axiapayments.com',
+		);
+		$this->CobrandedApplicationValue->save($value);
+		//this call will puth both applications under the same ApplicationGroup
+		$this->CobrandedApplication->addAppToGroup(1);
+		$groupId = $this->CobrandedApplication->field('application_group_id', ['id' => 1]);
+
+		$this->CobrandedApplication->deleteAll(['id' => 1], false, false);
+		$this->assertTrue($this->CobrandedApplication->ApplicationGroup->hasAny(['id' => $groupId]));
+		$this->CobrandedApplication->id = 2;
+		//calling the callback method directly should delete the ApplicationGroup record
+		$this->CobrandedApplication->beforeDelete(false);
+		$this->assertFalse($this->CobrandedApplication->ApplicationGroup->hasAny(['id' => $groupId]));
+	}
+
+	/**
  	* testFindGroupedApps method
  	*
+ 	* @covers CobrandedApplication::findGroupedApps();
  	* @return void
  	*/
 	public function testFindGroupedApps() {

@@ -493,41 +493,6 @@ class UsersController extends AppController {
 			'viewVars' => ['content' => $msg],
 		];
 	}
-/**
- * Provides Bulk Edit functionality
- *
- * @return null
- */
-
-	public function admin_bulk_edit() {
-		if (empty($this->request->data)) {
-			$this->paginate = array(
-				'limit' => 150,
-				'contain' => array(
-					'Group',
-					'Template' => array('fields' => array('id')),
-					'Cobrand' => array('fields' => array('id')),
-				),
-				'recursive' => -1,
-				'order' => array('User.firstname' => 'ASC'),
-			);
-
-			$users = $this->paginate('User');
-			$cobrands = $this->User->Cobrand->getList();
-			$templates = $this->User->Template->getList();
-			$groups = $this->User->Group->find('list');
-			$this->set(compact('cobrands', 'users', 'groups', 'templates'));
-		} else {
-			$relatedData = Hash::extract($this->request->data, 'User');
-			$userData = Hash::remove($this->request->data, 'User');
-			$mergeData = Hash::merge($userData, $relatedData);
-			$changedUsers = $this->User->arrayDiff($mergeData);
-			if ($this->User->saveAll($changedUsers, array('deep' => true))) {
-				$this->_success("Users Saved!");
-				$this->redirect('/admin/users');
-			}
-		}
-	}
 
 /**
  * Provides functionality for editing users
