@@ -278,17 +278,6 @@ class AppModel extends Model {
 	}
 
 /**
- * mcryptEncryptStr
- * ************************* This function is deprecated and should not be used except for migrating mcrypt encrypted data to OpenSSL encryption
- * ************************* This will be removed in the near future 08/24/2021
- * @param string $str a string to excrypt using mcrypt_encrypt 
- * @return the string encrypted and base64encpded
- */
-	public function mcryptEncryptStr($str) {
-		return base64_encode(mcrypt_encrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), $str, 'cbc', Configure::read('Cryptable.iv')));
-	}
-
-/**
  * encrypt
  * OpenSSL Encryption method used for highly sensitive customer data
  * 
@@ -306,17 +295,6 @@ class AppModel extends Model {
 		$ciphertext = base64_encode($iv.$hmac.$ciphertext_raw);
 
 		return $ciphertext;
-	}
-
-/**
- * mcryptDencrypt
- * ************************* This function is deprecated and should not be used except for migrating mcrypt encrypted data to OpenSSL encryption
- * ************************* This will be removed in the near future 08/24/2021
- * @param string $str a string excrypted using $this->mcryptEncryptStr() 
- * @return the decrypted string
- */
-	public function mcryptDencrypt($str) {
-		return trim(mcrypt_decrypt(Configure::read('Cryptable.cipher'), Configure::read('Cryptable.key'), base64_decode($str), 'cbc', Configure::read('Cryptable.iv')));
 	}
 
 /**

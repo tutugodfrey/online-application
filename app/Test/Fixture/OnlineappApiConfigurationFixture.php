@@ -6,6 +6,12 @@
 class OnlineappApiConfigurationFixture extends CakeTestFixture {
 
 /**
+ * Table name
+ *
+ * @var string
+ */
+	public $table = 'onlineapp_api_configurations';
+/**
  * Fields
  *
  * @var array

@@ -126,7 +126,7 @@ class AppModelTest extends CakeTestCase {
 /**
  * testIsEncrypted
  *
- * @covers AppModel::testIsEncrypted()
+ * @covers AppModel::isEncrypted()
  * @return void
  */
 	public function testIsEncrypted() {
@@ -146,7 +146,7 @@ class AppModelTest extends CakeTestCase {
 	}
 
 /**
- * testEncrypt
+ * testDecrypt
  *
  * @covers AppModel::decrypt()
  * @return void
@@ -157,7 +157,8 @@ class AppModelTest extends CakeTestCase {
 		$this->assertSame($expected, $actual);
 	}
 
-/* testGenRandomSecureToken
+/**
+ * testGenRandomSecureToken
  *
  * @covers AppModel::genRandomSecureToken()
  * @return void
@@ -167,7 +168,19 @@ class AppModelTest extends CakeTestCase {
 		$this->assertEquals(128,strlen($this->AppModel->genRandomSecureToken(64)));
 	}
 
-/* testMaskUsernamePartOfEmail
+/** 
+ * testIsValidUUID
+ *
+ * @covers AppModel::isValidUUID()
+ * @return void
+ */
+	public function testIsValidUUID() {
+		$this->assertFalse($this->AppModel->isValidUUID('not valid'));
+		$this->assertTrue($this->AppModel->isValidUUID(CakeText::uuid()));
+
+	}
+/** 
+ * testMaskUsernamePartOfEmail
  *
  * @covers AppModel::maskUsernamePartOfEmail()
  * @return void

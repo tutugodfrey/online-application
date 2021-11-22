@@ -672,55 +672,6 @@ class User extends AppModel {
 	}
 
 /**
- * arrayDiff
- * Checks for difference between existing data in the database and the data passed to function
- *
- * @todo ****This method is not in used and should be removed in the near future********
- * @param array $change Array of users data
- * @return array
- */
-	public function arrayDiff($change) {
-		$original = $this->find('all',
-				array(
-					'contain' => array(
-						'Template' => array(
-							'fields' => array('Template.id')
-						),
-						'Cobrand' => array(
-							'fields' => array('Cobrand.id')
-						)
-					),
-					'fields' => array(
-						'User.id',
-						'User.firstname',
-						'User.lastname',
-						'User.email',
-						'User.group_id',
-						'User.template_id',
-						'User.active'
-					),
-					'recursive' => -1,
-					'order' => array('User.firstname' => 'ASC'),
-					'limit' => 150
-				)
-		);
-		$user = Hash::remove($original, '{n}.Cobrand.{n}.UsersCobrand');
-		$user = Hash::remove($user, '{n}.Template.{n}.UsersTemplate');
-		$user = Hash::remove($user, '{n}.Template.name');
-		$user = Hash::flatten($user);
-		foreach ($user as $key => $value) {
-			if (preg_match("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", $key)) {
-				$newKey = preg_replace("/^(.*)[\.](Template|Cobrand)[\.](.*)[\.].*$/", "$1.$2.$2.$3", $key);
-				unset($user[$key]);
-				$user[$newKey] = $value;
-			}
-		}
-		$user = Hash::expand($user);
-		$changedUsers = Hash::diff($change, $user);
-		return $changedUsers;
-	}
-
-/**
  * getCobrandIds
  * Get all UsersCobrands that belong to a user
  *
