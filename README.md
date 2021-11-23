@@ -7,14 +7,14 @@ merchant application.  It is built to be flexible and customizable with the
 ability to easily add "Cobrands" Partner Branded application "Templates."                                                  
 The templates correspond to PDF signature templates that are integrated with                                               
 [RightSignature](https://rightsignature.com).  This application also provides a                                            
-basic [RestAPI](https://redmine.axiapayments.com/projects/onlineapp/wiki/Application_Programming_Interface) to allow merchants to programmatically create new applications
+basic [RestAPI] to allow to programmatically create new applications
                                                                                                                            
                                                                                                                            
 Building the Application                                                                                                   
 ----------------                                                                                                           
                                                                                                                            
 ```                                                                                                                        
-git clone git@git.axiapayments.com:axia/online-application.git                                                             
+git clone git@github.com:PaymentFusion/online-application.git                                                             
 cd online-application                                                                                                      
 composer install && composer update
 app/Console/cake Migrations.migration run all                                                                              
