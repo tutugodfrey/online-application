@@ -1064,4 +1064,99 @@ class TemplateTest extends CakeTestCase {
 		$actual = $this->Template->setCobrandsTemplatesList($tstData);
 		$this->assertEquals($expected, $actual);
 	}
+
+/**
+ * test__BuildMergeFieldName
+ *
+ * @covers Template::__buildMergeFieldName()
+ * @return void
+ */
+	public function test__BuildMergeFieldName() {
+		$reflection = new ReflectionClass('Template');
+		$method = $reflection->getMethod('__buildMergeFieldName');
+		$method->setAccessible(true);
+		$pageName = 'Page One';
+		$sectionName = 'Section XYZ';
+		$fieldName = 'Field XYZ';
+
+		$actual = $method->invokeArgs($this->Template, [$pageName, $sectionName, $fieldName]);
+		$expected = 'PO_SX_FieldXYZ';
+		$this->assertEqual($expected, $actual);
+	}
+
+/**
+ * test__GetFLOEW
+ *
+ * @covers Template::__getFLOEW()
+ * @return void
+ */
+	public function test__GetFLOEW() {
+		$reflection = new ReflectionClass('Template');
+		$method = $reflection->getMethod('__getFLOEW');
+		$method->setAccessible(true);
+		$words = 'stardate? picard & (obrian) &&computer&& #kobayashi';
+
+		$actual = $method->invokeArgs($this->Template, [$words]);
+
+		$expected = 'spock';
+		$this->assertEqual($expected, $actual);
+	}
+
+/**
+ * test__stripString
+ *
+ * @covers Template::__stripString()
+ * @return void
+ */
+	public function test__stripString() {
+		$reflection = new ReflectionClass('Template');
+		$method = $reflection->getMethod('__stripString');
+		$method->setAccessible(true);
+		$words = 'stardate? picard & (obrian) &&computer&& #kobayashi';
+
+		$actual = $method->invokeArgs($this->Template, [$words]);
+		$expected = 'stardate picard  obrian computer kobayashi';
+		$this->assertEqual($expected, $actual);
+
+		$actual = $method->invokeArgs($this->Template, [$words, true]);
+		$expected = 'stardatepicardobriancomputerkobayashi';
+		$this->assertEqual($expected, $actual);
+	}
+
+/**
+ * testRemovable
+ *
+ * @covers Template::removable()
+ * @return void
+ */
+	public function testRemovable() {
+		$this->assertFalse($this->Template->removable(1));
+		$this->assertTrue($this->Template->removable(99999));
+	}
+
+/**
+ * testGetOrphanedTemplates
+ *
+ * @covers Template::getOrphanedTemplates()
+ * @return void
+ */
+	public function testGetOrphanedTemplates() {
+		$rsTemplateIds = [str_shuffle('loremipsumdolorcitametavecamourinfit')];
+		$actual = $this->Template->getOrphanedTemplates($rsTemplateIds);
+		$expected = array(
+			array(
+				'Template' => array(
+					'id' => 6,
+					'name' => 'Template 1 for Corral',
+					'rightsignature_template_guid' => '123456789mdolorcitametavecamourinfit'
+				),
+				'Cobrand' => array(
+					'partner_name' => 'Corral',
+					'id' => 4
+				)
+			)
+		);
+		$this->assertSame($expected, $actual);
+
+	}
 }
