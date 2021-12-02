@@ -94,6 +94,7 @@ class OnlineappTemplateFixture extends CakeTestFixture {
 			'modified' => '2007-03-18 10:41:31',
 			'owner_equity_threshold' => 50,
 			'email_app_pdf' => true,
+			'rightsignature_template_guid' => '123456789mdolorcitametavecamourinfit'
 		),
 	);
 }
