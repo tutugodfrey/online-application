@@ -59,6 +59,22 @@ class User extends AppModel {
 				'rule' => array('numeric'),
 			),
 		),
+		'firstname' => array(
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => false,
+	            'allowEmpty' => true,
+	        ),
+		),
+		'lastname' => array(
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => false,
+	            'allowEmpty' => true,
+	        ),
+		),
 	);
 
 	public $virtualFields = array(

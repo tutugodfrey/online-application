@@ -17,8 +17,16 @@ class Template extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'rule' => array('notBlank'),
-			'message' => array('Template name cannot be empty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'message' => array('Template name cannot be empty'),
+			),
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => true,
+	            'allowEmpty' => false,
+	        ),
 		),
 		'cobrand_id' => array(
 			'rule' => array('numeric'),
@@ -55,6 +63,18 @@ class Template extends AppModel {
 			'foreignKey' => 'cobrand_id'
 		)
 	);
+
+/**
+ * beforeSave callback
+ *
+ * @param array $options options param required by callback
+ * @return void
+ */
+	public function beforeSave($options = array()) {
+		if (!empty($this->data[$this->alias]['description'])) {
+            $this->data[$this->alias]['description'] = $this->removeAnyMarkUp($this->data[$this->alias]['description']);
+        }
+	}
 
 	public function getList($cobrandId = null) {
 		$conditions = array();

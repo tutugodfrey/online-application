@@ -19,6 +19,14 @@ class Coversheet extends AppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	public $validate = array(
+		'setup_field_other' => array(
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => false,
+	            'allowEmpty' => true,
+	        ),
+		),
 		'setup_banking' => array(
 			'rule' => array('comparison', '==', '1'),
 			'message' => 'Required'
@@ -40,8 +48,16 @@ class Coversheet extends AppModel {
 			'message' => 'Equipment Type: Select One'
 		),
 		'setup_install' => array(
-			'rule' => 'notBlank',
-			'message' => 'Someone has got to perform the install'
+			'notBlank' => array(
+				'rule' => 'notBlank',
+				'message' => 'Someone has got to perform the install'
+			),
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => true,
+	            'allowEmpty' => false,
+	        ),
 		 ),
 		'setup_tier3' => array(
 			'rule' => array('tier3'),
@@ -161,6 +177,65 @@ class Coversheet extends AppModel {
 			'order' => ''
 		)
 	);
+
+/**
+ * beforeSave callback
+ *
+ * @param array $options options param required by callback
+ * @return void
+ */
+	public function beforeSave($options = array()) {
+		//sanitize
+		if (!empty($this->data[$this->alias]['setup_reseller'])) {
+            $this->data[$this->alias]['setup_reseller'] = $this->removeAnyMarkUp($this->data[$this->alias]['setup_reseller']);
+        }
+        if (!empty($this->data[$this->alias]['setup_referrer'])) {
+            $this->data[$this->alias]['setup_referrer'] = $this->removeAnyMarkUp($this->data[$this->alias]['setup_referrer']);
+        }
+        if (!empty($this->data[$this->alias]['setup_notes'])) {
+            $this->data[$this->alias]['setup_notes'] = $this->removeAnyMarkUp($this->data[$this->alias]['setup_notes']);
+        }
+        if (!empty($this->data[$this->alias]['cp_encrypted_sn'])) {
+            $this->data[$this->alias]['cp_encrypted_sn'] = $this->removeAnyMarkUp($this->data[$this->alias]['cp_encrypted_sn']);
+        }
+        if (!empty($this->data[$this->alias]['cp_check_guarantee_info'])) {
+            $this->data[$this->alias]['cp_check_guarantee_info'] = $this->removeAnyMarkUp($this->data[$this->alias]['cp_check_guarantee_info']);
+        }
+        if (!empty($this->data[$this->alias]['cp_pos_contact'])) {
+            $this->data[$this->alias]['cp_pos_contact'] = $this->removeAnyMarkUp($this->data[$this->alias]['cp_pos_contact']);
+        }
+        if (!empty($this->data[$this->alias]['moto_developer'])) {
+            $this->data[$this->alias]['moto_developer'] = $this->removeAnyMarkUp($this->data[$this->alias]['moto_developer']);
+        }
+        if (!empty($this->data[$this->alias]['moto_company'])) {
+            $this->data[$this->alias]['moto_company'] = $this->removeAnyMarkUp($this->data[$this->alias]['moto_company']);
+        }
+        if (!empty($this->data[$this->alias]['moto_gateway'])) {
+            $this->data[$this->alias]['moto_gateway'] = $this->removeAnyMarkUp($this->data[$this->alias]['moto_gateway']);
+        }
+        if (!empty($this->data[$this->alias]['moto_contact'])) {
+            $this->data[$this->alias]['moto_contact'] = $this->removeAnyMarkUp($this->data[$this->alias]['moto_contact']);
+        }
+        if (!empty($this->data[$this->alias]['moto_phone'])) {
+            $this->data[$this->alias]['moto_phone'] = $this->removeAnyMarkUp($this->data[$this->alias]['moto_phone']);
+        }
+        if (!empty($this->data[$this->alias]['moto_email'])) {
+            $this->data[$this->alias]['moto_email'] = $this->removeAnyMarkUp($this->data[$this->alias]['moto_email']);
+        }
+        if (!empty($this->data[$this->alias]['org_name'])) {
+            $this->data[$this->alias]['org_name'] = $this->removeAnyMarkUp($this->data[$this->alias]['org_name']);
+        }
+        if (!empty($this->data[$this->alias]['region_name'])) {
+            $this->data[$this->alias]['region_name'] = $this->removeAnyMarkUp($this->data[$this->alias]['region_name']);
+        }
+        if (!empty($this->data[$this->alias]['subregion_name'])) {
+            $this->data[$this->alias]['subregion_name'] = $this->removeAnyMarkUp($this->data[$this->alias]['subregion_name']);
+        }
+        if (!empty($this->data[$this->alias]['setup_partner'])) {
+            $this->data[$this->alias]['setup_partner'] = $this->removeAnyMarkUp($this->data[$this->alias]['setup_partner']);
+        }
+	}
+
 
 /**
  * dateIsNotInThePast
