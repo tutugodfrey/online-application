@@ -49,14 +49,14 @@ class Coversheet extends AppModel {
 		),
 		'setup_install' => array(
 			'notBlank' => array(
-				'rule' => 'notBlank',
+				'rule' => array('notBlank'),
 				'message' => 'Someone has got to perform the install'
 			),
 			'input_has_only_valid_chars' => array(
 	            'rule' => array('inputHasOnlyValidChars'),
 	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
-	            'required' => true,
-	            'allowEmpty' => false,
+	            'required' => false,
+	            'allowEmpty' => true,
 	        ),
 		 ),
 		'setup_tier3' => array(

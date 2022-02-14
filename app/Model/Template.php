@@ -24,8 +24,8 @@ class Template extends AppModel {
 			'input_has_only_valid_chars' => array(
 	            'rule' => array('inputHasOnlyValidChars'),
 	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
-	            'required' => true,
-	            'allowEmpty' => false,
+	            'required' => false,
+	            'allowEmpty' => true,
 	        ),
 		),
 		'cobrand_id' => array(
@@ -33,8 +33,10 @@ class Template extends AppModel {
 			'message' => array('Invalid cobrand_id value used'),
 		),
 		'logo_position' => array(
-			'rule' => array('notBlank'),
-			'message' => array('Logo position value not selected'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'message' => array('Logo position value not selected'),
+			),
 		),
 	);
 
