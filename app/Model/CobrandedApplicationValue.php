@@ -303,7 +303,7 @@ class CobrandedApplicationValue extends AppModel {
 							$data = $resultValue['CobrandedApplicationValue']['value'];
 							$data = (!empty($data))? $this->decrypt($data, Configure::read('Security.OpenSSL.key')) : $data;
 
-							if (!in_array($session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+							if (!in_array($session->read('Auth.User.group'), array('admin'))) {
 								$maskValue = true;
 
 								$e = new Exception;

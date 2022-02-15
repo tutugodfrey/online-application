@@ -66,7 +66,12 @@ class TemplateFieldHelper extends Helper {
 
 		switch ($field['type']) {
 			case 0: // text
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				if ($field['encrypt'] == true && preg_match('/XXX/', $fieldOptions['value']) !== 1){
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'password');
+					$fieldOptions = Hash::insert($fieldOptions, 'after', '<a href="javascript:void(0)" class="btn-xs btn-danger pull-right" onClick="toggleShowPwField(\''. $field['merge_field_name'] .'\')">show/hide</a>');
+				} else {
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				}
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
@@ -76,7 +81,12 @@ class TemplateFieldHelper extends Helper {
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
 			case 18: // 'number'         // 18 - (#)+.(#)+
 			case 19: // 'digits',        // 19 - (#)+
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				if ($field['encrypt'] == true && preg_match('/XXX/', $fieldOptions['value']) !== 1){
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'password');
+					$fieldOptions = Hash::insert($fieldOptions, 'after', '<a href="javascript:void(0)" class="btn-xs btn-danger pull-right" onClick="toggleShowPwField(\''. $field['merge_field_name'] .'\')">show/hide</a>');
+				} else {
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				}
 				if ($field['type'] == 1) {
 					//$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
 				} elseif ($field['type'] == 9) {
