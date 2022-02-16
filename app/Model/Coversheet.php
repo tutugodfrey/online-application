@@ -564,7 +564,7 @@ class Coversheet extends AppModel {
 				//Must check LIKENESS in both directions because
 				//("Word" ILIKE "Words") === false but ("Words ILIKE Word") === true
 				//but they are all the same word obviously
-				array("name ILIKE (E'%$orgName%')"),
+				array("name ILIKE (E'%".addslashes($orgName)."%')"),
 				array("'$orgName' ILIKE '%'|| name ||'%'")
 			)
 		)));
@@ -588,7 +588,7 @@ class Coversheet extends AppModel {
 			//Must check LIKENESS in both directions because
 			//("Word" ILIKE "Words") === false but ("Words ILIKE Word") === true
 			//but they are all the same word obviously
-			array("name ILIKE (E'%$regionName%')"),
+			array("name ILIKE (E'%".addslashes($regionName)."%')"),
 			array("'$regionName' ILIKE '%'|| name ||'%'")
 		);
 		$Region = new Model(array('name' => 'Region', 'table' => 'regions', 'ds' => $this->connection));
@@ -617,7 +617,7 @@ class Coversheet extends AppModel {
 			//Must check LIKENESS in both directions because
 			//("Word" ILIKE "Words") === false but ("Words ILIKE Word") === true
 			//but they are all the same word obviously
-			array("name ILIKE (E'%$subRegionName%')"),
+			array("name ILIKE (E'%".addslashes($subRegionName)."%')"),
 			array("'$subRegionName' ILIKE '%'|| name ||'%'")
 		);
 		$SubRegion = new Model(array('name' => 'SubRegion', 'table' => 'subregions', 'ds' => $this->connection));
