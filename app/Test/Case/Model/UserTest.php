@@ -17,6 +17,7 @@ class UserTest extends CakeTestCase {
 	public $fixtures = array(
 		'app.onlineappUser',
 		'app.onlineappApip',
+		'app.onlineappApiLog',
 		'app.onlineapp_users_manager',
 		'app.onlineappUsersTemplate',
 		'app.onlineappUsersCobrand',
@@ -26,6 +27,7 @@ class UserTest extends CakeTestCase {
 		'app.onlineappCobrand',
 		'app.onlineappTemplate',
 		'app.onlineappTemplatePage',
+		'app.onlineappCobrandedApplication',
 	);
 
 /**
@@ -54,6 +56,8 @@ class UserTest extends CakeTestCase {
 		$this->loadFixtures('OnlineappTemplate');
 		$this->loadFixtures('OnlineappTemplatePage');
 		$this->loadFixtures('OnlineappApip');
+		$this->loadFixtures('OnlineappApiLog');
+		$this->loadFixtures('OnlineappCobrandedApplication');
 	}
 
 /**
@@ -605,7 +609,9 @@ class UserTest extends CakeTestCase {
 			'template_id' => 1,
 			'pw_expiry_date' => '2019-10-01 00:00:00',
 			'pw_reset_hash' => null,
-			'fullname' => 'Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet'
+			'fullname' => 'Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet',
+			'wrong_log_in_count' => 0,
+			'is_blocked' => false,
 
 		];
 		$managerExpected = [
@@ -754,5 +760,39 @@ class UserTest extends CakeTestCase {
 		$expected = array(6 => 'Corral - Template 1 for Corral');
 		$actual = $this->User->getCombinedCobrandTemplateList([6]);
 		$this->assertSame($expected, $actual);
+	}
+
+/**
+ * testToggleBlockUser
+ *
+ * @covers User::toggleBlockUser()
+ * @return void
+ */
+	public function testToggleBlockUser() {
+		$notBLockedUser = $this->User->find('first', array('conditions' => array('is_blocked' => false))); //retrieve any unblocked user
+		$this->User->toggleBlockUser($notBLockedUser['User']['id'], true);
+		$this->assertTrue($this->User->hasAny(array('is_blocked' => true, 'id' => $notBLockedUser['User']['id'])));
+
+		$this->User->toggleBlockUser($notBLockedUser['User']['id'], false);
+		$this->assertFalse($this->User->hasAny(array('is_blocked' => true, 'id' => $notBLockedUser['User']['id'])));
+		
+	}
+
+/**
+ * testTrackIncorrectLogIn
+ *
+ * @covers User::trackIncorrectLogIn()
+ * @return void
+ */
+	public function testTrackIncorrectLogIn() {
+
+		for ($x = 1; $x < 7; $x ++) {
+			$curentCount = $this->User->trackIncorrectLogIn('testing@axiapayments.com', false);
+			$this->assertEquals($curentCount, $x);
+		}		
+		$this->assertTrue($this->User->hasAny(array('is_blocked' => true, 'email' => 'testing@axiapayments.com', 'pw_reset_hash IS NOT NULL')));
+		
+		$this->User->trackIncorrectLogIn('testing@axiapayments.com', true);
+		$this->assertTrue($this->User->hasAny(array('is_blocked' => false, 'email' => 'testing@axiapayments.com', 'wrong_log_in_count' => 0)));
 	}
 }

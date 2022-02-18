@@ -21,9 +21,17 @@ class TemplatePage extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'rule' => array('notBlank'),
-			'required' => true,
-			'message' => array('Template page name cannot be empty')
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'required' => true,
+				'message' => array('Template page name cannot be empty')
+			),
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => true,
+	            'allowEmpty' => false,
+	        ),
 		),
 		'template_id' => array(
 			'rule' => array('numeric'),
@@ -52,6 +60,18 @@ class TemplatePage extends AppModel {
 			'dependent' => true,
 		)
 	);
+
+/**
+ * beforeSave callback
+ *
+ * @param array $options options param required by callback
+ * @return void
+ */
+	public function beforeSave($options = array()) {
+		if (!empty($this->data[$this->alias]['description'])) {
+            $this->data[$this->alias]['description'] = $this->removeAnyMarkUp($this->data[$this->alias]['description']);
+        }
+	}
 
 	public function getCobrand($templateId = null) {
 		// check if we already have data

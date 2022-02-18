@@ -66,7 +66,11 @@ class TemplateFieldHelper extends Helper {
 
 		switch ($field['type']) {
 			case 0: // text
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				if ($field['encrypt'] == true){
+					$fieldOptions = $this->__getMaskedFieldOptions($fieldOptions);
+				} else {
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				}
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
 				break;
@@ -76,7 +80,11 @@ class TemplateFieldHelper extends Helper {
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
 			case 18: // 'number'         // 18 - (#)+.(#)+
 			case 19: // 'digits',        // 19 - (#)+
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				if ($field['encrypt'] == true){
+					$fieldOptions = $this->__getMaskedFieldOptions($fieldOptions);
+				} else {
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				}
 				if ($field['type'] == 1) {
 					//$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'date');
 				} elseif ($field['type'] == 9) {
@@ -347,7 +355,11 @@ class TemplateFieldHelper extends Helper {
 				break;
 
 			case 23: // number
-				$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				if ($field['encrypt'] == true){
+					$fieldOptions = $this->__getMaskedFieldOptions($fieldOptions);
+				} else {
+					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
+				}
 				$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'number');
 				$fieldOptions = Hash::insert($fieldOptions, 'class', 'col-md-12');
 				$retVal = $retVal . $this->Form->input($field['name'], $fieldOptions);
@@ -362,6 +374,12 @@ class TemplateFieldHelper extends Helper {
 		return $retVal;
 	}
 
+	private function __getMaskedFieldOptions($fieldOptions) {
+		$fieldOptions = Hash::insert($fieldOptions, 'type', 'password');
+		$fieldOptions = Hash::insert($fieldOptions, 'after', '<a href="javascript:void(0)" class="btn 
+			btn-xs btn-default" style="margin-top:-5px;"" onClick="toggleShowPwField(\''. $fieldOptions['id'] .'\')"><img title="show/hide" src="/img/eye-exclamation-icon.png"/></a>');
+		return $fieldOptions;
+	}
 	private function __buildMoneyField($fieldOptions, $label, $fieldId) {
 		$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
 		//$fieldOptions = Hash::insert($fieldOptions, 'data-vtype', 'money');

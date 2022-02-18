@@ -29,6 +29,8 @@ class OnlineappUserFixture extends CakeTestFixture {
 		'template_id' => array('type' => 'integer', 'null' => true),
 		'pw_expiry_date' => array('type' => 'datetime', 'null' => false),
 		'pw_reset_hash' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 32),
+		'wrong_log_in_count' => array('type' => 'integer', 'default' => 0),
+		'is_blocked' => array('type' => 'boolean', 'default' => false),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id'),
 			'onlineapp_users_email_key' => array('unique' => true, 'column' => 'email'),
@@ -61,7 +63,9 @@ class OnlineappUserFixture extends CakeTestFixture {
 			'api_enabled' => 1,
 			'template_id' => 1,
 			'pw_expiry_date' => '2019-10-01',
-			'pw_reset_hash' => null
+			'pw_reset_hash' => null,
+			'wrong_log_in_count' => 0,
+			'is_blocked' => false
 		),
 		array(
 			'id' => 11,

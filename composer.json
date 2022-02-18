@@ -1,5 +1,5 @@
 {
-	"name": "online-application",
+	"name": "onlineapp/app",
 	"require": {
 		"cakedc/migrations": "dev-master",
 		"cakedc/search": "dev-master",
