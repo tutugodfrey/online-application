@@ -7,7 +7,7 @@ class AppController extends Controller {
 			  'authenticate' => array(
 				'Form' => array(
 					'fields' => array('username' => 'email'),
-					'scope' => array('User.active' => 1))),
+					'scope' => array('User.active' => 1, 'User.is_blocked' => 0))),
 			'loginAction' => array('controller' => 'users', 'action' => 'login'),
 			'loginRedirect' => array('controller' => 'cobranded_applications', 'action' => 'index', 'admin' => true),
 			'logoutRedirect' => array('controller' => 'users', 'action' => 'login')

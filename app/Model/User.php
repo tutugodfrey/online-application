@@ -18,6 +18,13 @@ class User extends AppModel {
 	const API = 'api';
 	const MANAGER = 'manager';
 
+/**
+ * User maximum number of failed log in attempts
+ *
+ * @var string
+ */
+	const MAX_LOG_IN_ATTEMPTS = 6;
+
 	public $validate = array(
 		'email' => array(
 			'email' => array(
@@ -58,6 +65,22 @@ class User extends AppModel {
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
+		),
+		'firstname' => array(
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => false,
+	            'allowEmpty' => true,
+	        ),
+		),
+		'lastname' => array(
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => false,
+	            'allowEmpty' => true,
+	        ),
 		),
 	);
 
@@ -828,5 +851,78 @@ class User extends AppModel {
 			}
 		}
 		return json_encode($cobAndTmpl);
+	}
+
+/**
+ * trackIncorrectLogIn
+ * tracks the current user inccorrect log in attemts
+ *
+ * @param string $eamil User.email
+ * @return integer the current count of failed attempts if an active user exists or 0 if user not found
+ */
+	public function trackIncorrectLogIn($email, $reset = false) {
+		$userData = $this->find('first', array(
+			'fields' => array('id', 'wrong_log_in_count', 'is_blocked', 'active', 'email'),
+			'conditions' => array(
+				'email' => $email,
+				'active' => true
+			)
+		));
+		if(!empty($userData) && $reset) {
+			//reset
+			$userData['User']['wrong_log_in_count'] = 0;
+			$userData['User']['is_blocked'] = false;
+			$this->clear();
+			$this->save($userData, array('validate' => false));
+		} elseif (!empty($userData) && $userData['User']['is_blocked'] == false) {
+			if ($userData['User']['wrong_log_in_count'] < self::MAX_LOG_IN_ATTEMPTS) {
+				$userData['User']['wrong_log_in_count'] += 1;
+				$this->save($userData, array('validate' => false));
+		 	} 
+		 	if ($userData['User']['wrong_log_in_count'] >= self::MAX_LOG_IN_ATTEMPTS) {
+				//block user and notify send email
+				$userData['User']['pw_reset_hash'] = $this->getRandHash();
+				$userData['User']['pwd'] = $this->generateRandPw();
+				$this->clear();
+				$this->save($userData, array('validate' => false));
+				$this->notifyUserBlockedFailedLogInAttempts($userData);
+		 		$this->toggleBlockUser($userData['User']['id'], true);
+			}
+		}
+		
+		return Hash::get($userData, 'User.wrong_log_in_count', 0);
+	}
+
+/**
+ * notifyUserBlockedFailedLogInAttempts
+ * Send email to user when account is blocked due to too many failed log in attempts
+ *
+ * @param array $user data about the user; must contain a new pw_reset_hash, new temporary password and the user_email
+ * @return void
+ */
+	public function notifyUserBlockedFailedLogInAttempts($user) {
+		if (empty($user['User']['id'])) {
+			return null;
+		}
+		
+		$msg = "Your Online Applicaion account has been locked due to excessive incorrect log in attempts.\n";
+		$msg .= "The following temporary password has been set as your current password on your account:\n {$user['User']['pwd']}\n";
+		$msg .= "To unlock your account you must change the temporary password with a new password using this url:\n";
+		$msg .= Router::url(['controller' => 'Users', 'action' => 'change_pw', true, $user['User']['pw_reset_hash']], true) . "\n";
+		$args['viewVars'] = ['content' => $msg];
+		$args = $this->getEmailArgs($user['User']['id'], $args);
+		$this->sendEmail($args);
+	}
+
+/**
+ * toggleBlockUser
+ * Block or unblock users
+ *
+ * @param string $id User.id
+ * @param boolean $isBlocked true|false to block|unblock
+ * @return void
+ */
+	public function toggleBlockUser($id, $isBlocked) {
+		$this->save(['id' => $id, 'is_blocked' => $isBlocked], array('validate' => false));
 	}
 }

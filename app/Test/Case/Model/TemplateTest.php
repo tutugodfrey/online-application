@@ -195,7 +195,21 @@ class TemplateTest extends CakeTestCase {
 		$newTemplateData = array('name' => 'template name', 'cobrand_id' => 1, 'logo_position' => 0);
 		$this->Template->create($newTemplateData);
 		$this->Template->save($newTemplateData);
+
 		$this->assertTrue($this->Template->validates());
+		$this->assertEquals($expectedValidationErrors, $this->Template->validationErrors);
+
+		// test invalid characters entered
+		$expectedValidationErrors = array(
+	        'name' => array(
+	        	'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	        	'Special characters (i.e "<>`()[]"... etc) are not permitted!',)
+		);
+		$newTemplateData = array('name' => 'template name()', 'cobrand_id' => 1, 'logo_position' => 0);
+		$this->Template->create($newTemplateData);
+		$this->Template->save($newTemplateData);
+
+		$this->assertFalse($this->Template->validates());
 		$this->assertEquals($expectedValidationErrors, $this->Template->validationErrors);
 	}
 

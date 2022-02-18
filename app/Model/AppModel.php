@@ -96,6 +96,31 @@ class AppModel extends Model {
 		}
 
 /**
+ * Resuable custom validation rule
+ *
+ * @return void
+ */
+	public function inputHasOnlyValidChars($check) {
+		$value = array_pop($check);
+		//check if data is pre-encrypted 
+		$value = ($this->isEncrypted($value))? $this->decrypt($value, Configure::read('Security.OpenSSL.key')) : $value;
+		if (empty($value)){
+			return true;
+		} else {
+			return !(bool)preg_match('/(<|>|`|\(|\)|\[|\]|\{|\}|\\\|\/|\^)/', $value);
+		}
+	}
+
+/**
+ * Method removes mark up language from strinc such as html tags or script tags
+ *
+ * @return void
+ */
+	public function removeAnyMarkUp($str) {
+		return preg_replace('/(<([^>]+)>)/i', "", $str);
+	}
+
+/**
  * Custom validation rule, check if field value is equal (===) to another field
  *
  * @param string $check array values

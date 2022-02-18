@@ -30,10 +30,12 @@
 			echo $this->Form->input('User.email', array(
 					'placeholder' => 'Email',
 					'autofocus' => 'autofocus',
-					'required' => false
+					'required' => false,
+					'autocomplete' => 'off'
 				));
 				echo $this->Form->input('User.password', array(
-					'placeholder' => 'Password'
+					'placeholder' => 'Password',
+					'autocomplete' => 'off'
 				)); ?>
 				<div class="form-group">
 					<?php echo $this->Form->submit('Sign In', array(
