@@ -1509,9 +1509,9 @@ class CobrandedApplication extends AppModel {
 		if (empty($conditions)) {
 			return false;
 		}
-		$axDbApiClient = $this->createAxiaDbApiAuthClient();
-
-		$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Merchants/get_merchant', array($conditions));
+        $conditions = http_build_query($conditions);
+		$axDbApiClient = $this->createAxiaDbApiAuthClient('GET', '/api/Merchants/get_merchant?'.$conditions);
+		$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Merchants/get_merchant?'.$conditions);
 		$responseData = json_decode($reponse->body, true);
 		if (!empty($responseData['data'])) {
 			return $responseData['data'];

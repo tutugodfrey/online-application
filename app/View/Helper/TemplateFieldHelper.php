@@ -66,7 +66,7 @@ class TemplateFieldHelper extends Helper {
 
 		switch ($field['type']) {
 			case 0: // text
-				if ($field['encrypt'] == true){
+				if (Hash::get($field, 'encrypt') == true){
 					$fieldOptions = $this->__getMaskedFieldOptions($fieldOptions);
 				} else {
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
@@ -80,7 +80,7 @@ class TemplateFieldHelper extends Helper {
 			case 13: // 'zipcodeUS',     // 13 - #####[-####]
 			case 18: // 'number'         // 18 - (#)+.(#)+
 			case 19: // 'digits',        // 19 - (#)+
-				if ($field['encrypt'] == true){
+				if (Hash::get($field, 'encrypt') == true){
 					$fieldOptions = $this->__getMaskedFieldOptions($fieldOptions);
 				} else {
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');
@@ -355,7 +355,7 @@ class TemplateFieldHelper extends Helper {
 				break;
 
 			case 23: // number
-				if ($field['encrypt'] == true){
+				if (Hash::get($field, 'encrypt') == true){
 					$fieldOptions = $this->__getMaskedFieldOptions($fieldOptions);
 				} else {
 					$fieldOptions = Hash::insert($fieldOptions, 'type', 'text');

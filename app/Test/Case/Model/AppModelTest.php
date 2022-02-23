@@ -87,16 +87,26 @@ class AppModelTest extends CakeTestCase {
 	}
 
 /**
- * testCreateAxiaDbApiAuthClient
+ * testParseDigestAuthenticateResponseHeader()
  *
- * @covers AppModel::createAxiaDbApiAuthClient()
+ * @covers AppModel::parseDigestAuthenticateResponseHeader()
  * @return void
  */
-	public function testCreateAxiaDbApiAuthClient() {
-		$result = $this->AppModel->createAxiaDbApiAuthClient();
-		
-		$this->assertNotEmpty($result);
-		$this->assertTrue(is_object($result));
+	public function testParseDigestAuthenticateResponseHeader() {
+		$digestStr = 'Digest realm="realm-value",qop="auth",nonce=00000001,opaque="opaque-value"';
+		$actual = $this->AppModel->parseDigestAuthenticateResponseHeader($digestStr);
+		$expected = [
+			'realm' => 'realm-value',
+			'qop' => 'auth',
+			'nonce' => '00000001',
+			'opaque' => 'opaque-value',
+		];
+
+		$this->assertSame($expected, $actual);
+		//Test missing required data returns null
+		$digestStr = 'Digest nonce=00000001,opaque="opaque-value"';
+		$actual = $this->AppModel->parseDigestAuthenticateResponseHeader($digestStr);
+		$this->assertEmpty($actual);
 	}
 
 /**
