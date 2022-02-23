@@ -24,6 +24,7 @@
 App::uses('Model', 'Model');
 App::uses('CakeEmail', 'Network/Email');
 App::uses('HttpSocket', 'Network/Http');
+App::uses('DigestAuthenticate', 'Controller/Component/Auth');
 
 /**
  * Application model for Cake.
@@ -271,18 +272,100 @@ class AppModel extends Model {
 	}
 
 /**
+ * parseDigestAuthenticateResponseHeader
+ * Parses the WWW_Authenticate header returned by a digest Authentication response
+ * Returns the quoted values as key value pairs in an array
+ * Example: Digest realm="[realm-value]",qop="[qop-value]",nonce="[nonce-value]",opaque="[opaque-value]"
+ * 
+ * @param string $digestAuthenticateHeaderStr the contents of WWW_Authenticate header string
+ * @return array the quoted values as key value pairs in an array
+ */
+	public function parseDigestAuthenticateResponseHeader($digestAuthenticateHeaderStr) {
+		preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9\:\#\%\?\&@=\.\/_-]+)\2/', $digestAuthenticateHeaderStr, $match, PREG_SET_ORDER);
+		$required = array('nonce' => 1, 'realm' => 1, 'qop' => 1, 'opaque' => 1);
+		foreach ($match as $i) {
+			foreach ($match as $i) {
+				$values[$i[1]] = $i[3];
+				unset($required[$i[1]]);
+			}
+		}
+		//return only when all required values are fullfilled
+		if (empty($required)) {
+			return $values;
+		} else {
+			return null;
+		}
+	}
+
+/**
+ * buildDigestResponseValue
+ * Creates the Digest response value for Authorization header.
+ * In addition to the the WWW_Authenticate header values returned by the initial authentication request response
+ * the digest array parameter must include the uri of the intended request.
+ * 
+ * @param array $digestAuthenticateHeaderValues key-value pais of WWW_Authenticate plus the request method, the uri of the intended request and the password in digest format
+ * $digest = [
+ *	 		 	'nonce' =>
+ *	 			'realm' => 
+ *	 			'qop' =>
+ *	 			'opaque' =>
+ *	 			'uri' =>
+ *	 		 ]
+ * @param string $password the user api password already in digest form not plain text
+ * @param string $method the request verb used for the intended requiest (POST, GET, etc).
+ * @return array the required vialues for Digest Authorization
+ */
+	public function buildDigestResponseValue($digest, $password, $method) {
+		$responseHash = md5(
+			$password .
+			':' . $digest['nonce'] . ':' . $digest['nc'] . ':' . $digest['cnonce'] . ':' . $digest['qop'] . ':' .
+			md5($method . ':' . $digest['uri'])
+		);
+		return $responseHash;
+	}
+/**
  * createAxiaDbApiAuthClient
  * Creates an HttpSocket with the authentication configuration required to connect to the external Axia Database API
  * 
  * @return HttpSocket object
  */
-	public function createAxiaDbApiAuthClient() {
+	public function createAxiaDbApiAuthClient($requestMethod, $uri) {
+		$requestMethod = strtoupper($requestMethod);
 		$http = new HttpSocket();
 		$axMedApi = 'AxiaDbAPI';
 		if (Configure::read('debug') > 0) {
 			$axMedApi = 'AxiaDevDbAPI';
 		}
-		$http->configAuth('Basic', Configure::read("$axMedApi.access_token"), Configure::read("$axMedApi.password"));
+		//Currently only request endpoints using these verves have been integrated with the database
+		if ($requestMethod == 'GET') {
+			$response = $http->get("https://db.axiatech.com". $uri);
+		} elseif ($requestMethod == 'POST') {
+			$response = $http->post("https://db.axiatech.com". $uri);
+		} else {
+			$response = $http->put("https://db.axiatech.com". $uri);
+		}
+		$AuthenticateStr = $response->getHeader('WWW-Authenticate');
+		$digestValues = $this->parseDigestAuthenticateResponseHeader($AuthenticateStr);
+
+		$digestValues['username'] = Configure::read("$axMedApi.access_token");
+		$digestValues['uri'] = $uri;
+		//cnonce is an arbitrary string required in the request but nothing specific
+		$digestValues['cnonce'] = '80f644012cb543f2611a3e423363d641';  
+		//mc is always 1 since nonce values are single use
+		$digestValues['nc'] = '00000001';  
+		$digestValues['response'] = $this->buildDigestResponseValue($digestValues, Configure::read("$axMedApi.password"), $requestMethod);
+		$authStr = "Digest ";
+		foreach($digestValues as $key => $val) {
+			if ($key == 'nc') {
+				$authStr .= $key. '=' . $val.',';
+			} else{
+				$authStr .= $key. '="' . $val.'",';
+			}
+		}
+		$authStr = substr($authStr, 0, -1);
+		//reset the Socket to prepare for a fresh resource call this is optional but it's nice to have clean request/response data
+		$http->reset(true);
+		$http->config['request']['header']['Authorization'] = $authStr;
 		return $http;
 	}
 

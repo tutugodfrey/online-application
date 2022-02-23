@@ -139,6 +139,7 @@
 <body>
 	<div id='countTST'></div>
 	 <!-- Session notification Dialog Box -->
+	 <?php if (Hash::get($this->request->params, 'api', false) === false ): ?>
 	 <div id="msg_fader">&nbsp;</div>
 	<div id="session_box" class="col-md-12">
 		<div class="panel panel-danger">
@@ -150,6 +151,7 @@
 			</div> 
 		</div>
 	</div>
+<?php endif; ?>
 
 		<!-- End Session notification Dialog Box -->
 		<!--  span id="loginBtn" class="btn">Need to login?</span -->

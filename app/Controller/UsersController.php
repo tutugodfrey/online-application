@@ -1,6 +1,7 @@
 <?php
 App::uses('User', 'Model');
 App::uses('Okta', 'Model');
+App::uses('DigestAuthenticate', 'Controller/Component/Auth');
 class UsersController extends AppController {
 
 	public $permissions = array(
@@ -83,7 +84,9 @@ class UsersController extends AppController {
 				$this->render('/Elements/Ajax/api_info');
 			} else {
 				$apiPassword = $this->User->generateRandPw();
-				$this->User->save(['id' => $id, 'api_password' => $apiPassword]);
+				$DigestAuthenticate = new DigestAuthenticate(new ComponentCollection(), []);
+				$apiDigestPass = $DigestAuthenticate->password($apiToken, $apiPassword, env('SERVER_NAME'));
+				$this->User->save(['id' => $id, 'api_password' => $apiDigestPass]);
 				$this->set(compact('apiPassword'));
 				$this->render('/Elements/Ajax/api_info_content');
 			}
