@@ -620,10 +620,6 @@ class User extends AppModel {
 				} catch (Exception $e) {/*Is possible the user has yet to be created in okta so ignore exception.*/}
 			}
 		}
-		if (!empty($this->data[$this->alias]['api_password'])) {
-			$passwordHasher = new BlowfishPasswordHasher();
-			$this->data[$this->alias]['api_password'] = $passwordHasher->hash($this->data[$this->alias]['api_password']);
-		}
 
 		//Modify any HABTM data structures so that the data can be saved
 		//This is the required data structure for saving HABTM data

@@ -1064,8 +1064,8 @@ class CobrandedApplicationsController extends AppController {
 			$this->autoRender = false;
 			$appRep = $this->CobrandedApplication->CobrandedApplicationValues->getValuesByAppId($id, array('conditions' => array('name' => 'ContractorID')));
 			$csPartner = $this->CobrandedApplication->Coversheet->field('setup_partner', array('cobranded_application_id' => $id));
-			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient();
-			$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Users/get_reps', array('user_name' =>  Hash::get($appRep, 'ContractorID')));
+			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient('GET', '/api/Users/get_reps?user_name='.Hash::get($appRep, 'ContractorID'));
+			$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Users/get_reps?user_name='.Hash::get($appRep, 'ContractorID'));
 			$responseData = json_decode($reponse->body, true);
 			$repList = array();
 			$assocPartnerList = array();
@@ -1111,7 +1111,7 @@ class CobrandedApplicationsController extends AppController {
 				$data['setup_partner'] = $this->request->data('CobrandedApplication.setup_partner');
 			}
 			$data = json_encode($data);
-			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient();
+			$axDbApiClient = $this->CobrandedApplication->createAxiaDbApiAuthClient('POST', '/api/Merchants/add');
 			$reponse = $axDbApiClient->post('https://db.axiatech.com/api/Merchants/add', $data);
 			$responseData = json_decode($reponse->body, true);
 			$alertMsg = $responseData['messages'];

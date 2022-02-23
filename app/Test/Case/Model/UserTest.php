@@ -302,18 +302,15 @@ class UserTest extends CakeTestCase {
 		$data = array(
 			'User' => array(
 				'pwd' => 'password123',
-				'api_password' => 'apiPassword123'
 			)
 		);
 		$passwordHasher = new BlowfishPasswordHasher();
 		$encPwd = AuthComponent::password('password123');
-		$encApiPwd = $passwordHasher->hash('apiPassword123');
 		$this->User->set($data);
 		$this->User->beforeSave();
 		$expected = $data;
 		$expected['User']['password'] = $encPwd;		
 		$this->assertSame($expected['User']['password'], $this->User->data['User']['password']);
-		$this->assertTrue( $passwordHasher->check('apiPassword123', $this->User->data['User']['api_password']));
 	}
 
 /**
