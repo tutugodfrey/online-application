@@ -298,19 +298,21 @@ class AppModel extends Model {
 	}
 
 /**
- * buildDigestAuthorizationHeader
- * Creates the Digest Authorization header value.
- * In addition to the the WWW_Authenticate header returned by the initial request response
- * the passed parameter must include the uri of the intended request , and the password in digest format
+ * buildDigestResponseValue
+ * Creates the Digest response value for Authorization header.
+ * In addition to the the WWW_Authenticate header values returned by the initial authentication request response
+ * the digest array parameter must include the uri of the intended request.
  * 
  * @param array $digestAuthenticateHeaderValues key-value pais of WWW_Authenticate plus the request method, the uri of the intended request and the password in digest format
- * $digestAuthenticateHeaderValues = [
+ * $digest = [
  *	 		 	'nonce' =>
  *	 			'realm' => 
  *	 			'qop' =>
  *	 			'opaque' =>
  *	 			'uri' =>
  *	 		 ]
+ * @param string $password the user api password already in digest form not plain text
+ * @param string $method the request verb used for the intended requiest (POST, GET, etc).
  * @return array the required vialues for Digest Authorization
  */
 	public function buildDigestResponseValue($digest, $password, $method) {
