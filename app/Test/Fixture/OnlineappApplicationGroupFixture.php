@@ -24,6 +24,11 @@ class OnlineappApplicationGroupFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => true),
 		'modified' => array('type' => 'datetime', 'null' => true),
 		'token_expiration' => array('type' => 'datetime', 'null' => true),
+	 	'client_access_token' => array('type' => 'string', 'length' => 40),
+        'client_password' => array('type' => 'string', 'length' => 200),
+        'client_pw_expiration' => array('type' => 'date'),
+        'client_fail_login_count' => array('type' => 'integer', 'default' => 0),
+        'client_account_locked' => array('type' => 'boolean', 'default' => false),
 		'indexes' => array(
 			'PRIMARY' => array('unique' => true, 'column' => 'id')
 		),

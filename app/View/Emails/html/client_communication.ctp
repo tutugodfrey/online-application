@@ -9,6 +9,7 @@
             'appAccesslink' => isset($appAccesslink)?$appAccesslink:null,
             'ownerName' => isset($ownerName)?$ownerName:null,
             'logoImageFileName' => isset($logoImageFileName)?$logoImageFileName:null,
+            'clientAccessCredentials' => isset($clientAccessCredentials)?$clientAccessCredentials:null,
         )); ?>
   </body>
 </html>

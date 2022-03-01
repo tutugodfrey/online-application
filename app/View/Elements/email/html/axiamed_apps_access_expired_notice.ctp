@@ -5,15 +5,9 @@
 	    </div>
 		<div style="margin: 50px 50px 50px 50px;">
 	        <p>Esteemed and valued client:</p>
-	        <p>You recently requested access to your AxiaMed applications. Please visit the link below to view your applications:</p>
-
-			<p><strong><u>For your security, save this information in a safe location, and do not share it with anyone since your applications may contain confidential information. <br/>
-				In addition please note that access to this expires on <?php echo date_create($clientAccessCredentials['clientAccessExpiration'])->format('M jS Y');?>.</u></strong></p>
-			<p>
-				<?php echo "<a href='$appAccesslink'><strong>$appAccesslink</strong></a>"; ?><br/>
-				Username/User token: <?php echo $clientAccessCredentials['clientAccesToken'];?><br/>
-				Password: <?php echo $clientAccessCredentials['clientPassword'];?><br/>
-			</p>
+	        <p>You recently requested access to your AxiaMed applications, however access to your account has expired.</p>
+			<p>We apologize for any inconvenience, keeping our clients' information safe and secure is highly important to us, and for that reason we limit access to accounts to a maximum of <?php echo ApplicationGroup::EXP_MONTHS_ADD; ?> months.</p>
+			<p>If you still need access to your account to review your documents, agreements, or to resume an onboarding process that has taken longer than the account access expiration limit, please contact your sales representative and request your account access to be renewed. </p>
 			<p>Thank you!<br/>
 			This is an automated message please do not reply to this email, if you have any questions contact your sales representative or use the contact information at the bottom if this email. 
 			</p>

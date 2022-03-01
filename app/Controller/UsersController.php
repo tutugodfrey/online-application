@@ -101,6 +101,10 @@ class UsersController extends AppController {
  * @return null
  */
 	public function login() {
+		//clean up the session if client data is present
+		if (!is_null($this->Session->read('Client'))) {
+			$this->Session->delete('Client');
+		}
 		if ($this->request->is('post')) {
 			$user = $this->Auth->identify($this->request, $this->response);
 
@@ -424,6 +428,7 @@ class UsersController extends AppController {
 
 	public function logout() {
 		$this->_success('Good-Bye');
+		$this->Session->destroy();
 		$this->redirect($this->Auth->logout());
 	}
 
