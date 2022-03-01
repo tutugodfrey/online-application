@@ -157,8 +157,45 @@
 		<!--  span id="loginBtn" class="btn">Need to login?</span -->
 		<div id="container">
 				<div id="header">
+					<?php
+					$additionalMarginTop = 0;
+					if (!is_null($this->Session->read('Client.client_user_token'))) : ?>
+							<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+								<span class="navbar-text navbar-right btn-group" style="margin-right:20px">
+									<?php
+									if ($this->request->params['action'] != 'index') {
+										echo $this->Html->link(__('Go to Dashboard ') .' <span class="glyphicon glyphicon-th-list"></span>',
+											array(
+												'controller' => 'cobrandedApplications',
+												'action' => 'index',
+												$this->Session->read('Client.client_dashboard_id'),
+												'admin' => false,
+											),
+											array(
+												'escape' => false,
+												'class' => 'btn btn-primary'
+											)
+										);
+									}
+									echo $this->Html->link(__('Sing out ') .' <span class="glyphicon glyphicon-log-out"></span>',
+										array(
+											'controller' => 'cobrandedApplications',
+											'action' => 'cl_logout',
+											'admin' => false,
+										),
+										array(
+											'escape' => false,
+											'class' => 'btn btn-default'
+										)
+									);
+								?>
+							</span>
+						</nav>
+					<?php 
+					$additionalMarginTop = 45;
+					endif; ?>
 						<?php
-						$additionalMarginTop = 0;
+						
 						if ($this->Session->check('Auth.User.id')) :
 							echo $this->Element('Ajax/dynamicModal');
 						 ?>
@@ -196,6 +233,7 @@
 						<?php 
 							$additionalMarginTop = 45;
 						endif; ?>
+
 								<div style="margin-top: <?php echo 25 + $additionalMarginTop; ?>px;">
 								<?php
 									if (!empty($brand_logo_url) || !empty($cobrand_logo_url)) {
@@ -262,7 +300,12 @@
 						<?php echo $this->fetch('content'); ?>
 				</div>
 				<div id="footer">
-						<?php /* footer content not neeed at this time*/?>
+					
+						<?php
+							if ($this->request['action'] === 'cl_access_auth') {
+								echo $this->Element('publicFooter');
+							}
+						?>
 				</div>
 		</div>
 	<?php if ($this->Session->consume('Auth.User.Okta.needs_mfa_enrollment')): ?>

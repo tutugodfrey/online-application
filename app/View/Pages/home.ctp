@@ -10,9 +10,9 @@
 
 			<h3 class="text-info">Welcome to Axia's Online Application System</h3>
 			<hr />
-			<p class="text-justify"><small>If you are a client or a prospective client, we thank you for your business. You may request access to your forms and applications by using the option below.</small></p>
+			<p class="text-justify"><small>If you are a client or a prospective client, we thank you for your business. You may request access to your forms and applications by using the option below. The username that was previously assigned to your account will be required.</small></p>
 		    <?php
-		    	echo $this->Html->link('Retrieve Existing Applications <span class="glyphicon glyphicon-circle-arrow-right"></span>', 
+		    	echo $this->Html->link('Request Access <span class="glyphicon glyphicon-circle-arrow-right"></span>', 
 			    	'#', //(anchor url since this is hadled with AJAX modal)
 			    	array('escape' => false, 'data-toggle' => 'modal', 'data-target' => '#myModal_', 'class' => 'btn btn-primary btn-lg')
 		    	);
@@ -32,4 +32,4 @@
 	</div>
 </div>
 
-<?php echo $this->element('cobranded_applications/email_select_modal', array('cobranded_application_id' => null)); ?>
+<?php echo $this->element('cobranded_applications/client_access_request'); ?>

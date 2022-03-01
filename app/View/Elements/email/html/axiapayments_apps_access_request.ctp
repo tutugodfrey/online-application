@@ -4,14 +4,16 @@
 	    	<img style="margin: 20px 20px 20px 20px;"src="https://axia.i3merchant.com/wp-content/uploads/2019/07/AxiaLogo_ReverseColor_RGB-1024x321-1-600x188.png" width="150" alt="">
 	    </div>
 		<div style="margin: 50px 50px 50px 50px;">
-	        <p>Esteemed and valued client:</p>
+	       	<p>Esteemed and valued client:</p>
 	        <p>You recently requested access to your Axia applications. Please visit the link below to view your applications:</p>
-			<p><strong> For your security, do not share this link with anyone since it may contain confidential information. This link expires 24 hours from now or immediately after a new one is generated.</strong></p>
-			<div style="text-align: center;">
-				<div style="margin: 0 auto; text-align: center;">
-					<?php echo "<a href='$appAccesslink'><strong>$appAccesslink</strong></a>"; ?>
-				</div><br>
-			</div>
+
+			<p><strong><u>For your security, save this information in a safe location, and do not share it with anyone since your applications may contain confidential information. <br/>
+				In addition please note that access to this expires on <?php echo date_create($clientAccessCredentials['clientAccessExpiration'])->format('M jS Y');?>.</u></strong></p>
+			<p>
+				<?php echo "<a href='$appAccesslink'><strong>$appAccesslink</strong></a>"; ?><br/>
+				Username/User token: <?php echo $clientAccessCredentials['clientAccesToken'];?><br/>
+				Password: <?php echo $clientAccessCredentials['clientPassword'];?><br/>
+			</p>
 			<p>Thank you!<br/>
 			This is an automated message please do not reply to this email, if you have any questions contact your sales representative or use the contact information at the bottom if this email. 
 			</p>

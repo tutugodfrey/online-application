@@ -1,5 +1,5 @@
 <div class='center-block' style="width: 390px;" id='loginContainer'>
-	<div class='panel panel-default panel-body' style="padding: 20px 40px 0px 40px;">
+	<div class='panel panel-primary panel-body' style="padding: 20px 40px 0px 40px;">
 
 	<?php
 		echo $this->Html->image(
@@ -14,7 +14,8 @@
 	?>
 
 		<div style='margin-top:-15;opacity:0' id='loginFrmContainer'>
-			<p class='text-center'><strong>Application Portal.</strong> Company personnel sign in.</p>
+			<hr class="row" />
+			<p class='text-center'><strong>Client Applications Portal.</strong><br/> Customer sign in.<br/>Please enter your credentials.</p>
 			<?php echo $this->Session->flash(); ?>
 			<?php
 			echo $this->Form->create('BoostCake', array(
@@ -27,54 +28,36 @@
 				),
 				'class' => 'form-horizontal'
 			));
-			echo $this->Form->input('User.email', array(
-					'placeholder' => 'Email',
+			echo $this->Form->input('CobrandedApplication.user_token', array(
+					'placeholder' => 'Username',
 					'autofocus' => 'autofocus',
-					'required' => false,
+					'required' => true,
 					'autocomplete' => 'off'
 				));
-				echo $this->Form->input('User.password', array(
+				echo $this->Form->input('CobrandedApplication.password', array(
 					'placeholder' => 'Password',
+					'required' => true,
 					'autocomplete' => 'off'
 				)); ?>
 				<div class="form-group">
 					<?php echo $this->Form->submit('Sign In', array(
-						'class' => 'btn btn-sm btn-primary col-md-12 col-sm-12 col-lg-12',
+						'class' => 'btn btn-sm btn-success col-md-12 col-sm-12 col-lg-12',
 						'id' => 'loginSubmitBtn'
 					)); ?>
-				</div>
-				<div class="form-group small pull-right">
-					<?php
-					echo $this->Html->link('Forgot Password', array('action' => 'request_pw_reset'), array('class' => 'btn btn-xs text-muted'));
-					echo $this->Html->link('Renew Password', array('action' => 'request_pw_reset', 1), array('class' => 'btn btn-xs text-muted'));
-					?>
 				</div>
 			<?php
 				echo $this->Form->end();
 			?>
 		</div>
-		<div id="nextAuthStep"></div>
+		<div class="panel-footer row small text-small text-right">
+			<?php
+			echo $this->Html->link('Forgot username/password?', '/', array('class' => 'btn btn-xs text-muted'));
+			?>
+		</div>
 	</div>
 </div>
 <script>
-$("#BoostCakeLoginForm").bind("submit", function (event) {
-	$('#loginSubmitBtn').prop('disabled', 'disabled');
-	$('#loginSubmitBtn').val('Validating...');
-	$.ajax({
-		async: true, 
-		type: "POST", 
-		url: "/Users/login",
-		dataType: "html", 
-		data: $("#BoostCakeLoginForm").serialize(), 
-		success: function (data, textStatus) {
-			$("#nextAuthStep").html(data);
-		},
-		error: function (data, textStatus) {
-			$("#nextAuthStep").html(data);
-		}
-	});
-	return false;
-});
+
 //Don't run animation when there are alert messages.
 if ($('.alert').length === 0){
 	$( "#loginContainer" ).animate({
