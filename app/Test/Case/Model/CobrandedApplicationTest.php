@@ -2340,7 +2340,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$CakeEmail = new CakeEmail('default');
 		$CakeEmail->transport('Debug');
 		$this->CobrandedApplication->CakeEmail = $CakeEmail;
-
+		$newAppGroup = $this->CobrandedApplication->ApplicationGroup->createNewGroup();
+		$this->CobrandedApplication->save(['id' => 1, 'application_group_id' => $newAppGroup['ApplicationGroup']['id']], ['validate' => false]);
 		// set expected results
 		$expectedResponse = array(
 			'success' => true,
@@ -2899,7 +2900,10 @@ class CobrandedApplicationTest extends CakeTestCase {
 					'CorpPhone' => array ('value' => null),
 					'PhoneNum' => array ('value' => null),
 					'ApplicationGroup' => array(
-						'access_token' => null
+						'access_token' => null,
+						'client_access_token' => null,
+						'client_password' => null
+
 					)
 			),
 		);
@@ -3407,10 +3411,9 @@ class CobrandedApplicationTest extends CakeTestCase {
  	* @return void
  	*/
 	public function testAddAppToGroup() {
-		//Test that application does not get assigned to any ApplicationGroup
-		//since there is no other apps that have any data in common
+		//Test that application gets assigned to ApplicationGroup
 		$this->CobrandedApplication->addAppToGroup(1);
-		$this->assertFalse($this->CobrandedApplication->hasAny(array("id" => 1, "application_group_id is not null")));
+		$this->assertTrue($this->CobrandedApplication->hasAny(array("id" => 1, "application_group_id is not null")));
 
 		//Save an email value for existing app with id=2 which matches that of app with id = 1 (defined in fixture)
 		$value = array(
@@ -3422,7 +3425,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->CobrandedApplicationValue->save($value);
 
 		//Test that this call will puth both applications under the same ApplicationGroup
-		$this->CobrandedApplication->addAppToGroup(1);
+		$this->CobrandedApplication->addAppToGroup(2);
 		$AppData = $this->CobrandedApplication->find('first', array('recursive' => -1, 'conditions' => array('id' => 1)));
 		//The assigned application_group_id should be present in apps with ids 1 and 6 so total of 2 apps in the group
 		$actual = $this->CobrandedApplication->find('all', array(
@@ -3513,8 +3516,8 @@ class CobrandedApplicationTest extends CakeTestCase {
  	*/
 	public function testFindSameClientAppsUsingValuesInCommon() {
 		$id =1;
-		//Test that nothing is returned since Application with id = 1 has not other siblings with common values
-		$this->assertEmpty($this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id));
+		//Test that data is returned for Application with id = 1
+		$this->assertNotEmpty($this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id));
 
 		//Save an email value for existing app with id=2 which matches that of app with id = 1 (defined in fixture)
 		$value = array(
@@ -3525,10 +3528,15 @@ class CobrandedApplicationTest extends CakeTestCase {
 		);
 		$this->CobrandedApplicationValue->save($value);
 
-		//Test that only app id = 2 is returned since it is th only app with values in common with app with id=1
+		//Test that only app all associated apps are returned since including self since current app is associated to iself
 		$actual = $this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id);
-		$this->assertCount(1, $actual);
-		$this->assertSame(2, $actual[0]['CobrandedApplication']['id']);
+		$this->assertCount(2, $actual);
+		$actualIds = [];
+		foreach ($actual as $relatedApps) {
+			$actualIds[] = $relatedApps['CobrandedApplication']['id'];
+		}
+		$this->assertContains(2, $actualIds);
+		$this->assertContains(1, $actualIds);
 
 		//Save the additional field values that are used for thes search for the same app id=1 and 2 and verify they once again only app id = 2 is returned since
 		$value = array(
@@ -3546,10 +3554,15 @@ class CobrandedApplicationTest extends CakeTestCase {
 			),
 		);
 		$this->CobrandedApplicationValue->saveMany($value);
-		//Test that only app id = 2 is returned dispite the existaince of more common values
+		//Test that all associated apps with common values are returned
 		$actual = $this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id);
-		$this->assertCount(1, $actual);
-		$this->assertSame(2, $actual[0]['CobrandedApplication']['id']);
+		$this->assertCount(2, $actual);
+		$actualIds = [];
+		foreach ($actual as $relatedApps) {
+			$actualIds[] = $relatedApps['CobrandedApplication']['id'];
+		}
+		$this->assertContains(2, $actualIds);
+		$this->assertContains(1, $actualIds);
 
 		//Save an email value for existing app with id=3 which matches that of app with id = 1 and 2
 		$value = array(
@@ -3559,12 +3572,13 @@ class CobrandedApplicationTest extends CakeTestCase {
 			'value' => 'testing@axiapayments.com',
 		);
 		$this->CobrandedApplicationValue->save($value);
-		//Test that only app id = 2 and 3 are returned since they have values in common with app with id=1
+		//Test that only app id = 1, 2 and 3 are returned since they have values in common with app with id=1
 		$actual = $this->CobrandedApplication->findSameClientAppsUsingValuesInCommon($id);
-		$this->assertCount(2, $actual);
+		$this->assertCount(3, $actual);
 
 		$actualIds = Hash::extract($actual, '{n}.CobrandedApplication.id');
 		//check app ids are as expected
+		$this->assertContains(1, $actualIds);
 		$this->assertContains(2, $actualIds);
 		$this->assertContains(3, $actualIds);
 	}

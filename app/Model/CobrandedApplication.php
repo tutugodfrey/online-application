@@ -541,7 +541,7 @@ class CobrandedApplication extends AppModel {
  * Searches for other related applications by looking for same data such as client email address, SSNs and/or TaxIds
  * Applications that have these same data are considered to be related or belonging to the same client and therefore
  * part of the same group.
- * If no other related apps are found no group will be created and the current app will remain ungrouped.
+ * If no other related apps are found a group will be created with a single application.
  * 
  * @param integer|string $id an application id integer/string representation of integer
  * @return void
@@ -550,32 +550,34 @@ class CobrandedApplication extends AppModel {
 		if ($this->hasAny(array("id" => $id, "application_group_id is not null"))) {
 			return;
 		}
-		$relatedApps = $this->findSameClientAppsUsingValuesInCommon($id);
-		
-		if (empty($relatedApps)) {
-			return;
-		}
-		$groupId = null;
-		$ungroupedApps = array($id);
-		//iterate and find if the $relatedApps are already in a group and any other related apps
-		//that are not yet in a group
-		foreach ($relatedApps as $relatedApp) {
-			if (!empty($relatedApp['CobrandedApplication']['application_group_id'])) {
-				$groupId = $relatedApp['CobrandedApplication']['application_group_id'];
-			} else {
-				$ungroupedApps[] = $relatedApp['CobrandedApplication']['id'];
-			}
-		}
-		//if none of the apps are grouped create a new group
-		if (empty($groupId)) {
-			$appGroup = $this->ApplicationGroup->createNewGroup();
-			$groupId = $appGroup['ApplicationGroup']['id'];
-		}
-		//add apps to group
-		$this->updateAll(
-			array('application_group_id' => $groupId),
-			array('id' => $ungroupedApps)
-		);
+        //Check for values in this application to search on other applications with same values
+        //if empty we cant create a group
+        $commonValues = $this->getDataForCommonAppValueSearch($id);
+        if (!empty($commonValues)) {
+    		$relatedApps = $this->findSameClientAppsUsingValuesInCommon($id, $commonValues);
+
+    		$groupId = null;
+    		$ungroupedApps = array($id);
+    		//iterate and find if the $relatedApps are already in a group and any other related apps
+    		//that are not yet in a group
+    		foreach ($relatedApps as $relatedApp) {
+    			if (!empty($relatedApp['CobrandedApplication']['application_group_id'])) {
+    				$groupId = $relatedApp['CobrandedApplication']['application_group_id'];
+    			} else {
+    				$ungroupedApps[] = $relatedApp['CobrandedApplication']['id'];
+    			}
+    		}
+    		//if none of the apps are grouped create a new group
+    		if (empty($groupId)) {
+    			$appGroup = $this->ApplicationGroup->createNewGroup();
+    			$groupId = $appGroup['ApplicationGroup']['id'];
+    		}
+    		//add apps to group
+    		$this->updateAll(
+    			array('application_group_id' => $groupId),
+    			array('id' => $ungroupedApps)
+    		);
+        }
 	}
 
 /**
@@ -615,15 +617,17 @@ class CobrandedApplication extends AppModel {
  * @param integer|string $id the id of application whose data will be used as the values-in-common to search for in other applications that might have those values in common
  * @return array containing aplications records that were found to contain the common values.
  */
-	public function findSameClientAppsUsingValuesInCommon($id) {
-		$commonValues = $this->getDataForCommonAppValueSearch($id);
+	public function findSameClientAppsUsingValuesInCommon($id, $commonValues = array()) {
+        if (empty($commonValues)) {
+		  $commonValues = $this->getDataForCommonAppValueSearch($id);
+        }
 		if (!empty($commonValues)) {
 			return $this->find('all', array(
 					'recursive' => -1,
 					'fields' => array('DISTINCT CobrandedApplication.id', 'CobrandedApplication.application_group_id'),
 					'conditions' => array(
 						//exlude the original app we only want apps related to this one 
-						"CobrandedApplication.id != $id", 
+						// "CobrandedApplication.id != $id", 
 					),
 					'joins' => array(
 						array(
@@ -1640,7 +1644,7 @@ class CobrandedApplication extends AppModel {
  * @return
  *     $response array
  */
-	public function sendFieldCompletionEmail($email, $id = null) {
+	public function sendFieldCompletionEmail($email, $id = null, $performFullClientCredentialsReset = false) {
 		$response = array(
 			'success' => false,
 			'msg' => 'Failed to send email to [' . $email . ']. Please contact your rep.',
@@ -1674,28 +1678,43 @@ class CobrandedApplication extends AppModel {
 		} else {
 			// send the email
 			$timestamp = time();
-			$appGroupAccessToken = null;
+
+            $clientAccesExpired = false;
 			if (!empty($apps[0]['CobrandedApplication']['application_group_id'])) {
 				$appGroupData = $this->ApplicationGroup->find('first', array(
 					'recursive' => -1,
 					'conditions' => array('id' => $apps[0]['CobrandedApplication']['application_group_id'])
 				));
-				//Generate new access token every time
-				$appGroupData = $this->ApplicationGroup->renewAccessToken($appGroupData['ApplicationGroup']['id'], true);
-				$appGroupAccessToken = $appGroupData['ApplicationGroup']['access_token'];
-			}
-			if (!empty($appGroupAccessToken)) {
-				$link = Router::url('/cobranded_applications/index/', true) . $appGroupAccessToken;
+
+				//Generate new client password if is not expired
+                $clientAccesExpired = $this->ApplicationGroup->isClientPwExpired($appGroupData['ApplicationGroup']['id']);
+                if ($performFullClientCredentialsReset) {
+    				$updatedAppGroupData = $this->ApplicationGroup->resetFullClientCredentials($appGroupData['ApplicationGroup']['id'], true);
+                    $appGroupData['ApplicationGroup'] = array_merge($appGroupData['ApplicationGroup'],$updatedAppGroupData['ApplicationGroup']);
+                    $clientAccesExpired = false;
+
+                } elseif($clientAccesExpired === false) {
+                    $updatedAppGroupData = $this->ApplicationGroup->resetPartialClientCredentials($appGroupData['ApplicationGroup']['id'], true);
+                    $appGroupData['ApplicationGroup'] = array_merge($appGroupData['ApplicationGroup'],$updatedAppGroupData['ApplicationGroup']);
+
+                } elseif ($clientAccesExpired) {
+                    $appGroupData = null;
+                }
+    			$appGroupData['ApplicationGroup']['client_password'] = (!empty($appGroupData))? $this->decrypt($appGroupData['ApplicationGroup']['client_password'], Configure::read('Security.OpenSSL.key')) : null;
+
 			} else {
-				$link = Router::url('/cobranded_applications/edit/', true) . $apps[0]['CobrandedApplication']['uuid'];
-			}
+                $response['msg'] = 'Could not find client application access credentials with the specified information.';
+                return $response;
+            }
+
+			$link = Router::url('/cobrandedApplications/cl_access_auth/', true);
 
             if (stripos($link, 'axiatech') !== false || stripos($link, EmailTimeline::ENTITY1_EMAIL_DOMAIN) !== false) {
                 $from = array('noreply@axiamed.com' => 'No Reply AxiaMed Automated Message');
-                $elementPath = 'email/html/axiamed_apps_access_request';
+                $elementPath = ($clientAccesExpired)? 'email/html/axiamed_apps_access_expired_notice' : 'email/html/axiamed_apps_access_request';
             } else {
                  $from = array('noreply@axiamed.com' => 'No Reply Axia Automated Message');
-                 $elementPath = 'email/html/axiapayments_apps_access_request';
+                 $elementPath = ($clientAccesExpired)? 'email/html/axiapayments_apps_access_expired_notice' : 'email/html/axiapayments_apps_access_request';
             }
 
 			$args = array(
@@ -1704,7 +1723,15 @@ class CobrandedApplication extends AppModel {
 				'subject' => 'Your Axia Applications',
 				'format' => 'html',
 				'template' => 'client_communication',
-				'viewVars' => array('emailBodyElementPath' => $elementPath, 'appAccesslink' => $link)
+				'viewVars' => array(
+                    'emailBodyElementPath' => $elementPath,
+                    'appAccesslink' => $link,
+                    'clientAccessCredentials' => array(
+                        'clientAccesToken' => ($clientAccesExpired)? null : $appGroupData['ApplicationGroup']['client_access_token'],
+                        'clientPassword' => ($clientAccesExpired)? null : $appGroupData['ApplicationGroup']['client_password'],
+                        'clientAccessExpiration' => ($clientAccesExpired)? null : $appGroupData['ApplicationGroup']['client_pw_expiration'],
+                    )
+                )
 			);
 
 			$response = $this->sendEmail($args);
@@ -3480,6 +3507,8 @@ class CobrandedApplication extends AppModel {
 				'CobrandedApplication.client_name_global',
 				'CobrandedApplication.application_group_id',
 				'ApplicationGroup.access_token',
+                'ApplicationGroup.client_access_token',
+                'ApplicationGroup.client_password',
 				'Cobrand.id',
 				'Cobrand.partner_name',
 				'Template.id',
