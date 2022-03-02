@@ -41,6 +41,12 @@ class Cobrand extends AppModel {
 				'required' => true,
 				'message' => 'Partner name cannot be empty'
 			),
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => true,
+	            'allowEmpty' => false,
+	        ),
 		),
 		'partner_name_short' => array(
 			'notBlank' => array(
@@ -48,6 +54,12 @@ class Cobrand extends AppModel {
 				'required' => true,
 				'message' => 'Short partner name cannot be empty'
 			),
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => true,
+	            'allowEmpty' => false,
+	        ),
 		),
 	);
 
@@ -65,6 +77,27 @@ class Cobrand extends AppModel {
 			'dependent' => true,
 		)
 	);
+
+/**
+ * beforeSave callback
+ *
+ * @param array $options options param required by callback
+ * @return void
+ */
+	public function beforeSave($options = array()) {
+		if (!empty($this->data[$this->alias]['cobrand_logo_url'])) {
+            $this->data[$this->alias]['cobrand_logo_url'] = $this->removeAnyMarkUp($this->data[$this->alias]['cobrand_logo_url']);
+        }
+        if (!empty($this->data[$this->alias]['description'])) {
+            $this->data[$this->alias]['description'] = $this->removeAnyMarkUp($this->data[$this->alias]['description']);
+        }
+        if (!empty($this->data[$this->alias]['brand_logo_url'])) {
+            $this->data[$this->alias]['brand_logo_url'] = $this->removeAnyMarkUp($this->data[$this->alias]['brand_logo_url']);
+        }
+        if (!empty($this->data[$this->alias]['brand_name'])) {
+            $this->data[$this->alias]['brand_name'] = $this->removeAnyMarkUp($this->data[$this->alias]['brand_name']);
+        }
+	}
 
 	public function getList() {
 		return $this->find('list',

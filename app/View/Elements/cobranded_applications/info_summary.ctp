@@ -1,6 +1,6 @@
 <div class="panel panel-info">
 	<div class="panel-heading"><span class="glyphicon glyphicon-info-sign pull-left" style="font-size: 15pt"></span><strong>&nbsp;&nbsp; <?php echo __('More Information about ') . $app['Dba']['value']; ?></strong></div>
-	<table class="table table-condensed table-hover">
+	<table class="table table-condensed table-hover small">
 		<tr>
 			<th>Client ID/Name:</th>
 			<td style="width: 400px;">
@@ -65,6 +65,27 @@
 			 ?></td>
 		</tr>
 		<?php endif;?>
+		<tr>
+			<th>Customer username for app access</th>
+			<td><?php 
+				echo $app['ApplicationGroup']['client_access_token']
+			 ?></td>
+		</tr>
+		<tr>
+			<th>Customer password for app access</th>
+			<td><?php 
+				echo $this->Form->input("ApplicationGroup.client_pw", array(
+					'type' => 'password',
+					'value' => h($app['ApplicationGroup']['client_password']),
+					'label' => false,
+					'class' => 'form-control',
+					'readonly' => 'readonly',
+					'beforeInput' => '<div class="input-group col-md-11"><span class="input-group-addon">'. $this->Html->link('<span class="glyphicon glyphicon-eye-open"></span>', 'javascript:void(0)', array('escape' => false, "title" => "Show/hide", 
+												'onClick' => "toggleShowPwField('ApplicationGroupClientPw')")) .'</span>',
+					'afterInput' => '</div>'
+			));
+			 ?></td>
+		</tr>
 	</table>
 </div>
 <script type='text/javascript'>

@@ -53,8 +53,18 @@ class TemplateField extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'rule' => array('notBlank'),
-			'message' => array('Template field name cannot be empty'),
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'required' => true,
+				'message' => array('Template field name cannot be empty'),
+
+			),
+			'input_has_only_valid_chars' => array(
+	            'rule' => array('inputHasOnlyValidChars'),
+	            'message' => 'Special characters (i.e "<>`()[]"... etc) are not permitted!',
+	            'required' => true,
+	            'allowEmpty' => false,
+	        ),
 		),
 		'width' => array(
 			'between' => array(
@@ -250,6 +260,12 @@ class TemplateField extends AppModel {
  * @return void
  */
 	public function beforeSave($options = array()) {
+		if (!empty($this->data[$this->alias]['description'])) {
+            $this->data[$this->alias]['description'] = $this->removeAnyMarkUp($this->data[$this->alias]['description']);
+        }
+        if (!empty($this->data[$this->alias]['merge_field_name'])) {
+            $this->data[$this->alias]['merge_field_name'] = $this->removeAnyMarkUp($this->data[$this->alias]['merge_field_name']);
+        }
 		//If a change was made add a new value to indicate so in the data.
 		//Then check for this value in the afterSave callback
 		$this->data['TemplateField']['record_changed'] = $this->_recordChanged($this->data);

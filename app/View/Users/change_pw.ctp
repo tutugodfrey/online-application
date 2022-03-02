@@ -26,12 +26,12 @@ echo $this->Form->create('User', array(
 ));
 
 if ($renewingPw) {
-	echo $this->Form->input('cur_password', array('type' => 'password','placeholder' => 'Enter current password'));
+	echo $this->Form->input('cur_password', array('type' => 'password','placeholder' => 'Enter current password', 'autocomplete' => 'off'));
 }
 
 echo $this->Form->hidden('id');
-echo $this->Form->input('pwd', array('type' => 'password', 'placeholder' => 'Enter new password'));
-echo $this->Form->input('repeat_password', array('type' => 'password', 'placeholder' => 'Confirm new password'));
+echo $this->Form->input('pwd', array('type' => 'password', 'placeholder' => 'Enter new password', 'autocomplete' => 'off'));
+echo $this->Form->input('repeat_password', array('type' => 'password', 'placeholder' => 'Confirm new password', 'autocomplete' => 'off'));
 
 echo $this->Html->tag('div', $this->Html->link('Cancel', array('action' => 'login'), array(
 	'class' => 'btn btn-danger',

@@ -90,6 +90,9 @@ class CobrandedApplicationValue extends AppModel {
 			return true;
 		}
 
+		//satinize: remove all potential html or script mark ups (pevents XSS attack)
+		$this->data[$this->alias]['value'] = $this->removeAnyMarkUp($this->data[$this->alias]['value']);
+
 		// only validate in the update case, ignore during create; null will not be valid in all cases
 		if (key_exists('id', $this->data[$this->alias])) {
 			// look up the value's template field
@@ -300,7 +303,7 @@ class CobrandedApplicationValue extends AppModel {
 							$data = $resultValue['CobrandedApplicationValue']['value'];
 							$data = (!empty($data))? $this->decrypt($data, Configure::read('Security.OpenSSL.key')) : $data;
 
-							if (!in_array($session->read('Auth.User.group'), array('admin', 'rep', 'manager'))) {
+							if (!in_array($session->read('Auth.User.group'), array('admin'))) {
 								$maskValue = true;
 
 								$e = new Exception;

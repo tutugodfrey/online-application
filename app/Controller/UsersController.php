@@ -1,6 +1,7 @@
 <?php
 App::uses('User', 'Model');
 App::uses('Okta', 'Model');
+App::uses('DigestAuthenticate', 'Controller/Component/Auth');
 class UsersController extends AppController {
 
 	public $permissions = array(
@@ -83,7 +84,9 @@ class UsersController extends AppController {
 				$this->render('/Elements/Ajax/api_info');
 			} else {
 				$apiPassword = $this->User->generateRandPw();
-				$this->User->save(['id' => $id, 'api_password' => $apiPassword]);
+				$DigestAuthenticate = new DigestAuthenticate(new ComponentCollection(), []);
+				$apiDigestPass = $DigestAuthenticate->password($apiToken, $apiPassword, env('SERVER_NAME'));
+				$this->User->save(['id' => $id, 'api_password' => $apiDigestPass]);
 				$this->set(compact('apiPassword'));
 				$this->render('/Elements/Ajax/api_info_content');
 			}
@@ -98,8 +101,13 @@ class UsersController extends AppController {
  * @return null
  */
 	public function login() {
+		//clean up the session if client data is present
+		if (!is_null($this->Session->read('Client'))) {
+			$this->Session->delete('Client');
+		}
 		if ($this->request->is('post')) {
 			$user = $this->Auth->identify($this->request, $this->response);
+
 			if (!empty($user)) {
 				$passwordValidDays = $this->User->getDaysTillPwExpires($user['id']);
 				if ($passwordValidDays < 0) {
@@ -125,6 +133,10 @@ class UsersController extends AppController {
 				//user is not MFA enrolled but since at this point credentials are valid proceed to log user in
 				if ($result === false) {
 					$this->Auth->login($user);
+					if ($user['wrong_log_in_count'] != 0) {
+						//reset any previous failed attempts to login
+						$this->User->trackIncorrectLogIn($user['email'], true);
+					}
 					$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
 					$this->Session->write('Auth.User.Okta.needs_mfa_enrollment', true);
 					if ($this->Auth->user('group_id') === User::API_GROUP_ID) {
@@ -155,9 +167,19 @@ class UsersController extends AppController {
 				}
 				
 			} else {
+				//If user tries to login with wrong password while already logged in destroy session.
+				if ($this->Session->check('Auth.User.id')){
+					$this->Session->destroy();
+				}
+				$errMsg = 'Invalid e-mail/password.';
+				$attemptCount = $this->User->trackIncorrectLogIn($this->request->data('User.email'));
+				if ($attemptCount >= 6) {
+					$errMsg .= " Account is now locked. A notification was sent to the registered user's email.";
+				}
+
 				$redirectUrl = Router::url(array('controller' => 'Users', 'action' => 'login'));
 				$this->set('redirectUrl', $redirectUrl);
-				$this->_failure(__('Invalid e-mail/password.'));
+				$this->_failure(__($errMsg));
 				$this->render('/Elements/Ajax/nonAjaxRedirect', 'ajax');
 			}
 		}
@@ -259,6 +281,9 @@ class UsersController extends AppController {
 				$user['User']['Template'] = $user['Template'];
 				$user = $user['User'];
 				$this->Auth->login($user);
+				if ($user['User']['wrong_log_in_count'] != 0) {
+					$this->User->trackIncorrectLogIn($user['User']['email'], true);
+				}
 				$this->Session->write('Auth.User.Okta.mfa_enrolled', true);
 				$this->Session->write('Auth.User.group', $this->User->Group->field('name', array('id' => $this->Auth->user('group_id'))));
 				if ($this->Auth->user('group_id') === User::API_GROUP_ID) {
@@ -378,8 +403,12 @@ class UsersController extends AppController {
 				}
 			}
 			//save pw_reset_hash as null
+			
 			$this->request->data['User']['pw_reset_hash'] = null;
-			if ($this->User->save($this->request->data['User'])) {
+			$updatedData = $this->request->data['User'];
+			$updatedData['is_blocked'] = false;
+			$updatedData['wrong_log_in_count'] = 0;
+			if ($this->User->save($updatedData)) {
 				$this->_success(__('Password updated!'), ['action' => 'login'], 'alert-success');
 			} else {
 				$this->_failure(__('Failed to update password.'));
@@ -399,6 +428,7 @@ class UsersController extends AppController {
 
 	public function logout() {
 		$this->_success('Good-Bye');
+		$this->Session->destroy();
 		$this->redirect($this->Auth->logout());
 	}
 

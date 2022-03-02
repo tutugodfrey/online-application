@@ -5,23 +5,20 @@
     $incomplete = $waiting = $completed = 0;
     $allowSigning = false;
     $expriedLabel = "<span class='label label-default nowrap'>Expired</span>";
-    $tokenExpDate = date('l M jS \a\t g:ia',strtotime($appGroupData['ApplicationGroup']['token_expiration']));
+    $tokenExpDate = date('l M jS',strtotime($appGroupData['ApplicationGroup']['client_pw_expiration']));
 
     $datetime1 = date_create(date('Y-m-d H:i:s'));
-    $datetime2 = date_create($appGroupData['ApplicationGroup']['token_expiration']);
+    $datetime2 = date_create($appGroupData['ApplicationGroup']['client_pw_expiration']);
 
     // Calculates the difference between DateTime objects
     $interval = date_diff($datetime1, $datetime2);
       
     // Display the result
-    $remainingD = (int)$interval->format('%d');
-    $remainingH =  (int)$interval->format('%h');
-    $remainingS =  (int)$interval->format('%i');
+    $remainingD = (int)$interval->format('%a');
     $remainderConcat = '';
-    $remainderConcat .= ($remainingD)?"$remainingD day ":'';
-    $remainderConcat .= ($remainingH)?"$remainingH hours ":'';
-    $remainderConcat .= ($remainingS)?"$remainingS minutes ":'';
-    $remainderConcat = ($remainingD ==0)? $remainderConcat : $remainderConcat ."on ". $tokenExpDate;
+    $remainderConcat .= ($remainingD>0)?"in $remainingD day":'today';
+    $remainderConcat .= ($remainingD>1)?"s ":' ';
+    $remainderConcat = ($remainingD <=8)? $remainderConcat : $remainderConcat ."on ". $tokenExpDate;
 ?>
 <div style="width:80%" class="center-block">
     <div class="panel panel-primary">
@@ -32,22 +29,22 @@
                 <span class="glyphicon glyphicon-info-sign text-info pull-left" style="font-size:20pt;margin-top:2.7%"></span>
                 <div class="panel-heading text-center">
                     <p class="text-left" style="margin-left:40px">This dashboard provides an overview of all your forms, applications and documents that have been saved, are awaiting signature, and/or are signed and completed.<br/>
-                    The <u>Incomplete Applications</u> section contains applications that are in the initial stage, and are yet to be completely filled out.<br/>
-                    Once an application is completely filled out and signature is required it will be listed in the <u>Applications Waiting for Signature</u> section (a signature may not always be required depending on the type of application).
-                    You may at any time return to this page using its URL (which expires in 2 days), and review documents that need your attention. If you have any questions about your applications, please feel free to contact your rep.</p>
+                    The <u>"Incomplete Applications"</u> section contains applications that are in the initial stage, and are yet to be completely filled out.<br/>
+                    Once an application is completely filled out and signature is required it will be listed in the <u>"Applications Waiting for Signature"</u> section (a signature may not always be required depending on the type of application).
+                    If you have any questions about your applications, please feel free to contact your sales representative.</p>
                     <?php
                         if ((int)$datetime1->format('U') > (int)$datetime2->format('U')) {
-                            echo  '<strong class="text-danger bg-warning"><span class="glyphicon glyphicon-exclamation-sign"></span> Client access token has expired, only logged in users may currently access this page.</strong><br/>';
+                            echo  '<strong class="text-danger bg-warning"><span class="glyphicon glyphicon-exclamation-sign"></span> Client access to this page has expired, only logged in users may currently have access.</strong><br/>';
                         } else {
-                            echo "<strong>For security, access to this page will expire in <span class='text-danger'>$remainderConcat</span>.";
+                            echo "<strong>For security, access to this page will expire <span class='text-danger'>$remainderConcat</span>.";
                         }
                     ?>
                    
-                        <?php if (!empty($this->Session->read('Auth.User.id')) || ($remainingD == 0 && $appGroupData['ApplicationGroup']['token_renew_count'] <= 3)) { 
-                            echo "If needed, you may extend this expiration by 2 days from now: ";
-                            echo $this->Form->postLink('Extend', array('admin' => false, 'controller' => 'CobrandedApplications', 'action' => 'extend_dashboard_expiration', $appGroupData['ApplicationGroup']['id']), array('class' => 'btn btn-default btn-xs'));
+                        <?php if (!empty($this->Session->read('Auth.User.id')) || ($remainingD <= 8 && $appGroupData['ApplicationGroup']['token_renew_count'] <= 2)) { 
+                            echo "If more time is needed to complete your documents, you may extend this expiration: ";
+                            echo $this->Form->postLink('Extend', array('admin' => false, 'controller' => 'CobrandedApplications', 'action' => 'extend_dashboard_expiration', $appGroupData['ApplicationGroup']['id']), array('class' => 'btn btn-default btn-xs', 'confirm' => "An email notification will be sent to the client containing renewed access credentials.\nContinue?"));
                         }
-                        if (empty($this->Session->read('Auth.User.id')) && $appGroupData['ApplicationGroup']['token_renew_count'] > 3) {
+                        if (empty($this->Session->read('Auth.User.id')) && $appGroupData['ApplicationGroup']['token_renew_count'] > 2) {
                             echo "<br/>If you need to extend this expiration, please contact you sales representative.";
                         }
                         ?>

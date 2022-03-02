@@ -27,7 +27,8 @@ echo $this->Form->input('email', array(
 	'wrapInput' => 'col col-md-12 input-group',
 	'beforeInput' => '<span class ="input-group-addon glyphicon glyphicon-envelope"></span>',
 	'placeholder' => 'email',
-	'autofocus' => 'autofocus'
+	'autofocus' => 'autofocus',
+	'autocomplete' => 'off'
 ));
 
 echo $this->Html->tag('div', $this->Html->link('Cancel', array('action' => 'login'), array(

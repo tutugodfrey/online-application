@@ -165,7 +165,7 @@ class TemplateFieldTest extends CakeTestCase {
 
 		// go right
 		$newFieldData = array(
-			'name' => 'required text field from user w/o default',
+			'name' => 'required text field from user without default',
 			'width' => 6,
 			'type' => 0, // (text|)
 			'required' => 1,
@@ -181,7 +181,7 @@ class TemplateFieldTest extends CakeTestCase {
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
 		$newFieldData = array(
-			'name' => 'required text field from user w/o default',
+			'name' => 'required text field from user without default',
 			'width' => 6,
 			'type' => 4, // (radio)
 			'required' => 1,
@@ -197,7 +197,7 @@ class TemplateFieldTest extends CakeTestCase {
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
 		$newFieldData = array(
-			'name' => 'required text field from user w/o default',
+			'name' => 'required text field from user without default',
 			'width' => 6,
 			'type' => 5, // (radio)
 			'required' => 1,
@@ -213,7 +213,7 @@ class TemplateFieldTest extends CakeTestCase {
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
 		$newFieldData = array(
-			'name' => 'required text field from user w/o default',
+			'name' => 'required text field from user without default',
 			'width' => 6,
 			'type' => 7, // (radio)
 			'required' => 1,
@@ -229,7 +229,7 @@ class TemplateFieldTest extends CakeTestCase {
 
 		// merge_field_name can be empty for fields with type 4, 5, 7 or 20
 		$newFieldData = array(
-			'name' => 'required text field from user w/o default',
+			'name' => 'required text field from user without default',
 			'width' => 6,
 			'type' => 20, // (radio)
 			'required' => 1,

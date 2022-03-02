@@ -12,8 +12,8 @@
 		<link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" >
 
 		<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" />
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="/js/onlineAppControls.js"></script>
 		<script type="text/javascript" src="/js/uiContols.js"></script>
 
@@ -22,7 +22,7 @@
 		<!-- Optional theme -->
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 		<!-- Latest compiled and minified JavaScript -->
-		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 		<?php
 				echo $this->Html->css('sessionMsg');
@@ -139,6 +139,7 @@
 <body>
 	<div id='countTST'></div>
 	 <!-- Session notification Dialog Box -->
+	 <?php if (Hash::get($this->request->params, 'api', false) === false ): ?>
 	 <div id="msg_fader">&nbsp;</div>
 	<div id="session_box" class="col-md-12">
 		<div class="panel panel-danger">
@@ -150,13 +151,51 @@
 			</div> 
 		</div>
 	</div>
+<?php endif; ?>
 
 		<!-- End Session notification Dialog Box -->
 		<!--  span id="loginBtn" class="btn">Need to login?</span -->
 		<div id="container">
 				<div id="header">
+					<?php
+					$additionalMarginTop = 0;
+					if (!is_null($this->Session->read('Client.client_user_token'))) : ?>
+							<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+								<span class="navbar-text navbar-right btn-group" style="margin-right:20px">
+									<?php
+									if ($this->request->params['action'] != 'index') {
+										echo $this->Html->link(__('Go to Dashboard ') .' <span class="glyphicon glyphicon-th-list"></span>',
+											array(
+												'controller' => 'cobrandedApplications',
+												'action' => 'index',
+												$this->Session->read('Client.client_dashboard_id'),
+												'admin' => false,
+											),
+											array(
+												'escape' => false,
+												'class' => 'btn btn-primary'
+											)
+										);
+									}
+									echo $this->Html->link(__('Sing out ') .' <span class="glyphicon glyphicon-log-out"></span>',
+										array(
+											'controller' => 'cobrandedApplications',
+											'action' => 'cl_logout',
+											'admin' => false,
+										),
+										array(
+											'escape' => false,
+											'class' => 'btn btn-default'
+										)
+									);
+								?>
+							</span>
+						</nav>
+					<?php 
+					$additionalMarginTop = 45;
+					endif; ?>
 						<?php
-						$additionalMarginTop = 0;
+						
 						if ($this->Session->check('Auth.User.id')) :
 							echo $this->Element('Ajax/dynamicModal');
 						 ?>
@@ -194,6 +233,7 @@
 						<?php 
 							$additionalMarginTop = 45;
 						endif; ?>
+
 								<div style="margin-top: <?php echo 25 + $additionalMarginTop; ?>px;">
 								<?php
 									if (!empty($brand_logo_url) || !empty($cobrand_logo_url)) {
@@ -260,7 +300,12 @@
 						<?php echo $this->fetch('content'); ?>
 				</div>
 				<div id="footer">
-						<?php /* footer content not neeed at this time*/?>
+					
+						<?php
+							if ($this->request['action'] === 'cl_access_auth') {
+								echo $this->Element('publicFooter');
+							}
+						?>
 				</div>
 		</div>
 	<?php if ($this->Session->consume('Auth.User.Okta.needs_mfa_enrollment')): ?>
