@@ -1564,9 +1564,116 @@ class CobrandedApplication extends AppModel {
 		if (empty($applicationGroupId)) {
 			return [];
 		}
-		$settings['conditions'] = array('CobrandedApplication.application_group_id' => $applicationGroupId);
-		$data = $this->getSummarizedAppData($settings);
-		return $data;
+
+		$settings = array(
+            'callbacks' => false,
+            'recursive' => -1,
+            'fields' => array(
+                'CobrandedApplication.id',
+                'CobrandedApplication.user_id',
+                'CobrandedApplication.template_id',
+                'CobrandedApplication.uuid',
+                'CobrandedApplication.created',
+                'CobrandedApplication.modified',
+                'CobrandedApplication.rightsignature_document_guid',
+                'CobrandedApplication.status',
+                'CobrandedApplication.rightsignature_install_document_guid',
+                'CobrandedApplication.rightsignature_install_status',
+                'CobrandedApplication.application_group_id',
+                'User.id',
+                'Template.id',
+                'Cobrand.partner_name',
+                'Coversheet.id',
+                'CobrandedApplicationValues.name',
+                'CobrandedApplicationValues.value',
+            ),
+            'joins' => array(
+                array(
+                    'alias' => 'CobrandedApplicationValues',
+                    'table' => 'onlineapp_cobranded_application_values',
+                    'type' => 'LEFT',
+                    'conditions' => array(
+                        '"CobrandedApplicationValues"."cobranded_application_id" = "CobrandedApplication"."id"',
+                    ),
+                ),
+                array(
+                    'alias' => 'Coversheet',
+                    'table' => 'onlineapp_coversheets',
+                    'type' => 'LEFT',
+                    'conditions' => '"Coversheet"."onlineapp_application_id" = "CobrandedApplication"."id"',
+                ),
+                array(
+                    'alias' => 'User',
+                    'table' => 'onlineapp_users',
+                    'type' => 'LEFT',
+                    'conditions' => '"User"."id" = "CobrandedApplication"."user_id"',
+                ),
+                array(
+                    'alias' => 'Template',
+                    'table' => 'onlineapp_templates',
+                    'type' => 'LEFT',
+                    'conditions' => '"Template"."id" = "CobrandedApplication"."template_id"',
+                ),
+                array(
+                    'alias' => 'Cobrand',
+                    'table' => 'onlineapp_cobrands',
+                    'type' => 'LEFT',
+                    'conditions' => '"Cobrand"."id" = "Template"."cobrand_id"',
+                )
+            ),
+            'conditions' => array(
+                'CobrandedApplication.application_group_id' => $applicationGroupId,
+                '"CobrandedApplicationValues"."name" in (\'DBA\', \'CorpName\', \'AllowMerchantToSignApplication\')'
+                ),
+            'group' => array(
+                'CobrandedApplication.id',
+                'CobrandedApplication.user_id',
+                'CobrandedApplication.template_id',
+                'CobrandedApplication.uuid',
+                'CobrandedApplication.created',
+                'CobrandedApplication.modified',
+                'CobrandedApplication.rightsignature_document_guid',
+                'CobrandedApplication.status',
+                'CobrandedApplication.rightsignature_install_document_guid',
+                'CobrandedApplication.rightsignature_install_status',
+                'CobrandedApplication.application_group_id',
+                'User.id',
+                'Template.id',
+                'Cobrand.partner_name',
+                'Coversheet.id',
+                'CobrandedApplicationValues.name',
+                'CobrandedApplicationValues.value',
+            ),
+            'order' => 'CobrandedApplication.created desc'
+        );
+        $apps = $this->find('all',$settings);
+
+        $values = array();
+        foreach ($apps as $idx => $app) {
+            $values[$app['CobrandedApplication']['id']][$app['CobrandedApplicationValues']['name']] = $app['CobrandedApplicationValues']['value'];
+        }
+
+        $finalData = array();
+        $added = array();
+        foreach ($apps as $idx => $app) {
+            unset($app['CobrandedApplicationValues']);
+            $app['ValuesMap'] = $values[$app['CobrandedApplication']['id']];
+            if (empty($finalData)) {
+                $finalData[] = $app;
+                $added[$app['CobrandedApplication']['id']] = $app['CobrandedApplication']['id'];
+            }
+
+            foreach ($finalData as $idx2 => $app2) {
+                if (empty($added[$app['CobrandedApplication']['id']])) {
+                    $finalData[] = $app;
+                    $added[$app['CobrandedApplication']['id']] = $app['CobrandedApplication']['id'];
+                } else {
+                    break;
+                }
+            }
+        }
+
+		return $finalData;
 	}
 
 
