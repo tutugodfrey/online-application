@@ -427,15 +427,13 @@ class CobrandedApplicationsController extends AppController {
 		//check if pw expired
 		if (!empty($appGroupData)) {
 			if (!empty($this->Session->read('Auth.User.id')) || $this->CobrandedApplication->ApplicationGroup->isClientPwExpired($appGroupData['ApplicationGroup']['id']) == false) {
+				set_time_limit(0);
 				$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id']);
 			}
 		}
+
 		$template = [];
 		if (!empty($applications)) {
-			foreach ($applications as $key => $val) {
-				$valuesMap = $this->CobrandedApplication->buildCobrandedApplicationValuesMap($val['CobrandedApplicationValues']);
-				$applications[$key]['ValuesMap'] = $valuesMap;
-			}
 			$app = Hash::get($applications, '0');
 
 			$template = $this->CobrandedApplication->User->Template->find(
