@@ -130,8 +130,9 @@ class CoversheetsController extends AppController {
         }
         $dbUserAssocParters = [];
         if (Hash::get($data, 'Coversheet.status') === 'saved') {
-	        $axDbApiClient = $this->Coversheet->createAxiaDbApiAuthClient('GET', '/api/Users/get_reps?user_name='.Hash::get($data, 'ContractorID'));
-			$reponse = $axDbApiClient->get('https://db.axiatech.com/api/Users/get_reps?user_name='.Hash::get($data, 'ContractorID'));
+        	$requestUri = '/api/Users/get_reps?'. http_build_query(["user_name" => Hash::get($data, 'ContractorID')], "", null, PHP_QUERY_RFC3986);
+	        $axDbApiClient = $this->Coversheet->createAxiaDbApiAuthClient('GET', $requestUri);
+			$reponse = $axDbApiClient->get('https://db.axiatech.com'.$requestUri);
 			$responseData = json_decode($reponse->body, true);
 			if (!empty($responseData['data'])) {
 				$dbUserAssocParters = Hash::extract($responseData, 'data.{n}.assoc_partners.{s}');
