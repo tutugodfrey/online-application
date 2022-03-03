@@ -3632,14 +3632,30 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'value' => '123456789',
 			),
 			array(
+				'cobranded_application_id' => 2,
+				'template_field_id' => 40,
+				'name' => 'DBA',
+				'value' => 'Doing Business As',
+				'created' => '2014-01-23 17:28:15',
+				'modified' => '2014-01-23 17:28:15'
+			),
+			array(
 				'cobranded_application_id' => 3,
 				'template_field_id' => 5,
 				'name' => 'SomeEmail',
 				'value' => 'testing@axiapayments.com',
-			)
+			),
+			array(
+				'cobranded_application_id' => 3,
+				'template_field_id' => 40,
+				'name' => 'DBA',
+				'value' => 'Doing Business As',
+				'created' => '2014-01-23 17:28:15',
+				'modified' => '2014-01-23 17:28:15'
+			),
 		);
-		$this->CobrandedApplicationValue->saveMany($value);
-		//create a group of those 3 apps
+		$this->CobrandedApplicationValue->saveAll($value, array('validate' => false));
+		//create a group that shold result in containing apps 1 and 6 since they have the same ssn
 		$this->CobrandedApplication->addAppToGroup(1);
 		//Get the data of the 3 apps
 		$expected = $this->CobrandedApplication->find('all', 
@@ -3647,9 +3663,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 				'recursive' => -1,
 				'conditions' => array('id' => array(1,2,3)),
 			));
+
 		$expectedGroupId = $expected[0]['CobrandedApplication']['application_group_id'];
 
 		$actual = $this->CobrandedApplication->findGroupedApps($expectedGroupId);
+
 		$this->assertCount(3, $actual);
 		$this->assertSame($expectedGroupId, $actual[0]['CobrandedApplication']['application_group_id']);
 		$this->assertSame($expectedGroupId, $actual[1]['CobrandedApplication']['application_group_id']);

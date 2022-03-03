@@ -553,6 +553,7 @@ class CobrandedApplication extends AppModel {
         //Check for values in this application to search on other applications with same values
         //if empty we cant create a group
         $commonValues = $this->getDataForCommonAppValueSearch($id);
+
         if (!empty($commonValues)) {
     		$relatedApps = $this->findSameClientAppsUsingValuesInCommon($id, $commonValues);
 
@@ -567,11 +568,13 @@ class CobrandedApplication extends AppModel {
     				$ungroupedApps[] = $relatedApp['CobrandedApplication']['id'];
     			}
     		}
+
     		//if none of the apps are grouped create a new group
     		if (empty($groupId)) {
     			$appGroup = $this->ApplicationGroup->createNewGroup();
     			$groupId = $appGroup['ApplicationGroup']['id'];
     		}
+
     		//add apps to group
     		$this->updateAll(
     			array('application_group_id' => $groupId),
