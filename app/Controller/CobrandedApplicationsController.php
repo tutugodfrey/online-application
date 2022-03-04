@@ -111,7 +111,7 @@ class CobrandedApplicationsController extends AppController {
 			'cl_logout',
 			'submit_for_review');
 
-		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'retrieve_with_client_token','document_callback');
+		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'retrieve_with_client_token','document_callback', 'index');
 		$this->Security->blackHoleCallback = 'forcePageRefresh';
 		if ($this->requestIsApiJson() || $this->request->is('ajax')) {
 			$this->Security->unlockedActions= array('api_add', 'api_edit', $this->action);
@@ -136,10 +136,15 @@ class CobrandedApplicationsController extends AppController {
 						$this->_failure(__('Access not allowed.'), array('action' => 'cl_access_auth', 'admin' => false));
 					}
 				} else {
+
 					//External user needs to be authenticated
 					//Redirect unauthenticated users to client login page
 					if (!in_array($this->request->params['action'], $this->Auth->allowedActions)) {
+						if ($this->request->params['action'] == 'cl_access_auth' || $this->request->params['action'] == 'cl_logout') {
 						$this->redirect(array('action' => 'cl_access_auth', 'admin' => false));
+					} else {
+						$this->redirect(array('action' => 'cl_access_auth', 'admin' => false, '?' => array('ref' => Router::url($this->request->here, true))));
+					}
 					}
 				}
 			}
@@ -210,6 +215,18 @@ class CobrandedApplicationsController extends AppController {
  * @return null
  */
 	protected function _isResourceOwnerAllowedAccess() {
+		return true;
+	}
+
+/**
+ * Authenticate client users
+ * Checkes whether the current request action is part of actions that are accessible by clients with appropriate access credentials.
+ * Also checks if the requested resource is owned by the currently authenticated client based on request data parameters.
+ * Each action has different parameters and must check each differently
+ * 
+ * @return null
+ */
+	protected function _isResourceOwnerAllowedAccessDeprecated() {
 		if (in_array($this->request->params['action'], $this->authenticatedAllowedActions)) {
 			switch ($this->request->params['action']) {
 			    case 'edit':
@@ -318,7 +335,6 @@ class CobrandedApplicationsController extends AppController {
 			//Destroy session of internal user if exists
 			$this->Session->destroy();
 		}
-
 		if ($this->request->is('post')) {
 			$clientAccessToken = $this->request->data('CobrandedApplication.user_token');
 			$clientPassword = $this->request->data('CobrandedApplication.password');
@@ -343,7 +359,12 @@ class CobrandedApplicationsController extends AppController {
 					$this->Session->write('Client.client_dashboard_id', $result['ApplicationGroup']['access_token']);
 					//reset any failed login counter
 					$this->CobrandedApplication->ApplicationGroup->trackIncorrectLogIn($clientAccessToken, true);
-					$this->redirect(array('action' => 'index', $result['ApplicationGroup']['access_token'], 'admin' => false));
+
+					if (!empty($this->request->query['ref'])) {
+						$this->redirect($this->request->query['ref']);
+					} else {
+						$this->redirect(array('action' => 'index', $result['ApplicationGroup']['access_token'], 'admin' => false));
+					}
 				} else {
 					// increase wrong log in counter
 					$attemptCount = $this->CobrandedApplication->ApplicationGroup->trackIncorrectLogIn($clientAccessToken, false);
@@ -422,13 +443,22 @@ class CobrandedApplicationsController extends AppController {
 			$this->renderError404('ERROR 404: Page does not exist.', Router::url(['controller' => 'CobrandedApplications', 'action' => 'index', $accessToken], true));
 			return;
 		}
+
 		$applications = [];
 		$appGroupData = $this->CobrandedApplication->ApplicationGroup->findByAccessToken($accessToken, false);
+
 		//check if pw expired
-		if (!empty($appGroupData)) {
-			if (!empty($this->Session->read('Auth.User.id')) || $this->CobrandedApplication->ApplicationGroup->isClientPwExpired($appGroupData['ApplicationGroup']['id']) == false) {
-				set_time_limit(0);
-				$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id']);
+		if ($this->request->is('post')) {
+			if (!empty($appGroupData) && $this->CobrandedApplication->isValidUUID($this->request->data('CobrandedApplication.doc_id'))) {
+				if (!empty($this->Session->read('Auth.User.id')) || $this->CobrandedApplication->ApplicationGroup->isClientPwExpired($appGroupData['ApplicationGroup']['id']) == false) {
+					set_time_limit(0);
+					$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id'], $this->request->data('CobrandedApplication.doc_id'));
+					if (empty($applications)) {
+						$this->_failure(__("Sorry no documents found with that id, contact your sales representative if you need assistance."));
+					}
+				}
+			} elseif($this->CobrandedApplication->isValidUUID($this->request->data('CobrandedApplication.doc_id'))) {
+				$this->_failure(__("Please enter a valid document id to retrieve your document."));
 			}
 		}
 
@@ -442,12 +472,6 @@ class CobrandedApplicationsController extends AppController {
 					'conditions' => array('Template.id' => $app['CobrandedApplication']['template_id'])
 				)
 			);
-		} else {
-			$this->renderError404(
-				'ERROR 404: Page not found or expired. For assistance please contact your sales representative.',
-				Router::url(['controller' => 'CobrandedApplications', 'action' => 'index', $accessToken], true)
-			);
-			return;
 		}
 		
 		$this->set('appGroupData', $appGroupData);
