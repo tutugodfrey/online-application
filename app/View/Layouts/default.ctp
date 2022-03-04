@@ -177,7 +177,7 @@
 											)
 										);
 									}
-									echo $this->Html->link(__('Sing out ') .' <span class="glyphicon glyphicon-log-out"></span>',
+									echo $this->Html->link(__('Sign out ') .' <span class="glyphicon glyphicon-log-out"></span>',
 										array(
 											'controller' => 'cobrandedApplications',
 											'action' => 'cl_logout',
