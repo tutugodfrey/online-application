@@ -143,7 +143,11 @@ class CobrandedApplicationsController extends AppController {
 						if ($this->request->params['action'] == 'cl_access_auth' || $this->request->params['action'] == 'cl_logout') {
 						$this->redirect(array('action' => 'cl_access_auth', 'admin' => false));
 					} else {
-						$this->redirect(array('action' => 'cl_access_auth', 'admin' => false, '?' => array('ref' => Router::url($this->request->here, true))));
+						$refUrl = Router::url($this->request->here, true);
+						if (!empty($this->request->query)) {
+							$refUrl .= '?' . http_build_query($this->request->query);
+						}
+						$this->redirect(array('action' => 'cl_access_auth', 'admin' => false, '?' => array('ref' => $refUrl)));
 					}
 					}
 				}
