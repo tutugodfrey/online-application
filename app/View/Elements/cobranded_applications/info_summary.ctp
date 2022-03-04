@@ -2,6 +2,15 @@
 	<div class="panel-heading"><span class="glyphicon glyphicon-info-sign pull-left" style="font-size: 15pt"></span><strong>&nbsp;&nbsp; <?php echo __('More Information about ') . $app['Dba']['value']; ?></strong></div>
 	<table class="table table-condensed table-hover small">
 		<tr>
+			<th>Document/Application ID:</th>
+			<td style="width: 400px;">
+				<?php 
+					 echo $app['CobrandedApplication']['uuid'];
+				?>
+				
+			</td>
+		</tr>
+		<tr>
 			<th>Client ID/Name:</th>
 			<td style="width: 400px;">
 				<?php 
