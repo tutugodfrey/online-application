@@ -629,8 +629,8 @@ class CobrandedApplication extends AppModel {
 					'recursive' => -1,
 					'fields' => array('DISTINCT CobrandedApplication.id', 'CobrandedApplication.application_group_id'),
 					'conditions' => array(
-						//exlude the original app we only want apps related to this one 
-						// "CobrandedApplication.id != $id", 
+						//exclude apps older than 11 months
+						"CobrandedApplication.modified > '" . date_format(date_modify(new DateTime(date("Y-m-d")), '- 11 months'), 'Y-m-d') . "'", 
 					),
 					'joins' => array(
 						array(
@@ -1563,7 +1563,7 @@ class CobrandedApplication extends AppModel {
  *      'GrouppedApps' => array( array(AppDataX), array(AppDataY), ...)
  *    )
  */
-	public function findGroupedApps($applicationGroupId) {
+	public function findGroupedApps($applicationGroupId, $appId) {
 		if (empty($applicationGroupId)) {
 			return [];
 		}
@@ -1625,6 +1625,8 @@ class CobrandedApplication extends AppModel {
                 )
             ),
             'conditions' => array(
+                "CobrandedApplication.modified > '" . date_format(date_modify(new DateTime(date("Y-m-d")), '- 11 months'), 'Y-m-d') . "'", 
+                'CobrandedApplication.uuid' => $appId,
                 'CobrandedApplication.application_group_id' => $applicationGroupId,
                 '"CobrandedApplicationValues"."name" in (\'DBA\', \'CorpName\', \'AllowMerchantToSignApplication\')'
                 ),

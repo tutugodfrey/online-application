@@ -111,7 +111,7 @@ class CobrandedApplicationsController extends AppController {
 			'cl_logout',
 			'submit_for_review');
 
-		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'retrieve_with_client_token','document_callback');
+		$this->Security->unlockedActions= array('quickAdd', 'retrieve', 'retrieve_with_client_token','document_callback', 'index');
 		$this->Security->blackHoleCallback = 'forcePageRefresh';
 		if ($this->requestIsApiJson() || $this->request->is('ajax')) {
 			$this->Security->unlockedActions= array('api_add', 'api_edit', $this->action);
@@ -443,16 +443,25 @@ class CobrandedApplicationsController extends AppController {
 			$this->renderError404('ERROR 404: Page does not exist.', Router::url(['controller' => 'CobrandedApplications', 'action' => 'index', $accessToken], true));
 			return;
 		}
+
 		$applications = [];
 		$appGroupData = $this->CobrandedApplication->ApplicationGroup->findByAccessToken($accessToken, false);
+
 		//check if pw expired
-		if (!empty($appGroupData)) {
-			if (!empty($this->Session->read('Auth.User.id')) || $this->CobrandedApplication->ApplicationGroup->isClientPwExpired($appGroupData['ApplicationGroup']['id']) == false) {
-				set_time_limit(0);
-				$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id']);
+		if ($this->request->is('post')) {
+			if (!empty($appGroupData) && $this->CobrandedApplication->isValidUUID($this->request->data('CobrandedApplication.doc_id'))) {
+				if (!empty($this->Session->read('Auth.User.id')) || $this->CobrandedApplication->ApplicationGroup->isClientPwExpired($appGroupData['ApplicationGroup']['id']) == false) {
+					set_time_limit(0);
+					$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id'], $this->request->data('CobrandedApplication.doc_id'));
+					if (empty($applications)) {
+						$this->_failure(__("Sorry no documents found with that id, contact your sales representative if you need assistance."));
+					}
+				}
+			} elseif($this->CobrandedApplication->isValidUUID($this->request->data('CobrandedApplication.doc_id'))) {
+				$this->_failure(__("Please enter a valid document id to retrieve your document."));
 			}
 		}
-$applications = [];
+
 		$template = [];
 		if (!empty($applications)) {
 			$app = Hash::get($applications, '0');
@@ -464,13 +473,6 @@ $applications = [];
 				)
 			);
 		}
-		//  else {
-		// 	$this->renderError404(
-		// 		'ERROR 404: Page not found or expired. For assistance please contact your sales representative.',
-		// 		Router::url(['controller' => 'CobrandedApplications', 'action' => 'index', $accessToken], true)
-		// 	);
-		// 	return;
-		// }
 		
 		$this->set('appGroupData', $appGroupData);
 		$this->set('applications', $applications);

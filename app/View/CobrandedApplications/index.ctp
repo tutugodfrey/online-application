@@ -49,7 +49,26 @@
                         }
                         ?>
                     </strong>
+
+
             </div>
+            <?php
+                echo $this->Session->flash();
+                echo $this->Form->create(array(
+                        'inputDefaults' => array(
+                            'div' => 'form-group',
+                            'label' => array('class' => 'control-label'),
+                            'wrapInput' => 'col-md-12',
+                            'class' => 'form-control col-md-12 col-sm-12',
+                        ),
+                        'type' => 'post',
+                        'class' => 'form-inline well-sm'
+                    ));
+                echo $this->Form->unlockField('CobrandedApplication.doc_id');
+                echo $this->Form->input('CobrandedApplication.doc_id', array('autocomplete' => 'off','type' => 'text', 'label' => 'Please enter your document id: <span class="text-muted small nowrap">(example: d5f4795c-d501-4411-b849-f48a9d60eed6)</span>'));
+                echo $this->Form->submit(__('Search'), array('div' => false, 'class' => 'btn btn-sm btn-primary', 'style'=> 'margin-top:14px'));
+                echo $this->Form->end();
+            ?>
         </div>
         <div class="list-group ">
             <div class="list-group-item panel-primary clearfix">
