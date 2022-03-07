@@ -4,6 +4,7 @@
 * This element should only be used as a footer for public access pages only.
 */
  ?>
+ <div style="margin-top:500px"></div>
  <footer class="row navbar-default navbar-fixed-bottom small">
   <div class="container-fluid">
     <div class="row panel-footer">
