@@ -163,6 +163,20 @@
 							<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 								<span class="navbar-text navbar-right btn-group" style="margin-right:20px">
 									<?php
+									if ($this->request->params['action'] != 'index') {
+										echo $this->Html->link(__('Go to Dashboard ') .' <span class="glyphicon glyphicon-th-list"></span>',
+											array(
+												'controller' => 'cobrandedApplications',
+												'action' => 'index',
+												$this->Session->read('Client.client_dashboard_id'),
+												'admin' => false,
+											),
+											array(
+												'escape' => false,
+												'class' => 'btn btn-primary'
+											)
+										);
+									}
 									echo $this->Html->link(__('Sign out ') .' <span class="glyphicon glyphicon-log-out"></span>',
 										array(
 											'controller' => 'cobrandedApplications',

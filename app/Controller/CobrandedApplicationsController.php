@@ -1012,10 +1012,6 @@ class CobrandedApplicationsController extends AppController {
  * @return void
  */
 	public function admin_index() {
-		$this->CobrandedApplication->updateAll(
-			['status' => "'completed'"],
-			['id' => 22616]
-		);
 		//reset all of the search parameters
 		if(isset($this->request->data['reset'])) {
 			foreach($this->request->data['CobrandedApplication'] as $i => $value) {
