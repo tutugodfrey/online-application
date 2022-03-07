@@ -598,7 +598,7 @@ class CobrandedApplication extends AppModel {
 			'conditions' => array(
 				//find any email or SSN data which other apps under the same client usually have
 				//the same data in common
-				"((value ~ '(.+@.+)' and name ilike '%email%') OR (value != '' and name ilike '%ssn%') OR (value != '' and name ilike '%taxid%'))",
+				"((value ~ '(.+@.+)' and name ilike '%email%') OR (value != '' and name ilike '%ssn%'))",
 				'cobranded_application_id' => $id
 			),
 		));
