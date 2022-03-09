@@ -31,7 +31,7 @@
                     <p class="text-left" style="margin-left:40px">This dashboard provides an overview of all your forms, applications and documents that have been saved, are awaiting signature, and/or are signed and completed.<br/>
                     The <u>"Incomplete Applications"</u> section contains applications that are in the initial stage, and are yet to be completely filled out.<br/>
                     Once an application is completely filled out and signature is required it will be listed in the <u>"Applications Waiting for Signature"</u> section (a signature may not always be required depending on the type of application).
-                    If you have any questions about your applications, please feel free to contact your sales representative.</p>
+                    <br/>Use the search form below to find your applications and/or documents if they are not already listed. If you have any questions about your applications, please feel free to contact your sales representative.</p>
                     <?php
                         if ((int)$datetime1->format('U') > (int)$datetime2->format('U')) {
                             echo  '<strong class="text-danger bg-warning"><span class="glyphicon glyphicon-exclamation-sign"></span> Client access to this page has expired, only logged in users may currently have access.</strong><br/>';
@@ -58,14 +58,16 @@
                         'inputDefaults' => array(
                             'div' => 'form-group',
                             'label' => array('class' => 'control-label'),
-                            'wrapInput' => 'col-md-12',
-                            'class' => 'form-control col-md-12 col-sm-12',
+                            'wrapInput' => 'col-md-12 col-sm-12',
+                            'div' => 'col-md-4 col-sm-5',
+                            'class' => 'col-md-12 col-sm-12',
                         ),
                         'type' => 'post',
-                        'class' => 'form-inline well-sm'
+                        'class' => 'row form-inline well-sm'
                     ));
-                echo $this->Form->unlockField('CobrandedApplication.doc_id');
-                echo $this->Form->input('CobrandedApplication.doc_id', array('autocomplete' => 'off','type' => 'text', 'label' => 'Please enter your document id: <span class="text-muted small nowrap">(example: d5f4795c-d501-4411-b849-f48a9d60eed6)</span>'));
+
+                echo $this->Form->input('CobrandedApplication.email_value', array('div' => 'col-md-3 col-sm-5', 'wrapInput' => 'col-md-12 col-sm-12', 'autocomplete' => 'off','type' => 'text', 'label' => 'Search by Owner/Officer Email:<br><span class="text-muted small nowrap">(must match the email entered in your application(s))</span>'));
+                echo $this->Form->input('CobrandedApplication.doc_id', array('autocomplete' => 'off','type' => 'text', 'label' => 'Or search by document id:<br><span class="text-muted small nowrap">(example: d5f4795c-d501-4411-b849-f48a9d60eed6)</span>'));
                 echo $this->Form->submit(__('Search'), array('div' => false, 'class' => 'btn btn-sm btn-primary', 'style'=> 'margin-top:14px'));
                 echo $this->Form->end();
             ?>
