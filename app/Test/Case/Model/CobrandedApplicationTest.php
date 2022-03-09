@@ -3481,7 +3481,7 @@ class CobrandedApplicationTest extends CakeTestCase {
 		$this->assertContains('cfo@company.com', $actual);
 		$this->assertContains('testing@axiapayments.com', $actual);
 
-		//Save the additional field value that are used for thes search for the same app id=1 and verify they are added to the returned data
+		//Save the additional field values that are not used for this search for the same app id=1 and verify they are not added to the returned data
 		$value = array(
 			array(
 				'cobranded_application_id' => 1,
@@ -3500,11 +3500,11 @@ class CobrandedApplicationTest extends CakeTestCase {
 
 		//verify that the returned data contains the additional email address, is distinct, no duplicates
 		$actual = $this->CobrandedApplication->getDataForCommonAppValueSearch(1);
-		$this->assertCount(4, $actual);
+		$this->assertCount(2, $actual);
 		$this->assertContains('cfo@company.com', $actual);
 		$this->assertContains('testing@axiapayments.com', $actual);
-		$this->assertContains('123456789', $actual);
-		$this->assertContains('987654321', $actual);
+		$this->assertNotContains('123456789', $actual);
+		$this->assertNotContains('987654321', $actual);
 		
 	}
 
@@ -3622,14 +3622,14 @@ class CobrandedApplicationTest extends CakeTestCase {
 			array(
 				'cobranded_application_id' => 1,
 				'template_field_id' => 5,
-				'name' => 'SSN',
-				'value' => '123456789',
+				'name' => 'SomeEmail',
+				'value' => 'testing@axiapayments.com',
 			),
 			array(
 				'cobranded_application_id' => 2,
 				'template_field_id' => 5,
-				'name' => 'SSN',
-				'value' => '123456789',
+				'name' => 'SomeEmail',
+				'value' => 'testing@axiapayments.com',
 			),
 			array(
 				'cobranded_application_id' => 2,
@@ -3665,8 +3665,8 @@ class CobrandedApplicationTest extends CakeTestCase {
 			));
 
 		$expectedGroupId = $expected[0]['CobrandedApplication']['application_group_id'];
-
-		$actual = $this->CobrandedApplication->findGroupedApps($expectedGroupId);
+		$settings = array('CobrandedApplication.application_group_id' => $expectedGroupId);
+		$actual = $this->CobrandedApplication->findGroupedApps($expectedGroupId, $settings);
 
 		$this->assertCount(3, $actual);
 		$this->assertSame($expectedGroupId, $actual[0]['CobrandedApplication']['application_group_id']);

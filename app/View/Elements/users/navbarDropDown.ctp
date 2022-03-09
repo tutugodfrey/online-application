@@ -1,6 +1,6 @@
  <?php
  $logoutLink = $this->Html->link(__('Logout') .
- 	$this->Html->tag('span', null, array('class' => 'glyphicon glyphicon-log-out pull-right')) .
+ 	$this->Html->tag('span', null, array('class' => 'glyphicon glyphicon-log-out pull-right text-danger')) .
  	$this->Html->tag('/span'),
 		array(
 			'controller' => 'users',
@@ -24,9 +24,9 @@
 		$oktaMfaEnrollLink .= $this->Html->link('Activate Okta MFA', Router::url(['controller' => 'Users', 'action' =>  'okta_mfa_enroll', 0, 'admin' => true]));
 	}
 	$oktaMfaEnrollLink .= '</li>';
-	echo '<span class="btn btn-default dropdown">
-	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-			<span class="glyphicon glyphicon-user"></span><span class="caret"></span>
+	echo '<span class="dropdown">
+	    <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<span class="glyphicon glyphicon-user text-primary"></span><span class="caret text-primary"></span>
 		</a>
 		<ul class="dropdown-menu">
 	        <li>' . $logoutLink . '</li>
