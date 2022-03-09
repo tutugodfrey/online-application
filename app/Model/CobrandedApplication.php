@@ -1625,7 +1625,7 @@ class CobrandedApplication extends AppModel {
                 )
             ),
             'conditions' => array(
-                "CobrandedApplication.modified > '" . date_format(date_modify(new DateTime(date("Y-m-d")), '- 11 months'), 'Y-m-d') . "'",
+                "CobrandedApplication.modified > '" . date_format(date_modify(new DateTime(date("Y-m-d")), '- 2 months'), 'Y-m-d') . "'",
                 'CobrandedApplication.application_group_id' => $applicationGroupId,
                 '"CobrandedApplicationValues"."name" in (\'DBA\', \'CorpName\', \'AllowMerchantToSignApplication\')',
                 ),
