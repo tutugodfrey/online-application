@@ -219,18 +219,6 @@ class CobrandedApplicationsController extends AppController {
  * @return null
  */
 	protected function _isResourceOwnerAllowedAccess() {
-		return true;
-	}
-
-/**
- * Authenticate client users
- * Checkes whether the current request action is part of actions that are accessible by clients with appropriate access credentials.
- * Also checks if the requested resource is owned by the currently authenticated client based on request data parameters.
- * Each action has different parameters and must check each differently
- * 
- * @return null
- */
-	protected function _isResourceOwnerAllowedAccessDeprecated() {
 		if (in_array($this->request->params['action'], $this->authenticatedAllowedActions)) {
 			switch ($this->request->params['action']) {
 				case 'edit':
