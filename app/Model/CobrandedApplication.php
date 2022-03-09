@@ -598,7 +598,7 @@ class CobrandedApplication extends AppModel {
 			'conditions' => array(
 				//find any email or SSN data which other apps under the same client usually have
 				//the same data in common
-				"((value ~ '(.+@.+)' and name ilike '%email%') OR (value != '' and name ilike '%ssn%'))",
+				"((value ~ '(.+@.+)' and name ilike '%email%'))",
 				'cobranded_application_id' => $id
 			),
 		));
@@ -1563,7 +1563,7 @@ class CobrandedApplication extends AppModel {
  *      'GrouppedApps' => array( array(AppDataX), array(AppDataY), ...)
  *    )
  */
-	public function findGroupedApps($applicationGroupId, $appId) {
+	public function findGroupedApps($applicationGroupId, $customSettings) {
 		if (empty($applicationGroupId)) {
 			return [];
 		}
@@ -1625,10 +1625,9 @@ class CobrandedApplication extends AppModel {
                 )
             ),
             'conditions' => array(
-                "CobrandedApplication.modified > '" . date_format(date_modify(new DateTime(date("Y-m-d")), '- 11 months'), 'Y-m-d') . "'", 
-                'CobrandedApplication.uuid' => $appId,
+                "CobrandedApplication.modified > '" . date_format(date_modify(new DateTime(date("Y-m-d")), '- 11 months'), 'Y-m-d') . "'",
                 'CobrandedApplication.application_group_id' => $applicationGroupId,
-                '"CobrandedApplicationValues"."name" in (\'DBA\', \'CorpName\', \'AllowMerchantToSignApplication\')'
+                '"CobrandedApplicationValues"."name" in (\'DBA\', \'CorpName\', \'AllowMerchantToSignApplication\')',
                 ),
             'group' => array(
                 'CobrandedApplication.id',
@@ -1651,6 +1650,13 @@ class CobrandedApplication extends AppModel {
             ),
             'order' => 'CobrandedApplication.created desc'
         );
+        if (!empty($customSettings['conditions'])) {
+            $settings['conditions'] = array_merge($settings['conditions'], $customSettings['conditions']);
+        }
+        if (!empty($customSettings['joins'])) {
+            $settings['joins'] = array_merge($settings['joins'], $customSettings['joins']);
+        }
+
         $apps = $this->find('all',$settings);
 
         $values = array();
