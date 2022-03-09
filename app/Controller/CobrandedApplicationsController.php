@@ -162,9 +162,9 @@ class CobrandedApplicationsController extends AppController {
 		if (Configure::read('debug') > 0) {
 			return $this->redirect(env('FULL_BASE_URL'). $this->here);
 		} else {
-        	return $this->redirect('https://' . env('SERVER_NAME') . $this->here);
+			return $this->redirect('https://' . env('SERVER_NAME') . $this->here);
 		}
-    }
+	}
 
 	public function beforeRender() {
 		parent::beforeRender();
@@ -198,12 +198,12 @@ class CobrandedApplicationsController extends AppController {
 			$clientDashboardId = $this->Session->read('Client.client_dashboard_id');
 			$this->Session->destroy();
 			Configure::write('Session', array(
-			    'defaults' => 'php',
-			    'cookie' => 'CAKEPHP',
-			    'timeout' => 14, // in minutes
-			    'ini' => array(
-			        'session.gc_maxlifetime' => 840 // in secs,  controls session expiration when the user will be signed out
-			    )
+				'defaults' => 'php',
+				'cookie' => 'CAKEPHP',
+				'timeout' => 14, // in minutes
+				'ini' => array(
+					'session.gc_maxlifetime' => 840 // in secs,  controls session expiration when the user will be signed out
+				)
 			));
 			$this->Session->write('Client.client_user_token', $authenticatedUser);
 			$this->Session->write('Client.client_dashboard_id', $clientDashboardId);
@@ -233,20 +233,20 @@ class CobrandedApplicationsController extends AppController {
 	protected function _isResourceOwnerAllowedAccessDeprecated() {
 		if (in_array($this->request->params['action'], $this->authenticatedAllowedActions)) {
 			switch ($this->request->params['action']) {
-			    case 'edit':
-			    case 'create_rightsignature_document':
-			    case 'send_pdf_to_client':
-			        $applicationID = $this->request->params['pass'][0];
-			        $conditions = array('CobrandedApplication.id' => $applicationID);
-			        if ($this->CobrandedApplication->isValidUUID($applicationID)) {
-			        	$conditions = array('CobrandedApplication.uuid' => $applicationID);
-			        }
-			        $appData = $this->CobrandedApplication->find('first', array(
-			    		'recursive' => -1,
-			    		'fields' => array('CobrandedApplication.id'),
-			    		'conditions' => $conditions,
-			    		'joins' => array(
-			    			array('table' => 'onlineapp_application_groups',
+				case 'edit':
+				case 'create_rightsignature_document':
+				case 'send_pdf_to_client':
+					$applicationID = $this->request->params['pass'][0];
+					$conditions = array('CobrandedApplication.id' => $applicationID);
+					if ($this->CobrandedApplication->isValidUUID($applicationID)) {
+						$conditions = array('CobrandedApplication.uuid' => $applicationID);
+					}
+					$appData = $this->CobrandedApplication->find('first', array(
+						'recursive' => -1,
+						'fields' => array('CobrandedApplication.id'),
+						'conditions' => $conditions,
+						'joins' => array(
+							array('table' => 'onlineapp_application_groups',
 								'alias' => 'ApplicationGroup',
 								'type' => 'INNER',
 								'conditions' => array(
@@ -254,47 +254,47 @@ class CobrandedApplicationsController extends AppController {
 									"ApplicationGroup.client_access_token = '" .$this->Session->read('Client.client_user_token')."'",
 								),
 							),
-			    		)
-			    	));
+						)
+					));
 
-			        return !empty($appData['CobrandedApplication']['id']);
-			        break;
-			    case 'extend_dashboard_expiration':
-			        $applicationGroupId = $this->request->params['pass'][0];
-			        //if the authenticated user token and the dashboard access token are in the same record
-			        //the user can access the index page
-			        return $this->CobrandedApplication->ApplicationGroup->hasAny(
-			        	array(
-			        		'id' => $applicationGroupId,
-			        		'client_access_token' => $this->Session->read('Client.client_user_token')
-			        	)
-			        );
-			        break;
-			    case 'index':
-			        $applicationDashboardAccessToken = $this->request->params['pass'][0];
-			        //if the authenticated user token and the dashboard access token are in the same record
-			        //the user can access the index page
-			        return $this->CobrandedApplication->ApplicationGroup->hasAny(
-			        	array(
-			        		'access_token' => $applicationDashboardAccessToken,
-			        		'client_access_token' => $this->Session->read('Client.client_user_token')
-			        	)
-			        );
-			        break;
-			    case 'sign_rightsignature_document':
-			    	$rsDocUuid = Hash::get($this->request->query, 'guid');
-			    	if(empty($rsDocUuid)) {
-			    		return false;
-			    	}
-			    	
-			    	$appData = $this->CobrandedApplication->find('first', array(
-			    		'recursive' => -1,
-			    		'fields' => array('CobrandedApplication.id'),
-			    		'conditions' => array(
-			    			'CobrandedApplication.rightsignature_document_guid' => $rsDocUuid
-			    		),
-			    		'joins' => array(
-			    			array('table' => 'onlineapp_application_groups',
+					return !empty($appData['CobrandedApplication']['id']);
+					break;
+				case 'extend_dashboard_expiration':
+					$applicationGroupId = $this->request->params['pass'][0];
+					//if the authenticated user token and the dashboard access token are in the same record
+					//the user can access the index page
+					return $this->CobrandedApplication->ApplicationGroup->hasAny(
+						array(
+							'id' => $applicationGroupId,
+							'client_access_token' => $this->Session->read('Client.client_user_token')
+						)
+					);
+					break;
+				case 'index':
+					$applicationDashboardAccessToken = $this->request->params['pass'][0];
+					//if the authenticated user token and the dashboard access token are in the same record
+					//the user can access the index page
+					return $this->CobrandedApplication->ApplicationGroup->hasAny(
+						array(
+							'access_token' => $applicationDashboardAccessToken,
+							'client_access_token' => $this->Session->read('Client.client_user_token')
+						)
+					);
+					break;
+				case 'sign_rightsignature_document':
+					$rsDocUuid = Hash::get($this->request->query, 'guid');
+					if(empty($rsDocUuid)) {
+						return false;
+					}
+					
+					$appData = $this->CobrandedApplication->find('first', array(
+						'recursive' => -1,
+						'fields' => array('CobrandedApplication.id'),
+						'conditions' => array(
+							'CobrandedApplication.rightsignature_document_guid' => $rsDocUuid
+						),
+						'joins' => array(
+							array('table' => 'onlineapp_application_groups',
 								'alias' => 'ApplicationGroup',
 								'type' => 'INNER',
 								'conditions' => array(
@@ -302,12 +302,12 @@ class CobrandedApplicationsController extends AppController {
 									"ApplicationGroup.client_access_token = '" .$this->Session->read('Client.client_user_token')."'",
 								),
 							),
-			    		)
-			    	));
-			        return !empty($appData['CobrandedApplication']['id']);
-			        break;
-			    default:
-       				return false;
+						)
+					));
+					return !empty($appData['CobrandedApplication']['id']);
+					break;
+				default:
+					return false;
 			}
 		} else {
 			return false;
@@ -350,12 +350,12 @@ class CobrandedApplicationsController extends AppController {
 					//credentials ok? destroy then create session
 					$this->Session->destroy();
 					Configure::write('Session', array(
-					    'defaults' => 'php',
-					    'cookie' => 'CAKEPHP',
-					    'timeout' => 14, // in minutes
-					    'ini' => array(
-					        'session.gc_maxlifetime' => 840 // in secs,  controls session expiration when the user will be signed out
-					    )
+						'defaults' => 'php',
+						'cookie' => 'CAKEPHP',
+						'timeout' => 14, // in minutes
+						'ini' => array(
+							'session.gc_maxlifetime' => 840 // in secs,  controls session expiration when the user will be signed out
+						)
 					));
 					$this->Session->write('Client.client_user_token', $result['ApplicationGroup']['client_access_token']);
 					//renew client dashboard expiration redirect to client dashboard
@@ -451,18 +451,51 @@ class CobrandedApplicationsController extends AppController {
 		$applications = [];
 		$appGroupData = $this->CobrandedApplication->ApplicationGroup->findByAccessToken($accessToken, false);
 
-		//check if pw expired
-		if ($this->request->is('post')) {
-			if (!empty($appGroupData) && $this->CobrandedApplication->isValidUUID($this->request->data('CobrandedApplication.doc_id'))) {
-				if (!empty($this->Session->read('Auth.User.id')) || $this->CobrandedApplication->ApplicationGroup->isClientPwExpired($appGroupData['ApplicationGroup']['id']) == false) {
-					set_time_limit(0);
-					$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id'], $this->request->data('CobrandedApplication.doc_id'));
-					if (empty($applications)) {
-						$this->_failure(__("Sorry no documents found with that id, contact your sales representative if you need assistance."));
+		$settings = array();
+		if (!empty($this->Session->read('Auth.User.id')) || !empty($this->Session->read('Client.client_user_token'))) {
+			if ($this->request->is('post')) {
+				$validSearchInput = true;
+				$appUuidInput = trim($this->request->data('CobrandedApplication.doc_id'));
+				if ($this->CobrandedApplication->isValidUUID($appUuidInput)) {
+					$settings['conditions']['CobrandedApplication.uuid'] = $appUuidInput;
+				} elseif (!empty($appUuidInput)) {
+					$this->CobrandedApplication->validationErrors['doc_id'][] = 'Invalid ID';
+					$validSearchInput = false;
+				}
+
+				$emailInput = trim($this->request->data('CobrandedApplication.email_value'));
+				if (Validation::email($emailInput)) {
+					$settings['joins'][] = array(
+	                    'alias' => 'EmailCobrandedApplicationValue',
+	                    'table' => 'onlineapp_cobranded_application_values',
+	                    'type' => 'INNER',
+	                    'conditions' => array(
+	                        '"EmailCobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
+	                        '"EmailCobrandedApplicationValue"."value"' => $emailInput,
+	                        '"EmailCobrandedApplicationValue"."name" ILIKE \'%email%\'' ,
+	                    ),
+	                );
+				} elseif (!empty($emailInput)) {
+					$this->CobrandedApplication->validationErrors['email_value'][] = 'Invalid email input format i.e: "name@host.com"';
+					$validSearchInput = false;
+				}
+				if (!empty($appGroupData) && $validSearchInput) {
+						$applications = (!empty($settings))? $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id'], $settings) : [];
+						if (empty($applications)) {
+							$this->_failure(__("Sorry no document found containing information that match your search, please try again. Contact your sales representative if you need assistance."));
+						}
+				}
+			} else {
+				if (!empty($appGroupData)) {
+					$groupCount = $this->CobrandedApplication->find('count', array(
+						'recursive' => -1,
+						'conditions' => array('CobrandedApplication.application_group_id' => $appGroupData['ApplicationGroup']['id'] )
+					));
+					if ($groupCount <= 2) {
+						$settings = array('CobrandedApplication.application_group_id' => $appGroupData['ApplicationGroup']['id']);
+						$applications = $this->CobrandedApplication->findGroupedApps($appGroupData['ApplicationGroup']['id'], $settings);
 					}
 				}
-			} elseif($this->CobrandedApplication->isValidUUID($this->request->data('CobrandedApplication.doc_id'))) {
-				$this->_failure(__("Please enter a valid document id to retrieve your document."));
 			}
 		}
 
