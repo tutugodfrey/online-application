@@ -1473,6 +1473,7 @@ class CobrandedApplication extends AppModel {
 				if ($app['CobrandedApplicationValues'][$key]['name'] == 'Unknown Type for testing') {
 					// skip it
 				} else {
+
 					$found = false;
 					foreach ($newApp['CobrandedApplicationValues'] as $newKey => $newVal) {
 						if ($found == true) {
@@ -1485,7 +1486,12 @@ class CobrandedApplication extends AppModel {
 						}
 
 						if ($newApp['CobrandedApplicationValues'][$newKey]['name'] == $app['CobrandedApplicationValues'][$key]['name']) {
-							$newAppVal = $app['CobrandedApplicationValues'][$key]['value'];
+                            $newAppVal = $app['CobrandedApplicationValues'][$key]['value'];
+                            if ($this->CobrandedApplicationValues->TemplateField->hasAny(['id' => $app['CobrandedApplicationValues'][$key]['template_field_id'], 'encrypt' => true]) &&
+                               preg_match('/^X+/', $app['CobrandedApplicationValues'][$key]['value'])) {
+                               $newAppVal = $this->CobrandedApplicationValues->getUnencryptedValueForApplicationCopy($app['CobrandedApplicationValues'][$key]['id']);
+                            }
+
 						}
 						if (isset($newAppVal)) {
 							$newApp['CobrandedApplicationValues'][$newKey]['value'] = $newAppVal;
