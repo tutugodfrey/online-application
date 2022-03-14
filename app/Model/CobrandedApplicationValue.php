@@ -379,6 +379,27 @@ class CobrandedApplicationValue extends AppModel {
  * @param array $settings Settings for search query
  * @return $valuesMap array
  */
+	public function getUnencryptedValueForApplicationCopy($id) {
+		$appVal = $this->find('first', array(
+			 		'callbacks' => false,
+		            'recursive' => -1,
+		            'conditions' => array('id' => $id),
+		            'fields' => array('value'),
+		        ));
+
+		$encVal = Hash::get($appVal, $this->alias . '.value');
+		if (!empty($encVal) && $this->isEncrypted($encVal)) {
+			return $this->decrypt($encVal, Configure::read('Security.OpenSSL.key'));
+		}
+		return null;
+	}
+/**
+ * getValuesByAppId
+ *
+ * @param integer $appId A CobrandedApplication.id
+ * @param array $settings Settings for search query
+ * @return $valuesMap array
+ */
 	public function getValuesByAppId($appId, $settings = array()) {
 		$default = array(
 			'contain' => false
