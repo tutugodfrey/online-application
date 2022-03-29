@@ -594,7 +594,7 @@ class CobrandedApplication extends AppModel {
  */
 	public function getDataForCommonAppValueSearch($id) {
 		$result = $this->CobrandedApplicationValues->find('all', array(
-			'callbacks' => false, 'recursive' => -1, 'fields' => array("DISTINCT value"),
+			'callbacks' => false, 'recursive' => -1, 'fields' => array('DISTINCT lower(value) as "CobrandedApplicationValues__value"'),
 			'conditions' => array(
 				//find any email or SSN data which other apps under the same client usually have
 				//the same data in common
@@ -639,7 +639,7 @@ class CobrandedApplication extends AppModel {
 							'type' => 'INNER',
 							'conditions' => array(
 								'"CobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
-								'CobrandedApplicationValue.value' => $commonValues
+								'lower("CobrandedApplicationValue"."value")' => $commonValues
 							)
 						)
 					),
