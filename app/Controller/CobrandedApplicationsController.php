@@ -459,7 +459,7 @@ class CobrandedApplicationsController extends AppController {
 	                    'type' => 'INNER',
 	                    'conditions' => array(
 	                        '"EmailCobrandedApplicationValue"."cobranded_application_id" = "CobrandedApplication"."id"',
-	                        '"EmailCobrandedApplicationValue"."value"' => $emailInput,
+	                        'lower("EmailCobrandedApplicationValue"."value")' => strtolower($emailInput),
 	                        '"EmailCobrandedApplicationValue"."name" ILIKE \'%email%\'' ,
 	                    ),
 	                );

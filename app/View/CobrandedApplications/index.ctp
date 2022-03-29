@@ -66,7 +66,7 @@
                         'class' => 'row form-inline well-sm'
                     ));
 
-                echo $this->Form->input('CobrandedApplication.email_value', array('div' => 'col-md-3 col-sm-5', 'wrapInput' => 'col-md-12 col-sm-12', 'autocomplete' => 'off','type' => 'text', 'label' => 'Search by Owner/Officer Email:<br><span class="text-muted small nowrap">(must match the email entered in your application(s))</span>'));
+                echo $this->Form->input('CobrandedApplication.email_value', array('div' => 'col-md-3 col-sm-5', 'wrapInput' => 'col-md-12 col-sm-12', 'autocomplete' => 'off','type' => 'email', 'label' => 'Search by Owner/Officer Email:<br><span class="text-muted small nowrap">(must match the email entered in your application(s))</span>'));
                 echo $this->Form->input('CobrandedApplication.doc_id', array('autocomplete' => 'off','type' => 'text', 'label' => 'Or search by document id:<br><span class="text-muted small nowrap">(example: d5f4795c-d501-4411-b849-f48a9d60eed6)</span>'));
                 echo $this->Form->submit(__('Search'), array('div' => false, 'class' => 'btn btn-sm btn-primary', 'style'=> 'margin-top:14px'));
                 echo $this->Form->end();
