@@ -2982,9 +2982,9 @@ class CobrandedApplication extends AppModel {
 		
 		$docData = array();
 		if ($subject == null) {
-			$docData['name'] = htmlspecialchars($dbaBusinessName) . ' Axia Merchant Application';
+			$docData['name'] = $dbaBusinessName . ' Axia Merchant Application';
 		} else {
-			$docData['name'] = htmlspecialchars($dbaBusinessName) . ' ' . $subject;
+			$docData['name'] = $dbaBusinessName . ' ' . $subject;
 		}
 		$docData['message'] = "Please sign this document. (Sent for signature by $sender)";
 		$docData['expires_in'] = 20;
