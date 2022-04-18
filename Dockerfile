@@ -63,6 +63,15 @@ RUN rm -rf /var/www/html && \
 
 COPY ./configFiles/10-onlineapp.conf /etc/apache2/sites-available/10-onlineapp.conf
 COPY ./configFiles/apache2.conf /etc/apache2/apache2.conf
+COPY ./startup.sh /tmp/startup.sh
+
+##SAMPLE VARIABLE DEFNENTIION###
+ENV PROD_HOST=
+ENV PROD_DBNAME=
+######END####
+
+RUN chmod +x /tmp/deploy.sh
+ENTRYPOINT [ "/tmp/deploy.sh" ]
 
 #Install PHPUnit
 
