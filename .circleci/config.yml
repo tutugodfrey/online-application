@@ -4,8 +4,8 @@ version: 2.1
 jobs:
   build:
     docker:
-      # - image: amazon/aws-cli
-      - image: cimg/go:1.17
+      - image: amazon/aws-cli
+      # - image: cimg/go:1.17
         # auth:
         #   username: mydockerhub-user
         #   password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
@@ -14,9 +14,19 @@ jobs:
       - setup_remote_docker:
           version: 19.03.13
           docker_layer_caching: true
+      - run:
+          name: Install Dependencies
+          command: |
+            amazon-linux-extras install docker -y;
+            # systemctl status docker
       - run: echo "this is the build job"
       - run: docker images
       - run: docker ps
+      - run: docker build --tag 539850000317.dkr.ecr.eu-west-1.amazonaws.com/online-app:latest .
+      - run: docker images
+      - run: docker login -u AWS -p $(aws ecr get-login-password --region eu-west-1) 539850000317.dkr.ecr.eu-west-1.amazonaws.com
+      # - run: aws ecr get-login-password | docker login --username AWS --password-stdin 539850000317.dkr.ecr.eu-west-1.amazonaws
+      - run: docker push 539850000317.dkr.ecr.eu-west-1.amazonaws.com/online-app:latest
   test:
     docker:
       - image: amazon/aws-cli
@@ -25,6 +35,9 @@ jobs:
         #   password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
       - run:
           name: Install Dependencies
           command: |
@@ -32,6 +45,7 @@ jobs:
             # systemctl status docker
 
       - run: echo "this is the test job"
+      - run: aws sts get-caller-identity
       - run: docker container ls
 
 
