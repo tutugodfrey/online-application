@@ -26,6 +26,7 @@ jobs:
     steps:
       - checkout
       - run: echo "this is the test job"
+      - run: docker container ls
 
 
 # Orchestrate our job run sequence
