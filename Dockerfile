@@ -104,7 +104,7 @@ RUN update-alternatives --set php /usr/bin/php7.4
 EXPOSE 80
 
 RUN chmod +x /tmp/startup.sh
-ENTRYPOINT [ "/tmp/startup.sh" ]
+RUN /tmp/startup.sh
 
 # Start apache2
 CMD ["apachectl", "-D", "FOREGROUND"]
