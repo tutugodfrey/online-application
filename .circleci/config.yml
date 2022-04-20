@@ -7,16 +7,26 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: echo "this is the build job"
-  test:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run: echo "this is the test job"
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+      - run:
+          name: Install Dependencies
+          command: |
+            amazon-linux-extras install docker -y;
+      - run:
+          name: Build and push image
+          command: |
+            export IMAGE_TAG=${CIRCLE_WORKFLOW_ID}
+            export APP_NAME=online-application
+            echo ${AWS_DEFAULT_REGION}
+            docker build --tag ${ECR_REPOSITORY}/${APP_NAME}:${IMAGE_TAG} .
+            docker images 
+            docker login -u AWS -p $(aws ecr get-login-password --region us-west-2) ${ECR_REPOSITORY}
+            docker push ${ECR_REPOSITORY}/${APP_NAME}:${IMAGE_TAG}
+
 # Orchestrate our job run sequence
 workflows:
   build_and_test:
     jobs:
       - build
-      - test
