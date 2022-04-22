@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-WORKDIR /tmp
+WORKDIR /app
 
 #This dockerfile installs PHP 7.4 + dependencies and apache2 
 
@@ -8,17 +8,7 @@ WORKDIR /tmp
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
-    && apt-get install -y wget gnupg2
-	
-# Install common / shared packages
-RUN apt-get install -y \
-    curl \
-    git \
-    zip \
-    unzip \
-    locales \
-    software-properties-common \
-    vim
+    && apt-get install -y wget gnupg2 curl git zip unzip locales software-properties-common vim
 
 # Set up locales
 RUN locale-gen en_US.UTF-8
@@ -42,33 +32,37 @@ RUN add-apt-repository ppa:ondrej/php; \
     wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.8_amd64.deb; \
     dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.8_amd64.deb; \
     apt-get update; apt-get install -y --no-install-recommends \
-    gcc make libpq5 apache2 libpq-dev \
+    gcc make acl libpq5 apache2 libpq-dev postfix \
     php7.4 libapache2-mod-php7.4 php7.4-bcmath php7.4-zip \
     php7.4-common php7.4-mbstring php7.4-xml php7.4-imap \
     php7.4-fpm php7.4-cli php7.4-pgsql php7.4-sqlite3 php7.4-redis \
     php7.4-apcu php7.4-intl php7.4-json php7.4-gd \
-    php7.4-memcached php-ssh2 openssh-server php7.4-curl; \
-    phpenmod mcrypt && \
+    php7.4-memcached php-ssh2 openssh-server php7.4-curl php7.4-mcrypt;
+
+# Set php7.4 as default version to use
+RUN a2enmod php7.4 && a2enmod headers && update-alternatives --set php /usr/bin/php7.4
+
+RUN phpenmod mcrypt && \
     rm -rf /var/lib/apt/lists/* && \
-    cd /tmp && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+    curl -sS https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer
 
 # Packages remove
-# php7.4-mcrypt
 # libpq-dev postgresql-client-11 \
 	
 #Add ssh.ini file and enable ssh2 module
-RUN bash -c "echo extension=ssh2.so > /etc/php/7.4/mods-available/ssh2.ini"
-RUN phpenmod ssh2
+RUN bash -c "echo extension=ssh2.so > /etc/php/7.4/mods-available/ssh2.ini" && phpenmod ssh2
 
 RUN rm -rf /var/www/html && \
-	mkdir -p /var/www/vhosts/online-application && \
     rm -rf /etc/apache2/sites-enabled/* && \
-	rm /etc/apache2/apache2.conf
+	rm /etc/apache2/apache2.conf && \
+    mkdir -p /var/www/vhosts/online-application
 
 COPY ./10-onlineapp.conf /etc/apache2/sites-available/10-onlineapp.conf
 COPY ./apache.conf /etc/apache2/apache2.conf
 COPY ./app /var/www/vhosts/online-application/app
-COPY ./startup.sh startup.sh
+COPY ./build.sh ./startup.sh index.php build.xml phpunit.xml composer.json app_sys_update.sh /var/www/vhosts/online-application/
+COPY ./build.sh ./startup.sh index.php build.xml phpunit.xml composer.json app_sys_update.sh /app/
 
 ##VARIABLE DEFNENTIIONS FOR SECRETS IN CONFIG FILES###
 ENV DATABASE_HOST=
@@ -87,24 +81,17 @@ ENV EMAIL_USERNAME=
 ENV EMAIL_PW=
 ######END####
 
-
 #Install PHPUnit
-
 RUN curl https://phar.phpunit.de/phpunit-3.7.28.phar > phpunit.phar && \
     chmod +x phpunit.phar && \
-    mv /tmp/phpunit.phar /usr/local/bin/phpunit
+    mv /app/phpunit.phar /usr/local/bin/phpunit
 	
 RUN a2ensite 10-onlineapp.conf
 
-# Set php7.4 as default version to use
-RUN a2enmod php7.4
-RUN a2enmod headers
-RUN update-alternatives --set php /usr/bin/php7.4
-
 EXPOSE 80
-
-RUN chmod +x /tmp/startup.sh
-RUN /tmp/startup.sh
+RUN chmod +x /app/startup.sh && chmod +x build.sh
+RUN /app/startup.sh
+RUN /app/build.sh
 
 # Start apache2
 CMD ["apachectl", "-D", "FOREGROUND"]

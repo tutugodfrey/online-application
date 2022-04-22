@@ -8,9 +8,9 @@ EMAIL_FILE=/var/www/vhosts/online-application/app/Config/email.php
 SES_CRED_FILE=/etc/postfix/sasl_passwd
 PHP_UNIT_FILE=/var/www/vhosts/online-application/app/Vendor/phpunit/phpunit/PHPUnit/Framework/Comparator/DOMDocument.php
 
-mv /var/www/vhosts/online-application/app/Config/database.php.default /var/www/vhosts/online-application/app/Config/database.php
-mv /var/www/vhosts/online-application/app/Config/core.php.default /var/www/vhosts/online-application/app/Config/core.php
-mv /var/www/vhosts/online-application/app/Config/email.php.default /var/www/vhosts/online-application/app/Config/email.php
+mv /var/www/vhosts/online-application/app/Config/database.php.default ${DB_FILE}
+mv /var/www/vhosts/online-application/app/Config/core.php.default ${CORE_FILE}
+mv /var/www/vhosts/online-application/app/Config/email.php.default ${EMAIL_FILE}
 
 #Update php7.4 incompatible code in PHPUNIT
 sed -i 's/$ignoreCase = false/$ignoreCase = false, array \&$processed = array()/' $PHP_UNIT_FILE
