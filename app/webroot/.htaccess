@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{QUERY_STRING} ^guid=(\w+)$ [NC]
+    RewriteRule ^applications /cobranded_applications/sign_rightsignature_document [R=301,L]
+    RewriteRule ^applications/add/(.*)$ /applications/retrieve [R=301,L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+
+</IfModule>

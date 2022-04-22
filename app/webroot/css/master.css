@@ -1,0 +1,84 @@
+body {
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #fff;
+    font-size: 14px;
+    font-family: Verdana, Arial, serif;
+    color: #4d4d4d;
+}
+
+hr {
+    color: #ccc;
+}
+
+h4, form th {
+    font-size: 13px;
+    font-weight: bold;
+    color: #4e6378;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+}
+
+#flashMessage, #authMessage {
+    margin-top: 10px;
+    font-weight: bold;
+    font-style: italic;
+}
+#authMessage {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: #a94442;
+}
+#header {
+    padding-left: 7px;
+}
+#content {
+    padding-left: 7px;
+}
+
+.iblock {
+    display: inline-block;
+}
+
+div.radio label {
+    display: inline;
+    font-size: 13px;
+    color: #4e6378;
+}
+
+div.radio2 label, td.radio label {
+    display: inline;
+}
+
+.center     { margin-left: auto; margin-right: auto; text-align: center; }
+.error      { color: #ff0000 }
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+    float: inherit;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin: 4px 5px 0;
+}
+/*jQuery UI autocomplete styles*/
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+    height: 100px;
+}

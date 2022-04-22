@@ -1,0 +1,28 @@
+{
+	"name": "onlineapp/app",
+	"require": {
+		"cakedc/migrations": "dev-master",
+		"cakedc/search": "dev-master",
+		"cakedc/utils": "dev-master",
+		"cakephp/cakephp": "2.10.24",
+		"cakephp/debug_kit": "2.2.*",
+		"phpunit/phpunit": "3.7.32",
+		"slywalker/boost_cake": "*",
+		"josegonzalez/cakephp-upload": "1.1.1",
+		"ircmaxell/random-lib": "^1.2",
+		"zircote/swagger-php": "^3.0"
+	},
+	"extra": {
+		"installer-paths": {
+			"app/Plugin/Migrations": ["cakedc/migrations"],
+			"app/Plugin/Search": ["cakedc/search"],
+			"app/Plugin/Utils": ["cakedc/utils"],
+			"app/Plugin/DebugKit": ["cakephp/debug_kit"],
+			"app/Plugin/BoostCake": ["slywalker/boost_cake"],
+			"app/Plugin/Upload": ["josegonzalez/cakephp-upload"]
+		}
+	},
+	"config": {
+		"vendor-dir": "app/Vendor/"
+	}
+}

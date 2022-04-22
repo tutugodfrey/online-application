@@ -1,0 +1,45 @@
+/* 
+    Document   : coversheet
+    Created on : Sep 25, 2012, 5:22:09 PM
+    Author     : stanner
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+body {
+    color: #4D4D4D;
+    font-family: Verdana,Arial,serif;
+    font-size: 12px;
+}
+table.radios label {
+    display: inline;
+}
+table.text label {
+    display: inline;
+}
+table.checkbox label {
+    display: inline;
+}
+div.onlineappCoversheets {
+    /*width: 960px;*/
+    margin: 0 auto;
+    padding: 0;
+    background-color: #fff;
+    font-size: 12px;
+    font-family: Verdana, Arial, serif;
+    color: #4d4d4d;
+}
+.error-message      { color: #ff0000 }
+.textborder {
+    border:1px solid;
+    display:inline-block; 
+    padding:1px;
+    border-radius: 5px;
+}
+table.bg-highlight {
+    background-color:#FFFFCC;
+}

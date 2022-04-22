@@ -1,0 +1,245 @@
+/* 
+    Document   : app_status
+    Created on : Jan 21, 2013, 10:13:14 AM
+    Author     : stanner
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+div#dashboard_object_details div#object_details_meat table.basic-details {
+    font-size: 11px;
+    width: 435px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details a {
+    -moz-text-blink: none;
+    -moz-text-decoration-color: -moz-use-text-color;
+    -moz-text-decoration-line: none;
+    -moz-text-decoration-style: solid;
+    color: #000000;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details a:hover {
+    -moz-text-blink: none;
+    -moz-text-decoration-color: -moz-use-text-color;
+    -moz-text-decoration-line: underline;
+    -moz-text-decoration-style: solid;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details td.key, div#dashboard_object_details div#object_details_meat table.basic-details td.padded, div#dashboard_object_details div#object_details_meat table.basic-details td.value {
+    border-bottom-color: #DEDEDE;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding-bottom: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 5px;
+    vertical-align: top;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details thead td {
+    background-color: #EFEFEF;
+    color: #777777;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details td.padded strong, div#dashboard_object_details div#object_details_meat table.basic-details td.value strong {
+    display: block;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details td.key {
+    background-color: #EFEFEF;
+    color: #777777;
+    text-align: right;
+    width: 100px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details span.party-icon {
+    display: block;
+    height: 26px;
+    width: 26px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details .party-name-email strong {
+    line-height: 13px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details .party-name-email strong span {
+    color: #15658A;
+    font-size: 10px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details .party-name-email span {
+    font-size: 9px;
+    line-height: 9px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details .party-name-email span.email-bounced {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("https://d3h6bmsl1mvs0k.cloudfront.net/assets/icons/alert_small-93e10ea8c13327658b89ad568b8e9272.png");
+    background-origin: padding-box;
+    background-position: 0 1px;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    padding-left: 15px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details span.cc {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("https://d3h6bmsl1mvs0k.cloudfront.net/assets/sprites/common_layout-b92b50dcaa43913a7ddf2d9acbe6f6c2.png");
+    background-origin: padding-box;
+    background-position: -775px -208px;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details span.signer-signed {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("https://d3h6bmsl1mvs0k.cloudfront.net/assets/sprites/common_layout-b92b50dcaa43913a7ddf2d9acbe6f6c2.png");
+    background-origin: padding-box;
+    background-position: 0 -301px;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details span.signer-notsigned {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("https://d3h6bmsl1mvs0k.cloudfront.net/assets/sprites/common_layout-b92b50dcaa43913a7ddf2d9acbe6f6c2.png");
+    background-origin: padding-box;
+    background-position: 0 -372px;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details td.checkmark-area {
+    color: #BBBBBB;
+    font-size: 13px;
+    text-align: center;
+    vertical-align: middle;
+    width: 40px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details td.checkmark-area-na {
+    color: #999999;
+    font-size: 9px !important;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details a.download-link {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("https://d39prh5twx7ht1.cloudfront.net/assets/icons/arrow_down-b66d1107a7f19fe67829cac492e917c4.png");
+    background-origin: padding-box;
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    display: block;
+    font-size: 9px;
+    line-height: 16px;
+    padding-left: 20px;
+}
+div#dashboard_object_details div#object_details_meat table.basic-details a.download-link-disabled {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("https://d3h6bmsl1mvs0k.cloudfront.net/assets/icons/arrow_down_bw-4d9ca09df6634d10fbebd5f81e6818aa.png");
+    background-origin: padding-box;
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    color: #AAAAAA;
+    display: block;
+    font-size: 9px;
+    line-height: 16px;
+    padding-left: 20px;
+}
+div#dashboard_object_details div#object_details_meat table.document-audits td.value a {
+    font-weight: bold;
+}
+
+.tipsy {
+    font-size: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    position: absolute;
+    z-index: 100000;
+}
+.tipsy h5 {
+    font-weight: bold;
+}
+.tipsy p img {
+    display: block;
+    margin-bottom: 5px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 5px;
+}
+.tipsy-inner {
+    background-color: black;
+    color: white;
+    max-width: 225px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 5px;
+    text-align: center;
+}
+.tipsy-inner {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.tipsy-arrow {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("https://d23ektw8dscfrq.cloudfront.net/assets/tipsy-7b94a436d62ec428059790bd35b1b90f.gif");
+    background-origin: padding-box;
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    height: 5px;
+    position: absolute;
+    width: 9px;
+}
+.tipsy-n .tipsy-arrow {
+    left: 50%;
+    margin-left: -4px;
+    top: 0;
+}
+.tipsy-nw .tipsy-arrow {
+    left: 10px;
+    top: 0;
+}
+.tipsy-ne .tipsy-arrow {
+    right: 10px;
+    top: 0;
+}
+.tipsy-s .tipsy-arrow {
+    background-position: left bottom;
+    bottom: 0;
+    left: 50%;
+    margin-left: -4px;
+}
+.tipsy-sw .tipsy-arrow {
+    background-position: left bottom;
+    bottom: 0;
+    left: 10px;
+}
+.tipsy-se .tipsy-arrow {
+    background-position: left bottom;
+    bottom: 0;
+    right: 10px;
+}
+.tipsy-e .tipsy-arrow {
+    background-position: right top;
+    height: 9px;
+    margin-top: -4px;
+    right: 0;
+    top: 50%;
+    width: 5px;
+}
+.tipsy-w .tipsy-arrow {
+    height: 9px;
+    left: 0;
+    margin-top: -4px;
+    top: 50%;
+    width: 5px;
+}

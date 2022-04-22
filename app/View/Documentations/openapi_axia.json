@@ -1,0 +1,734 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "AxiaMed REST API",
+        "description": "AxiaMed's REST API allows access to the resources detailed in this document. Access to this API and these resources must be requested and approved by a system administrator. Upon approval, consumers will be given limited access to AxiaMed's [Database system](https://db.axiatech.com/users/login) where they can login and generate their own API access token and password from their own user profiles.",
+        "contact": {
+            "email": "webmaster@axiamed.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/Users/get_partners?user_name={FirstName+LastName}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "list partners ",
+                "description": "Accepts request query data containig a partner name string to search for.\nThe user_name value can be emtpty and a full list of partners will be returned",
+                "operationId": "UsersController::api_get_partners",
+                "parameters": [
+                    {
+                        "name": "user_name",
+                        "in": "query",
+                        "description": "Parner user full name to search for (optional). Empty parameter value is allowed but key 'user_name=' must be preset in query URI. Empty value will return a full list of all partners.\n *     Example 1: Jane Doe\n *     Example 2: Great Healthcare Solutions",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "\n *    status=success JSON list of Users (empty when no users found).\n *   status=failed Missing key user_name in uri",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Users"
+                                },
+                                "example": {
+                                    "id": "5a3875b2-b170-4ab0-841f-510834627ad4",
+                                    "first_name": "Jane",
+                                    "last_name": "Doherty",
+                                    "status": "active"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "HTTP method not allowed when request method is not GET"
+                    },
+                    "400": {
+                        "description": "Invalid or missing query parameters"
+                    }
+                }
+            }
+        },
+        "/api/Users/get_reps?user_name={FirstName+LastName}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "list rep users",
+                "description": "Accepts request query data containig a rep name string to search for\nThe user_name value can be emtpty and a full list of reps will be returned along with a list of partners that the rep is associated with.",
+                "operationId": "UsersController::api_get_reps",
+                "parameters": [
+                    {
+                        "name": "user_name",
+                        "in": "query",
+                        "description": "Rep user full name to search for (optional). Empty parameter value is allowed but key 'user_name=' must be preset in query URI. Empty value will return a full list of all reps.\n *     Example 1: John Doe",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "\n *    status=success JSON list of Users (empty when no users found).\n *   status=failed Missing key user_name in uri",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Users"
+                                },
+                                "example": {
+                                    "id": "5a3875b2-b170-5ba1-321f-510834627ad4",
+                                    "first_name": "John",
+                                    "last_name": "Davis",
+                                    "status": "active",
+                                    "assoc_partners": {
+                                        "588094ef-d50a-4def-a17b-20f0d95d2c4b": "A Partner Name",
+                                        "08c37527-9abd-4c95-ba19-7bd30c1b54ac": "Great Healthcare Solutions"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "HTTP method not allowed when request method is not GET"
+                    },
+                    "400": {
+                        "description": "Invalid or missing query parameters"
+                    }
+                }
+            }
+        },
+        "/api/Merchants/add": {
+            "post": {
+                "tags": [
+                    "Merchants"
+                ],
+                "summary": "Add a new merchant/client account.",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/Merchants"
+                },
+                "responses": {
+                    "200": {
+                        "description": "\n *    On status success: \n *    {'status': 'success', 'messages': 'Merchant account created!'}\n *\n *   On status failed a string or array of operation-specific errors will be returned as the value for the 'messages' array key.\n *   Furthermore, if no data is sent operation will return status:failed",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": "[success/failed]",
+                                    "messages": "[string or single dimentional array of status related messages]"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "HTTP method not allowed when request method is not POST",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": "failed",
+                                    "messages": "HTTP method not allowed"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Merchants": {
+                "title": "Merchants",
+                "description": "Merchants database table schema (These fields should not to be used in any API requests).",
+                "properties": {
+                    "id": {
+                        "description": "Merchant id is a unique identifier (UUID)",
+                        "type": "string/uuid"
+                    },
+                    "merchant_mid": {
+                        "description": "Merchant/Client MID is the account number",
+                        "type": "integer"
+                    },
+                    "merchant_dba": {
+                        "description": "Merchant/Client DBA -- this is the merchant/client's business name",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Users": {
+                "title": "Users",
+                "description": "Users database table schema",
+                "properties": {
+                    "id": {
+                        "description": "User id",
+                        "type": "string/uuid"
+                    },
+                    "user_first_name": {
+                        "description": "User First name",
+                        "type": "string"
+                    },
+                    "user_last_name": {
+                        "description": "User last name",
+                        "type": "string"
+                    },
+                    "active": {
+                        "description": "Active =1, Inactive = 0",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "requestBodies": {
+            "Merchants": {
+                "description": "Example JSON data to create a merchant/client account",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "MID": {
+                                    "description": "MID required",
+                                    "type": "integer",
+                                    "maxLength": 20,
+                                    "example": "1239123654789632"
+                                },
+                                "CompanyBrandName": {
+                                    "description": "Accepted Values: Axia Med, Axia Tech",
+                                    "type": "string",
+                                    "example": "Axia Med"
+                                },
+                                "CorpName": {
+                                    "description": "Corporation/Company Name (Required)",
+                                    "type": "string",
+                                    "maxLength": 150,
+                                    "example": "Family Health Service"
+                                },
+                                "DBA": {
+                                    "description": "DBA Name (Required)",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "Family Health"
+                                },
+                                "CorpAddress": {
+                                    "description": "Address (Required)",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "1234 Narrow Street"
+                                },
+                                "CorpCity": {
+                                    "description": "City (Required)",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "Red Bluff"
+                                },
+                                "CorpState": {
+                                    "description": "Two-letter State (Required)",
+                                    "type": "string",
+                                    "maxLength": 2,
+                                    "example": "CA"
+                                },
+                                "CorpZip": {
+                                    "description": "Zip code (Required)",
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "example": "96080"
+                                },
+                                "CorpPhone": {
+                                    "description": "Phone (Required)",
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "example": "(530)555-5789"
+                                },
+                                "EMail": {
+                                    "description": "Company contact email",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "janedoe@nomail.com"
+                                },
+                                "Owner1Name": {
+                                    "description": "Owner/Officer Name (Required)",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "Jane Doe"
+                                },
+                                "Owner1Title": {
+                                    "description": "Owner/Officer Title",
+                                    "type": "string",
+                                    "maxLength": 40,
+                                    "example": "CEO"
+                                },
+                                "Owner1Equity": {
+                                    "description": "Owner/Officer Equity percent",
+                                    "type": "integer",
+                                    "maximum": 100,
+                                    "minimum": 0,
+                                    "example": "55"
+                                },
+                                "OwnerSSN": {
+                                    "description": "Owner/Officer SSN",
+                                    "type": "string",
+                                    "example": "123-45-6789"
+                                },
+                                "Owner1Address": {
+                                    "description": "Owner/Officer Address",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "1234 Long Street"
+                                },
+                                "Owner1City": {
+                                    "description": "Owner/Officer City",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "Red Bluff"
+                                },
+                                "Owner1State": {
+                                    "description": "Owner/Officer State",
+                                    "type": "string",
+                                    "maxLength": 2,
+                                    "example": "CA"
+                                },
+                                "Owner1Zip": {
+                                    "description": "Zip code",
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "example": "96080"
+                                },
+                                "Owner1Phone": {
+                                    "description": "Owner/Officer Phone",
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "example": "(530)555-9875"
+                                },
+                                "BankName": {
+                                    "description": "Bank Name (Required)",
+                                    "type": "string",
+                                    "example": "Cornerstone Community Bank"
+                                },
+                                "RoutingNum": {
+                                    "description": "Company Bank Routing Number (Required)",
+                                    "type": "string",
+                                    "example": "121144476"
+                                },
+                                "AccountNum": {
+                                    "description": "Company Bank Account Number (Required)",
+                                    "type": "string",
+                                    "example": "1234567890"
+                                },
+                                "FeesRoutingNum": {
+                                    "description": "Company Bank Routing Number for fees",
+                                    "type": "string",
+                                    "example": "121144476"
+                                },
+                                "FeesAccountNum": {
+                                    "description": "Company Bank Account Number for fees",
+                                    "type": "string",
+                                    "example": "1234567890"
+                                },
+                                "oaID": {
+                                    "description": "OnlineAPP Id",
+                                    "type": "integer",
+                                    "example": "12345"
+                                },
+                                "setup_referrer": {
+                                    "description": "Referrer user full name must match existing database user.",
+                                    "type": "string",
+                                    "example": "Albert Smith"
+                                },
+                                "setup_referrer_pct_profit": {
+                                    "description": "Referrer profit percent. This will be used if no referrer volume percent.",
+                                    "type": "decimal",
+                                    "example": "80.50"
+                                },
+                                "setup_referrer_pct_volume": {
+                                    "description": "Referrer volume percent. This will be used if no referrer profit percent.",
+                                    "type": "decimal",
+                                    "example": "50"
+                                },
+                                "setup_referrer_pct_gross": {
+                                    "description": "Referrer percent of gross profit.",
+                                    "type": "integer",
+                                    "example": "100"
+                                },
+                                "setup_reseller": {
+                                    "description": "Reseller user full name must match existing database user.",
+                                    "type": "string",
+                                    "example": "Mr. Reseller Jackson"
+                                },
+                                "setup_reseller_pct_profit": {
+                                    "description": "Reseller profit percent. This will be used if no reseller volume percent.",
+                                    "type": "decimal",
+                                    "example": "80.50"
+                                },
+                                "setup_reseller_pct_volume": {
+                                    "description": "Reseller volume percent. This will be used if no reseller profit percent.",
+                                    "type": "decimal",
+                                    "example": "50"
+                                },
+                                "setup_reseller_pct_gross": {
+                                    "description": "Reseller percent of gross profit.",
+                                    "type": "integer",
+                                    "example": "100"
+                                },
+                                "setup_partner": {
+                                    "description": "Partner user full name must match existing database user.",
+                                    "type": "string",
+                                    "example": "Health Partner"
+                                },
+                                "org_name": {
+                                    "description": "Merchant/Client Organization name",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "Family Health Corporation"
+                                },
+                                "region_name": {
+                                    "description": "Merchant/Client Region name is a subset/child of and belonging to the parent Organization",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "Red Bluff Fam Health"
+                                },
+                                "subregion_name": {
+                                    "description": "Merchant/Client Sub-Region name is a subset/child of and belonging to parent Region",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": ""
+                                },
+                                "expected_install_date": {
+                                    "description": "Approximate date when any hardware/software install will be completed",
+                                    "type": "date",
+                                    "pattern": "YYYY-mm-dd",
+                                    "example": "2020-01-25"
+                                },
+                                "Gateway_Name": {
+                                    "description": "Gateway name must match an existing gateway in the database",
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "example": "Paytrace Pro"
+                                },
+                                "Gateway_ID": {
+                                    "description": "A unique id for the specific client's gateway account",
+                                    "type": "integer",
+                                    "maxLength": 20,
+                                    "example": "12345"
+                                },
+                                "Merch_Gateway_Rate": {
+                                    "description": "A rate up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "3.25"
+                                },
+                                "Merch_Gateway_Per_Item_Fee": {
+                                    "description": "Monetary per item fee up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "10.00"
+                                },
+                                "Merch_Gateway_Monthly_Fee": {
+                                    "description": "Monetary monthly fee up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "25.50"
+                                },
+                                "Gateway_Monthly_Vol": {
+                                    "description": "Monetary monthly gateway volume up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "9999999.999"
+                                },
+                                "Gateway_Item_Count": {
+                                    "description": "Monthly count of number items",
+                                    "type": "integer",
+                                    "example": "99999999"
+                                },
+                                "PaymentFusion": {
+                                    "description": "Whether payment fusion was accepted.",
+                                    "type": "string",
+                                    "example": "YES"
+                                },
+                                "PF_ID": {
+                                    "description": "A unique id for the specific client's Payment Fusion product",
+                                    "type": "integer",
+                                    "maxLength": 20,
+                                    "example": "YES"
+                                },
+                                "PF_Account_Fee": {
+                                    "description": "A monthly fee aount of up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "25.00"
+                                },
+                                "PF_Rate": {
+                                    "description": "A rate up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "2.10"
+                                },
+                                "PF_Per_Item_Fee": {
+                                    "description": "Monetary per item fee up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "2.10"
+                                },
+                                "PF_Standard_Device_Qty": {
+                                    "description": "Quantity count of standard Payment Fusion devices aquired by client",
+                                    "type": "integer",
+                                    "example": "1"
+                                },
+                                "PF_Standard_Device_Fee": {
+                                    "description": "Fee per each standard Payment Fusion device, up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "5.00"
+                                },
+                                "PF_VP2PE_Device_Qty": {
+                                    "description": "Quantity count of VP2PE Payment Fusion devices aquired by client",
+                                    "type": "integer",
+                                    "example": "1"
+                                },
+                                "PF_VP2PE_Device_Fee": {
+                                    "description": "Fee per each VP2PE Payment Fusion device, up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "5.00"
+                                },
+                                "PF_PFCC_Device_Qty": {
+                                    "description": "Quantity count of PFCC Payment Fusion devices aquired by client",
+                                    "type": "integer",
+                                    "example": "1"
+                                },
+                                "PF_PFCC_Device_Fee": {
+                                    "description": "Fee per each PFCC Payment Fusion device, up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "5.00"
+                                },
+                                "PF_VP2PE_PFCC_Device_Qty": {
+                                    "description": "Quantity of Payment Fusion devices that support VP2PE and PFCC aquired by client",
+                                    "type": "integer",
+                                    "example": "1"
+                                },
+                                "PF_VP2PE_PFCC_Device_Fee": {
+                                    "description": "Fee per each Payment Fusion device that support VP2PE and PFCC, up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "10.00"
+                                },
+                                "ach_accepted": {
+                                    "description": "Whether ACH processing service was accepted by client.",
+                                    "type": "string",
+                                    "example": "YES"
+                                },
+                                "ach_provider_name": {
+                                    "description": "Name of ACH provider that matches an existing one in the database",
+                                    "type": "string",
+                                    "example": "Sage Payments"
+                                },
+                                "ach_annual_volume": {
+                                    "description": "Expected annual ACH sales volume (monetary amount up to 3 decimals)",
+                                    "type": "decimal",
+                                    "example": "9999999999.999"
+                                },
+                                "ach_application_fee": {
+                                    "description": "Application fee (monetary amount up to 3 decimals)",
+                                    "type": "decimal",
+                                    "example": "9999.999"
+                                },
+                                "ach_expedite_fee": {
+                                    "description": "Expedited sign up service fee (monetary amount up to 3 decimals)",
+                                    "type": "decimal",
+                                    "example": "9999.999"
+                                },
+                                "ach_average_transaction": {
+                                    "description": "Average ACH transaction amount (monetary amount up to 3 decimals)",
+                                    "type": "decimal",
+                                    "example": "99999.999"
+                                },
+                                "ach_max_transaction": {
+                                    "description": "Estimated maximum ACH transaction amount (monetary amount up to 3 decimals)",
+                                    "type": "decimal",
+                                    "example": "999999.999"
+                                },
+                                "ach_rate": {
+                                    "description": "Rate up to 3 decimals",
+                                    "type": "decimal",
+                                    "example": "99.999"
+                                },
+                                "ach_per_item_fee": {
+                                    "description": "Fee per each ACH item",
+                                    "type": "decimal",
+                                    "example": "999.999"
+                                },
+                                "ach_statement_fee": {
+                                    "description": "Monthly statement fee",
+                                    "type": "decimal",
+                                    "example": "9999.999"
+                                },
+                                "ach_batch_upload_fee": {
+                                    "description": "Batch upload fee",
+                                    "type": "decimal",
+                                    "example": "9999.999"
+                                },
+                                "ach_reject_fee": {
+                                    "description": "Rejected ACH fee",
+                                    "type": "decimal",
+                                    "example": "9999.999"
+                                },
+                                "ach_monthly_gateway_fee": {
+                                    "description": "Monthtly gateway fee",
+                                    "type": "decimal",
+                                    "example": "9999.999"
+                                },
+                                "ach_monthly_minimum_fee": {
+                                    "description": "Monthtly minimum fee",
+                                    "type": "decimal",
+                                    "example": "9999.999"
+                                },
+                                "ach_disbursment_bank_name": {
+                                    "description": "Name of Bank for disbursment",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "Bank of the West"
+                                },
+                                "ach_disbursment_routing": {
+                                    "description": "Bank routing number for disbursment",
+                                    "type": "string",
+                                    "example": "123456789"
+                                },
+                                "ach_disbursment_account": {
+                                    "description": "Bank account number for disbursment",
+                                    "type": "string",
+                                    "example": "123456789"
+                                },
+                                "ach_fees_bank_name": {
+                                    "description": "Name of Bank for fees",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "Bank of the West"
+                                },
+                                "ach_fees_routing": {
+                                    "description": "Bank routing number for fees",
+                                    "type": "string",
+                                    "example": "123456789"
+                                },
+                                "ach_fees_account": {
+                                    "description": "Bank account number for fees",
+                                    "type": "string",
+                                    "example": "123456789"
+                                },
+                                "ach_rejects_bank_name": {
+                                    "description": "Name of Bank for rejects",
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "example": "Bank of the West"
+                                },
+                                "ach_rejects_routing": {
+                                    "description": "Bank routing number for rejects",
+                                    "type": "string",
+                                    "example": "123456789"
+                                },
+                                "ach_rejects_account": {
+                                    "description": "Bank account number for rejects",
+                                    "type": "string",
+                                    "example": "123456789"
+                                }
+                            },
+                            "type": "object",
+                            "example": {
+                                "MID": "1239123654789632",
+                                "CompanyBrandName": "Axia Med",
+                                "CorpName": "Family Health Service",
+                                "DBA": "Family Health",
+                                "CorpAddress": "1234 Narrow Street",
+                                "CorpCity": "Red Bluff",
+                                "CorpState": "CA",
+                                "CorpZip": "96080",
+                                "CorpPhone": "(530)555-5789",
+                                "Owner1Name": "Jane Doe",
+                                "Owner1Title": "CEO",
+                                "Owner1Equity": "100",
+                                "OwnerSSN": "123-45-6789",
+                                "Owner1Address": "1234 Long Street",
+                                "Owner1City": "Red Bluff",
+                                "Owner1State": "CA",
+                                "Owner1Zip": "96080",
+                                "Owner1Phone": "(530)555-9875",
+                                "Owner1Email": "janedoe@nomail.com",
+                                "ContractorID": "Jess Noss",
+                                "Contact": "Jane Doe",
+                                "Address": "999 Wide Street",
+                                "City": "Red Bluff",
+                                "State": "CA",
+                                "Zip": "96080",
+                                "PhoneNum": "(530)555-9875",
+                                "EMail": "janedoe@nomail.com",
+                                "RoutingNum": "121144476",
+                                "AccountNum": "1234567890",
+                                "FeesRoutingNum": "121144476",
+                                "FeesAccountNum": "1234567890",
+                                "oaID": "99999",
+                                "setup_referrer": "Mr. Referrer Smith",
+                                "setup_reseller": "Mr. Reseller Jackson",
+                                "setup_referrer_pct_profit": "10",
+                                "setup_referrer_pct_volume": "5",
+                                "setup_referrer_pct_gross": "100",
+                                "setup_reseller_pct_profit": "0",
+                                "setup_reseller_pct_volume": "0",
+                                "setup_reseller_pct_gross": "100",
+                                "setup_partner": "Health Partner",
+                                "org_name": "Family Health Corporation",
+                                "region_name": "Red Bluff Fam Health",
+                                "subregion_name": "",
+                                "expected_install_date": "2020-01-25",
+                                "Gateway": "",
+                                "Gateway_Name": "Paytrace Pro",
+                                "Gateway_ID": "12345",
+                                "Merch_Gateway_Rate": "3.25",
+                                "Merch_Gateway_Per_Item_Fee": "10",
+                                "Merch_Gateway_Monthly_Fee": "25",
+                                "Gateway_Monthly_Vol": "5000",
+                                "Gateway_Item_Count": "1000",
+                                "PaymentFusion": "YES",
+                                "PF_ID": "12345",
+                                "PF_Account_Fee": "25",
+                                "PF_Rate": "2.10",
+                                "PF_Per_Item_Fee": ".50",
+                                "PF_Standard_Device_Qty": "1",
+                                "PF_Standard_Device_Fee": "5.00",
+                                "PF_VP2PE_Device_Qty": "1",
+                                "PF_VP2PE_Device_Fee": "2.00",
+                                "PF_PFCC_Device_Qty": "1",
+                                "PF_PFCC_Device_Fee": "5.00",
+                                "PF_VP2PE_PFCC_Device_Qty": "1",
+                                "PF_VP2PE_PFCC_Device_Fee": "10.00",
+                                "ach_accepted": "NO",
+                                "ach_provider_name": "",
+                                "ach_annual_volume": "",
+                                "ach_application_fee": "",
+                                "ach_expedite_fee": "",
+                                "ach_average_transaction": "",
+                                "ach_max_transaction": "",
+                                "ach_rate": "",
+                                "ach_per_item_fee": "",
+                                "ach_statement_fee": "",
+                                "ach_batch_upload_fee": "",
+                                "ach_reject_fee": "",
+                                "ach_monthly_gateway_fee": "",
+                                "ach_monthly_minimum_fee": "",
+                                "ach_disbursment_bank_name": "",
+                                "ach_disbursment_routing": "",
+                                "ach_disbursment_account": "",
+                                "ach_fees_bank_name": "",
+                                "ach_fees_routing": "",
+                                "ach_fees_account": "",
+                                "ach_rejects_bank_name": "",
+                                "ach_rejects_routing": "",
+                                "ach_rejects_account": ""
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Merchants",
+            "description": "Operations and data about Merchants/Client accounts"
+        },
+        {
+            "name": "Users",
+            "description": "Operation and data about Users"
+        }
+    ]
+}
