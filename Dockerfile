@@ -40,7 +40,7 @@ RUN add-apt-repository ppa:ondrej/php; \
     php7.4-memcached php-ssh2 openssh-server php7.4-curl php7.4-mcrypt;
 
 # Set php7.4 as default version to use
-RUN a2enmod php7.4 && a2enmod headers && update-alternatives --set php /usr/bin/php7.4
+RUN a2enmod proxy_fcgi setenvif && a2enconf php7.4-fpm && a2enmod php7.4 && a2enmod headers && update-alternatives --set php /usr/bin/php7.4 && service apache2 restart
 
 RUN phpenmod mcrypt && \
     rm -rf /var/lib/apt/lists/* && \
@@ -90,8 +90,9 @@ RUN a2ensite 10-onlineapp.conf
 
 EXPOSE 80
 RUN chmod +x /app/startup.sh && chmod +x build.sh
-RUN /app/startup.sh
-RUN /app/build.sh
+# RUN /app/startup.sh
+# RUN /app/build.sh
+ENTRYPOINT [ "/app/startup.sh" ]
 
 # Start apache2
 CMD ["apachectl", "-D", "FOREGROUND"]

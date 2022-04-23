@@ -18,11 +18,13 @@ jobs:
           name: Build and push image
           command: |
             export IMAGE_TAG=${CIRCLE_WORKFLOW_ID}
-            export APP_NAME=online-application
             echo ${AWS_DEFAULT_REGION}
+            ./create-docker-env.sh
+            ls
+            cat docker-env
             docker build --tag ${ECR_REPOSITORY}/${APP_NAME}:${IMAGE_TAG} .
             docker images 
-            docker login -u AWS -p $(aws ecr get-login-password --region us-west-2) ${ECR_REPOSITORY}
+            docker login -u AWS -p $(aws ecr get-login-password) ${ECR_REPOSITORY}
             docker push ${ECR_REPOSITORY}/${APP_NAME}:${IMAGE_TAG}
 
 # Orchestrate our job run sequence
