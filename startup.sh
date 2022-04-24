@@ -12,9 +12,6 @@ mv /var/www/vhosts/online-application/app/Config/database.php.default ${DB_FILE}
 mv /var/www/vhosts/online-application/app/Config/core.php.default ${CORE_FILE}
 mv /var/www/vhosts/online-application/app/Config/email.php.default ${EMAIL_FILE}
 
-#Update php7.4 incompatible code in PHPUNIT
-sed -i 's/$ignoreCase = false/$ignoreCase = false, array \&$processed = array()/' $PHP_UNIT_FILE
-
 #Update DB file based on environemnt
 sed -i 's/DATABASE_HOST/'${DATABASE_HOST}'/' $DB_FILE
 sed -i 's/DATABASE_NAME/'${DATABASE_NAME}'/' $DB_FILE
@@ -64,3 +61,5 @@ composer self-update
 composer update
 app/Console/cake Migrations.migration run all
 
+#Update php7.4 incompatible code in PHPUNIT
+sed -i 's/$ignoreCase = false/$ignoreCase = false, array \&$processed = array()/' $PHP_UNIT_FILE

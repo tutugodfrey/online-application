@@ -86,13 +86,13 @@ RUN curl https://phar.phpunit.de/phpunit-3.7.28.phar > phpunit.phar && \
     chmod +x phpunit.phar && \
     mv /app/phpunit.phar /usr/local/bin/phpunit
 	
-RUN a2ensite 10-onlineapp.conf
-
 EXPOSE 80
 RUN chmod +x /app/startup.sh && chmod +x build.sh
 # RUN /app/startup.sh
 # RUN /app/build.sh
+
 ENTRYPOINT [ "/app/startup.sh" ]
+RUN a2ensite 10-onlineapp.conf
 
 # Start apache2
 CMD ["apachectl", "-D", "FOREGROUND"]
