@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #Database parameters
 DB_FILE=/var/www/vhosts/online-application/app/Config/database.php
 CORE_FILE=/var/www/vhosts/online-application/app/Config/core.php
@@ -24,13 +23,13 @@ sed -i 's/CORE_CIPHER_SEED/'${CORE_CIPHER_SEED}'/' $CORE_FILE
 sed -i 's/CORE_DB_API_ACCESS_TOKEN/'${CORE_DB_API_ACCESS_TOKEN}'/' $CORE_FILE
 sed -i 's/CORE_DB_API_PW/'${CORE_DB_API_PW}'/' $CORE_FILE
 sed -i 's/CORE_SSL_CIPHER/'${CORE_SSL_CIPHER}'/' $CORE_FILE
-sed -i 's/CORE_SSL_KEY/'${CORE_SSL_KEY}'/' $CORE_FILE
+sed -i 's|CORE_SSL_KEY|'${CORE_SSL_KEY}'|' $CORE_FILE
 sed -i 's/CORE_SSL_IV/'${CORE_SSL_IV}'/' $CORE_FILE
 
 #email.php secrets config
 sed -i 's/EMAIL_HOST/'${EMAIL_HOST}'/' $EMAIL_FILE
 sed -i 's/EMAIL_USERNAME/'${EMAIL_USERNAME}'/' $EMAIL_FILE
-sed -i 's/EMAIL_PW/'${EMAIL_PW}'/' $EMAIL_FILE
+sed -i 's|EMAIL_PW|'${EMAIL_PW}'|' $EMAIL_FILE
 
 echo "[${EMAIL_HOST}]:587 "${EMAIL_USERNAME}":"${EMAIL_PW} > $SES_CRED_FILE
 postmap hash:/etc/postfix/sasl_passwd
@@ -63,3 +62,7 @@ app/Console/cake Migrations.migration run all
 
 #Update php7.4 incompatible code in PHPUNIT
 sed -i 's/$ignoreCase = false/$ignoreCase = false, array \&$processed = array()/' $PHP_UNIT_FILE
+
+a2ensite 10-onlineapp.conf
+service apache2 reload
+apachectl -D FOREGROUND

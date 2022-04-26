@@ -42,3 +42,4 @@ cache.properties
 *.sublime-workspace
 /nbproject/private/
 .env
+env2

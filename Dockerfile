@@ -17,7 +17,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 # Install PostgreSQL v11
-#RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+# RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 # RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
 # RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
@@ -91,8 +91,9 @@ RUN chmod +x /app/startup.sh && chmod +x build.sh
 # RUN /app/startup.sh
 # RUN /app/build.sh
 
-ENTRYPOINT [ "/app/startup.sh" ]
-RUN a2ensite 10-onlineapp.conf
+# ENTRYPOINT [ "/app/startup.sh" ]
+# RUN a2ensite 10-onlineapp.conf
 
 # Start apache2
-CMD ["apachectl", "-D", "FOREGROUND"]
+# CMD ["apachectl", "-D", "FOREGROUND"]
+CMD [ "/app/startup.sh" ]
