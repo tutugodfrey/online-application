@@ -37,7 +37,7 @@ RUN add-apt-repository ppa:ondrej/php; \
     php7.4-common php7.4-mbstring php7.4-xml php7.4-imap \
     php7.4-fpm php7.4-cli php7.4-pgsql php7.4-sqlite3 php7.4-redis \
     php7.4-apcu php7.4-intl php7.4-json php7.4-gd \
-    php7.4-memcached php-ssh2 openssh-server php7.4-curl php7.4-mcrypt;
+    php7.4-memcached php-ssh2 openssh-server php7.4-curl php7.4-mcrypt postgresql-client-12;
 
 # Set php7.4 as default version to use
 RUN a2enmod proxy_fcgi setenvif && a2enconf php7.4-fpm && a2enmod php7.4 && a2enmod headers && update-alternatives --set php /usr/bin/php7.4 && service apache2 restart
