@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-WORKDIR /app
+WORKDIR /tmp
 
 #This dockerfile installs PHP 7.4 + dependencies and apache2 
 
@@ -60,9 +60,9 @@ RUN rm -rf /var/www/html && \
 
 COPY ./10-onlineapp.conf /etc/apache2/sites-available/10-onlineapp.conf
 COPY ./apache.conf /etc/apache2/apache2.conf
-COPY ./app /var/www/vhosts/online-application/app
-COPY ./build.sh ./startup.sh index.php build.xml phpunit.xml composer.json app_sys_update.sh /var/www/vhosts/online-application/
-COPY ./build.sh ./startup.sh index.php build.xml phpunit.xml composer.json app_sys_update.sh /app/
+COPY . /var/www/vhosts/online-application/
+# COPY ./build.sh ./startup.sh index.php build.xml phpunit.xml composer.json app_sys_update.sh /var/www/vhosts/online-application/
+# COPY ./build.sh ./startup.sh index.php build.xml phpunit.xml composer.json app_sys_update.sh /app/
 
 ##VARIABLE DEFNENTIIONS FOR SECRETS IN CONFIG FILES###
 ENV DATABASE_HOST=
@@ -84,10 +84,10 @@ ENV EMAIL_PW=
 #Install PHPUnit
 RUN curl https://phar.phpunit.de/phpunit-3.7.28.phar > phpunit.phar && \
     chmod +x phpunit.phar && \
-    mv /app/phpunit.phar /usr/local/bin/phpunit
+    mv phpunit.phar /usr/local/bin/phpunit
 	
 EXPOSE 80
-RUN chmod +x /app/startup.sh && chmod +x build.sh
+RUN chmod +x /var/www/vhosts/online-application/startup.sh && chmod +x /var/www/vhosts/online-application/build.sh
 # RUN /app/startup.sh
 # RUN /app/build.sh
 
@@ -96,4 +96,4 @@ RUN chmod +x /app/startup.sh && chmod +x build.sh
 
 # Start apache2
 # CMD ["apachectl", "-D", "FOREGROUND"]
-CMD [ "/app/startup.sh" ]
+CMD [ "/var/www/vhosts/online-application/startup.sh" ]
