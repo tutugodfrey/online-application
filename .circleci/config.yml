@@ -7,6 +7,22 @@ phpimg: &phpimg
   working_directory: ~/online-application
 
 commands:
+  create_directories:
+    steps:
+      - run:
+          command: |
+            mkdir -p build/{logs,pdepend,reports};
+            mkdir -p app/webroot/{coverage,code-browser,api};
+            mkdir -p app/tmp/{logs,tests,sessions,cache}
+            mkdir -p app/tmp/cache/{persistent,models,views}
+  composer-update:
+    steps:
+      - run:
+          command: |
+            export COMPOSER_NO_INTERACTION=1
+            sudo composer self-update;
+            composer install;
+            composer update;
 
 # Define the jobs we want to run for this project
 jobs:
@@ -39,6 +55,8 @@ jobs:
     <<: *phpimg
     steps:
       - checkout
+      - create_directories
+      - composer-update
       - run:
           name: prepare
           command: |
@@ -47,15 +65,8 @@ jobs:
             whoami
             ls -al app
             ls -al app/webroot
-            mkdir -p build/{logs,pdepend,reports};
-            mkdir -p app/webroot/{coverage,code-browser,api};
-            mkdir -p app/tmp/{logs,tests,sessions,cache}
-            mkdir -p app/tmp/cache/{persistent,models,views}
             cp app/Config/core.php.default app/Config/core.php;
-            export COMPOSER_NO_INTERACTION=1
-            sudo composer self-update;
-            composer install;
-            composer update;
+
       
       - persist_to_workspace:
           root: ~/online-application
@@ -67,6 +78,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/online-application
+      - composer-update
       - run:
           name: phpunit
           command: |
@@ -75,10 +87,12 @@ jobs:
             whoami
             ls -al build
             ls -al app/webroot
-            # Console/cake test --debug --log-junit '../build/reports/junit.xml' \
-            #   --coverage-html 'webroot/coverage' \
-            #   --coverage-clover '../build/reports/coverage-clover.xml' \
-            #   --configuration '../phpunit.xml' app AllTests
+            sudo apt-get update -y
+            sudo apt-get install php-memcache -y
+            app/Console/cake test --debug --log-junit '../build/reports/junit.xml' \
+              --coverage-html 'webroot/coverage' \
+              --coverage-clover '../build/reports/coverage-clover.xml' \
+              --configuration '../phpunit.xml' app AllTests
 
   pdepend:
     <<: *phpimg
@@ -86,57 +100,117 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/online-application
+      - composer-update
       - run:
           name: pdepend
           command: |
-            ls -al 
-            ls -al build
-            echo Hello
+            composer global require pdepend/pdepend
+            sudo  ln -s /home/circleci/.config/composer/vendor/bin/pdepend /usr/bin/pdepend
+            pdepend --summary-xml='build/pdepend/summary.xml' \
+              --jdepend-chart='build/pdepend/dependencies.svg' \
+              --overview-pyramid='build/pdepend/overview-pyramid.svg' \
+              --jdepend-xml='build/logs/jdepend.xml' \
+              --ignore=Console,Locale,Plugin,vendor,Vendor 'app'
 
   phpmd-ci:
     <<: *phpimg
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/online-application
+      - composer-update
       - run:
           name: phpmd-ci
           command: |
-            echo Hello
+            phpmd 'app' xml codesize,unusedcode,naming \
+              --exclude 'Console,Plugin,tmp,vendor,Vendor' \
+              --reportfile 'build/logs/phpmd.xml'
 
   phpcpd:
     <<: *phpimg
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/online-application
+      - composer-update
       - run:
           name: phpcpd
           command: |
-            echo Hello
+            wget -O phpcpd.phar https://phar.phpunit.de/phpcpd.phar;
+            chmod a+x phpcpd.phar;
+            sudo mv phpcpd.phar /usr/local/bin/phpcpd;
+            phpcpd --exclude=Vendor --exclude=Plugin --exclude=vendor --log-pmd 'build/logs/pmd-cpd.xml' 'app'
 
   phpcs-ci:
     <<: *phpimg
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/online-application
+      - create_directories
+      - composer-update
       - run:
           name: phpcs-ci
           command: |
-            echo Hello
+            # mv auth.json /home/circleci/.config/composer
+            composer global require cakephp/cakephp-codesniffer
+            composer global require "squizlabs/php_codesniffer=*"
+            which phpcs
+            phpcs -i
+            phpcs --config-set ignore_warnings_on_exit 1
+            phpcs --config-set ignore_errors_on_exit 1
+            phpcs -n --standard=CakePHP \
+              --ignore=Console,Plugin,tmp,Test,vendor,Vendor,webroot,.css,.js \
+              --report-full='build/logs/phpcs_full.txt' 'app'
 
   phploc:
     <<: *phpimg
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/online-application
+      - create_directories
+      - composer-update
       - run:
           name: phploc
           command: |
-            echo Hello
+            sudo apt-get update -y
+            sudo apt-get install phploc -y
+            phploc --log-csv 'build/logs/phploc.csv' 'app'
 
   phpdox:
     <<: *phpimg
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/online-application
+      - create_directories
+      - composer-update
       - run:
           name: phpdox
           command: |
-            echo Hello
+            sudo apt-get update -y
+            sudo apt-get install phpdox -y
+            phpdox -f phpdox.xml.dist
+
+  phpcb:
+    <<: *phpimg
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/online-application
+      - create_directories
+      - composer-update
+      - run:
+          name: phpcb
+          command: |
+            ls -al build/logs
+            composer global require "mayflower/php-codebrowser=~1.1"
+            ls -al
+            phpcb --log 'build/logs' \
+              --source 'app' --output 'app/webroot/code-browser' \
+              --ignore 'app/Plugin,app/tmp,app/vendor,app/Vendor'
+            ls -al build/logs
 
 # Orchestrate our job run sequence
 workflows:
@@ -154,3 +228,4 @@ workflows:
       - phpcs-ci
       - phploc
       - phpdox
+      - phpcb  # Not included in build.xml
