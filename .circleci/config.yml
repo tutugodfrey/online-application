@@ -9,6 +9,11 @@ phpimg: &phpimg
 ubuntuimg: &ubuntuimg
   docker:
     - image: ubuntu:20.04
+  working_directory: ~/online-application
+
+ubuntuwithpg: &ubuntuwithpg
+  docker:
+    - image: ubuntu:20.04
       environment:
         POSTGRES_USER: postgres
         PGPASSWORD: ax!a
@@ -33,9 +38,10 @@ commands:
       - run:
           command: |
             mkdir -p build/{logs,pdepend,reports};
-            mkdir -p app/webroot/{coverage,code-browser,api};
+            mkdir -p app/webroot/{coverage,code-browser,api}
             mkdir -p app/tmp/{logs,tests,sessions,cache}
             mkdir -p app/tmp/cache/{persistent,models,views}
+
   composer-update:
     steps:
       - run:
@@ -99,7 +105,7 @@ jobs:
             # docker login -u AWS -p $(aws ecr get-login-password) ${ECR_REPOSITORY}
             # docker push ${ECR_REPOSITORY}/${APP_NAME}:${IMAGE_TAG}
   
-  prepare:
+  lint:
     <<: *ubuntuimg
     steps:
       - checkout
@@ -107,23 +113,12 @@ jobs:
       - create_directories
       - composer-update
       - run:
-          name: prepare
+          name: Lint
           command: |
-            pwd
-            ls -al
-            whoami
-            ls -al app
-            ls -al app/webroot
-            cp app/Config/core.php.default app/Config/core.php;
-            cp app/Config/axia-test-database.php app/Config/database.php
-
-      
-      - persist_to_workspace:
-          root: ~/online-application
-          paths: "*"
+            php -l app
 
   phpunit:
-    <<: *ubuntuimg
+    <<: *ubuntuwithpg
     steps:
       - checkout
       # - attach_workspace:
@@ -148,6 +143,10 @@ jobs:
               --coverage-clover '../build/reports/coverage-clover.xml' \
               --configuration 'phpunit.xml' app AllTests || exit 0
 
+      - persist_to_workspace:
+          root: ~/online-application
+          paths: "*"
+
   pdepend:
     <<: *ubuntuimg
     steps:
@@ -165,7 +164,11 @@ jobs:
               --jdepend-chart='build/pdepend/dependencies.svg' \
               --overview-pyramid='build/pdepend/overview-pyramid.svg' \
               --jdepend-xml='build/logs/jdepend.xml' \
-              --ignore=Console,Locale,Plugin,vendor,Vendor 'app'
+              --ignore=Console,Locale,Plugin,vendor,Vendor app
+
+      - persist_to_workspace:
+          root: ~/online-application
+          paths: "*"
 
   phpmd-ci:
     <<: *ubuntuimg
@@ -189,8 +192,6 @@ jobs:
     steps:
       - checkout
       - setup
-      - attach_workspace:
-          at: ~/online-application
       - composer-update
       - run:
           name: phpcpd
@@ -208,8 +209,6 @@ jobs:
     steps:
       - checkout
       - setup
-      - attach_workspace:
-          at: ~/online-application
       - create_directories
       - composer-update
       - run:
@@ -227,7 +226,6 @@ jobs:
             phpcs -i
             phpcs --config-set ignore_warnings_on_exit 1
             phpcs --config-set ignore_errors_on_exit 1
-            echo Job Run Got Here
             phpcs -n --standard=CakePHP \
               --ignore=Console,Plugin,tmp,Test,vendor,Vendor,webroot,.css,.js \
               --report-full=build/logs/phpcs_full.txt app
@@ -237,8 +235,6 @@ jobs:
     steps:
       - checkout
       - setup
-      - attach_workspace:
-          at: ~/online-application
       - create_directories
       - composer-update
       - run:
@@ -253,8 +249,6 @@ jobs:
     steps:
       - checkout
       - setup
-      - attach_workspace:
-          at: ~/online-application
       - create_directories
       - composer-update
       - run:
@@ -269,8 +263,6 @@ jobs:
     steps:
       - checkout
       - setup
-      - attach_workspace:
-          at: ~/online-application
       - create_directories
       - composer-update
       - run:
@@ -287,12 +279,14 @@ jobs:
 
 # Orchestrate our job run sequence
 workflows:
-  build_and_test:
+  build_smoke:
     jobs:
-      - build
-      - prepare
-      - phpunit:
-          requires: [prepare]
+      - phpunit
+
+  build_nightly:
+    jobs:
+      - lint
+      - phpunit
       - pdepend:
            requires: [phpunit]
       - phpmd-ci:
@@ -301,4 +295,4 @@ workflows:
       - phpcs-ci
       - phploc
       - phpdox
-      - phpcb  # Not included in build.xml
+      - phpcb
