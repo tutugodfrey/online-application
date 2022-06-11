@@ -6,7 +6,28 @@ phpimg: &phpimg
     - image: cimg/php:7.4.26
   working_directory: ~/online-application
 
+ubuntuimg: &ubuntuimg
+  docker:
+    - image: ubuntu:20.04
+      environment:
+        POSTGRES_USER: postgres
+        PGPASSWORD: ax!a
+        DATABASE_URL: postgresql://postgres@localhost:5432/postgres
+
+    - image: postgres:latest
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: ax!a
+  
+  working_directory: ~/online-application
+
 commands:
+  setup:
+    steps:
+      - run:
+          command:
+            ./setup.sh
+
   create_directories:
     steps:
       - run:
@@ -20,9 +41,36 @@ commands:
       - run:
           command: |
             export COMPOSER_NO_INTERACTION=1
-            sudo composer self-update;
+            composer self-update;
             composer install;
             composer update;
+
+  setup_pg_client:
+    steps:
+      - run:
+          name: Setup PG dump
+          command: |
+            sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+            wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+            apt -y update
+            apt -y install postgresql-14
+            ln -s /usr/lib/postgresql/14/bin/pg_dump /usr/bin/pg_dump --force
+
+  setup_db_permissions:
+    steps:
+      - run:
+          name: Database setup
+          command: |
+            echo DATABASE_URL $DATABASE_URL
+            psql -d $DATABASE_URL -c "CREATE user axia with password 'ax!a'";
+            psql -d $DATABASE_URL -c "GRANT postgres to axia";
+            psql -d $DATABASE_URL -c "ALTER ROLE axia WITH SUPERUSER";
+            psql -d $DATABASE_URL -c "CREATE DATABASE axia OWNER = postgres";
+            psql -d $DATABASE_URL -c "CREATE DATABASE axia_test OWNER = postgres";
+            psql -d $DATABASE_URL -c "CREATE DATABASE axia_template OWNER = postgres";
+            psql -d $DATABASE_URL -c "GRANT ALL PRIVILEGES on DATABASE axia to axia";
+            psql -d $DATABASE_URL -c "GRANT ALL PRIVILEGES on DATABASE axia_template to axia";
+            psql -d $DATABASE_URL -c "GRANT ALL PRIVILEGES on DATABASE axia_test to axia";
 
 # Define the jobs we want to run for this project
 jobs:
@@ -52,9 +100,10 @@ jobs:
             # docker push ${ECR_REPOSITORY}/${APP_NAME}:${IMAGE_TAG}
   
   prepare:
-    <<: *phpimg
+    <<: *ubuntuimg
     steps:
       - checkout
+      - setup
       - create_directories
       - composer-update
       - run:
@@ -66,6 +115,7 @@ jobs:
             ls -al app
             ls -al app/webroot
             cp app/Config/core.php.default app/Config/core.php;
+            cp app/Config/axia-test-database.php app/Config/database.php
 
       
       - persist_to_workspace:
@@ -73,26 +123,30 @@ jobs:
           paths: "*"
 
   phpunit:
-    <<: *phpimg
+    <<: *ubuntuimg
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/online-application
+      # - attach_workspace:
+      #     at: ~/online-application
+      - setup
+      - create_directories
       - composer-update
+      - setup_pg_client
+      - setup_db_permissions
       - run:
           name: phpunit
           command: |
             pwd
             ls -al
             whoami
-            ls -al build
-            ls -al app/webroot
-            sudo apt-get update -y
-            sudo apt-get install php-memcache -y
+            cp app/Config/core.php.default app/Config/core.php;
+            cp app/Config/axia-test-database.php app/Config/database.php
+            composer require phpunit/phpunit 3.7.38 -W
+            cp app/Config/phpdoc.php app/Vendor/phpunit/phpunit/PHPUnit/Framework/Comparator/DOMDocument.php 
             app/Console/cake test --debug --log-junit '../build/reports/junit.xml' \
               --coverage-html 'webroot/coverage' \
               --coverage-clover '../build/reports/coverage-clover.xml' \
-              --configuration '../phpunit.xml' app AllTests
+              --configuration 'phpunit.xml' app AllTests
 
   pdepend:
     <<: *phpimg
